@@ -1,0 +1,69 @@
+;
+; Copyright (C) 2009 Sung Ho Park
+; Contact: ubinos.org@gmail.com
+;
+; This file is part of the bsp_sam9xe512ek component of the Ubinos.
+;
+; GNU General Public License Usage
+; This file may be used under the terms of the GNU
+; General Public License version 3.0 as published by the Free Software
+; Foundation and appearing in the file license_gpl3.txt included in the
+; packaging of this file. Please review the following information to
+; ensure the GNU General Public License version 3.0 requirements will be
+; met: http://www.gnu.org/copyleft/gpl.html.
+;
+; GNU Lesser General Public License Usage
+; Alternatively, this file may be used under the terms of the GNU Lesser
+; General Public License version 2.1 as published by the Free Software
+; Foundation and appearing in the file license_lgpl.txt included in the
+; packaging of this file. Please review the following information to
+; ensure the GNU Lesser General Public License version 2.1 requirements
+; will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+;
+; Commercial Usage
+; Alternatively, licensees holding valid commercial licenses may 
+; use this file in accordance with the commercial license agreement 
+; provided with the software or, alternatively, in accordance with the 
+; terms contained in a written agreement between you and rightful owner.
+;
+
+print "begin"
+
+RES
+SYS.RES
+SYS.CPU ARM926EJ
+SYS.JtagClock Rtck
+SYS.MODE.Attach
+IF (run())
+	BREAK
+
+MAP.BOnchip 0x00200000--0x0027FFFF
+
+r.s cpsr 0xD3
+
+d.s 0xFFFFF124 %l 0xFFFFFFFF
+d.s 0xFFFFF128 %l 0xFFFFFFFF
+d.s 0xFFFFFC14 %l 0xFFFFFFFF
+
+d.s 0xFFFFFC20 %l 0x00004001
+WAIT 10.ms
+d.s 0xFFFFFC28 %l 0x2060bf09
+WAIT 10.ms
+d.s 0xFFFFFC2C %l 0x207c7f0c
+WAIT 10.ms
+d.s 0xFFFFFC30 %l 0x00000100
+WAIT 10.ms
+d.s 0xFFFFFC30 %l 0x00000102
+WAIT 10.ms
+
+data.load.elf ~~~~/app.elf /nocode
+register.set pc 0x00300000
+
+break.set appmain
+Mode.Mix
+
+print "end"
+ENDDO
+
+
+

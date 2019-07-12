@@ -1,0 +1,482 @@
+/*
+  Copyright (C) 2011 RTLab, Yu Jin Park, Sung Ho Park
+  Contact: ubinos.org@gmail.com
+
+  This file is part of the lib_ubik_armcortexm component of the Ubinos.
+
+  GNU General Public License Usage
+  This file may be used under the terms of the GNU
+  General Public License version 3.0 as published by the Free Software
+  Foundation and appearing in the file license_gpl3.txt included in the
+  packaging of this file. Please review the following information to
+  ensure the GNU General Public License version 3.0 requirements will be
+  met: http://www.gnu.org/copyleft/gpl.html.
+
+  GNU Lesser General Public License Usage
+  Alternatively, this file may be used under the terms of the GNU Lesser
+  General Public License version 2.1 as published by the Free Software
+  Foundation and appearing in the file license_lgpl.txt included in the
+  packaging of this file. Please review the following information to
+  ensure the GNU Lesser General Public License version 2.1 requirements
+  will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+
+  Commercial Usage
+  Alternatively, licensees holding valid commercial licenses may
+  use this file in accordance with the commercial license agreement
+  provided with the software or, alternatively, in accordance with the
+  terms contained in a written agreement between you and rightful owner.
+*/
+
+
+#include "../../../_ubik.h"
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+#if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__CORTEX_M4)
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+
+int _ubik_port_comp_init(unsigned int idle_stackdepth) {
+	int r = 0;
+
+	r = _ubik_inittick();
+	if (r != 0) {
+		return -1;
+	}
+
+	r = task_comp_init(idle_stackdepth);
+	if (r != 0) {
+		return -1;
+	}
+
+	return 0;
+}
+
+void _ubik_port_comp_start(void) {
+	task_comp_start();
+}
+
+int ubik_isactive(void) {
+	return _bsp_kernel_active;
+}
+
+tickcount_t ubik_gettickcount(void) {
+	tickcount_t tc;
+
+	ubik_entercrit();
+
+	tc.high	= _ubik_tickcounth;
+	tc.low	= _ubik_tickcount;
+
+	ubik_exitcrit();
+
+	return tc;
+}
+
+tickcount_t ubik_gettickdiff(tickcount_t tick1, tickcount_t tick2) {
+	tickcount_t diff;
+
+	if (tick1.high > tick2.high) {
+		diff.high = UINT_MAX - tick1.high + 1 + tick2.high;
+	}
+	else {
+		diff.high = tick2.high - tick1.high;
+	}
+
+	if (tick1.low > tick2.low) {
+		diff.high--;
+		diff.low = UINT_MAX - tick1.low + 1 + tick2.low;
+	}
+	else {
+		diff.low = tick2.low - tick1.low;
+	}
+
+	return diff;
+}
+
+void _ubik_swisr(unsigned int swino) {
+	switch(swino) {
+	case SWINO__TASK_YIELD:
+		_task_prev = _task_cur;
+		if(TASK_STATE__RUNNING == _task_cur->state) {
+			_task_cur->state = TASK_STATE__READY;
+		}
+		_task_cur = _tasklist_getcurnext(_task_list_ready_cur);
+		_task_cur->state = TASK_STATE__RUNNING;
+		break;
+	}
+}
+
+void _task_stackinit(_task_pt task, void * arg) {
+	unsigned int *	stacktop;
+	unsigned int	stacklimit;
+
+	stacktop 		= (unsigned int *) (((unsigned int) task->stack) + task->stacksize);
+	stacklimit		= ((unsigned int) task->stack) + ARM_CONTEXT_SIZE + UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN;
+
+	stacktop        = (unsigned int *) (((unsigned int) stacktop) & (~(8 - 1)));    // 8 bytes alignment
+	stacklimit      = ((stacklimit + (8 - 1)) & (~(8 - 1)));                        // 8 bytes alignment
+
+	*(--stacktop) = ((unsigned int) 0x01000000);					/* xpsr					*/
+	*(--stacktop) = ((unsigned int) _task_rootfunc) | 0x00000001;	/* r15 (pc)				*/
+	*(--stacktop) = ((unsigned int) 0x00000000);					/* r14 (lr)				*/
+	*(--stacktop) = ((unsigned int) 0x12121212);					/* r12					*/
+	*(--stacktop) = ((unsigned int) 0x03030303);					/* r3 					*/
+	*(--stacktop) = ((unsigned int) 0x02020202);					/* r2 					*/
+	*(--stacktop) = ((unsigned int) 0x01010101);					/* r1 					*/
+	*(--stacktop) = ((unsigned int) arg       );					/* r0 					*/
+
+    *(--stacktop) = ((unsigned int) 0x00000000);                    /* _bsp_critcount       */
+
+	*(--stacktop) = ((unsigned int) 0x11111111);					/* r11					*/
+	*(--stacktop) = ((unsigned int) 0x10101010);					/* r10              	*/
+	*(--stacktop) = ((unsigned int) 0x09090909);					/* r9					*/
+	*(--stacktop) = ((unsigned int) 0x08080808);					/* r8 					*/
+	*(--stacktop) = ((unsigned int) 0x07070707);					/* r7 					*/
+	*(--stacktop) = ((unsigned int) 0x06060606);					/* r6 					*/
+	*(--stacktop) = ((unsigned int) 0x05050505);					/* r5 					*/
+	*(--stacktop) = ((unsigned int) 0x04040404);					/* r4 					*/
+
+#if (__FPU_USED == 1)
+	*(--stacktop) = ((unsigned int) 0x00000010);                    /* stack frame type     */
+#endif
+
+	task->stacktop = stacktop;
+	task->stacktop_max = stacktop;
+	task->stacklimit = (unsigned int *) stacklimit;
+
+	return;
+}
+
+int task_getstacksize(task_pt _task, unsigned int * stacksize_p) {
+	#define	__FUNCNAME__	"task_getstacksize"
+	int r;
+	_task_pt task = (_task_pt)_task;
+
+	if (NULL == _task_cur) {
+		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		r = -1;
+		goto end0;
+	}
+
+	if (NULL == stacksize_p) {
+		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		r = -3;
+		goto end0;
+	}
+
+	if (NULL == task && 0 == _bsp_kernel_active) {
+		r = bsp_getstacksize(0, stacksize_p);
+		goto end0;
+	}
+
+	if (NULL == task) {
+		task = _task_cur;
+	}
+
+	ubik_entercrit();
+
+	if (0 == task->valid || (OBJTYPE__UBIK_TASK != task->type && OBJTYPE__UBIK_IDLETASK != task->type)) {
+		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		r = -2;
+		goto end1;
+	}
+
+	*stacksize_p = task->stacksize;
+
+	r = 0;
+
+end1:
+	ubik_exitcrit();
+
+end0:
+	return r;
+	#undef __FUNCNAME__
+}
+
+int task_getmaxstackusage(task_pt _task, unsigned int * maxstackusage_p) {
+	if (NULL != maxstackusage_p) {
+		*maxstackusage_p = 0;
+	}
+
+	return -1;
+}
+
+int ubik_iscrit(void) {
+	if (	(0 != _bsp_critcount) ||
+			(0 != bsp_isintr()) 		) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int ubik_istask(void) {
+	if (	(0 != _bsp_kernel_active && 0 == bsp_isintr()) 	) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+int ubik_isrt(void) {
+	if (	(0 != _bsp_critcount) ||
+			(0 != bsp_isintr()) ||
+			(0 != _ubik_tasklockcount) ||
+			(0 != _bsp_kernel_active && NULL != _task_cur && _task_cur->priority >= _ubik_rtpriority)	) {
+		return 1;
+	}
+	else {
+		return 0;
+	}
+}
+
+void _task_yield(void) {
+	if (0 == _ubik_tasklockcount && 0 != _bsp_kernel_active) {
+	    if (0 == bsp_isintr()) {
+            if (0 == _bsp_critcount) {
+                logme("not in critical section");
+                bsp_abortsystem();
+            }
+
+            __asm__ __volatile__ (
+                "svc        %0                                              \n\t"
+                :: "i" (SWINO__TASK_YIELD)
+            );
+	    }
+	    else {
+	        arm_set_pendsv();
+	    }
+	}
+}
+
+unsigned int ubik_gettickpersec(void) {
+    return UBINOS__UBIK__TICK_PER_SEC;
+}
+
+unsigned int ubik_timemstotick(unsigned int timems) {
+    if (0 == timems) {
+        return 0;
+    }
+
+#if     (0 == UBINOS__UBIK__TICK_PER_SEC%1000)
+    timems = timems * (UBINOS__UBIK__TICK_PER_SEC / 1000);
+#elif   (0 == UBINOS__UBIK__TICK_PER_SEC%100)
+    timems = timems * (UBINOS__UBIK__TICK_PER_SEC  / 100) /   10;
+#elif   (0 == UBINOS__UBIK__TICK_PER_SEC%10)
+    timems = timems * (UBINOS__UBIK__TICK_PER_SEC   / 10) /  100;
+#else
+    timems = timems * (UBINOS__UBIK__TICK_PER_SEC       ) / 1000;
+#endif
+
+    if (0 == timems) {
+        return 1;
+    }
+
+    return timems;
+}
+
+unsigned int ubik_ticktotimems(unsigned int tick) {
+    if (0 == tick) {
+        return 0;
+    }
+
+#if     (0 == UBINOS__UBIK__TICK_PER_SEC%1000)
+    tick = tick        / (UBINOS__UBIK__TICK_PER_SEC / 1000);
+#elif   (0 == UBINOS__UBIK__TICK_PER_SEC%100)
+    tick = tick * 10   / (UBINOS__UBIK__TICK_PER_SEC  / 100);
+#elif   (0 == UBINOS__UBIK__TICK_PER_SEC%10)
+    tick = tick * 100  / (UBINOS__UBIK__TICK_PER_SEC   / 10);
+#else
+    tick = tick * 1000 / (UBINOS__UBIK__TICK_PER_SEC       );
+#endif
+
+    if (0 == tick) {
+        return 1;
+    }
+
+    return tick;
+}
+
+void _ubik_tickisr(void) {
+    unsigned int    status = 0;
+    edlist_pt       tempedlist;
+    _task_pt        task;
+    #if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
+    _stimer_pt      stimer;
+    #endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
+    _wtask_pt       wtask;
+    _sigobj_pt      sigobj;
+    int             i;
+
+    status = SysTick->CTRL;
+    if (0 != (0x00010000 & status)) {
+
+        ////////////////
+
+        _ubik_tickcount++;
+
+        ////////////////
+
+        if (0 == _ubik_tickcount) {
+            _ubik_tickcounth++;
+
+            tempedlist                      = _task_list_blocked_timed_cur;
+            _task_list_blocked_timed_cur    = _task_list_blocked_timed_next;
+            _task_list_blocked_timed_next   = tempedlist;
+
+            #if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
+            tempedlist                      = _stimer_list_cur;
+            _stimer_list_cur                = _stimer_list_next;
+            _stimer_list_next               = tempedlist;
+            #endif
+        }
+
+        for (;;) {
+            task = _tasklist_head(_task_list_blocked_timed_cur);
+            if (NULL != task && _ubik_tickcount >= task->wakeuptick) {
+                for (i=0; i<task->wtask_count; i++) {
+                    wtask = &task->wtask_p[i];
+                    sigobj = _sigobj_wtasklist_owner(wtask);
+                    if (NULL != sigobj) {
+                        wtask->sigtype  = SIGOBJ_SIGTYPE__TIMEOUT;
+                        task->wtask_recvcount++;
+                        _sigobj_wtasklist_remove(wtask);
+                        _sigobj_wtasklist_notifychange(sigobj);
+                    }
+                }
+                task->state             = TASK_STATE__READY;
+                task->wakeuptick        = 0;
+                _task_changelist(task);
+            }
+            else {
+                break;
+            }
+        }
+
+#if       !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
+        for (;;) {
+            stimer = _stimerlist_head(_stimer_list_cur);
+            if (NULL != stimer && _ubik_tickcount >= stimer->wakeuptick) {
+                switch (stimer->sigobj->type) {
+                case OBJTYPE__UBIK_SEM:
+                    sem_give((sem_pt) stimer->sigobj);
+                    if (0 == stimer->oneshot) {
+                        _stimerlist_add(stimer);
+                    }
+                    else {
+                        _stimerlist_remove(stimer);
+                        stimer->running = 0;
+                    }
+                    break;
+                case OBJTYPE__UBIK_SIGNAL:
+                    if (0 == stimer->broadcast) {
+                        signal_send((signal_pt) stimer->sigobj, stimer->sigtype);
+                    } else {
+                        signal_broadcast((signal_pt) stimer->sigobj, stimer->sigtype);
+                    }
+                    if (0 == stimer->oneshot) {
+                        _stimerlist_add(stimer);
+                    }
+                    else {
+                        _stimerlist_remove(stimer);
+                        stimer->running = 0;
+                    }
+                    break;
+                default:
+                    _stimerlist_remove(stimer);
+                    stimer->running = 0;
+                    break;
+                }
+            }
+            else {
+                break;
+            }
+        }
+#endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
+
+        ////////////////
+
+#if !(UBINOS__UBIK__EXCLUDE_TICK_HOOKFUNC == 1)
+        if (NULL != _ubik_tickhookfunc_func) {
+            _ubik_tickhookfunc_func();
+        }
+#endif /* !(UBINOS__UBIK__EXCLUDE_TICK_HOOKFUNC == 1) */
+
+        ////////////////
+
+        if (0 == _ubik_tasklockcount && 0 != _bsp_kernel_active) {
+            _task_prev = _task_cur;
+            if(TASK_STATE__RUNNING == _task_cur->state) {
+                _task_cur->state = TASK_STATE__READY;
+            }
+            _task_cur = _tasklist_getcurnext(_task_list_ready_cur);
+            _task_cur->state = TASK_STATE__RUNNING;
+        }
+        arm_clear_pendsv();
+
+        //////////////////
+
+    }
+}
+
+int _ubik_inittick(void) {
+    int r;
+    int i;
+    unsigned int clockfreqk = 0;
+    unsigned int counter = 0;
+    unsigned int tickpersec = 0;
+
+    __disable_irq();
+
+    _ubik_tickcount     = 0;
+    _ubik_tickcounth    = 0;
+
+    r = bsp_getmckfreqk(&clockfreqk);
+    if (0 != r) {
+        return -1;
+    }
+    tickpersec = ubik_gettickpersec();
+    counter = (clockfreqk * 1000 / tickpersec) - 1;
+
+    if ((SysTick_LOAD_RELOAD_Msk - 1) < counter) {
+        return -1;
+    }
+
+    // System Tick Configuration
+    assert(SysTick_Config(counter) == 0);
+
+    // Set exception priority
+    for (i = NVIC_IRQN_START; i <= NVIC_IRQN_END; i++) {
+        NVIC_SetPriority(i, (NVIC_PRIO_MIDDLE >> (8 - __NVIC_PRIO_BITS)));
+    }
+    NVIC_SetPriority(SVCall_IRQn, (NVIC_PRIO_SVC >> (8 - __NVIC_PRIO_BITS)));
+    NVIC_SetPriority(PendSV_IRQn, (NVIC_PRIO_PENDSV >> (8 - __NVIC_PRIO_BITS)));
+    NVIC_SetPriority(SysTick_IRQn, (NVIC_PRIO_SYSTICK >> (8 - __NVIC_PRIO_BITS)));
+
+    return 0;
+}
+
+
+void _ubik_task_schedule_irq() {
+    if (0 == _ubik_tasklockcount && 0 != _bsp_kernel_active) {
+        if(_task_list_ready_index > _task_cur->priority) {
+            arm_set_pendsv();
+//          _task_prev = _task_cur;
+//          if(TASK_STATE__RUNNING == _task_cur->state) {
+//              _task_cur->state = TASK_STATE__READY;
+//          }
+//          _task_cur = _tasklist_getcurnext(_task_list_ready_cur);
+//          _task_cur->state = TASK_STATE__RUNNING;
+        }
+    }
+}
+
+#endif /* (UBINOS__BSP__CPU_TYPE == ...) */
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
+
