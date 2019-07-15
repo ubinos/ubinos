@@ -5,7 +5,7 @@
 
 ###############################################################################
 
-_BASE_DIR               := $(realpath $(dir $(firstword $(MAKEFILE_LIST)))/..)
+_BASE_DIR               := $(realpath ..)
 
 ###############################################################################
 
@@ -23,7 +23,7 @@ endif
 
 ifeq ($(strip $(LIBRARY_DIR)),)
 ifeq ($(lastword $(subst /, ,$(_BASE_DIR))),ubinos)
-_LIBRARY_DIR            := $(realpath $(_BASE_DIR)/..)
+_LIBRARY_DIR            := $(realpath ../..)
 else
 _LIBRARY_DIR            := $(_BASE_DIR)/library
 endif
@@ -74,7 +74,12 @@ endif
 
 ###############################################################################
 
-_CMAKE_OPTION           = -D PROJECT_CONFIG_NAME=$(_CONFIG_NAME)
+_CMAKE_OPTION           = -G "Unix Makefiles"
+_CMAKE_OPTION          += -D CMAKE_SYSTEM_NAME=Generic
+_CMAKE_OPTION          += -D CMAKE_C_COMPILER_FORCED=TRUE
+_CMAKE_OPTION          += -D CMAKE_CXX_COMPILER_FORCED=TRUE
+
+_CMAKE_OPTION          += -D PROJECT_CONFIG_NAME=$(_CONFIG_NAME)
 _CMAKE_OPTION          += -D PROJECT_CONFIG_DIR="$(_CONFIG_DIR)"
 _CMAKE_OPTION          += -D PROJECT_LIBRARY_DIR="$(_LIBRARY_DIR)"
 

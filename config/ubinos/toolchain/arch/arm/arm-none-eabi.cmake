@@ -1,20 +1,13 @@
 set(_tmp_prefix "arm-none-eabi")
 
-
 ########
-
 
 set_cache(PROJECT_TOOLCHAIN_PREFIX                                              "${_tmp_prefix}"            STRING)
 set_cache(PROJECT_TOOLCHAIN_GDB_COMMAND                                         "${_tmp_prefix}-gdb"        STRING)
 
-
 ########
 
-
-enable_language(C CXX ASM)
-set(CMAKE_C_COMPILER_FORCED TRUE)
-set(CMAKE_CXX_COMPILER_FORCED TRUE)
-set(CMAKE_CROSSCOMPILING TRUE)
+enable_language(ASM C CXX)
 
 set(CMAKE_ASM_COMPILER ${_tmp_prefix}-gcc)
 set(CMAKE_ASM_COMPILER_AR ${_tmp_prefix}-gcc-ar)
@@ -65,5 +58,4 @@ set(CMAKE_ASM_FLAGS)
 set(CMAKE_C_FLAGS)
 set(CMAKE_CXX_FLAGS)
 set(CMAKE_EXE_LINKER_FLAGS)
-
 

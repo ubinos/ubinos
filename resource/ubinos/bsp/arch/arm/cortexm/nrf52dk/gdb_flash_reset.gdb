@@ -36,7 +36,7 @@ set remote memory-read-packet-size 1024
 
 monitor reset
 monitor sleep 500
-monitor speed adaptive
+monitor speed auto
 monitor sleep 500
 monitor endian little
 
