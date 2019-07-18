@@ -150,8 +150,8 @@ common-help:
 	@echo "make debug                   (run execution binary file and attach GDB CLI)"
 	@echo "make attach                  (attach GDB CLI)"
 	@echo ""
-	@echo "make menuconfig              (open config TUI)"
-	@echo "make xconfig                 (open config GUI)"
+	@echo "make menuconfig              (open config TUI using ccmake)"
+	@echo "make xconfig                 (open config GUI using cmake-gui)"
 	@echo ""
 	@echo "make doc                     (build document)"
 	@echo ""
@@ -183,7 +183,7 @@ common-build:
 
 common-clean:
 	$(call begin_message)
-ifneq ("$(wildcard $(_OUTPUT_DIR)/Makefile)", "")
+ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "$(_OUTPUT_DIR)/Makefile")", "1")
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make clean
 endif
 	$(call end_message)

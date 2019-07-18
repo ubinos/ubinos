@@ -10,6 +10,7 @@ def print_help():
     print("Usage:")
     print("    %s cpu_count" % (sys.argv[0]))
     print("    %s realpath file_name" % (sys.argv[0]))
+    print("    %s is_existing_path path_name" % (sys.argv[0]))
     print("    %s which exe_name" % (sys.argv[0]))
     print("    %s getuid" % (sys.argv[0]))
     print("    %s getgid" % (sys.argv[0]))
@@ -23,6 +24,12 @@ def cpu_count():
 
 def realpath(fname):
     print(os.path.realpath(fname))
+    
+def is_existing_path(pname):
+    if os.path.exists(pname):
+        print("1")
+    else:
+        print("0")
 
 def which(ename):
     print(find_executable(ename))
@@ -161,6 +168,12 @@ if __name__ == '__main__':
             else:
                 fname = sys.argv[2]
                 realpath(fname)
+        elif "is_existing_path" == sys.argv[1]:
+            if 3 > len(sys.argv):
+                print_help()
+            else:
+                pname = sys.argv[2]
+                is_existing_path(pname)
         elif "which" == sys.argv[1]:
             if 3 > len(sys.argv):
                 print_help()
