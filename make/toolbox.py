@@ -9,14 +9,15 @@ def print_help():
     print("===============================================================================")
     print("Usage:")
     print("    %s cpu_count" % (sys.argv[0]))
-    print("    %s realpath file_name" % (sys.argv[0]))
-    print("    %s is_existing_path path_name" % (sys.argv[0]))
-    print("    %s which exe_name" % (sys.argv[0]))
+    print("    %s realpath <file name>" % (sys.argv[0]))
+    print("    %s is_existing_path <path name>" % (sys.argv[0]))
+    print("    %s is_removable_dir <output dir>" % (sys.argv[0]))
+    print("    %s which <executable file name>" % (sys.argv[0]))
     print("    %s getuid" % (sys.argv[0]))
     print("    %s getgid" % (sys.argv[0]))
-    print("    %s refine_gdbscript src_file_name dst_file_name app_file_name" % (sys.argv[0]))
-    print("    %s parse_mapfile_get_value src_file_name symbol" % (sys.argv[0]))
-    print("    %s show_mapfile_info src_file_name" % (sys.argv[0]))
+    print("    %s refine_gdbscript <source file name> <destination file name> <app file name>" % (sys.argv[0]))
+    print("    %s parse_mapfile_get_value <source file name> <symbol>" % (sys.argv[0]))
+    print("    %s show_mapfile_info <source file name>" % (sys.argv[0]))
     print("===============================================================================")
 
 def cpu_count():
@@ -27,6 +28,12 @@ def realpath(fname):
     
 def is_existing_path(pname):
     if os.path.exists(pname):
+        print("1")
+    else:
+        print("0")
+
+def is_removable_dir(output_dir):
+    if os.path.exists(output_dir) and os.path.isdir(output_dir) and output_dir != "/":
         print("1")
     else:
         print("0")
@@ -174,6 +181,12 @@ if __name__ == '__main__':
             else:
                 pname = sys.argv[2]
                 is_existing_path(pname)
+        elif "is_removable_dir" == sys.argv[1]:
+            if 3 > len(sys.argv):
+                print_help()
+            else:
+                output_dir = sys.argv[2]
+                is_removable_dir(output_dir)
         elif "which" == sys.argv[1]:
             if 3 > len(sys.argv):
                 print_help()
