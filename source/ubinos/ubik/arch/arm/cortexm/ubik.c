@@ -451,12 +451,13 @@ int _ubik_inittick(void) {
     assert(SysTick_Config(counter) == 0);
 
     // Set exception priority
+    NVIC_SetPriorityGrouping(NVIC_PRIO_GROUP);
     for (i = NVIC_IRQN_START; i <= NVIC_IRQN_END; i++) {
-        NVIC_SetPriority(i, (NVIC_PRIO_MIDDLE >> (8 - __NVIC_PRIO_BITS)));
+        NVIC_SetPriority(i, NVIC_PRIO_MIDDLE);
     }
-    NVIC_SetPriority(SVCall_IRQn, (NVIC_PRIO_SVC >> (8 - __NVIC_PRIO_BITS)));
-    NVIC_SetPriority(PendSV_IRQn, (NVIC_PRIO_PENDSV >> (8 - __NVIC_PRIO_BITS)));
-    NVIC_SetPriority(SysTick_IRQn, (NVIC_PRIO_SYSTICK >> (8 - __NVIC_PRIO_BITS)));
+    NVIC_SetPriority(SVCall_IRQn, NVIC_PRIO_SVC);
+    NVIC_SetPriority(PendSV_IRQn, NVIC_PRIO_PENDSV);
+    NVIC_SetPriority(SysTick_IRQn, NVIC_PRIO_SYSTICK);
 
     return 0;
 }

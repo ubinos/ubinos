@@ -104,9 +104,9 @@ void ubik_exitcrit(void) {
         "cmp        r2, #0                                          \n\t"   \
         "ite        eq                                              \n\t"   \
         "moveq      r1, #0                                          \n\t"   \
-        "movne      r1, %0                                         \n\t"   \
+        "movne      r1, %0                                          \n\t"   \
         "msr        basepri, r1                                     \n\t"   \
-        :: "i" (NVIC_BASEPRI)                                               \
+        :: "i" (NVIC_BASEPRI_REAL)                                          \
     );                                                                      \
 }
 
@@ -146,9 +146,9 @@ void ubik_exitcrit(void) {
         "cmp        r2, #0                                          \n\t"   \
         "ite        eq                                              \n\t"   \
         "moveq      r1, #0                                          \n\t"   \
-        "movne      r1, %0                                         \n\t"   \
+        "movne      r1, %0                                          \n\t"   \
         "msr        basepri, r1                                     \n\t"   \
-        :: "i" (NVIC_BASEPRI)                                               \
+        :: "i" (NVIC_BASEPRI_REAL)                                          \
     );                                                                      \
 }
 

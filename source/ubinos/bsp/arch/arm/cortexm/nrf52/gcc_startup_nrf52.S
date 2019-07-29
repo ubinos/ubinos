@@ -40,8 +40,9 @@ NOTICE: This file has been modified by Nordic Semiconductor ASA.
 
     #define PendSV_Handler                                  bsp_ubik_psv_handler
     #define SysTick_Handler                                 bsp_ubik_systick_handler
-
+#if !(INCLUDE__NRF5SDK == 1)
     #define POWER_CLOCK_IRQHandler                          bsp_ubik_irq_handler
+#endif
     #define RADIO_IRQHandler                                bsp_ubik_irq_handler
     #define UARTE0_UART0_IRQHandler                         bsp_ubik_irq_handler
     #define SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0_IRQHandler    bsp_ubik_irq_handler

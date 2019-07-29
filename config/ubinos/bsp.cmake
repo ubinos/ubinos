@@ -120,7 +120,7 @@ set(_tmp_all_flags "")
 
 if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
-    if( UBINOS__BSP__CPU_TYPE STREQUAL "ARM926EJ_S")
+    if(UBINOS__BSP__CPU_TYPE STREQUAL "ARM926EJ_S")
     
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=arm926ej-s")
         
@@ -149,6 +149,9 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         
     endif()
     
+	if(INCLUDE__UBINOS__BSP)
+		set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_PRESENT")
+	endif()
 
     if(UBINOS__BSP__CPU_MODEL STREQUAL "SAM9XE512")
     

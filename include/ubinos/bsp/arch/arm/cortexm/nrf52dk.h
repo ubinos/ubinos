@@ -57,22 +57,32 @@ extern "C"
 
 #define SWINO__TASK_YIELD					0x01
 
+#define NVIC_IRQN_REAL_TO_CMSISAPI(irqn)    (irqn - 16)
+#define NVIC_IRQN_CMSISAPI_TO_REAL(irqn)    (irqn + 16)
+
 #define NVIC_IRQN_START                     0
 #define NVIC_IRQN_END                       38
 
-#define NVIC_PRIO_HIGHEST                   ((1 << (8 - __NVIC_PRIO_BITS)) & 0xff)
-#define NVIC_PRIO_MIDDLE                    ((3 << (8 - __NVIC_PRIO_BITS)) & 0xff)
-#define NVIC_PRIO_LOWEST                    ((((1 << __NVIC_PRIO_BITS) - 1) << (8 - __NVIC_PRIO_BITS)) & 0xff)
+#define NVIC_PRIO_GROUP                     0
 
-#define NVIC_PRIO_SVC                       NVIC_PRIO_HIGHEST
-#define NVIC_PRIO_PENDSV                    NVIC_PRIO_LOWEST
-#define NVIC_PRIO_SYSTICK                   ((((1 << __NVIC_PRIO_BITS) - 2) << (8 - __NVIC_PRIO_BITS)) & 0xff)
+#define NVIC_PRIO_REAL_TO_CMSISAPI(prio)    ((prio >> (8 - __NVIC_PRIO_BITS)) & 0xff)
+#define NVIC_PRIO_CMSISAPI_TO_REAL(prio)    ((prio << (8 - __NVIC_PRIO_BITS)) & 0xff)
 
-#define NVIC_BASEPRI                        ((2 << (8 - __NVIC_PRIO_BITS)) & 0xff)
+/* Priority: 0 ~ ((1 << __NVIC_PRIO_BITS) - 1) = 0 ~ 7 */
+#define NVIC_PRIO_HIGHEST                   1
+#define NVIC_PRIO_MIDDLE                    4
+#define NVIC_PRIO_LOWEST                    6
+
+#define NVIC_PRIO_SVC                       (NVIC_PRIO_HIGHEST - 1)
+#define NVIC_PRIO_PENDSV                    (NVIC_PRIO_LOWEST  + 1)
+#define NVIC_PRIO_SYSTICK                   3
+
+#define NVIC_BASEPRI                        NVIC_PRIO_HIGHEST
+#define NVIC_BASEPRI_REAL                   NVIC_PRIO_CMSISAPI_TO_REAL(NVIC_BASEPRI)
 
 #define ARM_INTERRUPT_ENABLE()  __set_BASEPRI(0x00)
 
-#define ARM_INTERRUPT_DISABLE() __set_BASEPRI(NVIC_BASEPRI)
+#define ARM_INTERRUPT_DISABLE() __set_BASEPRI(NVIC_BASEPRI_REAL)
 
 #define ARM_DATASYNC()  														\
 	__asm__ __volatile__ (														\
