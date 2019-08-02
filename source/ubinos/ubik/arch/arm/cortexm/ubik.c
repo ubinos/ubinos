@@ -448,7 +448,8 @@ int _ubik_inittick(void) {
     }
 
     // System Tick Configuration
-    assert(SysTick_Config(counter) == 0);
+    r = SysTick_Config(counter);
+    assert(r == 0);
 
     // Set exception priority
     NVIC_SetPriorityGrouping(NVIC_PRIO_GROUP);
