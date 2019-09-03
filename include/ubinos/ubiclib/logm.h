@@ -122,7 +122,7 @@ int logm_getlevel(int category);
  *
  * @param level		메시지 수준
  *
- * @param tag		메시지 테크
+ * @param tag		메시지 테그
  *
  * @param format	메시지 형식
  *
@@ -132,8 +132,23 @@ int logm_getlevel(int category);
  * 					<br>
  *                 -1: 오류<br>
  */
-int logm_printf(int category, int level, const char * tag, const char * format,
-		...);
+int logm_printf(int category, int level, const char * tag, const char * format, ...);
+
+/*!
+ * 메시지를 기록하는 함수
+ *
+ * @param category	메시지 분류 번호
+ *
+ * @param level		메시지 수준
+ *
+ * @param tag		메시지 테그
+ *
+ * @param msg		메시지
+ * @return			기록한 메시지 길이<br>
+ * 					<br>
+ *                 -1: 오류<br>
+ */
+int logm_print(int category, int level, const char * tag, const char * msg);
 
 /*!
  * 버퍼에 문자열을 출력하는 함수
@@ -153,19 +168,34 @@ int logm_printf(int category, int level, const char * tag, const char * format,
 int snprintf(char * str, size_t num, const char * format, ...);
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ALWAYS 수준) */
-#define logma(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__ALWAYS,  LOGM_TAG, format, ## args)
+#define logma(msg) logm_print(LOGM_CATEGORY, LOGM_LEVEL__ALWAYS,  LOGM_TAG, msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__FATAL 수준) */
-#define logmf(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__FATAL,   LOGM_TAG, format, ## args)
+#define logmt(msg) logm_print(LOGM_CATEGORY, LOGM_LEVEL__FATAL,   LOGM_TAG, msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ERROR 수준) */
-#define logme(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__ERROR,   LOGM_TAG, format, ## args)
+#define logme(msg) logm_print(LOGM_CATEGORY, LOGM_LEVEL__ERROR,   LOGM_TAG, msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__WARNING 수준) */
-#define logmw(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__WARNING, LOGM_TAG, format, ## args)
+#define logmw(msg) logm_print(LOGM_CATEGORY, LOGM_LEVEL__WARNING, LOGM_TAG, msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__INFO 수준) */
-#define logmi(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__INFO,    LOGM_TAG, format, ## args)
+#define logmi(msg) logm_print(LOGM_CATEGORY, LOGM_LEVEL__INFO,    LOGM_TAG, msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__DEBUG 수준) */
-#define logmd(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__DEBUG,   LOGM_TAG, format, ## args)
+#define logmd(msg) logm_print(LOGM_CATEGORY, LOGM_LEVEL__DEBUG,   LOGM_TAG, msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL 기본값 수준) */
-#define logm(format, args...)  logm_printf(LOGM_CATEGORY, LOGM_LEVEL,          LOGM_TAG, format, ## args)
+#define logm (msg) logm_print(LOGM_CATEGORY, LOGM_LEVEL,          LOGM_TAG, msg)
+
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ALWAYS 수준) */
+#define logmfa(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__ALWAYS,  LOGM_TAG, format, ## args)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__FATAL 수준) */
+#define logmft(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__FATAL,   LOGM_TAG, format, ## args)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ERROR 수준) */
+#define logmfe(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__ERROR,   LOGM_TAG, format, ## args)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__WARNING 수준) */
+#define logmfw(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__WARNING, LOGM_TAG, format, ## args)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__INFO 수준) */
+#define logmfi(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__INFO,    LOGM_TAG, format, ## args)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__DEBUG 수준) */
+#define logmfd(format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL__DEBUG,   LOGM_TAG, format, ## args)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL 기본값 수준) */
+#define logmf (format, args...) logm_printf(LOGM_CATEGORY, LOGM_LEVEL,          LOGM_TAG, format, ## args)
 
 #else /* !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1) */
 
@@ -215,19 +245,34 @@ int snprintf(char * str, size_t num, const char * format, ...);
 #define logm_printf(category, level, tag, format, args...)
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ALWAYS 수준) */
-#define logma(format, args...)
+#define logma(msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__FATAL 수준) */
-#define logmf(format, args...)
+#define logmt(msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ERROR 수준) */
-#define logme(format, args...)
+#define logme(msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__WARNING 수준) */
-#define logmw(format, args...)
+#define logmw(msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__INFO 수준) */
-#define logmi(format, args...)
+#define logmi(msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__DEBUG 수준) */
-#define logmd(format, args...)
+#define logmd(msg)
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL 기본값 수준) */
-#define logm (format, args...)
+#define logm (msg)
+
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ALWAYS 수준) */
+#define logmfa(format, args...)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__FATAL 수준) */
+#define logmft(format, args...)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ERROR 수준) */
+#define logmfe(format, args...)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__WARNING 수준) */
+#define logmfw(format, args...)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__INFO 수준) */
+#define logmfi(format, args...)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__DEBUG 수준) */
+#define logmfd(format, args...)
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL 기본값 수준) */
+#define logmf (format, args...)
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1) */
 

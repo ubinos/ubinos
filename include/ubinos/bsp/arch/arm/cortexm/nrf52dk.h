@@ -80,9 +80,19 @@ extern "C"
 #define NVIC_BASEPRI                        NVIC_PRIO_HIGHEST
 #define NVIC_BASEPRI_REAL                   NVIC_PRIO_CMSISAPI_TO_REAL(NVIC_BASEPRI)
 
-#define ARM_INTERRUPT_ENABLE()  __set_BASEPRI(0x00)
+#define ARM_INTERRUPT_ENABLE() {		\
+	__set_BASEPRI(0x00);				\
+	__SEV();							\
+	__DSB();							\
+	__ISB();							\
+}
 
-#define ARM_INTERRUPT_DISABLE() __set_BASEPRI(NVIC_BASEPRI_REAL)
+#define ARM_INTERRUPT_DISABLE() {		\
+	__set_BASEPRI(NVIC_BASEPRI_REAL);	\
+	__SEV();							\
+	__DSB();							\
+	__ISB();							\
+}
 
 #define ARM_DATASYNC()  														\
 	__asm__ __volatile__ (														\

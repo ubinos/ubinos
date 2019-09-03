@@ -112,6 +112,29 @@ int logm_printf(int category, int level, const char * tag, const char * format, 
     return n;
 }
 
+int logm_print(int category, int level, const char * tag, const char * msg) {
+	int n = 0;
+
+	if (0 > category || LOGM_CATEGORY__END <= category) {
+		return -2;
+	}
+
+	if (_ubiclib_logm_level[category] < level) {
+		return 0;
+	}
+
+	if (NULL != tag) {
+		n += dtty_puts(_ubiclib_logm_levelname[level], 128);
+		n += dtty_puts(tag , 128);
+		n += dtty_puts(": ", 128);
+	}
+
+    n += dtty_puts(msg, 128);
+    n += dtty_puts("\n\r", 128);
+
+    return n;
+}
+
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1) */
 
 #endif /* (INCLUDE__UBINOS__UBICLIB == 1) */

@@ -392,7 +392,7 @@ void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size) {
 		heap = _ubiclib_heap;
 	}
 
-	heap_logmd("0x%08x: called  : heap 0x%08x, dir %d, size 0x%08x", bsp_task_getcur(), heap, dir, size);
+	heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, size 0x%08x", bsp_task_getcur(), heap, dir, size);
 
 	if (NULL == heap) {
 		logme("heap is NULL");
@@ -417,7 +417,7 @@ void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size) {
 	ptr = heap->allocate_block_afp[dir](heap, size);
 
 end0:
-	heap_logmd("0x%08x: return  : heap 0x%08x, dir %d, ptr 0x%08x\r\n", bsp_task_getcur(), heap, dir, ptr);
+	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, ptr 0x%08x\r\n", bsp_task_getcur(), heap, dir, ptr);
 
 	return ptr;
 
@@ -434,7 +434,7 @@ int _heap_release_block(_heap_pt heap, void * ptr) {
 		heap = _ubiclib_heap;
 	}
 
-	heap_logmd("0x%08x: called  : heap 0x%08x, ptr 0x%08x", bsp_task_getcur(), heap, ptr);
+	heap_logmfd("0x%08x: called  : heap 0x%08x, ptr 0x%08x", bsp_task_getcur(), heap, ptr);
 
 	if (NULL == heap) {
 		logme("heap is NULL");
@@ -470,7 +470,7 @@ int _heap_release_block(_heap_pt heap, void * ptr) {
 	r2 = heap->release_block_afp[dir](heap, ptr);
 
 end0:
-	heap_logmd("0x%08x: return  : heap 0x%08x, dir %d, result %d\r\n", bsp_task_getcur(), heap, dir, r2);
+	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, result %d\r\n", bsp_task_getcur(), heap, dir, r2);
 
 	return r2;
 
@@ -656,7 +656,7 @@ int heap_create_ext(heap_pt * heap_p, unsigned int addr, unsigned int size,
 
 	*heap_p = (heap_pt) heap;
 
-	heap_logmd("heap was created: heap 0x%08x, size 0x%08x, addr %d", heap, heap->size, heap->addr);
+	heap_logmfd("heap was created: heap 0x%08x, size 0x%08x, addr %d", heap, heap->size, heap->addr);
 
 	return 0;
 
@@ -743,7 +743,7 @@ int heap_delete(heap_pt * heap_p) {
 	free(heap->region[1].fbl_ap);
 	free(heap);
 
-	heap_logmd("heap was deleted: heap 0x%08x, size 0x%08x, addr %d", heap, heap->size, heap->addr);
+	heap_logmfd("heap was deleted: heap 0x%08x, size 0x%08x, addr %d", heap, heap->size, heap->addr);
 
 	return r2;
 

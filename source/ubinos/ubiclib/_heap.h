@@ -61,9 +61,11 @@ extern "C" {
 
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_LOGMD == 1)
-    #define heap_logmd(format, args...) logmd(format, ## args)
+	#define heap_logmd(msg) logmd(msg)
+	#define heap_logmfd(format, args...) logmfd(format, ## args)
 #else
-    #define heap_logmd(format, args...)
+	#define heap_logmd(msg)
+	#define heap_logmfd(format, args...)
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_LOGMD == 1) */
 
 
@@ -309,15 +311,15 @@ extern "C" {
 
 	#define _check_boundary_and_abort(block, log2m) {																								\
 		if 		(!_check_header_boundary(block)) {																									\
-			logme("memory(0x%08x) is polluted (head boundary)",		(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
+			logmfe("memory(0x%08x) is polluted (head boundary)",		(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
 			bsp_abortsystem();																														\
 		}																																			\
 		else if	(!_check_top_boundary(block)) {																										\
-			logme("memory(0x%08x) is polluted (top boundary)", 		(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
+			logmfe("memory(0x%08x) is polluted (top boundary)", 		(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
 			bsp_abortsystem();																														\
 		}																																			\
 		else if	(!_check_bottom_boundary(block, log2m)) {																							\
-			logme("memory(0x%08x) is polluted (bottom boundary)", 	(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
+			logmfe("memory(0x%08x) is polluted (bottom boundary)", 	(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
 			bsp_abortsystem();																														\
 		}																																			\
 	}
@@ -674,66 +676,66 @@ extern _heap_pt _ubiclib_heap;
 
 
 #if 0
-#define heap_logmd_block_created(heap, dir, block, log2m)																								\
-	heap_logmd("0x%08x: created : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
+#define heap_logmfd_block_created(heap, dir, block, log2m)																								\
+	heap_logmfd("0x%08x: created : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
 			bsp_task_getcur(), heap, dir, block, _block_pt_to_ptr(block), _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag)	)
 
-#define heap_logmd_block_deleted(heap, dir, block, log2m)																								\
-	heap_logmd("0x%08x: deleted : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
+#define heap_logmfd_block_deleted(heap, dir, block, log2m)																								\
+	heap_logmfd("0x%08x: deleted : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
 			bsp_task_getcur(), heap, dir, block, _block_pt_to_ptr(block), _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag)	)
 
-#define heap_logmd_block_inserted(heap, dir, block, ix, log2m)																							\
-	heap_logmd("0x%08x: inserted: heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, i %4u", 	\
+#define heap_logmfd_block_inserted(heap, dir, block, ix, log2m)																							\
+	heap_logmfd("0x%08x: inserted: heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, i %4u", 	\
 			bsp_task_getcur(), heap, dir, block, _block_pt_to_ptr(block), _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),										\
 			ix																										)
-#define heap_logmd_block_removed(heap, dir, block, ix, log2m)																							\
-	heap_logmd("0x%08x: removed : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, i %4u", 	\
+#define heap_logmfd_block_removed(heap, dir, block, ix, log2m)																							\
+	heap_logmfd("0x%08x: removed : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, i %4u", 	\
 			bsp_task_getcur(), heap, dir, block, _block_pt_to_ptr(block), _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),										\
 			ix																										)
 
-#define heap_logmd_block(heap, dir, block, log2m)																										\
-	heap_logmd("0x%08x:         : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
+#define heap_logmfd_block(heap, dir, block, log2m)																										\
+	heap_logmfd("0x%08x:         : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
 			bsp_task_getcur(), heap, dir, block, _block_pt_to_ptr(block), _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag)	)
 
 #else
 
-#define heap_logmd_block_created(heap, dir, block, log2m)																								\
-	heap_logmd("0x%08x: created : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
+#define heap_logmfd_block_created(heap, dir, block, log2m)																								\
+	heap_logmfd("0x%08x: created : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
 			bsp_task_getcur(), heap, dir, block, (((unsigned int) block - (unsigned int) heap->region[dir].addr)) , _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag)	)
 
-#define heap_logmd_block_deleted(heap, dir, block, log2m)																								\
-	heap_logmd("0x%08x: deleted : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
+#define heap_logmfd_block_deleted(heap, dir, block, log2m)																								\
+	heap_logmfd("0x%08x: deleted : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
 			bsp_task_getcur(), heap, dir, block, (((unsigned int) block - (unsigned int) heap->region[dir].addr)) , _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag)	)
 
-#define heap_logmd_block_inserted(heap, dir, block, ix, log2m)																							\
-	heap_logmd("0x%08x: inserted: heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, i %4u", 	\
+#define heap_logmfd_block_inserted(heap, dir, block, ix, log2m)																							\
+	heap_logmfd("0x%08x: inserted: heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, i %4u", 	\
 			bsp_task_getcur(), heap, dir, block, (((unsigned int) block - (unsigned int) heap->region[dir].addr)) , _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),										\
 			ix																										)
-#define heap_logmd_block_removed(heap, dir, block, ix, log2m)																							\
-	heap_logmd("0x%08x: removed : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, i %4u", 	\
+#define heap_logmfd_block_removed(heap, dir, block, ix, log2m)																							\
+	heap_logmfd("0x%08x: removed : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, i %4u", 	\
 			bsp_task_getcur(), heap, dir, block, (((unsigned int) block - (unsigned int) heap->region[dir].addr)) , _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),										\
 			ix																										)
 
-#define heap_logmd_block(heap, dir, block, log2m)																										\
-	heap_logmd("0x%08x:         : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
+#define heap_logmfd_block(heap, dir, block, log2m)																										\
+	heap_logmfd("0x%08x:         : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u", 			\
 			bsp_task_getcur(), heap, dir, block, (((unsigned int) block - (unsigned int) heap->region[dir].addr)) , _block_pt_to_end_prt(block, log2m), _tag_to_asize(block->tag, log2m),			\
 			_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,																	\
 			_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag)	)

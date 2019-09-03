@@ -150,6 +150,25 @@ int dtty_puts(const char * str, int max) {
 
 	return i;
 }
+
+int dtty_putn(const char * str, int len) {
+    int i = 0;
+
+    if (NULL == str) {
+        return -2;
+    }
+
+    if (0 > len) {
+        return -3;
+    }
+
+    for (i = 0; i < len; i++) {
+        dtty_putc(*str);
+        str++;
+    }
+
+    return i;
+}
 #pragma GCC pop_options
 
 int dtty_gets(char * str, int max) {
@@ -217,6 +236,10 @@ int dtty_putc(int ch)  {
 }
 
 int dtty_puts(const char * str, int max) {
+    return 0;
+}
+
+int dtty_putn(const char * str, int len) {
     return 0;
 }
 

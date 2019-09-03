@@ -353,23 +353,12 @@ void * _sbrk (int incr)
 
 int __attribute__((weak)) _write(int file, const char * p_char, int len)
 {
-    int i;
-
-    (void)(file);
-
-    for (i = 0; i < len; i++)
-    {
-    	dtty_putc(*p_char++);
-    }
-
-    return len;
+	return dtty_putn(p_char, len);
 }
 
 int __attribute__((weak)) _read(int file, char * p_char, int len)
 {
     int i;
-
-    (void)(file);
 
     for (i = 0; i < len; i++)
     {

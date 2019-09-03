@@ -19,10 +19,10 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 
 MEMORY
 {
-    FLASH (rx) :  ORIGIN = 0x00200000, LENGTH = 0x00080000
-    RAM (rwx) :   ORIGIN = 0x00300000, LENGTH = 0x00008000
-    FLASH2 (rx) : ORIGIN = 0x10000000, LENGTH = 0x00800000
-    RAM2 (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x04000000
+    FLASH (rx) :  ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
+    RAM (rwx) :   ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
+    FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
+    RAM2 (rwx) :  ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together

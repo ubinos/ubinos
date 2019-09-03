@@ -9,7 +9,7 @@
 	@echo "OS Kernel       : none"
 	@echo "Link memory map : sram"
 	@echo ""
-	make -f makefile.mk $@ CONFIG_NAME=ubinos_sam9xe512ek_baremetal_sram        CONFIG_DIR=../config
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_sam9xe512ek_baremetal_sram            CONFIG_DIR=../config
 	@echo ""
 	@echo "==============================================================================="	
 	@echo "==============================================================================="
@@ -19,7 +19,7 @@
 	@echo "OS Kernel       : none"
 	@echo "Link memory map : flash"
 	@echo ""
-	make -f makefile.mk $@ CONFIG_NAME=ubinos_sam9xe512ek_baremetal             CONFIG_DIR=../config
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_sam9xe512ek_baremetal                 CONFIG_DIR=../config
 	@echo ""
 	@echo "==============================================================================="	
 	@echo "==============================================================================="
@@ -29,7 +29,7 @@
 	@echo "OS Kernel       : ubik"
 	@echo "Link memory map : flash"
 	@echo ""
-	make -f makefile.mk $@ CONFIG_NAME=ubinos_sam9xe512ek                       CONFIG_DIR=../config
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_sam9xe512ek                           CONFIG_DIR=../config
 	@echo ""
 
 	@echo "==============================================================================="	
@@ -81,7 +81,7 @@
 	@echo "OS Kernel       : none"
 	@echo "Link memory map : sram"
 	@echo ""
-	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_baremetal_sram            CONFIG_DIR=../config
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_baremetal_sram                CONFIG_DIR=../config
 	@echo ""
 	@echo "==============================================================================="	
 	@echo "==============================================================================="
@@ -91,7 +91,17 @@
 	@echo "OS Kernel       : none"
 	@echo "Link memory map : flash"
 	@echo ""
-	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_baremetal                 CONFIG_DIR=../config
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_baremetal                     CONFIG_DIR=../config
+	@echo ""
+	@echo "==============================================================================="	
+	@echo "==============================================================================="
+	@echo ""
+	@echo "Config          : ubinos library supporting ETM trace"
+	@echo "Target board    : nrf52dk"
+	@echo "OS Kernel       : none"
+	@echo "Link memory map : flash"
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_baremetal_trace               CONFIG_DIR=../config
 	@echo ""
 	@echo "==============================================================================="	
 	@echo "==============================================================================="
@@ -101,7 +111,7 @@
 	@echo "OS Kernel       : ubik"
 	@echo "Link memory map : flash"
 	@echo ""
-	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk                           CONFIG_DIR=../config
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk                               CONFIG_DIR=../config
 	@echo ""
 	@echo "==============================================================================="	
 	@echo "==============================================================================="
@@ -111,7 +121,46 @@
 	@echo "OS Kernel       : ubik"
 	@echo "Link memory map : flash"
 	@echo ""
-	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_trace                     CONFIG_DIR=../config
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_trace                         CONFIG_DIR=../config
+	@echo ""
+	@echo "==============================================================================="	
+	@echo "==============================================================================="
+	@echo ""
+	@echo "Config          : ubinos library with softdevice"
+	@echo "Target board    : nrf52dk"
+	@echo "OS Kernel       : none"
+	@echo "Link memory map : flash"
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_softdevice_baremetal          CONFIG_DIR=../config
+	@echo ""
+	@echo "==============================================================================="	
+	@echo "==============================================================================="
+	@echo ""
+	@echo "Config          : ubinos library with softdevice supporting ETM trace"
+	@echo "Target board    : nrf52dk"
+	@echo "OS Kernel       : none"
+	@echo "Link memory map : flash"
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_softdevice_baremetal_trace    CONFIG_DIR=../config
+	@echo ""
+	@echo "==============================================================================="
+	@echo ""
+	@echo "Config          : ubinos library with softdevice"
+	@echo "Target board    : nrf52dk"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_softdevice                    CONFIG_DIR=../config
+	@echo ""
+	@echo "==============================================================================="	
+	@echo "==============================================================================="
+	@echo ""
+	@echo "Config          : ubinos library with softdevice supporting ETM trace"
+	@echo "Target board    : nrf52dk"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=ubinos_nrf52dk_softdevice_trace              CONFIG_DIR=../config
 	@echo ""
 
 	@echo "==============================================================================="	

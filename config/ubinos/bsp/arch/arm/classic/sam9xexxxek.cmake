@@ -6,6 +6,15 @@ set_cache(UBINOS__BSP__BOARD_MODEL                                              
 
 set_cache(UBINOS__BSP__LINK_MEMMAP_TYPE                                           "FLASH"         STRING)
 
+set_cache(UBINOS__BSP__LINK_MEMMAP_FLASH_ORIGIN                                   0x00200000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_FLASH_LENGTH                                   0x00080000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN                                     0x00300000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH                                     0x00008000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_FLASH2_ORIGIN                                  0x10000000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_FLASH2_LENGTH                                  0x00800000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_RAM2_ORIGIN                                    0x20000000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_RAM2_LENGTH                                    0x04000000     STRING)
+
 set_cache(UBINOS__BSP__USE_ICACHE                                                 TRUE            BOOL)
 
 set_cache(UBINOS__BSP__USE_EXTSDRAM                                               TRUE            BOOL)

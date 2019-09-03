@@ -31,7 +31,35 @@ set_cache_default(UBINOS__UBIK__EXCLUDE_HRTICK_TICKISR_DELAY_CHECK              
 
 set_cache_default(UBINOS__UBIK__IDLETASK_SPINWAIT_INTERVALTICK                  10      STRING "Spin wait interval tick of idle task")
 
+if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
+
+    if(UBINOS__BSP__CPU_TYPE STREQUAL "ARM926EJ_S")
+    
+    elseif(UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4")
+
+set_cache_default(UBINOS__UBIK__USE_PENDSV_TASK_YIELD                           TRUE    BOOL "Use PendSV for task yield instead of SVC")
+    
+    else()
+    
+        message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_TYPE")
+    
+    endif()
+
+else()
+
+    message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_ARCH")
+
+endif()
 
 ########
 
+set(_tmp_all_flags "")
+
+if(INCLUDE__UBINOS__UBIK)
+	set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_PRESENT")
+endif()
+
+set(CMAKE_ASM_FLAGS "${_tmp_all_flags} ${CMAKE_ASM_FLAGS}")
+set(CMAKE_C_FLAGS   "${_tmp_all_flags} ${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${_tmp_all_flags} ${CMAKE_CXX_FLAGS}")
 

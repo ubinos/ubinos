@@ -28,60 +28,6 @@ NOTICE: This file has been modified by Nordic Semiconductor ASA.
     .syntax unified
     .arch armv7e-m
 
-#if (INCLUDE__UBINOS__UBIK == 1)
-    #define NMI_Handler                                     bsp_ubik_irq_handler
-    #define HardFault_Handler                               bsp_ubik_irq_handler
-    #define MemoryManagement_Handler                        bsp_ubik_irq_handler
-    #define BusFault_Handler                                bsp_ubik_irq_handler
-    #define UsageFault_Handler                              bsp_ubik_irq_handler
-
-    #define SVC_Handler                                     bsp_ubik_swi_handler
-    #define DebugMon_Handler                                bsp_ubik_irq_handler
-
-    #define PendSV_Handler                                  bsp_ubik_psv_handler
-    #define SysTick_Handler                                 bsp_ubik_systick_handler
-#if !(INCLUDE__NRF5SDK == 1)
-    #define POWER_CLOCK_IRQHandler                          bsp_ubik_irq_handler
-#endif
-    #define RADIO_IRQHandler                                bsp_ubik_irq_handler
-    #define UARTE0_UART0_IRQHandler                         bsp_ubik_irq_handler
-    #define SPIM0_SPIS0_TWIM0_TWIS0_SPI0_TWI0_IRQHandler    bsp_ubik_irq_handler
-    #define SPIM1_SPIS1_TWIM1_TWIS1_SPI1_TWI1_IRQHandler    bsp_ubik_irq_handler
-    #define NFCT_IRQHandler                                 bsp_ubik_irq_handler
-    #define GPIOTE_IRQHandler                               bsp_ubik_irq_handler
-    #define SAADC_IRQHandler                                bsp_ubik_irq_handler
-    #define TIMER0_IRQHandler                               bsp_ubik_irq_handler
-    #define TIMER1_IRQHandler                               bsp_ubik_irq_handler
-    #define TIMER2_IRQHandler                               bsp_ubik_irq_handler
-    #define RTC0_IRQHandler                                 bsp_ubik_irq_handler
-    #define TEMP_IRQHandler                                 bsp_ubik_irq_handler
-    #define RNG_IRQHandler                                  bsp_ubik_irq_handler
-    #define ECB_IRQHandler                                  bsp_ubik_irq_handler
-    #define CCM_AAR_IRQHandler                              bsp_ubik_irq_handler
-    #define WDT_IRQHandler                                  bsp_ubik_irq_handler
-    #define RTC1_IRQHandler                                 bsp_ubik_irq_handler
-    #define QDEC_IRQHandler                                 bsp_ubik_irq_handler
-    #define COMP_LPCOMP_IRQHandler                          bsp_ubik_irq_handler
-    #define SWI0_EGU0_IRQHandler                            bsp_ubik_irq_handler
-    #define SWI1_EGU1_IRQHandler                            bsp_ubik_irq_handler
-    #define SWI2_EGU2_IRQHandler                            bsp_ubik_irq_handler
-    #define SWI3_EGU3_IRQHandler                            bsp_ubik_irq_handler
-    #define SWI4_EGU4_IRQHandler                            bsp_ubik_irq_handler
-    #define SWI5_EGU5_IRQHandler                            bsp_ubik_irq_handler
-    #define TIMER3_IRQHandler                               bsp_ubik_irq_handler
-    #define TIMER4_IRQHandler                               bsp_ubik_irq_handler
-    #define PWM0_IRQHandler                                 bsp_ubik_irq_handler
-    #define PDM_IRQHandler                                  bsp_ubik_irq_handler
-
-    #define MWU_IRQHandler                                  bsp_ubik_irq_handler
-    #define PWM1_IRQHandler                                 bsp_ubik_irq_handler
-    #define PWM2_IRQHandler                                 bsp_ubik_irq_handler
-    #define SPIM2_SPIS2_SPI2_IRQHandler                     bsp_ubik_irq_handler
-    #define RTC2_IRQHandler                                 bsp_ubik_irq_handler
-    #define I2S_IRQHandler                                  bsp_ubik_irq_handler
-    #define FPU_IRQHandler                                  bsp_ubik_irq_handler
-#endif /* (INCLUDE__UBINOS__UBIK == 1) */
-
 #ifdef __STARTUP_CONFIG
 #include "startup_config.h"
 #ifndef __STARTUP_CONFIG_STACK_ALIGNEMENT
@@ -114,20 +60,37 @@ __StackTop:
 __isr_vector:
     .long   __StackTop                  /* Top of Stack */
     .long   Reset_Handler
+#if (INCLUDE__UBINOS__UBIK == 1)
+    .long   bsp_ubik_irq_handler        /* NMI_Handler */
+    .long   bsp_ubik_irq_handler        /* HardFault_Handler */
+    .long   bsp_ubik_irq_handler        /* MemoryManagement_Handler */
+    .long   bsp_ubik_irq_handler        /* BusFault_Handler */
+    .long   bsp_ubik_irq_handler        /* UsageFault_Handler */
+    .long   0                           /* Reserved */
+    .long   0                           /* Reserved */
+    .long   0                           /* Reserved */
+    .long   0                           /* Reserved */
+    .long   bsp_ubik_swi_handler        /* SVC_Handler */
+    .long   bsp_ubik_irq_handler        /* DebugMon_Handler */
+    .long   0                           /* Reserved */
+    .long   bsp_ubik_psv_handler        /* PendSV_Handler */
+    .long   bsp_ubik_systick_handler    /* SysTick_Handler */
+#else
     .long   NMI_Handler
     .long   HardFault_Handler
     .long   MemoryManagement_Handler
     .long   BusFault_Handler
     .long   UsageFault_Handler
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
+    .long   0                           /* Reserved */
+    .long   0                           /* Reserved */
+    .long   0                           /* Reserved */
+    .long   0                           /* Reserved */
     .long   SVC_Handler
     .long   DebugMon_Handler
-    .long   0                           /*Reserved */
+    .long   0                           /* Reserved */
     .long   PendSV_Handler
     .long   SysTick_Handler
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
   /* External Interrupts */
     .long   POWER_CLOCK_IRQHandler
@@ -304,6 +267,44 @@ Reset_Handler:
     bgt .L_loop2
 
 .L_loop2_done:
+
+#if (UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT == 1)
+
+    movs r1, #0
+    ldr r2, =__relocated_isr_vector_start__
+    ldr r3, =__relocated_isr_vector_end__
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+/* Skip ~ SysTick_Handler */
+    adds r1, r1, #64
+    adds r2, r2, #64
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
+    cmp r1, r2
+    beq .L_loop2_2_done
+
+    subs r3, r3, r2
+    ble .L_loop2_2_done
+
+.L_loop2_2:
+    subs r3, r3, #4
+    ldr r0, [r1,r3]
+    str r0, [r2,r3]
+    bgt .L_loop2_2
+
+.L_loop2_2_done:
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+/* Copy SVC_Handler */
+    movs r1, #0
+    ldr r2, =__relocated_isr_vector_start__
+    mov r3, #44
+    ldr r0, [r1,r3]
+    str r0, [r2,r3]
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
+#endif /* (UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT == 1) */
+
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
 
 /* This part of work usually is done in C library startup code. Otherwise,
@@ -416,13 +417,18 @@ SysTick_Handler:
     b       .
     .size   SysTick_Handler, . - SysTick_Handler
 
+#endif /* !(INCLUDE__UBINOS__UBIK == 1) */
 
 /* IRQ Handlers */
 
     .globl  Default_Handler
     .type   Default_Handler, %function
 Default_Handler:
+#if (INCLUDE__UBINOS__UBIK == 1)
+	b       bsp_ubik_irq_handler
+#else
     b       .
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
     .size   Default_Handler, . - Default_Handler
 
     .macro  IRQ handler
@@ -467,8 +473,6 @@ Default_Handler:
     IRQ  RTC2_IRQHandler
     IRQ  I2S_IRQHandler
     IRQ  FPU_IRQHandler
-
-#endif /* !(INCLUDE__UBINOS__UBIK == 1) */
 
   .end
 

@@ -1,10 +1,15 @@
-set_cache(UBINOS__BSP__CPU_TYPE                                                   "CORTEX_M4"     STRING)
-set_cache(UBINOS__BSP__CPU_ARMTHUMBSTATE                                          "THUMB"         STRING)
-set_cache(UBINOS__BSP__CPU_MODEL                                                  "NRF52832XXAA"  STRING)
+set_cache(UBINOS__BSP__CPU_TYPE                                                  "CORTEX_M4"     STRING)
+set_cache(UBINOS__BSP__CPU_ARMTHUMBSTATE                                         "THUMB"         STRING)
+set_cache(UBINOS__BSP__CPU_MODEL                                                 "NRF52832XXAA"  STRING)
 
-set_cache(UBINOS__BSP__BOARD_MODEL                                                "NRF52DK"       STRING)
+set_cache(UBINOS__BSP__BOARD_MODEL                                               "NRF52DK"       STRING)
 
-set_cache(UBINOS__BSP__LINK_MEMMAP_TYPE                                           "FLASH"         STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_TYPE                                          "FLASH"         STRING)
+
+set_cache(UBINOS__BSP__LINK_MEMMAP_FLASH_ORIGIN                                   0x00000000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_FLASH_LENGTH                                   0x00080000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN                                     0x20000000     STRING)
+set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH                                     0x00010000     STRING)
 
 set_cache(UBINOS__BSP__USE_ICACHE                                                 TRUE            BOOL)
 

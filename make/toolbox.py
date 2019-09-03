@@ -16,8 +16,10 @@ def print_help():
     print("    %s getuid" % (sys.argv[0]))
     print("    %s getgid" % (sys.argv[0]))
     print("    %s refine_gdbscript <source file name> <destination file name> <app file name>" % (sys.argv[0]))
+    print("    %s refine_linkscript <source file name> <destination file name> <memory type> <origin> <length>" % (sys.argv[0]))
     print("    %s parse_mapfile_get_value <source file name> <symbol>" % (sys.argv[0]))
     print("    %s show_mapfile_info <source file name>" % (sys.argv[0]))
+    print("    %s replace_string <source file name> <destination file name> <old string> <new string>" % (sys.argv[0]))
     print("===============================================================================")
 
 def cpu_count():
@@ -48,14 +50,27 @@ def getgid():
     print(os.getgid())
 
 def refine_gdbscript(sfn, dfn, afn):
+    oldstr = "<size_of_app.bin>"
+    newstr = ("0x%x" % os.stat(afn).st_size)
+    replace_string(sfn, dfn, oldstr, newstr)
+
+def refine_linkscript(sfn, dfn, memtype, origin, length):
+    oldstr = ("<%s_ORIGIN>" % memtype)
+    newstr = ("%s" % origin)
+    replace_string(sfn, dfn, oldstr, newstr)
+    oldstr = ("<%s_LENGTH>" % memtype)
+    newstr = ("%s" % length)
+    replace_string(sfn, dfn, oldstr, newstr)
+
+def replace_string(sfn, dfn, oldstr, newstr):
     sf = open(sfn, 'r')
-    lines = sf.readlines()        
+    lines = sf.readlines()
     sf.close()
 
     df = open(dfn, 'w')
     for line in lines:
-        if -1 != line.find("<size_of_app.bin>"):
-            newline = line.replace("<size_of_app.bin>", ("0x%x" % os.stat(afn).st_size))
+        if -1 != line.find(oldstr):
+            newline = line.replace(oldstr, newstr)
             df.write(newline)
         else:
             df.write(line)
@@ -63,7 +78,7 @@ def refine_gdbscript(sfn, dfn, afn):
 
 def parse_mapfile_get_value(sfn, symbol):
     sf = open(sfn, 'r')
-    lines = sf.readlines()        
+    lines = sf.readlines()
     sf.close()
 
     for line in lines:
@@ -205,6 +220,16 @@ if __name__ == '__main__':
                 dfn = sys.argv[3]
                 afn = sys.argv[4]
                 refine_gdbscript(sfn, dfn, afn)
+        elif "refine_linkscript" == sys.argv[1]:
+            if 7 > len(sys.argv):
+                print_help()
+            else:
+                sfn = sys.argv[2]
+                dfn = sys.argv[3]
+                memtype = sys.argv[4]
+                origin = sys.argv[5]
+                length = sys.argv[6]
+                refine_linkscript(sfn, dfn, memtype, origin, length)
         elif "parse_mapfile_get_value" == sys.argv[1]:
             if 4 > len(sys.argv):
                 print_help()
@@ -218,6 +243,15 @@ if __name__ == '__main__':
             else:
                 sfn = sys.argv[2]
                 show_mapfile_info(sfn)
+        elif "replace_string" == sys.argv[1]:
+            if 6 > len(sys.argv):
+                print_help()
+            else:
+                sfn = sys.argv[2]
+                dfn = sys.argv[3]
+                oldstr = sys.argv[4]
+                newstr = sys.argv[5]
+                replace_string(sfn, dfn, oldstr, newstr)
         else:
             print_help()
 

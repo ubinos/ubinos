@@ -57,6 +57,38 @@ macro(___project_add_app)
                 COMMAND ${CMAKE_COMMAND} -E copy
                         ${UBINOS__BSP__LINKSCRIPT_FILE}
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld)
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "FLASH"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "FLASH2"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH2_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH2_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM2"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM2_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM2_LENGTH})
     endif()
 
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
@@ -179,6 +211,14 @@ macro(___project_add_app)
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
                         ${PROJECT_EXE_NAME}.bin)
+    endif()
+
+    if(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT AND NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                        ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE}
+                        ${CMAKE_CURRENT_BINARY_DIR}/nrf52_softdevice.hex)
     endif()
 
     add_custom_command(

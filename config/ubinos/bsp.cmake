@@ -20,6 +20,15 @@ set_cache_default(UBINOS__BSP__BOARD_MODEL                                      
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | SDRAM | FLASH_SDRAM | SRAM_SDRAM]")
 
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH_ORIGIN                         0       STRING "FLASH origin address of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH_LENGTH                         0       STRING "FLASH length of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN                           0       STRING "RAM origin address of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH                           0       STRING "RAM length of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH2_ORIGIN                        0       STRING "FLASH2 origin address of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH2_LENGTH                        0       STRING "FLASH2 length of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM2_ORIGIN                          0       STRING "RAM2 origin address of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM2_LENGTH                          0       STRING "RAM2 length of link memory map")
+
 set_cache_default(UBINOS__BSP__USE_MMU                                          FALSE   BOOL "Use MMU")
 set_cache_default(UBINOS__BSP__USE_ICACHE                                       FALSE   BOOL "Use i-cache")
 set_cache_default(UBINOS__BSP__USE_DCACHE                                       FALSE   BOOL "Use d-cache")
@@ -67,6 +76,10 @@ set_cache_default(UBINOS__BSP__NRF52_NRF52                                      
 set_cache_default(UBINOS__BSP__NRF52_NRF52832_XXAA                              TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_NRF52_PAN_74                               TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_FLOAT_ABI_HARD                             TRUE    BOOL "")
+set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT                         FALSE   BOOL "")
+set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_NAME                            ""      STRING "[S132]")
+set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION                 ""      STRING "[6]")
+set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            ""      PATH "nRF52 softdevice file")
 
     else()
 
@@ -149,10 +162,6 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         
     endif()
     
-	if(INCLUDE__UBINOS__BSP)
-		set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_PRESENT")
-	endif()
-
     if(UBINOS__BSP__CPU_MODEL STREQUAL "SAM9XE512")
     
         if(UBINOS__BSP__CPU_ARMTHUMBSTATE STREQUAL "ARM")
@@ -202,6 +211,12 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             
         endif()
         
+        if(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT)
+        
+            set(_tmp_all_flags "${_tmp_all_flags} -DSOFTDEVICE_PRESENT")
+            
+        endif()
+        
     else()
     
        message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
@@ -246,7 +261,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     set(_tmp_all_flags "${_tmp_all_flags} -fno-strict-aliasing")
     set(_tmp_all_flags "${_tmp_all_flags} -fno-builtin")
     set(_tmp_all_flags "${_tmp_all_flags} -fshort-enums")
-    set(_tmp_all_flags "${_tmp_all_flags} -falign-functions=8")
+    set(_tmp_all_flags "${_tmp_all_flags} -falign-functions=32")
 
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections")

@@ -117,6 +117,20 @@ int dtty_getc(char * ch_p);
 int dtty_puts(const char * str, int max);
 
 /*!
+ * 디버깅 터미널에 문자열을 출력하는 함수
+ *
+ * @param	str		출력할 문자열
+ *
+ * @param	max		출력할 문자열의 크기
+ *
+ * @return	 출력한 문자열의 크기
+ * 			<br>
+ * 			 -1: 오류<br>
+ * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ */
+int dtty_putn(const char * str, int len);
+
+/*!
  * 디버깅 터미널에서 문자열을 입력받는 함수
  *
  * "\n", "\r", 또는 "\0" 이 입력되거나 최대 크기보다 작을 때까지 입력받는다.

@@ -19,8 +19,8 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 
 MEMORY
 {
-    FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 0x80000
-    RAM (rwx) :  ORIGIN = 0x20000000, LENGTH = 0x10000
+    FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
+    RAM (rwx) :  ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -93,29 +93,11 @@ SECTIONS
     {
         . = ALIGN(4);
     } > RAM
-    .sdh_ant_observers :
-    {
-        PROVIDE(__start_sdh_ant_observers = .);
-        KEEP(*(SORT(.sdh_ant_observers*)))
-        PROVIDE(__stop_sdh_ant_observers = .);
-    } > RAM
-    .sdh_ble_observers :
-    {
-        PROVIDE(__start_sdh_ble_observers = .);
-        KEEP(*(SORT(.sdh_ble_observers*)))
-        PROVIDE(__stop_sdh_ble_observers = .);
-    } > RAM
     .sdh_soc_observers :
     {
         PROVIDE(__start_sdh_soc_observers = .);
         KEEP(*(SORT(.sdh_soc_observers*)))
         PROVIDE(__stop_sdh_soc_observers = .);
-    } > RAM
-    .sdh_req_observers :
-    {
-        PROVIDE(__start_sdh_req_observers = .);
-        KEEP(*(SORT(.sdh_req_observers*)))
-        PROVIDE(__stop_sdh_req_observers = .);
     } > RAM
     .sdh_state_observers :
     {
@@ -129,23 +111,41 @@ SECTIONS
         KEEP(*(SORT(.sdh_stack_observers*)))
         PROVIDE(__stop_sdh_stack_observers = .);
     } > RAM
-    .log_const_data :
+    .sdh_req_observers :
     {
-        PROVIDE(__start_log_const_data = .);
-        KEEP(*(SORT(.log_const_data*)))
-        PROVIDE(__stop_log_const_data = .);
+        PROVIDE(__start_sdh_req_observers = .);
+        KEEP(*(SORT(.sdh_req_observers*)))
+        PROVIDE(__stop_sdh_req_observers = .);
     } > RAM
-    .nrf_balloc :
+    .sdh_ant_observers :
     {
-        PROVIDE(__start_nrf_balloc = .);
-        KEEP(*(.nrf_balloc))
-        PROVIDE(__stop_nrf_balloc = .);
+        PROVIDE(__start_sdh_ant_observers = .);
+        KEEP(*(SORT(.sdh_ant_observers*)))
+        PROVIDE(__stop_sdh_ant_observers = .);
+    } > RAM
+    .sdh_ble_observers :
+    {
+        PROVIDE(__start_sdh_ble_observers = .);
+        KEEP(*(SORT(.sdh_ble_observers*)))
+        PROVIDE(__stop_sdh_ble_observers = .);
+    } > RAM
+    .pwr_mgmt_data :
+    {
+        PROVIDE(__start_pwr_mgmt_data = .);
+        KEEP(*(SORT(.pwr_mgmt_data*)))
+        PROVIDE(__stop_pwr_mgmt_data = .);
     } > RAM
     .nrf_queue :
     {
         PROVIDE(__start_nrf_queue = .);
         KEEP(*(.nrf_queue))
         PROVIDE(__stop_nrf_queue = .);
+    } > RAM
+    .nrf_balloc :
+    {
+        PROVIDE(__start_nrf_balloc = .);
+        KEEP(*(.nrf_balloc))
+        PROVIDE(__stop_nrf_balloc = .);
     } > RAM
     .cli_command :
     {
@@ -159,11 +159,11 @@ SECTIONS
         KEEP(*(SORT(.crypto_data*)))
         PROVIDE(__stop_crypto_data = .);
     } > RAM
-    .pwr_mgmt_data :
+    .log_const_data :
     {
-        PROVIDE(__start_pwr_mgmt_data = .);
-        KEEP(*(SORT(.pwr_mgmt_data*)))
-        PROVIDE(__stop_pwr_mgmt_data = .);
+        PROVIDE(__start_log_const_data = .);
+        KEEP(*(SORT(.log_const_data*)))
+        PROVIDE(__stop_log_const_data = .);
     } > RAM
     .log_backends :
     {
@@ -220,24 +220,11 @@ SECTIONS
         . = ALIGN(4);
         /* All data end */
         __data_end__ = .;
-
     } > RAM
 
     .mem_section_dummy_ram :
     {
         . = ALIGN(4);
-    } > RAM
-    .log_dynamic_data :
-    {
-        PROVIDE(__start_log_dynamic_data = .);
-        KEEP(*(SORT(.log_dynamic_data*)))
-        PROVIDE(__stop_log_dynamic_data = .);
-    } > RAM
-    .log_filter_data :
-    {
-        PROVIDE(__start_log_filter_data = .);
-        KEEP(*(SORT(.log_filter_data*)))
-        PROVIDE(__stop_log_filter_data = .);
     } > RAM
     .cli_sorted_cmd_ptrs :
     {
@@ -250,6 +237,18 @@ SECTIONS
         PROVIDE(__start_fs_data = .);
         KEEP(*(.fs_data))
         PROVIDE(__stop_fs_data = .);
+    } > RAM
+    .log_dynamic_data :
+    {
+        PROVIDE(__start_log_dynamic_data = .);
+        KEEP(*(SORT(.log_dynamic_data*)))
+        PROVIDE(__stop_log_dynamic_data = .);
+    } > RAM
+    .log_filter_data :
+    {
+        PROVIDE(__start_log_filter_data = .);
+        KEEP(*(SORT(.log_filter_data*)))
+        PROVIDE(__stop_log_filter_data = .);
     } > RAM
 
     .bss :

@@ -174,7 +174,7 @@ _heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize) {
 	unsigned int tag, addr, end;
 	unsigned int i;
 
-	heap_logmd("0x%08x: called  : heap 0x%08x, dir %d, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, asize);
+	heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, asize);
 
 	region	 = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
@@ -289,7 +289,7 @@ _heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize) {
 		b1asize	-= b2asize;
 		tag		 = _kw_to_tag(b2k, b2b, 1, _UBINOS__UBICLIB__HEAP_DIR);
 		_block_set_tag(b2, tag, log2m);
-		heap_logmd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
+		heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
 		_heap_n_pgroup_combine_block(heap, b2, 1);
 	}
 
@@ -297,12 +297,12 @@ _heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize) {
 	b1		 = (_heap_block_pt) addr;
 	tag		 = _kw_to_tag(b1k, b1b, 1, _UBINOS__UBICLIB__HEAP_DIR);
 	_block_set_tag(b1, tag, log2m);
-	heap_logmd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+	heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 
-	heap_logmd("0x%08x:         : expanded: heap 0x%08x, dir %d, size 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, region->size);
+	heap_logmfd("0x%08x:         : expanded: heap 0x%08x, dir %d, size 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, region->size);
 
 end0:
-	heap_logmd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
+	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
 
@@ -321,7 +321,7 @@ int _heap_n_pgroup_reduce(_heap_pt heap) {
 	unsigned int bxi;
 	unsigned int tag, addr, end, size;
 
-	heap_logmd("0x%08x: called  : heap 0x%08x, dir %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR);
+	heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR);
 
 	region	 = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
@@ -365,8 +365,8 @@ int _heap_n_pgroup_reduce(_heap_pt heap) {
 			bxi		 = _kw_to_sn(b1k, b1b, log2m, m);
 			bxi		 = _sn_to_index(bxi, offset, log2m, m);
 			_region_remove_fb(region, bxi, b1, log2m);
-			heap_logmd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, bxi, log2m);
-			heap_logmd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+			heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, bxi, log2m);
+			heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 
 			end		-= b1asize;
 			size	-= b1asize;
@@ -406,10 +406,10 @@ int _heap_n_pgroup_reduce(_heap_pt heap) {
 
 	r = 0;
 
-	heap_logmd("0x%08x:         : reduced : heap 0x%08x, dir %d, size 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, region->size);
+	heap_logmfd("0x%08x:         : reduced : heap 0x%08x, dir %d, size 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, region->size);
 
 end0:
-	heap_logmd("0x%08x: return  : heap 0x%08x, dir %d, result %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, r);
+	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, result %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, r);
 
 	return r;
 
@@ -431,7 +431,7 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
 
 	b1 		 = block;
 
-	heap_logmd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, endflag %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, endflag);
+	heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, endflag %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, endflag);
 
 	region 	 = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
@@ -442,7 +442,7 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
 
 	addr	 = region->addr;
 
-	heap_logmd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+	heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 	_tag_check(b1->tag, _UBINOS__UBICLIB__HEAP_DIR, log2m, m, region->min);
 
 	for (;;) {
@@ -463,17 +463,17 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
 					bxi		 = _kw_to_sn(b2k, b2b, log2m, m);
 					bxi		 = _sn_to_index(bxi, offset, log2m, m);
 					_region_remove_fb(region, bxi, b2, log2m);
-					heap_logmd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, log2m);
-					heap_logmd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
+					heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, log2m);
+					heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
 
 					b1b += b2b;
 					b1 = b2;
 
 					_kw_refine(b1k, b1b, log2m, m);
-					heap_logmd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+					heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 					tag = _kw_to_tag(b1k, b1b, 1, _UBINOS__UBICLIB__HEAP_DIR);
 					_block_set_tag(b1, tag, log2m);
-					heap_logmd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+					heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 
 					continue;
 				}
@@ -497,16 +497,16 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
 				bxi		 = _kw_to_sn(b2k, b2b, log2m, m);
 				bxi		 = _sn_to_index(bxi, offset, log2m, m);
 				_region_remove_fb(region, bxi, b2, log2m);
-				heap_logmd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, log2m);
-				heap_logmd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
+				heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, log2m);
+				heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
 
 				b1b += b2b;
 
 				_kw_refine(b1k, b1b, log2m, m);
-				heap_logmd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+				heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 				tag = _kw_to_tag(b1k, b1b, 1, _UBINOS__UBICLIB__HEAP_DIR);
 				_block_set_tag(b1, tag, log2m);
-				heap_logmd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+				heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 
 				continue;
 			}
@@ -518,9 +518,9 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
 	bxi		 = _kw_to_sn(b1k, b1b, log2m, m);
 	bxi		 = _sn_to_index(bxi, offset, log2m, m);
 	_region_insert_fb_head(region, bxi, b1, log2m);
-	heap_logmd_block_inserted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, bxi, log2m);
+	heap_logmfd_block_inserted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, bxi, log2m);
 
-	heap_logmd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
+	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
 
@@ -542,7 +542,7 @@ _heap_block_pt _heap_n_pgroup_split_block(_heap_pt heap, _heap_block_pt block, u
 
 	b1		 = block;
 
-	heap_logmd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, asize);
+	heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, asize);
 
 	region   = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
@@ -560,7 +560,7 @@ _heap_block_pt _heap_n_pgroup_split_block(_heap_pt heap, _heap_block_pt block, u
 
 	//addr	 = region->addr;
 
-	heap_logmd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+	heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 	_tag_check(b1->tag, _UBINOS__UBICLIB__HEAP_DIR, log2m, m, min);
 
 	_asize_to_kw(asize, bxk, bxw, log2m, m);
@@ -604,23 +604,23 @@ _heap_block_pt _heap_n_pgroup_split_block(_heap_pt heap, _heap_block_pt block, u
 			break;
 		}
 
-		heap_logmd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+		heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 		tag = _kw_to_tag(b1k, b1b, 0, _UBINOS__UBICLIB__HEAP_DIR);
 		_block_set_tag(b1, tag, log2m);
 
 		b2 = (_heap_block_pt) ((unsigned int) b1 + _kw_to_asize(b1k, b1b, log2m));
 		tag = _kw_to_tag(b2k, b2b, 1, _UBINOS__UBICLIB__HEAP_DIR);
 		_block_set_tag(b2, tag, log2m);
-		heap_logmd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
+		heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
 		_heap_n_pgroup_combine_block(heap, b2, 0);
 
 		tag = _kw_to_tag(b1k, b1b, 1, _UBINOS__UBICLIB__HEAP_DIR);
 		_block_set_tag(b1, tag, log2m);
-		heap_logmd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+		heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 	}
 
 end0:
-	heap_logmd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
+	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
 
@@ -754,7 +754,7 @@ end0:
 		tmp = NULL;
 	}
 	else {
-		heap_logmd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+		heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 		_tag_check(b1->tag, _UBINOS__UBICLIB__HEAP_DIR, log2m, m, min);
 
 		tmp = (unsigned int) _block_pt_to_ptr(b1);
@@ -790,7 +790,7 @@ int _heap_n_pgroup_release_block(_heap_pt heap, void * ptr) {
 
 	tag = b1->tag;
 
-	heap_logmd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
+	heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 	_tag_check(tag, _UBINOS__UBICLIB__HEAP_DIR, log2m, m, region->min);
 
 	asize = _tag_to_asize(tag, log2m);

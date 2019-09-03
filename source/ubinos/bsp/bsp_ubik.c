@@ -132,16 +132,6 @@ void bsp_ubik_task_schedule_irq(void) {
 #endif
 }
 
-void bsp_ubik_tickisr() {
-#if (INCLUDE__UBINOS__UBIK == 1)
-    extern void _ubik_tickisr(void);
-    _ubik_tickisr();
-#else
-    dtty_puts("\r\n\r\bsp_ubik_tickisr\r\n\r\n", 80);
-    bsp_abortsystem();
-#endif
-}
-
 void bsp_ubik_swisr(unsigned int swino) {
 #if (INCLUDE__UBINOS__UBIK == 1)
     extern void _ubik_swisr(unsigned int swino);
