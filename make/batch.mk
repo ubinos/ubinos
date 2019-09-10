@@ -203,6 +203,16 @@
 	@echo ""
 	make -f makefile.mk $@ CONFIG_NAME=ubik_tester_nrf52dk
 	@echo ""
+	@echo "==============================================================================="	
+	@echo "==============================================================================="
+	@echo ""
+	@echo "Config          : command line interface tester application"
+	@echo "Target board    : nrf52dk"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=cli_tester_nrf52dk
+	@echo ""
 
 
 ###############################################################################

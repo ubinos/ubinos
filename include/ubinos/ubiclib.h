@@ -384,6 +384,7 @@ unsigned int uiones(register unsigned int x);
 #include <ubinos/ubiclib/heap.h>
 #include <ubinos/ubiclib/list.h>
 #include <ubinos/ubiclib/stdlib.h>
+#include <ubinos/ubiclib/cli.h>
 
 #ifdef	__cplusplus
 }

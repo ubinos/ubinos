@@ -156,6 +156,14 @@ int dtty_gets(char * str, int max);
 int dtty_kbhit(void);
 
 /*!
+ * 디버깅 터미널 오류가 있는지를 검사하는 함수
+ *
+ * @return	 0: 없음<br>
+ * 			 other: 오류 번호<br>
+ */
+int dtty_geterror(void);
+
+/*!
  * 디버깅 터미널 에코 설정 함수
  *
  * @param	echo	0: echo off<br>

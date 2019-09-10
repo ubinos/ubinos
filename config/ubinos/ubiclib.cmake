@@ -8,6 +8,7 @@ set_cache_default(UBINOS__UBICLIB__USE_MALLOC_RETARGETING                       
 set_cache_default(UBINOS__UBICLIB__USE_STDIO_RETARGETING                        TRUE    BOOL "Use stdio retargeting")
 
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_LOGM                                 FALSE   BOOL "Exclude log message functions")
+set_cache_default(UBINOS__UBICLIB__EXCLUDE_CLI                                  TRUE    BOOL "Exclude command line interface functions")
 
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_LIST                                 FALSE   BOOL "Exclude linked list functions")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_DLIST                                FALSE   BOOL "Exclude double linked list functions")

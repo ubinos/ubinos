@@ -85,6 +85,8 @@ int _g_bsp_dtty_echo = 0;
 int dtty_init(void) {
     _g_bsp_dtty_echo = 0;
 
+    NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
+
     /* Disable receiver & transmitter interrupts */
     NRF_UART0->INTENCLR = 0xffffffff;
 
@@ -102,6 +104,7 @@ int dtty_init(void) {
     NRF_UART0->CONFIG = (UART_CONFIG_PARITY_Excluded << UART_CONFIG_PARITY_Pos) | (UART_CONFIG_HWFC_Disabled << UART_CONFIG_HWFC_Pos);
     NRF_UART0->PSELTXD = 6;
     NRF_UART0->PSELRXD = 8;
+    NRF_UART0->EVENTS_ERROR = 0;
     NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Enabled << UART_ENABLE_ENABLE_Pos);
 
     /* Start receiver & transmitter */
@@ -109,6 +112,10 @@ int dtty_init(void) {
     NRF_UART0->TASKS_STARTRX = 1;
 
     return 0;
+}
+
+int dtty_geterror(void) {
+	return NRF_UART0->EVENTS_ERROR;
 }
 
 int dtty_enable(void) {
