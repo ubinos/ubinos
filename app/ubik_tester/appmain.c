@@ -45,7 +45,7 @@ static void rootfunc(void * arg) {
 	printf("\n\r");
 
 	unsigned int errcount = 0;
-	unsigned int testcountmax = UINT_MAX;
+	unsigned int testcountmax = 1; //UINT_MAX;
 
 	for (unsigned int i = 0; i < testcountmax; i++) {
 		r = ubik_test_testall();
