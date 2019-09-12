@@ -233,6 +233,9 @@ void _task_yield(void) {
 #if (UBINOS__UBIK__USE_PENDSV_TASK_YIELD == 1)
 	        arm_set_pendsv();
 	        ARM_INTERRUPT_ENABLE();
+	        while (arm_get_pendsv()) {
+		        ARM_INTERRUPT_ENABLE();
+	        }
 #else
             __asm__ __volatile__ (
                 "svc        %0                                              \n\t"
@@ -324,7 +327,7 @@ int _ubik_inittick(void) {
     // Set exception priority
     NVIC_SetPriorityGrouping(NVIC_PRIO_GROUP);
     for (i = NVIC_IRQN_START; i <= NVIC_IRQN_END; i++) {
-        NVIC_SetPriority(i, NVIC_PRIO_MIDDLE);
+        NVIC_SetPriority(i, NVIC_PRIO_LOWEST);
     }
     NVIC_SetPriority(SVCall_IRQn, NVIC_PRIO_SVC);
     NVIC_SetPriority(PendSV_IRQn, NVIC_PRIO_PENDSV);

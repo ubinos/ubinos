@@ -36,29 +36,27 @@
 #include <assert.h>
 
 void ubik_entercrit(void) {
-    if (0 == bsp_isintr()) {
-        ARM_INTERRUPT_DISABLE();
-        _bsp_critcount++;
-    }
+	ARM_INTERRUPT_DISABLE();
+	_bsp_critcount++;
 }
 
 void ubik_exitcrit(void) {
-    if (0 == bsp_isintr()) {
-        if (0 == _bsp_critcount) {
-            dtty_puts("\r\nubik_exitcrit fail (_bsp_critcount is already 0)\r\n", 80);
-            bsp_abortsystem();
-        }
-        _bsp_critcount--;
-        if (0 == _bsp_critcount) {
-            ARM_INTERRUPT_ENABLE();
-        }
-    }
+	if (0 == _bsp_critcount) {
+		dtty_puts("\r\nubik_exitcrit fail (_bsp_critcount is already 0)\r\n", 80);
+		bsp_abortsystem();
+	}
+	_bsp_critcount--;
+	if (0 == _bsp_critcount) {
+		ARM_INTERRUPT_ENABLE();
+	}
 }
 
 #if (__FPU_USED == 1)
 
 #define save_context() {                                                    \
     __asm__ __volatile__ (                                                  \
+        "mov        r3, %0                                          \n\t"   \
+        "msr        basepri, r3                                     \n\t"   \
         /* Set r3 to psp */                                                 \
         "mrs        r3, psp                                         \n\t"   \
         /* Save _bsp_critcount into psp stack */                            \
@@ -77,6 +75,7 @@ void ubik_exitcrit(void) {
         "ldr        r2, =_task_cur                                  \n\t"   \
         "ldr        r2, [r2]                                        \n\t"   \
         "str        r3, [r2, #4]                                    \n\t"   \
+        :: "i" (NVIC_BASEPRI_REAL)                                          \
     );                                                                      \
 }
 #define restore_context() {                                                 \
@@ -103,9 +102,9 @@ void ubik_exitcrit(void) {
         /* Restore basepri from _bsp_critcount */                           \
         "cmp        r2, #0                                          \n\t"   \
         "ite        eq                                              \n\t"   \
-        "moveq      r1, #0                                          \n\t"   \
-        "movne      r1, %0                                          \n\t"   \
-        "msr        basepri, r1                                     \n\t"   \
+        "moveq      r3, #0                                          \n\t"   \
+        "movne      r3, %0                                          \n\t"   \
+        "msr        basepri, r3                                     \n\t"   \
         :: "i" (NVIC_BASEPRI_REAL)                                          \
     );                                                                      \
 }
@@ -114,6 +113,8 @@ void ubik_exitcrit(void) {
 
 #define save_context() {                                                    \
     __asm__ __volatile__ (                                                  \
+        "mov        r3, %0                                          \n\t"   \
+        "msr        basepri, r3                                     \n\t"   \
         /* Set r3 to psp */                                                 \
         "mrs        r3, psp                                         \n\t"   \
         /* Save _bsp_critcount into psp stack */                            \
@@ -126,6 +127,7 @@ void ubik_exitcrit(void) {
         "ldr        r2, =_task_cur                                  \n\t"   \
         "ldr        r2, [r2]                                        \n\t"   \
         "str        r3, [r2, #4]                                    \n\t"   \
+        :: "i" (NVIC_BASEPRI_REAL)                                          \
     );                                                                      \
 }
 #define restore_context() {                                                 \
@@ -145,61 +147,14 @@ void ubik_exitcrit(void) {
         /* Restore basepri from _bsp_critcount */                           \
         "cmp        r2, #0                                          \n\t"   \
         "ite        eq                                              \n\t"   \
-        "moveq      r1, #0                                          \n\t"   \
-        "movne      r1, %0                                          \n\t"   \
-        "msr        basepri, r1                                     \n\t"   \
+        "moveq      r3, #0                                          \n\t"   \
+        "movne      r3, %0                                          \n\t"   \
+        "msr        basepri, r3                                     \n\t"   \
         :: "i" (NVIC_BASEPRI_REAL)                                          \
     );                                                                      \
 }
 
 #endif
-
-void __attribute__((naked)) bsp_ubik_swi_handler(void) {
-    register unsigned int swino;
-
-    __asm__ __volatile__ (
-        /* Set r0 to task stack */
-        "tst        lr, #4                                          \n\t"
-        "ite        eq                                              \n\t"
-        "mrseq      r0, msp                                         \n\t"
-        "mrsne      r0, psp                                         \n\t"
-        /* Set r0 to swino */
-        "ldr        r0, [r0, #24]                                   \n\t"
-        "subs       r0, r0, #2                                      \n\t"
-        "ldrb       r0, [r0]                                        \n\t"
-    );
-
-    save_context();
-    __asm__ __volatile__ (
-        "push       {lr}                                            \n\t"
-    );
-
-    __asm__ __volatile__ (
-        "mov        %0, r0                                          \n\t"
-        : "=r" (swino)
-    );
-
-    switch(swino) {
-	case SWINO__TASK_YIELD:
-		_task_prev = _task_cur;
-		if(TASK_STATE__RUNNING == _task_cur->state) {
-			_task_cur->state = TASK_STATE__READY;
-		}
-		_task_cur = _tasklist_getcurnext(_task_list_ready_cur);
-		_task_cur->state = TASK_STATE__RUNNING;
-		break;
-	default:
-		break;
-	}
-
-    __asm__ __volatile__ (
-        "pop        {lr}                                            \n\t"
-    );
-    restore_context();
-    __asm__ __volatile__ (
-        "bx         lr                                              \n\t"
-    );
-}
 
 void __attribute__((naked)) bsp_ubik_psv_handler(void) {
     save_context();
@@ -207,7 +162,7 @@ void __attribute__((naked)) bsp_ubik_psv_handler(void) {
         "push       {lr}                                            \n\t"
     );
 
-    _task_prev = _task_cur;
+	_task_prev = _task_cur;
 	if(TASK_STATE__RUNNING == _task_cur->state) {
 		_task_cur->state = TASK_STATE__READY;
 	}
@@ -223,6 +178,34 @@ void __attribute__((naked)) bsp_ubik_psv_handler(void) {
     );
 }
 
+void bsp_ubik_swi_handler(void) {
+    unsigned int swino;
+
+    __asm__ __volatile__ (
+        /* Set r0 to task stack */
+        "tst        lr, #4                                          \n\t"
+        "ite        eq                                              \n\t"
+        "mrseq      r0, msp                                         \n\t"
+        "mrsne      r0, psp                                         \n\t"
+        /* Set r0 to swino */
+        "ldr        r0, [r0, #24]                                   \n\t"
+        "subs       r0, r0, #2                                      \n\t"
+        "ldrb       r0, [r0]                                        \n\t"
+        "mov        %0, r0                                          \n\t"
+        : "=r" (swino)
+    );
+
+    switch(swino) {
+	case SWINO__TASK_YIELD:
+        if (0 == _ubik_tasklockcount && 0 != _bsp_kernel_active) {
+			arm_set_pendsv();
+        }
+		break;
+	default:
+		break;
+	}
+}
+
 void bsp_ubik_systick_handler(void) {
     unsigned int    status = 0;
     edlist_pt       tempedlist;
@@ -236,6 +219,8 @@ void bsp_ubik_systick_handler(void) {
 
     status = SysTick->CTRL;
     if (0 != (0x00010000 & status)) {
+
+    	ARM_INTERRUPT_DISABLE();
 
         ////////////////
 
@@ -319,6 +304,8 @@ void bsp_ubik_systick_handler(void) {
             }
         }
 #endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
+
+        ARM_INTERRUPT_ENABLE();
 
         ////////////////
 
