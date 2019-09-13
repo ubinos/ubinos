@@ -48,6 +48,10 @@ macro(___project_config_end)
 
     file(WRITE ${PROJECT_BASE_DIR}/include/${PROJECT_NAME}_config.h "#include \"${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h\"\n")
     include_directories(${PROJECT_BASE_DIR}/include)
+    
+    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_asm.txt "${CMAKE_ASM_FLAGS}")
+    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_c.txt "${CMAKE_C_FLAGS}")
+    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS}")
 endmacro(___project_config_end)
 
 macro(___project_add_app)
