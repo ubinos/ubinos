@@ -27,48 +27,45 @@
  terms contained in a written agreement between you and rightful owner.
  */
 
-#ifndef UBINOS_BSP_ARCH_H_
-#define UBINOS_BSP_ARCH_H_
+#include "../_bsp.h"
 
-#ifdef	__cplusplus
-extern "C"
-{
-#endif
+#if (INCLUDE__UBINOS__BSP == 1)
+#if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32F217IG)
 
-/*!
- * @file arch.h
- *
- * @brief Architecture definition
- *
- * Architecture 관련 내용을 정의합니다.
- */
+int bsp_getcpuclockfreq(unsigned int * freq_p) {
+    if (NULL == freq_p) {
+        return -2;
+    }
 
-#include <ubinos_config.h>
-#include <ubinos/type.h>
-
-#if   (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM7X256) || (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM7X512)
-#include "arch/arm/classic/sam7xxxxek.h"
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM9XE512)
-#include "arch/arm/classic/sam9xexxxek.h"
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM4SD32C)
-#include "arch/arm/cortexm/sam4sek2.h"
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
-#include "arch/arm/cortexm/nrf52dk.h"
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32F217IG)
-#include "arch/arm/cortexm/stm3221geval.h"
-#else
-#error "Unsupported UBINOS__BSP__CPU_MODEL"
-#endif
-
-#ifndef __ASSEMBLY__
-
-extern volatile unsigned int _bsp_kernel_active; /* variable representing whether kernel is active or not */
-extern volatile unsigned int _bsp_critcount; /* critical section nesting count */
-
-#endif /* __ASSEMBLY__ */
-
-#ifdef	__cplusplus
+    return -1;
 }
-#endif
 
-#endif /* UBINOS_BSP_ARCH_H_ */
+int bsp_getcpuclockfreqk(unsigned int * freqk_p) {
+    if (NULL == freqk_p) {
+        return -2;
+    }
+
+    *freqk_p = UBINOS__BSP__CLOCK_FREQ_MAIN;
+
+    return 0;
+}
+
+int bsp_getmckfreq(unsigned int * freq_p) {
+    return bsp_getcpuclockfreq(freq_p);
+}
+
+int bsp_getmckfreqk(unsigned int * freqk_p) {
+    return bsp_getcpuclockfreqk(freqk_p);
+}
+
+int bsp_getcpuidsize(void) {
+    return 8;
+}
+
+int bsp_getcpuid(unsigned char * buf, int max) {
+    return 4;
+}
+
+#endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32F217IG) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
+

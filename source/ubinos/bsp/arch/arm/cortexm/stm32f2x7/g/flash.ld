@@ -15,6 +15,7 @@
  * the new terms are clearly indicated on the first page of each file where
  * they apply.
  */
+
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 
 MEMORY
@@ -60,11 +61,9 @@ SECTIONS
         __text_start__ = .;
 
         __isr_vector_start__ = .;
-        __relocated_isr_vector_start__ = .;
         KEEP(*(.isr_vector))
         . = ALIGN(4);
         __isr_vector_end__ = .;
-        __relocated_isr_vector_end__ = .;
 
         *(.text*)
 
@@ -88,101 +87,23 @@ SECTIONS
         *(.rodata*)
 
         KEEP(*(.eh_frame*))
-    } > RAM
+    } > FLASH
     
     .mem_section_dummy_rom :
     {
         . = ALIGN(4);
-    } > RAM
-    .sdh_soc_observers :
-    {
-        PROVIDE(__start_sdh_soc_observers = .);
-        KEEP(*(SORT(.sdh_soc_observers*)))
-        PROVIDE(__stop_sdh_soc_observers = .);
-    } > RAM
-    .sdh_state_observers :
-    {
-        PROVIDE(__start_sdh_state_observers = .);
-        KEEP(*(SORT(.sdh_state_observers*)))
-        PROVIDE(__stop_sdh_state_observers = .);
-    } > RAM
-    .sdh_stack_observers :
-    {
-        PROVIDE(__start_sdh_stack_observers = .);
-        KEEP(*(SORT(.sdh_stack_observers*)))
-        PROVIDE(__stop_sdh_stack_observers = .);
-    } > RAM
-    .sdh_req_observers :
-    {
-        PROVIDE(__start_sdh_req_observers = .);
-        KEEP(*(SORT(.sdh_req_observers*)))
-        PROVIDE(__stop_sdh_req_observers = .);
-    } > RAM
-    .sdh_ant_observers :
-    {
-        PROVIDE(__start_sdh_ant_observers = .);
-        KEEP(*(SORT(.sdh_ant_observers*)))
-        PROVIDE(__stop_sdh_ant_observers = .);
-    } > RAM
-    .sdh_ble_observers :
-    {
-        PROVIDE(__start_sdh_ble_observers = .);
-        KEEP(*(SORT(.sdh_ble_observers*)))
-        PROVIDE(__stop_sdh_ble_observers = .);
-    } > RAM
-    .pwr_mgmt_data :
-    {
-        PROVIDE(__start_pwr_mgmt_data = .);
-        KEEP(*(SORT(.pwr_mgmt_data*)))
-        PROVIDE(__stop_pwr_mgmt_data = .);
-    } > RAM
-    .nrf_queue :
-    {
-        PROVIDE(__start_nrf_queue = .);
-        KEEP(*(.nrf_queue))
-        PROVIDE(__stop_nrf_queue = .);
-    } > RAM
-    .nrf_balloc :
-    {
-        PROVIDE(__start_nrf_balloc = .);
-        KEEP(*(.nrf_balloc))
-        PROVIDE(__stop_nrf_balloc = .);
-    } > RAM
-    .cli_command :
-    {
-        PROVIDE(__start_cli_command = .);
-        KEEP(*(.cli_command))
-        PROVIDE(__stop_cli_command = .);
-    } > RAM
-    .crypto_data :
-    {
-        PROVIDE(__start_crypto_data = .);
-        KEEP(*(SORT(.crypto_data*)))
-        PROVIDE(__stop_crypto_data = .);
-    } > RAM
-    .log_const_data :
-    {
-        PROVIDE(__start_log_const_data = .);
-        KEEP(*(SORT(.log_const_data*)))
-        PROVIDE(__stop_log_const_data = .);
-    } > RAM
-    .log_backends :
-    {
-        PROVIDE(__start_log_backends = .);
-        KEEP(*(SORT(.log_backends*)))
-        PROVIDE(__stop_log_backends = .);
-    } > RAM
+    } > FLASH
 
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > RAM
+    } > FLASH
 
     __exidx_start = .;
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    } > RAM
+    } > FLASH
     __exidx_end = .;
 
     __text_end__ = .;
@@ -191,7 +112,16 @@ SECTIONS
 
 SECTIONS
 {
-    .data :
+    .relocated_isr_vector (COPY) :
+    {
+        . = ALIGN(128);
+        __relocated_isr_vector_start__ = .;
+        . = . + (__isr_vector_end__ - __isr_vector_start__);
+        . = ALIGN(128);
+        __relocated_isr_vector_end__ = .;
+    } > RAM
+
+    .data __relocated_isr_vector_end__ : AT (__etext)
     {
         __data_start__ = .;
         *(vtable)
@@ -226,30 +156,6 @@ SECTIONS
     .mem_section_dummy_ram :
     {
         . = ALIGN(4);
-    } > RAM
-    .cli_sorted_cmd_ptrs :
-    {
-        PROVIDE(__start_cli_sorted_cmd_ptrs = .);
-        KEEP(*(.cli_sorted_cmd_ptrs))
-        PROVIDE(__stop_cli_sorted_cmd_ptrs = .);
-    } > RAM
-    .fs_data :
-    {
-        PROVIDE(__start_fs_data = .);
-        KEEP(*(.fs_data))
-        PROVIDE(__stop_fs_data = .);
-    } > RAM
-    .log_dynamic_data :
-    {
-        PROVIDE(__start_log_dynamic_data = .);
-        KEEP(*(SORT(.log_dynamic_data*)))
-        PROVIDE(__stop_log_dynamic_data = .);
-    } > RAM
-    .log_filter_data :
-    {
-        PROVIDE(__start_log_filter_data = .);
-        KEEP(*(SORT(.log_filter_data*)))
-        PROVIDE(__stop_log_filter_data = .);
     } > RAM
 
     .bss :
@@ -299,8 +205,8 @@ SECTIONS
     ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
     
     /* Check if text sections + data exceeds FLASH limit */
-    DataInitFlashUsed = 0;
-    CodeFlashUsed = 0;
+    DataInitFlashUsed = __bss_start__ - __data_start__;
+    CodeFlashUsed = __etext - ORIGIN(FLASH);
     TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
     

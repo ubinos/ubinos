@@ -61,6 +61,20 @@ endif
 
 ###############################################################################
 
+ifeq ($(strip $(RESOURCE_DIR)),)
+_RESOURCE_DIR          := $(_BASE_DIR)/resource
+else
+_RESOURCE_DIR          := $(realpath $(RESOURCE_DIR))
+endif
+
+ifeq ($(strip $(MAKE_DIR)),)
+_MAKE_DIR              := $(_BASE_DIR)/make
+else
+_MAKE_DIR              := $(realpath $(MAKE_DIR))
+endif
+
+###############################################################################
+
 ifeq ($(strip $(JOBS)),)
 _JOBS                  := $(shell "$(_TOOLBOX)" cpu_count)
 else
@@ -121,6 +135,11 @@ common-help:
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
 	@echo "CMAKE_OPTION                 = $(_CMAKE_OPTION)"
+	@echo ""
+	@echo "-------------------------------------------------------------------------------"
+	@echo ""
+	@echo "RESOURCE_DIR                 = $(_RESOURCE_DIR)"
+	@echo "MAKE_DIR                     = $(_MAKE_DIR)"
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""

@@ -26,6 +26,7 @@
 
 #define UBINOS__BSP__CPU_TYPE__ARM926EJ_S                 2
 #define UBINOS__BSP__CPU_TYPE__CORTEX_M4                  3
+#define UBINOS__BSP__CPU_TYPE__CORTEX_M3                  4
 #define UBINOS__BSP__CPU_TYPE                             UBINOS__BSP__CPU_TYPE__@UBINOS__BSP__CPU_TYPE@
 
 #define UBINOS__BSP__CPU_ENDIAN__LITTLE                   1
@@ -34,10 +35,12 @@
 
 #define UBINOS__BSP__CPU_MODEL__SAM9XE512                 0x00010023
 #define UBINOS__BSP__CPU_MODEL__NRF52832XXAA              0x00010311
+#define UBINOS__BSP__CPU_MODEL__STM32F217IG               0x00010411
 #define UBINOS__BSP__CPU_MODEL                            UBINOS__BSP__CPU_MODEL__@UBINOS__BSP__CPU_MODEL@
 
 #define UBINOS__BSP__BOARD_MODEL__SAM9XE512EK             0x00020023
 #define UBINOS__BSP__BOARD_MODEL__NRF52DK                 0x00020311
+#define UBINOS__BSP__BOARD_MODEL__STM3221GEVAL            0x00020411
 #define UBINOS__BSP__BOARD_MODEL                          UBINOS__BSP__BOARD_MODEL__@UBINOS__BSP__BOARD_MODEL@
 
 #define UBINOS__BSP__LINK_MEMMAP_TYPE__FLASH              1
@@ -95,9 +98,13 @@
     #if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__CORTEX_M4)
 
     #else
+    #if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__CORTEX_M3)
+
+    #else
 
         #error "Unsupported UBINOS__BSP__CPU_TYPE"
 
+    #endif
     #endif
     #endif /* (UBINOS__BSP__CPU_TYPE == ...) */
 
@@ -116,9 +123,12 @@
 #define UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION     @UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION@
 
     #else
+    #if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32F217IG)
+    #else
 
         #error "Unsupported UBINOS__BSP__CPU_MODEL"
 
+    #endif
     #endif
     #endif /* (UBINOS__BSP__CPU_MODEL == ...) */
 
@@ -133,9 +143,12 @@
 #cmakedefine01 UBINOS__BSP__NRF52_ENABLE_TRACE
 
     #else
+    #if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL)
+    #else
 
         #error "Unsupported UBINOS__BSP__BOARD_MODEL"
 
+    #endif
     #endif
     #endif /* (UBINOS__BSP__BOARD_MODEL == ...) */
 

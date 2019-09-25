@@ -12,11 +12,11 @@ set(INCLUDE__UBINOS__BSP                                                        
 
 
 set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
-set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M4]")
+set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M4 | CORTEX_M3]")
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
-set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA]")
+set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | STM32F217IG]")
 
-set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK]")
+set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | STM3221GEVAL]")
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | SDRAM | FLASH_SDRAM | SRAM_SDRAM]")
 
@@ -61,6 +61,8 @@ set_cache_default(UBINOS__BSP__INCLUDE_INTERRUPT_DISABLE_ENABLE_RETRY           
 
     elseif(UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4")
     
+    elseif(UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3")
+
     else()
     
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_TYPE")
@@ -81,6 +83,8 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_NAME                            
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION                 ""      STRING "[6]")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            ""      PATH "nRF52 softdevice file")
 
+    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG")
+
     else()
 
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
@@ -95,6 +99,8 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            
 set_cache_default(UBINOS__BSP__NRF52_CONFIG_GPIO_AS_PINRESET                    TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_ENABLE_SWO                                 FALSE   BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_ENABLE_TRACE                               FALSE   BOOL "")
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL")
 
     else()
 
@@ -140,7 +146,14 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4")
     
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m4")
+        set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
         
+    elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3")
+    
+        set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m3")
+        set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
+        set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=soft")
+    
     else()
     
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_TYPE")
@@ -183,7 +196,6 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA")
     
-        set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
         set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
         set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv4-sp-d16")
         
@@ -217,6 +229,10 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             
         endif()
         
+    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG")
+
+            set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F217xx")
+
     else()
     
        message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
@@ -246,6 +262,8 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             
         endif()
         
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL")
+
     else()
     
         message(FATAL_ERROR "Unsupported UBINOS__BSP__BOARD_MODEL")

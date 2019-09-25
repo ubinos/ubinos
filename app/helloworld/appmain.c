@@ -11,23 +11,23 @@ int appmain(int argc, char * argv[]) {
 
     (void) r;
 
-    printf("\n\n\n\r");
-	printf("================================================================================\n\r");
-	printf("helloworld (build time: %s %s)\n\r", __TIME__, __DATE__);
-	printf("================================================================================\n\r");
-	printf("\n\r");
+    printf("\n\n\r\n");
+	printf("================================================================================\r\n");
+	printf("helloworld (build time: %s %s)\r\n", __TIME__, __DATE__);
+	printf("================================================================================\r\n");
+	printf("\r\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
     r = heap_printheapinfo(NULL);
     if (0 == r) {
-        printf("\n\r");
-        printf("================================================================================\n\r");
-        printf("\n\r");
+        printf("\r\n");
+        printf("================================================================================\r\n");
+        printf("\r\n");
     }
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
-    printf("\n\r");
+    printf("\r\n");
 
 	for (unsigned int i = 0; ; i++) {
-		printf("hello world ! (%u)\n\r", i);
+		printf("hello world ! (%u)\r\n", i);
 		bsp_busywaitms(1000);
 	}
 
