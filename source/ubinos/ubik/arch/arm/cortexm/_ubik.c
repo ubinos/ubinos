@@ -31,7 +31,7 @@
 #include "../../../_ubik.h"
 
 #if (INCLUDE__UBINOS__UBIK == 1)
-#if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__CORTEX_M4)
+#if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__CORTEX_M4) || (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__CORTEX_M3)
 
 #include <assert.h>
 
@@ -362,8 +362,10 @@ void task_comp_start(void) {
     assert((__get_CONTROL() & CONTROL_nPRIV_Msk) == 0);
     // Make sure using MSP stack.
     assert((__get_CONTROL() & CONTROL_SPSEL_Msk) == 0);
+#if (__FPU_USED == 1)
     // Make sure FP extension is not active.
     assert((__get_CONTROL() & CONTROL_FPCA_Msk) == 0);
+#endif
     // Make sure that interrupt is disabled.
     assert(__get_PRIMASK() == 1);
 

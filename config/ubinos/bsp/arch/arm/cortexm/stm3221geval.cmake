@@ -11,13 +11,14 @@ set_cache(UBINOS__BSP__LINK_MEMMAP_FLASH_LENGTH                                 
 set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN                                     0x20000000     STRING)
 set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH                                     0x00020000     STRING)
 
-set_cache(UBINOS__BSP__USE_ICACHE                                                 FALSE           BOOL)
+set_cache(UBINOS__BSP__USE_ICACHE                                                 TRUE            BOOL)
+set_cache(UBINOS__BSP__USE_DCACHE                                                 TRUE            BOOL)
 
-set_cache(UBINOS__BSP__USE_RELOCATED_ISR_VECTOR                                   FALSE           BOOL)
+set_cache(UBINOS__BSP__USE_RELOCATED_ISR_VECTOR                                   TRUE            BOOL)
 
 set_cache(UBINOS__BSP__CLOCK_FREQ_MAIN                                            120000          STRING)
 set_cache(UBINOS__BSP__CLOCK_FREQ_SLOW                                            32              STRING)
-set_cache(UBINOS__BSP__BUSYWAITCOUNT_PER_MS                                       21200           STRING)
+set_cache(UBINOS__BSP__BUSYWAITCOUNT_PER_MS                                       39877           STRING)
 
 set_cache(UBINOS__BSP__STACK_SIZE                                                 0x800           STRING)
 
@@ -30,6 +31,12 @@ set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET                                     
 
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD                                        "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm3221geval/t32_flash_load.cmm"   PATH)
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET                                       "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm3221geval/t32_flash_reset.cmm"  PATH)
+
+set_cache(UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM                                    "GROUP"         STRING)
+set_cache(UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE                                     "MUTEX"         STRING)
+set_cache(UBINOS__UBICLIB__HEAP_DIR0_M                                            4               STRING)
+set_cache(UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT                                     96              STRING)
+set_cache(UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE                                16              STRING)
 
 include(${CMAKE_CURRENT_LIST_DIR}/../../arm.cmake)
 

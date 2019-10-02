@@ -54,6 +54,8 @@ extern void SystemInit_ExtMemCtl(void)
 #if (INCLUDE__UBINOS__BSP == 1)
 #if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32F217IG)
 
+#include "../stm32f2/stm32f2xx_ll_system.h"
+
 #if !defined  (HSE_VALUE) 
   #define HSE_VALUE    ((uint32_t)25000000) /*!< Value of the External oscillator in Hz */
 #endif /* HSE_VALUE */
@@ -173,6 +175,18 @@ void SystemInit(void)
     SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
     __DSB();
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
+#if (UBINOS__BSP__USE_ICACHE == 1)
+    LL_FLASH_EnableInstCache();
+    LL_FLASH_EnablePrefetch();
+#else
+    LL_FLASH_DisablePrefetch();
+    LL_FLASH_DisableInstCache();
+#endif /* (UBINOS__BSP__USE_ICACHE == 1) */
+#if (UBINOS__BSP__USE_DCACHE == 1)
+    LL_FLASH_EnableDataCache();
+#else
+    LL_FLASH_DisableDataCache();
+#endif /* (UBINOS__BSP__USE_DCACHE == 1) */
 }
 
 /**
