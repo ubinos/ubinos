@@ -102,6 +102,8 @@ set_cache_default(UBINOS__BSP__NRF52_ENABLE_TRACE                               
 
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL")
 
+set_cache_default(UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER "3"              STRING "[3 | 6]")
+
     else()
 
         message(FATAL_ERROR "Unsupported UBINOS__BSP__BOARD_MODEL")

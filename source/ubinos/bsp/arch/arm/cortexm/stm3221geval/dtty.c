@@ -40,20 +40,46 @@
 #include "../stm32f2/stm32f2xx_ll_gpio.h"
 #include "../stm32f2/stm32f2xx_ll_usart.h"
 
-/* USART3 instance is used. (TX on PD.08, RX on PD.09)
-   (please ensure that USART communication between the target MCU and ST-LINK MCU is properly enabled
-    on HW board in order to support Virtual Com Port) */
+
+#if (UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER == 3)
+
 #define USARTx_INSTANCE               USART3
 #define USARTx_CLK_ENABLE()           LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3)
 
-#define USARTx_GPIO_CLK_ENABLE()      LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)   /* Enable the peripheral clock of GPIOD */
+#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
 #define USARTx_TX_PIN                 LL_GPIO_PIN_10
 #define USARTx_TX_GPIO_PORT           GPIOC
 #define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOC, LL_GPIO_PIN_10, LL_GPIO_AF_7)
+
+#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
 #define USARTx_RX_PIN                 LL_GPIO_PIN_11
 #define USARTx_RX_GPIO_PORT           GPIOC
 #define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOC, LL_GPIO_PIN_11, LL_GPIO_AF_7)
+
 #define APB_Div 4
+
+#elif (UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER == 6)
+
+#define USARTx_INSTANCE               USART6
+#define USARTx_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART6)
+
+#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
+#define USARTx_TX_PIN                 LL_GPIO_PIN_6
+#define USARTx_TX_GPIO_PORT           GPIOC
+#define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(GPIOC, LL_GPIO_PIN_6, LL_GPIO_AF_8)
+
+#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
+#define USARTx_RX_PIN                 LL_GPIO_PIN_7
+#define USARTx_RX_GPIO_PORT           GPIOC
+#define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(GPIOC, LL_GPIO_PIN_7, LL_GPIO_AF_8)
+
+#define APB_Div 2
+
+#else
+
+#error "Unsupported UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER"
+
+#endif
 
 #define SLEEP_TIMEMS	1
 
@@ -62,12 +88,10 @@ int _g_bsp_dtty_echo = 0;
 static void Configure_USART(void)
 {
 
-  /* (1) Enable GPIO clock and configures the USART pins *********************/
-
   /* Enable the peripheral clock of GPIO Port */
-  USARTx_GPIO_CLK_ENABLE();
 
   /* Configure Tx Pin as : Alternate function, High Speed, Push pull, Pull up */
+  USARTx_TX_GPIO_CLK_ENABLE();
   LL_GPIO_SetPinMode(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_MODE_ALTERNATE);
   USARTx_SET_TX_GPIO_AF();
   LL_GPIO_SetPinSpeed(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_SPEED_FREQ_HIGH);
@@ -75,6 +99,7 @@ static void Configure_USART(void)
   LL_GPIO_SetPinPull(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_PULL_UP);
 
   /* Configure Rx Pin as : Alternate function, High Speed, Push pull, Pull up */
+  USARTx_RX_GPIO_CLK_ENABLE();
   LL_GPIO_SetPinMode(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_MODE_ALTERNATE);
   USARTx_SET_RX_GPIO_AF();
   LL_GPIO_SetPinSpeed(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_SPEED_FREQ_HIGH);
@@ -88,7 +113,7 @@ static void Configure_USART(void)
 
   /* Disable USART prior modifying configuration registers */
   /* Note: Commented as corresponding to Reset value */
-  // LL_USART_Disable(USARTx_INSTANCE);
+  LL_USART_Disable(USARTx_INSTANCE);
 
   /* TX/RX direction */
   LL_USART_SetTransferDirection(USARTx_INSTANCE, LL_USART_DIRECTION_TX_RX);
@@ -98,11 +123,11 @@ static void Configure_USART(void)
 
   /* No Hardware Flow control */
   /* Reset value is LL_USART_HWCONTROL_NONE */
-   LL_USART_SetHWFlowCtrl(USARTx_INSTANCE, LL_USART_HWCONTROL_NONE);
+  LL_USART_SetHWFlowCtrl(USARTx_INSTANCE, LL_USART_HWCONTROL_NONE);
 
   /* Oversampling by 16 */
   /* Reset value is LL_USART_OVERSAMPLING_16 */
-   LL_USART_SetOverSampling(USARTx_INSTANCE, LL_USART_OVERSAMPLING_16);
+  LL_USART_SetOverSampling(USARTx_INSTANCE, LL_USART_OVERSAMPLING_16);
 
   /* Set Baudrate to 115200 using APB frequency set to 120000000/APB_Div Hz */
   /* Frequency available for USART peripheral can also be calculated through LL RCC macro */
