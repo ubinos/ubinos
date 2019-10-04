@@ -266,15 +266,15 @@ _heap_block_pt _heap_n_group_expand(_heap_pt heap, unsigned int asize) {
 			region->size += b1asize;
 		}
 		else {
-			addr = NULL;
+			addr = 0;
 		}
 		bsp_ubik_exitcrit();
 	}
 	else {
-		addr = NULL;
+		addr = 0;
 	}
 
-	if (NULL == addr) {
+	if (0 == addr) {
 		b1 = NULL;
 		goto end0;
 	}
@@ -908,7 +908,7 @@ void * _heap_n_group_allocate_block(_heap_pt heap, unsigned int size) {
 
 end0:
 	if (NULL == b1) {
-		tmp = NULL;
+		tmp = 0;
 	}
 	else {
 		heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);

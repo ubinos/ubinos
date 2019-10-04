@@ -116,7 +116,7 @@ _heap_block_pt _heap_r_bestfit_expand(_heap_pt heap, unsigned int asize) {
 int _heap_r_bestfit_reduce(_heap_pt heap) {
 	#define LOGM_TAG	"_heap_r_bestfit_reduce         "
 
-	return NULL;
+	return 0;
 
 	#undef LOGM_TAG
 }
@@ -148,7 +148,7 @@ void * _heap_r_bestfit_allocate_block(_heap_pt heap, unsigned int size) {
 int _heap_r_bestfit_release_block(_heap_pt heap, void * ptr) {
 	#define LOGM_TAG	"_heap_r_bestfit_release_block  "
 
-	return NULL;
+	return 0;
 
 	#undef LOGM_TAG
 }
