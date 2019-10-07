@@ -55,7 +55,7 @@
   * @param  None
   * @retval None
   */
-void SystemClock_Config(void)
+__WEAK void SystemClock_Config(void)
 {
   /* Enable HSE oscillator */
   LL_RCC_HSE_Enable();
@@ -101,7 +101,7 @@ void SystemClock_Config(void)
   * @param  None
   * @retval None
   */
-void SystemInit_ExtMemCtl(void)
+__WEAK void SystemInit_ExtMemCtl(void)
 {
   __IO uint32_t tmp = 0x00;
 

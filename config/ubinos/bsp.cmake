@@ -297,6 +297,9 @@ else()
     
 endif()
 
+if(INCLUDE__UBINOS__BSP)
+	set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_BSP_PRESENT")
+endif()
 
 set(_tmp_all_flags "${_tmp_all_flags} -g3")
 set(_tmp_all_flags "${_tmp_all_flags} -Wall -Werror -fmessage-length=0")
