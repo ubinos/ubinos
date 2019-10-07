@@ -143,6 +143,14 @@ macro(___project_add_app)
                         ${CMAKE_CURRENT_BINARY_DIR}/flash_writer.elf)
     endif()
 
+    if(NOT ${UBINOS__BSP__OPENOCD_CONFIG_FILE} STREQUAL "")
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                        ${UBINOS__BSP__OPENOCD_CONFIG_FILE}
+                        ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg)
+    endif()
+
     if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD

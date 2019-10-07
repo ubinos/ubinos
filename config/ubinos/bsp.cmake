@@ -122,6 +122,8 @@ set_cache_default(UBINOS__BSP__LINKSCRIPT_FILE                                  
 set_cache_default(UBINOS__BSP__FLASH_WRITER_FILE                                ""      PATH "Flash writer file")
 set_cache_default(UBINOS__BSP__SYS_INIT_FILE                                    ""      PATH "System initiation file")
 
+set_cache_default(UBINOS__BSP__OPENOCD_CONFIG_FILE                              ""      PATH "OpenOCD config file")
+
 set_cache_default(UBINOS__BSP__GDBSCRIPT_FILE_ATTACH                            ""      PATH "Gdb script file to attach")
 set_cache_default(UBINOS__BSP__GDBSCRIPT_FILE_DEBUG                             ""      PATH "Gdb script file to debug")
 set_cache_default(UBINOS__BSP__GDBSCRIPT_FILE_RUN                               ""      PATH "Gdb script file to run")
