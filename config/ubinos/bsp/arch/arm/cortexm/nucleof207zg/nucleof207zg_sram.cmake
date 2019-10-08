@@ -10,8 +10,8 @@ set_cache(UBINOS__BSP__LINKSCRIPT_FILE                                          
 set_cache(UBINOS__BSP__GDBSCRIPT_FILE_LOAD                                        "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/gdb_sram_load_openocd.gdb"       PATH)
 set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET                                       "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/gdb_sram_reset_openocd.gdb"      PATH)
 
-set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD                                        "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm3221geval/t32_sram_load.cmm"  PATH)
-set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET                                       "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm3221geval/t32_sram_reset.cmm" PATH)
+set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD                                        "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nucleof207zg/t32_sram_load.cmm"   PATH)
+set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET                                       "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nucleof207zg/t32_sram_reset.cmm"  PATH)
 
-include(${CMAKE_CURRENT_LIST_DIR}/stm3221geval.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/nucleof207zg.cmake)
 

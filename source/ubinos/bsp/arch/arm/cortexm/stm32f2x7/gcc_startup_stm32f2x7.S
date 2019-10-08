@@ -28,7 +28,7 @@
 #include <ubinos_config.h>
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32F217IG)
+#if (UBINOS__BSP__CPU_MODEL__STM32F2X7 == 1)
 
     
   .syntax unified
@@ -598,7 +598,7 @@ Default_Handler:
    .weak      HASH_RNG_IRQHandler
    .thumb_set HASH_RNG_IRQHandler,Default_Handler
 
-#endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32F217IG) */
+#endif /* (UBINOS__BSP__CPU_MODEL__STM32F2X7 == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

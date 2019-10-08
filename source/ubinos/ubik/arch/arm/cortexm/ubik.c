@@ -31,7 +31,7 @@
 #include "../../../_ubik.h"
 
 #if (INCLUDE__UBINOS__UBIK == 1)
-#if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__CORTEX_M4) || (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__CORTEX_M3)
+#if (UBINOS__BSP__CPU_TYPE__CORTEX_MX == 1)
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -345,7 +345,7 @@ void _ubik_task_schedule_irq() {
     }
 }
 
-#endif /* (UBINOS__BSP__CPU_TYPE == ...) */
+#endif /* (UBINOS__BSP__CPU_TYPE__CORTEX_MX == 1) */
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
 

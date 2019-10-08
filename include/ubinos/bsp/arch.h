@@ -46,18 +46,16 @@ extern "C"
 #include <ubinos_config.h>
 #include <ubinos/type.h>
 
-#if   (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM7X256) || (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM7X512)
+#if   (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__SAM7X256EK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__SAM7X512EK)
 #include "arch/arm/classic/sam7xxxxek.h"
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM9XE512)
+#elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__SAM9XE512EK)
 #include "arch/arm/classic/sam9xexxxek.h"
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM4SD32C)
-#include "arch/arm/cortexm/sam4sek2.h"
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
+#elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52DK)
 #include "arch/arm/cortexm/nrf52dk.h"
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32F217IG)
+#elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NUCLEOF207ZG)
 #include "arch/arm/cortexm/stm3221geval.h"
 #else
-#error "Unsupported UBINOS__BSP__CPU_MODEL"
+#error "Unsupported UBINOS__BSP__BOARD_MODEL"
 #endif
 
 #ifndef __ASSEMBLY__

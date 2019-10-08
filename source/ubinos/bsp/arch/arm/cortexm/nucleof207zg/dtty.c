@@ -32,7 +32,7 @@
 #include "../_bsp.h"
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL)
+#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NUCLEOF207ZG)
 
 #if (UBINOS__BSP__USE_DTTY == 1)
 
@@ -45,34 +45,17 @@
 #define USARTx_INSTANCE               USART3
 #define USARTx_CLK_ENABLE()           LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3)
 
-#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USARTx_TX_PIN                 LL_GPIO_PIN_10
-#define USARTx_TX_GPIO_PORT           GPIOC
+#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD)
+#define USARTx_TX_PIN                 LL_GPIO_PIN_8
+#define USARTx_TX_GPIO_PORT           GPIOD
 #define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_AF_7)
 
-#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USARTx_RX_PIN                 LL_GPIO_PIN_11
-#define USARTx_RX_GPIO_PORT           GPIOC
+#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOD)
+#define USARTx_RX_PIN                 LL_GPIO_PIN_9
+#define USARTx_RX_GPIO_PORT           GPIOD
 #define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_AF_7)
 
 #define APB_Div 4
-
-#elif (UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER == 6)
-
-#define USARTx_INSTANCE               USART6
-#define USARTx_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART6)
-
-#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USARTx_TX_PIN                 LL_GPIO_PIN_6
-#define USARTx_TX_GPIO_PORT           GPIOC
-#define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_AF_8)
-
-#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USARTx_RX_PIN                 LL_GPIO_PIN_7
-#define USARTx_RX_GPIO_PORT           GPIOC
-#define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_AF_8)
-
-#define APB_Div 2
 
 #else
 
@@ -336,6 +319,6 @@ int dtty_setecho(int echo) {
 
 #endif /* (UBINOS__BSP__USE_DTTY == ...) */
 
-#endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL) */
+#endif /* ((UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NUCLEOF207ZG) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

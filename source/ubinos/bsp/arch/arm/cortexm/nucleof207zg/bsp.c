@@ -30,7 +30,7 @@
 #include "../_bsp.h"
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL)
+#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NUCLEOF207ZG)
 
 #include "../stm32f2/stm32f2xx_ll_system.h"
 #include "../stm32f2/stm32f2xx_ll_rcc.h"
@@ -45,8 +45,8 @@
  *            AHB Prescaler                  = 1
  *            APB1 Prescaler                 = 4
  *            APB2 Prescaler                 = 2
- *            HSE Frequency(Hz)              = 25000000
- *            PLL_M                          = 25
+ *            HSI Frequency(Hz)              = 80000000
+ *            PLL_M                          = 8
  *            PLL_N                          = 240
  *            PLL_P                          = 2
  *            VDD(V)                         = 3.3
@@ -57,6 +57,7 @@
  */
 __WEAK void SystemClock_Config(void) {
 	/* Enable HSE oscillator */
+	LL_RCC_HSE_EnableBypass();
 	LL_RCC_HSE_Enable();
 	while (LL_RCC_HSE_IsReady() != 1) {
 	};
@@ -65,7 +66,7 @@ __WEAK void SystemClock_Config(void) {
 	LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
 
 	/* Main PLL configuration and activation */
-	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_25, 240, LL_RCC_PLLP_DIV_2);
+	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_8, 240, LL_RCC_PLLP_DIV_2);
 	LL_RCC_PLL_Enable();
 	while (LL_RCC_PLL_IsReady() != 1) {
 	};
@@ -86,6 +87,6 @@ __WEAK void SystemClock_Config(void) {
 	SystemCoreClock = (UBINOS__BSP__CLOCK_FREQ_MAIN * 1000);
 }
 
-#endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL) */
+#endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NUCLEOF207ZG) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

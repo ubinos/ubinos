@@ -1,16 +1,13 @@
 #include <ubinos/ubik_test.h>
 
-
 #if (INCLUDE__APP__ubik_tester == 1)
-
 
 #include <stdio.h>
 #include <stdlib.h>
 
+static void rootfunc(void *arg);
 
-static void rootfunc(void * arg);
-
-int appmain(int argc, char * argv[]) {
+int appmain(int argc, char *argv[]) {
 	int r;
 
 	printf("\n\n\n\r");
@@ -28,7 +25,7 @@ int appmain(int argc, char * argv[]) {
 	return 0;
 }
 
-static void rootfunc(void * arg) {
+static void rootfunc(void *arg) {
 	int r;
 
 	//logm_setlevel(LOGM_CATEGORY__HEAP, LOGM_LEVEL__INFO);
@@ -59,19 +56,17 @@ static void rootfunc(void * arg) {
 		task_sleep(5000);
 	}
 
-    printf("\n\r");
+	printf("\n\r");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-    r = heap_printheapinfo(NULL);
-    if (0 == r) {
-        printf("\n\r");
-        printf("================================================================================\n\r");
-        printf("\n\r");
-    }
+	r = heap_printheapinfo(NULL);
+	if (0 == r) {
+		printf("\n\r");
+		printf("================================================================================\n\r");
+		printf("\n\r");
+	}
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
 }
 
-
 #endif /* (INCLUDE__APP__ubik_tester == 1) */
-
 
