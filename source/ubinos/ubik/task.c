@@ -1480,6 +1480,7 @@ void _task_init(_task_pt task) {
 	#endif /* !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1) */
 
 	task->name[0]				= 0;
+	task->name[UBINOS__UBIK__TASK_NAME_SIZE_MAX] = 0;
 
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	edlist_link_init(&task->kernel_monitor_tasklist_link);
