@@ -8,6 +8,7 @@
 
 static int clihookfunc(char *str, int max, void *arg);
 static void clihelphookfunc();
+static void mycmd();
 
 int appmain(int argc, char *argv[]) {
 	int r;
@@ -53,21 +54,22 @@ static int clihookfunc(char *str, int max, void *arg) {
 	tmax = max;
 	targ = arg;
 	(void) targ;
-#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
-	if (3 < tmax && 0 == strncmp(tstr, "ki", 3)) {
-		printf("\n\r");
-		ubik_printkernelinfo();
+
+	if (strncmp(tstr, "mc", tmax) == 0) {
+		mycmd();
 		r = 0;
 	}
-#endif /* !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) */
 
 	return r;
 }
 
 static void clihelphookfunc() {
-#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
-	printf("ki          : kernel information\n\r");
-#endif /* !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) */
+	printf("mc          : my command\n\r");
+}
+
+static void mycmd() {
+	printf("\n\r");
+	printf("do my command\n\r");
 }
 
 #endif /* (INCLUDE__APP__cli_tester == 1) */

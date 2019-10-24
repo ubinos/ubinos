@@ -37,11 +37,11 @@
 
 #define CLI_PROMPT__DEFAULT	"cli> "
 #define CLI_SLEEP_TICK 1
-#define CLI_BUF_SIZE 128
-#define CLI_PROMPT_SIZE 16
+#define CLI_BUF_SIZE 127
+#define CLI_PROMPT_SIZE 31
 
-char _cli_buf[CLI_BUF_SIZE] = { 0, };
-char _cli_prompt[CLI_PROMPT_SIZE] = { 0, };
+char _cli_buf[CLI_BUF_SIZE + 1] = { 0, };
+char _cli_prompt[CLI_PROMPT_SIZE + 1] = { 0, };
 
 cli_hookfunc_ft _cli_hookfunc = NULL;
 void *_cli_hookarg = NULL;
@@ -126,7 +126,7 @@ static int cli_rootfunc(char *str, int max, void *arg) {
 	tstr = str;
 	tmax = max;
 	targ = arg;
-	if (4 < tmax && 0 == strncmp(tstr, "set ", 4)) {
+	if (tmax > 4 && strncmp(tstr, "set ", 4) == 0) {
 		printf("\n\r");
 		tstr = &str[4];
 		tmax = max - 4;
@@ -134,12 +134,19 @@ static int cli_rootfunc(char *str, int max, void *arg) {
 		r = cli_cmdfunc__set(tstr, tmax, targ);
 	}
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	else if (3 < tmax && 0 == strncmp(tstr, "mi", 3)) {
+	else if (strncmp(tstr, "mi", tmax) == 0) {
 		printf("\n\r");
 		heap_printheapinfo(NULL);
 		r = 0;
 	}
-#endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
+#endif
+#if ( (INCLUDE__UBINOS__UBIK == 1) && !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) )
+	else if (strncmp(tstr, "ki", tmax) == 0) {
+		printf("\n\r");
+		ubik_printkernelinfo();
+		r = 0;
+	}
+#endif
 
 	return r;
 }
@@ -148,11 +155,14 @@ static int cli_cmdfunc__help(char *str, int max, void *arg) {
 	printf("h           : help\n\r");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
 	printf("mi          : memory information\n\r");
-#endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
+#endif
+#if ( (INCLUDE__UBINOS__UBIK == 1) && !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) )
+	printf("ki          : kernel information\n\r");
+#endif
+	printf("set echo    : set echo\n\r");
 #if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
 	printf("set logm    : set log message level\n\r");
-#endif /* !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1) */
-	printf("set echo    : set echo\n\r");
+#endif
 
 	return 0;
 }

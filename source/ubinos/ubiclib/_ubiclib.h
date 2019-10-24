@@ -44,6 +44,7 @@ extern "C" {
 
 #include <ubinos/bsp.h>
 #include <ubinos/bsp_ubik.h>
+#include <ubinos/ubik.h>
 #include <ubinos/ubiclib.h>
 
 /**
