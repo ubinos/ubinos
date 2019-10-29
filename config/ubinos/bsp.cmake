@@ -138,6 +138,9 @@ set_cache_default(UBINOS__BSP__GDBSCRIPT_FILE_RESET                             
 set_cache_default(UBINOS__BSP__T32SCRIPT_FILE_LOAD                              ""      PATH "Trace32 script file to load")
 set_cache_default(UBINOS__BSP__T32SCRIPT_FILE_RESET                             ""      PATH "Trace32 script file to reset")
 
+set_cache_default(UBINOS__BSP__GDBSERVER_HOST                                   ""      PATH "GDB server host name or IP")
+set_cache_default(UBINOS__BSP__GDBSERVER_PORT                                   ""      PATH "GDB server port number")
+
 set_cache_default(UBINOS__BSP__DOXYGEN_FILE                                     "${PROJECT_UBINOS_DIR}/resource/ubinos/doc/Doxyfile" PATH "Doxygen file")
 
 ########

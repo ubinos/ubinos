@@ -225,6 +225,72 @@ macro(___project_add_app)
                         ${PROJECT_EXE_NAME}.bin)
     endif()
 
+    if(NOT ${UBINOS__BSP__GDBSERVER_HOST} STREQUAL "")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+    endif()
+
+    if(NOT ${UBINOS__BSP__GDBSERVER_PORT} STREQUAL "")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+        add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX} replace_string
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+    endif()
+
     if(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT AND NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
