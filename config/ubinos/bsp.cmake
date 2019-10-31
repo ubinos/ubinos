@@ -74,10 +74,11 @@ set_cache_default(UBINOS__BSP__CPU_TYPE__CORTEX_MX                              
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA")
 
+set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
+
 set_cache_default(UBINOS__BSP__NRF52_NRF52                                      TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_NRF52832_XXAA                              TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_NRF52_PAN_74                               TRUE    BOOL "")
-set_cache_default(UBINOS__BSP__NRF52_FLOAT_ABI_HARD                             TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT                         FALSE   BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_NAME                            ""      STRING "[S132]")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION                 ""      STRING "[6]")
@@ -207,8 +208,18 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA")
     
-        set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
-        set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv4-sp-d16")
+        if(UBINOS__BSP__USE_SOFTFLOAT)
+        
+            set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
+        
+        else()
+            
+            set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
+            set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv4-sp-d16")
+            set(_tmp_all_flags "${_tmp_all_flags} -DFLOAT_ABI_HARD")
+            
+        endif()
+        
         
         if(UBINOS__BSP__NRF52_NRF52)
         
@@ -225,12 +236,6 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         if(UBINOS__BSP__NRF52_NRF52_PAN_74)
         
             set(_tmp_all_flags "${_tmp_all_flags} -DNRF52_PAN_74")
-            
-        endif()
-        
-        if(UBINOS__BSP__NRF52_FLOAT_ABI_HARD)
-        
-            set(_tmp_all_flags "${_tmp_all_flags} -DFLOAT_ABI_HARD")
             
         endif()
         

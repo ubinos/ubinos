@@ -41,7 +41,6 @@
 	@echo ""
 	@echo ""
 
-
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 	@echo ""
 	@echo ""
@@ -88,6 +87,18 @@
 	@echo ""
 	@echo ""
 	make -f makefile.mk $@ CONFIG_NAME=ubik_tester_sam9xe512ek
+	@echo ""
+	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : command line interface tester application"
+	@echo "Target board    : sam9xe512ek"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=cli_tester_sam9xe512ek
 	@echo ""
 	@echo ""
 
