@@ -1,0 +1,116 @@
+;
+; Copyright (C) 2009 Sung Ho Park
+; Contact: ubinos.org@gmail.com
+;
+; This file is part of the bsp_sam7x256ek component of the Ubinos.
+;
+; GNU General Public License Usage
+; This file may be used under the terms of the GNU
+; General Public License version 3.0 as published by the Free Software
+; Foundation and appearing in the file license_gpl3.txt included in the
+; packaging of this file. Please review the following information to
+; ensure the GNU General Public License version 3.0 requirements will be
+; met: http://www.gnu.org/copyleft/gpl.html.
+;
+; GNU Lesser General Public License Usage
+; Alternatively, this file may be used under the terms of the GNU Lesser
+; General Public License version 2.1 as published by the Free Software
+; Foundation and appearing in the file license_lgpl.txt included in the
+; packaging of this file. Please review the following information to
+; ensure the GNU Lesser General Public License version 2.1 requirements
+; will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+;
+; Commercial Usage
+; Alternatively, licensees holding valid commercial licenses may 
+; use this file in accordance with the commercial license agreement 
+; provided with the software or, alternatively, in accordance with the 
+; terms contained in a written agreement between you and rightful owner.
+;
+
+; --------------------------------------------------------------------------------
+
+print "begin"
+
+; --------------------------------------------------------------------------------
+; initialize and start the debugger
+
+RESet
+SYStem.RESet
+SYStem.CPU STM32F207ZG
+SYStem.CONFIG.DEBUGPORTTYPE SWD
+IF hardware.COMBIPROBE()||hardware.UTRACE()
+(
+  ; The trace was tested on a  nRF52 Development Kit without trace signals on a debug header.
+  ; To test the trace a test adapter has used, that maps the trace signals according to the
+  ; MIPI34 spec.
+  SYStem.CONFIG.CONNECTOR MIPI34
+)
+SYStem.Option DUALPORT ON
+SYStem.MemAccess DAP
+SYStem.JtagClock CTCK 10MHz
+SYStem.Up
+
+; --------------------------------------------------------------------------------
+; Setup pin multiplexing for parallel trace.
+; Prevent error during power saving states and stop peripherals in debug mode
+  Data.Set E:0xE0042004 %Long 0yXXXXxxxxXXX11111XXXXxxxxXXXXx111  ; DBGMCU_CR
+; Setup GPIO clock
+  Data.Set E:0x40023830 %Long 0yXXXXxxxxXXXXxxxxXXXXxxxxXXX1xxxx  ; RCC_AHB1ENR
+; Setup pin multiplexing for using the 4 bit trace
+  Data.Set E:0x40021000 %Long 0yXXXXxxxxXXXXxxxxXX1010101010xxxx  ; GPOIE_PORTMODE
+  Data.Set E:0x40021008 %Long 0yXXXXxxxxXXXXxxxxXX1111111111xxxx  ; GPOIE_PORTSPEED
+  Data.Set E:0x40021020 %Long 0yXXXX00000000000000000000XXXXxxxx  ; GPIOE_AFRL
+
+; --------------------------------------------------------------------------------
+; initialize offchip-trace (ETM ON, ITM ON)
+IF hardware.COMBIPROBE()||hardware.UTRACE()||Analyzer()
+(
+  ; set PinMux and enable Clocks
+
+  TPIU.PortSize 1
+  TPIU.PortMode Continuous
+  ITM.DataTrace CorrelatedData
+  ITM.ON
+  ETM.Trace ON
+  ETM.ON
+)
+IF hardware.COMBIPROBE()||hardware.UTRACE()
+(
+  Trace.METHOD CAnalyzer
+  Trace.AutoInit ON
+  IF VERSION.BUILD.BASE()>=74752.
+  (
+    CAnalyzer.AutoFocus
+  )
+  ELSE
+  (
+    ; for uTrace & Combiprobe use manual calibration
+    ; CAnalyzer.ClockDELAY Large
+  )
+)
+IF Analyzer()
+(
+  Trace.METHOD Analyzer
+  Trace.AutoInit ON
+  Trace.AutoFocus
+)
+
+; --------------------------------------------------------------------------------
+; Load
+
+Data.LOAD.Elf ~~~~/app.elf /nocode
+
+; --------------------------------------------------------------------------------
+
+Register.Set PC Reset_Handler
+
+Break.Set main
+Mode.Hll
+
+; --------------------------------------------------------------------------------
+
+print "end"
+
+ENDDO
+
+
