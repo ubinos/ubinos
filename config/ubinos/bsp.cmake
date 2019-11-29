@@ -109,6 +109,8 @@ set_cache_default(UBINOS__BSP__NRF52_ENABLE_TRACE                               
 set_cache_default(UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER "3"              STRING "[3 | 6]")
 set_cache_default(UBINOS__BSP__STM32F2_HSE_VALUE              "25000000U"      STRING "Value of the External oscillator in Hz [25000000U | 8000000U]")
 
+set_cache_default(UBINOS__BSP__STM32F2_RCC_HSE_CONFIG         "BYPASS"         STRING "[BYPASS| ON | OFF]")
+
     else()
 
         message(FATAL_ERROR "Unsupported UBINOS__BSP__BOARD_MODEL")

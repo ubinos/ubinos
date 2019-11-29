@@ -34,6 +34,8 @@ set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET                                     
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD                                        "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm3221geval/t32_flash_load.cmm"   PATH)
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET                                       "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm3221geval/t32_flash_reset.cmm"  PATH)
 
+set_cache(UBINOS__BSP__STM32F2_RCC_HSE_CONFIG                                     "ON"            STRING)
+
 set_cache(UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM                                    "GROUP"         STRING)
 set_cache(UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE                                     "MUTEX"         STRING)
 set_cache(UBINOS__UBICLIB__HEAP_DIR0_M                                            4               STRING)

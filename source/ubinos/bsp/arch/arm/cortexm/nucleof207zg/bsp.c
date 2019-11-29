@@ -57,10 +57,21 @@
  */
 __WEAK void SystemClock_Config(void) {
 	/* Enable HSE oscillator */
+#if (UBINOS__BSP__STM32F2_RCC_HSE_CONFIG == UBINOS__BSP__STM32F2_RCC_HSE_CONFIG__ON)
+	LL_RCC_HSE_Enable();
+	while (LL_RCC_HSE_IsReady() != 1) {
+	};
+#elif (UBINOS__BSP__STM32F2_RCC_HSE_CONFIG == UBINOS__BSP__STM32F2_RCC_HSE_CONFIG__BYPASS)
 	LL_RCC_HSE_EnableBypass();
 	LL_RCC_HSE_Enable();
 	while (LL_RCC_HSE_IsReady() != 1) {
 	};
+#elif (UBINOS__BSP__STM32F2_RCC_HSE_CONFIG == UBINOS__BSP__STM32F2_RCC_HSE_CONFIG__OFF)
+    dtty_puts("Unsupported UBINOS__BSP__STM32F2_RCC_HSE_CONFIG option\r\n", 80);
+    bsp_abortsystem();
+#else
+	#error "Unsupported UBINOS__BSP__STM32F2_RCC_HSE_CONFIG option"
+#endif
 
 	/* Set FLASH latency */
 	LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
