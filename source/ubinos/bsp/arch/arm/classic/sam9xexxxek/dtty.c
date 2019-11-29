@@ -96,6 +96,14 @@ int dtty_getc(char * ch_p) {
 			}
 		}
 	}
+	else {
+		for (i=0; ; i++)
+		{
+			if (AT91C_BASE_DBGU->DBGU_CSR & AT91C_US_RXRDY) {
+				break;
+			}
+		}
+	}
 #else
 	for (i=0; ; i++)
 	{

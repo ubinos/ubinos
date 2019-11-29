@@ -179,6 +179,14 @@ int dtty_getc(char *ch_p) {
 			}
 		}
 	}
+	else {
+		for (i=0; ; i++)
+		{
+			if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
+				break;
+			}
+		}
+	}
 #else
 	for (i=0; ; i++)
 	{

@@ -147,6 +147,14 @@ int dtty_getc(char * ch_p) {
             }
         }
     }
+    else {
+        for (i=0;; i++)
+        {
+            if(NRF_UART0->EVENTS_RXDRDY) {
+                break;
+            }
+        }
+    }
 #else
     for (i=0;; i++)
     {
