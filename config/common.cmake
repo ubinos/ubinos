@@ -52,6 +52,11 @@ macro(___project_config_end)
     file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_asm.txt "${CMAKE_ASM_FLAGS}")
     file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_c.txt "${CMAKE_C_FLAGS}")
     file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS}")
+    
+    file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/../Default)
+    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_asm.txt "${CMAKE_ASM_FLAGS}")
+    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_c.txt "${CMAKE_C_FLAGS}")
+    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS}")
 endmacro(___project_config_end)
 
 macro(___project_add_app)
