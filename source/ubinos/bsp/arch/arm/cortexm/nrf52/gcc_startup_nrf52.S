@@ -23,7 +23,7 @@ NOTICE: This file has been modified by Nordic Semiconductor ASA.
 #include <ubinos_config.h>
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
+#if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA) || (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA)
 
     .syntax unified
     .arch armv7e-m
@@ -132,6 +132,7 @@ __isr_vector:
     .long   RTC2_IRQHandler
     .long   I2S_IRQHandler
     .long   FPU_IRQHandler
+#if   (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */
@@ -141,6 +142,19 @@ __isr_vector:
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */
+#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA)
+    .long   USBD_IRQHandler
+    .long   UARTE1_IRQHandler
+    .long   QSPI_IRQHandler
+    .long   CRYPTOCELL_IRQHandler
+    .long   0                           /*Reserved */
+    .long   0                           /*Reserved */
+    .long   PWM3_IRQHandler
+    .long   0                           /*Reserved */
+    .long   SPIM3_IRQHandler
+#else
+    #error "Unsupported UBINOS__BSP__CPU_MODEL"
+#endif
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */
@@ -474,9 +488,20 @@ Default_Handler:
     IRQ  RTC2_IRQHandler
     IRQ  I2S_IRQHandler
     IRQ  FPU_IRQHandler
+#if   (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
+#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA)
+    IRQ  USBD_IRQHandler
+    IRQ  UARTE1_IRQHandler
+    IRQ  QSPI_IRQHandler
+    IRQ  CRYPTOCELL_IRQHandler
+    IRQ  PWM3_IRQHandler
+    IRQ  SPIM3_IRQHandler
+#else
+    #error "Unsupported UBINOS__BSP__CPU_MODEL"
+#endif
 
   .end
 
-#endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA) */
+#endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA) || (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

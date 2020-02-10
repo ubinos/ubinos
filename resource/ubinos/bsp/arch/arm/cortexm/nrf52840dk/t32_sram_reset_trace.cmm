@@ -1,0 +1,114 @@
+;
+; Copyright (C) 2009 Sung Ho Park
+; Contact: ubinos.org@gmail.com
+;
+; This file is part of the bsp_sam7x256ek component of the Ubinos.
+;
+; GNU General Public License Usage
+; This file may be used under the terms of the GNU
+; General Public License version 3.0 as published by the Free Software
+; Foundation and appearing in the file license_gpl3.txt included in the
+; packaging of this file. Please review the following information to
+; ensure the GNU General Public License version 3.0 requirements will be
+; met: http://www.gnu.org/copyleft/gpl.html.
+;
+; GNU Lesser General Public License Usage
+; Alternatively, this file may be used under the terms of the GNU Lesser
+; General Public License version 2.1 as published by the Free Software
+; Foundation and appearing in the file license_lgpl.txt included in the
+; packaging of this file. Please review the following information to
+; ensure the GNU Lesser General Public License version 2.1 requirements
+; will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+;
+; Commercial Usage
+; Alternatively, licensees holding valid commercial licenses may 
+; use this file in accordance with the commercial license agreement 
+; provided with the software or, alternatively, in accordance with the 
+; terms contained in a written agreement between you and rightful owner.
+;
+
+; --------------------------------------------------------------------------------
+
+print "begin"
+
+; --------------------------------------------------------------------------------
+; initialize and start the debugger
+
+RESet
+SYStem.RESet
+SYStem.CPU NRF52840QI
+SYStem.CONFIG.DEBUGPORTTYPE SWD
+IF COMBIPROBE()||UTRACE()
+(
+  SYStem.CONFIG.CONNECTOR MIPI20T
+)
+; nReset is likely to be configured as GPIO - use SYSRESETREQ only
+SYStem.Option EnReset OFF
+SYStem.Option DUALPORT ON
+SYStem.MemAccess DAP
+SYStem.JtagClock CTCK 10MHz
+Trace.DISable
+SYStem.Up
+
+; --------------------------------------------------------------------------------
+; initialize OFFCHIP trace (ETM, ITM)
+IF COMBIPROBE()||UTRACE()||Analyzer()
+(
+  ; set PinMux and enable Clocks
+  ; CLOCK.TRACECONFIG.TRACEMUX = Parallel, 32MHz
+  Data.Set AD:0x4000055C %Long 0x00020000
+  ; TraceClk P0.07 - Output, H0D1
+  Data.Set AD:0x5000071C %Long 0x00000303
+  ; TraceData[0] P1.00 - Output, H0D1
+  Data.Set AD:0x50000A00 %Long 0x00000303
+  ; TraceData[1] P0.11 - Output, H0D1
+  Data.Set AD:0x5000072C %Long 0x00000303
+  ; TraceData[2] P0.12 - Output, H0D1
+  Data.Set AD:0x50000730 %Long 0x00000303
+  ; TraceData[3] P1.09 - Output, H0D1
+  Data.Set AD:0x50000A24 %Long 0x00000303
+
+  TPIU.PortSize 4
+  TPIU.PortMode Continuous
+  ITM.DataTrace CorrelatedData
+  ITM.ON
+  ETM.Trace ON
+  ETM.ON
+)
+IF COMBIPROBE()||UTRACE()
+(
+  Trace.METHOD CAnalyzer
+  Trace.AutoInit ON
+  IF CAnalyzer.FEATURE(TPIU.TERMINATION)
+  (
+    ; pins have limited output current with low supply voltage -> disable Termination
+    Trace.TERMination OFF
+  )
+  Trace.AutoFocus
+)
+IF Analyzer()
+(
+  Trace.METHOD Analyzer
+  Trace.AutoInit ON
+  Trace.AutoFocus
+)
+
+; --------------------------------------------------------------------------------
+; Load
+
+Data.LOAD.Elf ~~~~/app.elf
+
+; --------------------------------------------------------------------------------
+
+Register.Set PC Reset_Handler
+
+Break.Set main
+Mode.Hll
+
+; --------------------------------------------------------------------------------
+
+print "end"
+
+ENDDO
+
+

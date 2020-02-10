@@ -14,9 +14,9 @@ set(INCLUDE__UBINOS__BSP                                                        
 set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
 set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M4 | CORTEX_M3]")
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
-set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | STM32F217IG | STM32F207ZG]")
+set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG]")
 
-set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | STM3221GEVAL | NUCLEOF207ZG]")
+set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | STM3221GEVAL | NUCLEOF207ZG]")
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | SDRAM | FLASH_SDRAM | SRAM_SDRAM]")
 
@@ -72,15 +72,27 @@ set_cache_default(UBINOS__BSP__CPU_TYPE__CORTEX_MX                              
 
     if(UBINOS__BSP__CPU_MODEL STREQUAL "SAM9XE512")
 
-    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA")
+    elseif((UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA") OR (UBINOS__BSP__CPU_MODEL STREQUAL "NRF52840XXAA"))
 
-set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
+        if(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA")
 
 set_cache_default(UBINOS__BSP__NRF52_NRF52                                      TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_NRF52832_XXAA                              TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_NRF52_PAN_74                               TRUE    BOOL "")
+
+        elseif(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52840XXAA")
+
+set_cache_default(UBINOS__BSP__NRF52_NRF52840_XXAA                              TRUE    BOOL "")
+
+        else()
+
+            message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
+
+        endif()
+
+set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT                         FALSE   BOOL "")
-set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_NAME                            ""      STRING "[S132]")
+set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_NAME                            ""      STRING "[S132 | S140]")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION                 ""      STRING "[6]")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            ""      PATH "nRF52 softdevice file")
 
@@ -98,7 +110,7 @@ set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F2XX                             
 
     if(UBINOS__BSP__BOARD_MODEL STREQUAL "SAM9XE512EK")
 
-    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52DK")
+    elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52DK") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52840DK"))
 
 set_cache_default(UBINOS__BSP__NRF52_CONFIG_GPIO_AS_PINRESET                    TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_ENABLE_SWO                                 FALSE   BOOL "")
@@ -208,7 +220,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
         set(_tmp_all_flags "${_tmp_all_flags} -fomit-frame-pointer")
         
-    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA")
+    elseif((UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA") OR (UBINOS__BSP__CPU_MODEL STREQUAL "NRF52840XXAA"))
     
         if(UBINOS__BSP__USE_SOFTFLOAT)
         
@@ -241,6 +253,12 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             
         endif()
         
+        if(UBINOS__BSP__NRF52_NRF52840_XXAA)
+        
+            set(_tmp_all_flags "${_tmp_all_flags} -DNRF52840_XXAA")
+            
+        endif()        
+        
         if(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT)
         
             set(_tmp_all_flags "${_tmp_all_flags} -DSOFTDEVICE_PRESENT")
@@ -272,7 +290,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
     if(UBINOS__BSP__BOARD_MODEL STREQUAL "SAM9XE512EK")
     
-    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52DK")
+    elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52DK") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52840DK"))
     
         if(UBINOS__BSP__NRF52_CONFIG_GPIO_AS_PINRESET)
         
@@ -309,7 +327,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     set(_tmp_all_flags "${_tmp_all_flags} -fno-strict-aliasing")
     set(_tmp_all_flags "${_tmp_all_flags} -fno-builtin")
     set(_tmp_all_flags "${_tmp_all_flags} -fshort-enums")
-    set(_tmp_all_flags "${_tmp_all_flags} -falign-functions=32")
+    set(_tmp_all_flags "${_tmp_all_flags} -falign-functions=64")
 
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections")

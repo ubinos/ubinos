@@ -48,11 +48,22 @@ extern "C" {
 #if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
 #include "nrf/nrf.h"
 #include "nrf/system_nrf52.h"
+#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA)
+#include "nrf/nrf.h"
+#include "nrf/system_nrf52840.h"
 #else
 #error "Unsupported UBINOS__BSP__CPU_MODEL"
 #endif
 
 /* Common definition for ARM Cortex M*/
+
+#if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
+#define NVIC_IRQN_END		38
+#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA)
+#define NVIC_IRQN_END		47
+#else
+#error "Unsupported UBINOS__BSP__CPU_MODEL"
+#endif
 
 #define SWINO__TASK_YIELD	1
 
@@ -60,7 +71,6 @@ extern "C" {
 #define NVIC_IRQN_CMSISAPI_TO_REAL(irqn)	(irqn + 16)
 
 #define NVIC_IRQN_START		0
-#define NVIC_IRQN_END		38
 
 #define NVIC_PRIO_GROUP		0
 
@@ -125,6 +135,10 @@ unsigned int arm_get_svcpend(void);
 
 #define NRF_CHIP_ID__NRF52832_REV_AABB	0x0005283241414242 // NRF52832_REV_AABB
 #define NRF_CHIP_ID__NRF52832_REV_AAE0	0x0005283241414530 // NRF52832_REV_AAE0
+
+#define NRF_CHIP_ID__NRF52840_REV_AABB	0x0005284041414242 // NRF52840_REV_AABB
+#define NRF_CHIP_ID__NRF52840_REV_AACA	0x0005284041414341 // NRF52840_REV_AACA
+#define NRF_CHIP_ID__NRF52840_REV_AAAB	0x0005284041414142 // NRF52840_REV_AAAB
 
 #ifdef	__cplusplus
 }

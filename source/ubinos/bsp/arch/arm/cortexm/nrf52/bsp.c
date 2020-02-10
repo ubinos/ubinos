@@ -30,7 +30,7 @@
 #include "../_bsp.h"
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
+#if (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA) || (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA)
 
 int bsp_getcpuclockfreq(unsigned int * freq_p) {
     if (NULL == freq_p) {
@@ -104,6 +104,6 @@ int bsp_getcpuid(unsigned char * buf, int max) {
     return 4;
 }
 
-#endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA) */
+#endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA) || (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

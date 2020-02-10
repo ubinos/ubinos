@@ -217,7 +217,7 @@ void SystemInit(void) {
 
     SystemCoreClockUpdate();
 
-#if (defined(NRF52832_XXAA) || defined(NRF52840_XXAA))
+#if defined(NRF52832_XXAA)
 #if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
     extern unsigned int relocated_isr_vector_start       __asm__ ("__relocated_isr_vector_start__");
     SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
