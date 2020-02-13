@@ -581,6 +581,18 @@
 	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_nucleof207zg
 	@echo ""
 	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : ubinos library with softdevice supporting ETM trace"
+	@echo "Target board    : nucleof207zg"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_nucleof207zg_trace
+	@echo ""
+	@echo ""
 
 
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"

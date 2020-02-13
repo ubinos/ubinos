@@ -1,89 +1,84 @@
 ###############################################################################
-#
-# This file must be included at the end.
-#
 
-###############################################################################
-
-_BASE_DIR               := $(realpath ..)
+_BASE_DIR                = $(realpath ..)
 
 ###############################################################################
 
 ifeq ($(strip $(CONFIG_NAME)),)
-_CONFIG_NAME            := default
+_CONFIG_NAME             = default
 else
-_CONFIG_NAME            := $(CONFIG_NAME)
+_CONFIG_NAME             = $(CONFIG_NAME)
 endif
 
 ifeq ($(strip $(CONFIG_DIR)),)
-_CONFIG_DIR             := $(_BASE_DIR)/app
+_CONFIG_DIR              = $(_BASE_DIR)/app
 else
-_CONFIG_DIR             := $(realpath $(CONFIG_DIR))
+_CONFIG_DIR              = $(realpath $(CONFIG_DIR))
 endif
 
 ifeq ($(strip $(LIBRARY_DIR)),)
 ifeq ($(lastword $(subst /, ,$(_BASE_DIR))),ubinos)
-_LIBRARY_DIR            := $(realpath ../..)
+_LIBRARY_DIR             = $(realpath ../..)
 else
-_LIBRARY_DIR            := $(_BASE_DIR)/library
+_LIBRARY_DIR             = $(_BASE_DIR)/library
 endif
 else
-_LIBRARY_DIR            := $(realpath $(LIBRARY_DIR))
+_LIBRARY_DIR             = $(realpath $(LIBRARY_DIR))
 endif
 
 ###############################################################################
 
 ifeq ($(strip $(UBINOS_DIR)),)
 ifeq ($(lastword $(subst /, ,$(_BASE_DIR))),ubinos)
-_UBINOS_DIR            := $(_BASE_DIR)
+_UBINOS_DIR             = $(_BASE_DIR)
 else
-_UBINOS_DIR            := $(_LIBRARY_DIR)/ubinos
+_UBINOS_DIR             = $(_LIBRARY_DIR)/ubinos
 endif
 else
-_UBINOS_DIR            := $(realpath $(UBINOS_DIR))
+_UBINOS_DIR             = $(realpath $(UBINOS_DIR))
 endif
 
 ifeq ($(strip $(TOOLBOX)),)
-_TOOLBOX               := $(_UBINOS_DIR)/make/toolbox.py
+_TOOLBOX                = $(_UBINOS_DIR)/make/toolbox.py
 else
-_TOOLBOX               := $(realpath $(TOOLBOX))
+_TOOLBOX                = $(realpath $(TOOLBOX))
 endif
 
 ###############################################################################
 
-_SOURCE_DIR            := $(_BASE_DIR)/source
+_SOURCE_DIR             = $(_BASE_DIR)/source
 
 ifeq ($(strip $(OUTPUT_DIR)),)
-_OUTPUT_DIR            := $(_BASE_DIR)/output/$(_CONFIG_NAME)
+_OUTPUT_DIR             = $(_BASE_DIR)/output/$(_CONFIG_NAME)
 else
-_OUTPUT_DIR            := $(OUTPUT_DIR)
+_OUTPUT_DIR             = $(OUTPUT_DIR)
 endif
 
 ###############################################################################
 
 ifeq ($(strip $(RESOURCE_DIR)),)
-_RESOURCE_DIR          := $(_BASE_DIR)/resource
+_RESOURCE_DIR           = $(_BASE_DIR)/resource
 else
-_RESOURCE_DIR          := $(realpath $(RESOURCE_DIR))
+_RESOURCE_DIR           = $(realpath $(RESOURCE_DIR))
 endif
 
 ifeq ($(strip $(MAKE_DIR)),)
-_MAKE_DIR              := $(_BASE_DIR)/make
+_MAKE_DIR               = $(_BASE_DIR)/make
 else
-_MAKE_DIR              := $(realpath $(MAKE_DIR))
+_MAKE_DIR               = $(realpath $(MAKE_DIR))
 endif
 
 ###############################################################################
 
 ifeq ($(strip $(JOBS)),)
-_JOBS                  := $(shell "$(_TOOLBOX)" cpu_count)
+_JOBS                   = $(shell "$(_TOOLBOX)" cpu_count)
 else
-_JOBS                  := $(JOBS)
+_JOBS                   = $(JOBS)
 endif
 ifeq ($(strip $(PRECMD)),)
-_PRECMD                := :
+_PRECMD                 = :
 else
-_PRECMD                := $(PRECMD)
+_PRECMD                 = $(PRECMD)
 endif
 
 ###############################################################################
