@@ -624,6 +624,7 @@ int _heap_n_bestfit_release_block(_heap_pt heap, void * ptr) {
 
 	region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
+	_block_check_freeable_and_abort(b1);
 	_block_check_boundary_and_abort(b1, 0);
 
 	tag = b1->tag;

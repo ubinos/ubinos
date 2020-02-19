@@ -786,6 +786,7 @@ int _heap_n_pgroup_release_block(_heap_pt heap, void * ptr) {
 	//maskm	= region->maskm;
 	//offset	= region->fbloffset;
 
+	_block_check_freeable_and_abort(b1);
 	_block_check_boundary_and_abort(b1, log2m);
 
 	tag = b1->tag;

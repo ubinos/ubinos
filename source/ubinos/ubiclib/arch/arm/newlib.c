@@ -34,6 +34,8 @@
 #if !(UBINOS__UBICLIB__NOSTDLIB == 1)
 
 #define _REENT_SMALL
+#undef _REENT_GLOBAL_STDIO_STREAMS
+
 //#define _RETARGETABLE_LOCKING
 
 //#include <_ansi.h>
@@ -43,7 +45,7 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
-//#include <reent.h>
+#include <sys/reent.h>
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>

@@ -311,15 +311,22 @@ extern "C" {
 
 	#define _check_boundary_and_abort(block, log2m) {																								\
 		if 		(!_check_header_boundary(block)) {																									\
-			logmfe("memory(0x%08x) is polluted (head boundary)",		(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
+			logmfe("memory(0x%08x) is polluted (head boundary)",		(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));			\
 			bsp_abortsystem();																														\
 		}																																			\
 		else if	(!_check_top_boundary(block)) {																										\
-			logmfe("memory(0x%08x) is polluted (top boundary)", 		(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
+			logmfe("memory(0x%08x) is polluted (top boundary)", 		(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));			\
 			bsp_abortsystem();																														\
 		}																																			\
 		else if	(!_check_bottom_boundary(block, log2m)) {																							\
 			logmfe("memory(0x%08x) is polluted (bottom boundary)", 	(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));				\
+			bsp_abortsystem();																														\
+		}																																			\
+	}
+
+	#define _check_freeable_and_abort(block) {																										\
+		if (_tag_to_a((block)->tag) != 0) {																											\
+			logmfe("memory(0x%08x) is not freeable (not allocated)",	(unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));			\
 			bsp_abortsystem();																														\
 		}																																			\
 	}
@@ -355,6 +362,7 @@ extern "C" {
 	#define _check_boundary(block, log2m)				1
 
 	#define _check_boundary_and_abort(block, log2m)
+	#define _check_freeable_and_abort(block)
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK == 1) */
 
@@ -588,6 +596,7 @@ typedef _heap_t * _heap_pt;
 		_kblr_check(k, b, l, r, log2m, m);																		\
 }
 
+#define _block_check_freeable_and_abort(block)				_check_freeable_and_abort(block)
 #define _block_check_boundary(block, log2m)					_check_boundary(block, log2m)
 #define _block_check_boundary_and_abort(block, log2m)		_check_boundary_and_abort(block, log2m)
 #define _block_set_boundary(block, log2m)					_set_boundary(block, log2m)

@@ -120,6 +120,7 @@ end0:
 _heap_block_pt _heap_r_wbuddy_expand(_heap_pt heap, unsigned int asize) {
 	#define LOGM_TAG	"_heap_r_wbuddy_expand            "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -128,6 +129,7 @@ _heap_block_pt _heap_r_wbuddy_expand(_heap_pt heap, unsigned int asize) {
 int _heap_r_wbuddy_reduce(_heap_pt heap) {
 	#define LOGM_TAG	"_heap_r_wbuddy_reduce            "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -136,6 +138,7 @@ int _heap_r_wbuddy_reduce(_heap_pt heap) {
 _heap_block_pt _heap_r_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block, int endflag) {
 	#define LOGM_TAG	"_heap_r_wbuddy_combine_block     "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -144,6 +147,7 @@ _heap_block_pt _heap_r_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
 _heap_block_pt _heap_r_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize) {
 	#define LOGM_TAG	"_heap_r_wbuddy_split_block       "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -152,6 +156,7 @@ _heap_block_pt _heap_r_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, u
 void * _heap_r_wbuddy_allocate_block(_heap_pt heap, unsigned int size) {
 	#define LOGM_TAG	"_heap_r_wbuddy_allocate_block    "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -160,6 +165,7 @@ void * _heap_r_wbuddy_allocate_block(_heap_pt heap, unsigned int size) {
 int _heap_r_wbuddy_release_block(_heap_pt heap, void * ptr) {
 	#define LOGM_TAG	"_heap_r_wbuddy_release_block     "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG

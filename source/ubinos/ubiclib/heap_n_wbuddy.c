@@ -1152,6 +1152,7 @@ int _heap_n_wbuddy_release_block(_heap_pt heap, void * ptr) {
 
 	//offset	= region->fbloffset;
 
+	_block_check_freeable_and_abort(b1);
 	_block_check_boundary_and_abort(b1, 1);
 
 	tag = b1->tag;

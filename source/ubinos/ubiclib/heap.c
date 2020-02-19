@@ -392,7 +392,7 @@ void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size) {
 		heap = _ubiclib_heap;
 	}
 
-	heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, size 0x%08x", bsp_task_getcur(), heap, dir, size);
+	heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, size 0x%08x ", bsp_task_getcur(), heap, dir, size);
 
 	if (NULL == heap) {
 		logme("heap is NULL");
@@ -434,7 +434,7 @@ int _heap_release_block(_heap_pt heap, void * ptr) {
 		heap = _ubiclib_heap;
 	}
 
-	heap_logmfd("0x%08x: called  : heap 0x%08x, ptr 0x%08x", bsp_task_getcur(), heap, ptr);
+	heap_logmfd("0x%08x: called  : heap 0x%08x, ptr 0x%08x ", bsp_task_getcur(), heap, ptr);
 
 	if (NULL == heap) {
 		logme("heap is NULL");

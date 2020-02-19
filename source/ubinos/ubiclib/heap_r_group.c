@@ -118,6 +118,7 @@ end0:
 _heap_block_pt _heap_r_group_expand(_heap_pt heap, unsigned int asize) {
 	#define LOGM_TAG	"_heap_r_group_expand            "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -126,6 +127,7 @@ _heap_block_pt _heap_r_group_expand(_heap_pt heap, unsigned int asize) {
 int _heap_r_group_reduce(_heap_pt heap) {
 	#define LOGM_TAG	"_heap_r_group_reduce            "
 
+	bsp_abortsystem();
 	return 0;
 
 	#undef LOGM_TAG
@@ -134,6 +136,7 @@ int _heap_r_group_reduce(_heap_pt heap) {
 _heap_block_pt _heap_r_group_combine_block(_heap_pt heap, _heap_block_pt block, int endflag) {
 	#define LOGM_TAG	"_heap_r_group_combine_block     "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -142,6 +145,7 @@ _heap_block_pt _heap_r_group_combine_block(_heap_pt heap, _heap_block_pt block, 
 _heap_block_pt _heap_r_group_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize) {
 	#define LOGM_TAG	"_heap_r_group_split_block       "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -150,6 +154,7 @@ _heap_block_pt _heap_r_group_split_block(_heap_pt heap, _heap_block_pt block, un
 void * _heap_r_group_allocate_block(_heap_pt heap, unsigned int size) {
 	#define LOGM_TAG	"_heap_r_group_allocate_block    "
 
+	bsp_abortsystem();
 	return NULL;
 
 	#undef LOGM_TAG
@@ -158,6 +163,7 @@ void * _heap_r_group_allocate_block(_heap_pt heap, unsigned int size) {
 int _heap_r_group_release_block(_heap_pt heap, void * ptr) {
 	#define LOGM_TAG	"_heap_r_group_release_block     "
 
+	bsp_abortsystem();
 	return 0;
 
 	#undef LOGM_TAG
