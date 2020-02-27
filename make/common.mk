@@ -49,7 +49,11 @@ endif
 _SOURCE_DIR             = $(_BASE_DIR)/source
 
 ifeq ($(strip $(OUTPUT_DIR)),)
+ifeq ($(strip $(OUTPUT_BASE_DIR)),)
 _OUTPUT_DIR             = $(_BASE_DIR)/output/$(_CONFIG_NAME)
+else
+_OUTPUT_DIR             = $(OUTPUT_BASE_DIR)/output/$(_CONFIG_NAME)
+endif
 else
 _OUTPUT_DIR             = $(OUTPUT_DIR)
 endif
@@ -226,9 +230,15 @@ common-rebuildd: cleand all
 
 common-load:
 	$(call begin_message)
+	@echo ""
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make reset
+	@echo ""
+	@echo ""
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make load
+	@echo ""
+	@echo ""
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make reset
+	@echo ""
 	$(call end_message)
 
 common-reset:
