@@ -80,15 +80,12 @@ int dtty_enable(void);
 int dtty_disable(void);
 
 /*!
- * 디버깅 터미널에 문자를 출력하는 함수
+ * 디버깅 터미널 오류가 있는지를 검사하는 함수
  *
- * @param	ch		출력할 문자
- *
- * @return	 0: 성공<br>
- * 			<br>
- * 			-1: 오류
+ * @return	 0: 없음<br>
+ * 			 other: 오류 번호<br>
  */
-int dtty_putc(int ch);
+int dtty_geterror(void);
 
 /*!
  * 디버깅 터미널에서 문자를 입력받는 함수
@@ -103,18 +100,15 @@ int dtty_putc(int ch);
 int dtty_getc(char * ch_p);
 
 /*!
- * 디버깅 터미널에 문자열을 출력하는 함수
+ * 디버깅 터미널에 문자를 출력하는 함수
  *
- * @param	str		출력할 문자열
+ * @param	ch		출력할 문자
  *
- * @param	max		출력할 문자열의 최대 크기
- *
- * @return	 출력한 문자열의 크기
+ * @return	 0: 성공<br>
  * 			<br>
- * 			 -1: 오류<br>
- * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ * 			-1: 오류
  */
-int dtty_puts(const char * str, int max);
+int dtty_putc(int ch);
 
 /*!
  * 디버깅 터미널에 문자열을 출력하는 함수
@@ -129,6 +123,28 @@ int dtty_puts(const char * str, int max);
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
 int dtty_putn(const char * str, int len);
+
+/*!
+ * 디버깅 터미널 입력 버퍼에 입력받은 문자가 있는지를 검사하는 함수
+ *
+ * @return	 1: 있음<br>
+ * 			 0: 없음<br>
+ */
+int dtty_kbhit(void);
+
+/*!
+ * 디버깅 터미널에 문자열을 출력하는 함수
+ *
+ * @param	str		출력할 문자열
+ *
+ * @param	max		출력할 문자열의 최대 크기
+ *
+ * @return	 출력한 문자열의 크기
+ * 			<br>
+ * 			 -1: 오류<br>
+ * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ */
+int dtty_puts(const char * str, int max);
 
 /*!
  * 디버깅 터미널에서 문자열을 입력받는 함수
@@ -146,22 +162,6 @@ int dtty_putn(const char * str, int len);
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
 int dtty_gets(char * str, int max);
-
-/*!
- * 디버깅 터미널 입력 버퍼에 입력받은 문자가 있는지를 검사하는 함수
- *
- * @return	 1: 있음<br>
- * 			 0: 없음<br>
- */
-int dtty_kbhit(void);
-
-/*!
- * 디버깅 터미널 오류가 있는지를 검사하는 함수
- *
- * @return	 0: 없음<br>
- * 			 other: 오류 번호<br>
- */
-int dtty_geterror(void);
 
 /*!
  * 디버깅 터미널 에코 설정 함수

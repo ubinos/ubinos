@@ -1,32 +1,30 @@
 /*
- Copyright (C) 2011 RTLab
- Contact: ubinos.org@gmail.com
+  Copyright (C) 2009 Sung Ho Park
+  Contact: ubinos.org@gmail.com
 
- Contributors: Dong Hoon Kim, Sung Ho Park
+  This file is part of the bsp_sam9xe512ek component of the Ubinos.
 
- This file is part of the bsp_sam3s4ek component of the Ubinos.
+  GNU General Public License Usage
+  This file may be used under the terms of the GNU
+  General Public License version 3.0 as published by the Free Software
+  Foundation and appearing in the file license_gpl3.txt included in the
+  packaging of this file. Please review the following information to
+  ensure the GNU General Public License version 3.0 requirements will be
+  met: http://www.gnu.org/copyleft/gpl.html.
 
- GNU General Public License Usage
- This file may be used under the terms of the GNU
- General Public License version 3.0 as published by the Free Software
- Foundation and appearing in the file license_gpl3.txt included in the
- packaging of this file. Please review the following information to
- ensure the GNU General Public License version 3.0 requirements will be
- met: http://www.gnu.org/copyleft/gpl.html.
+  GNU Lesser General Public License Usage
+  Alternatively, this file may be used under the terms of the GNU Lesser
+  General Public License version 2.1 as published by the Free Software
+  Foundation and appearing in the file license_lgpl.txt included in the
+  packaging of this file. Please review the following information to
+  ensure the GNU Lesser General Public License version 2.1 requirements
+  will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 
- GNU Lesser General Public License Usage
- Alternatively, this file may be used under the terms of the GNU Lesser
- General Public License version 2.1 as published by the Free Software
- Foundation and appearing in the file license_lgpl.txt included in the
- packaging of this file. Please review the following information to
- ensure the GNU Lesser General Public License version 2.1 requirements
- will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-
- Commercial Usage
- Alternatively, licensees holding valid commercial licenses may
- use this file in accordance with the commercial license agreement
- provided with the software or, alternatively, in accordance with the
- terms contained in a written agreement between you and rightful owner.
+  Commercial Usage
+  Alternatively, licensees holding valid commercial licenses may
+  use this file in accordance with the commercial license agreement
+  provided with the software or, alternatively, in accordance with the
+  terms contained in a written agreement between you and rightful owner.
  */
 
 #include "../_bsp.h"
@@ -35,6 +33,7 @@
 #if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL)
 
 #if (UBINOS__BSP__USE_DTTY == 1)
+#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART)
 
 #include "../stm32f2/stm32f2xx_ll_bus.h"
 #include "../stm32f2/stm32f2xx_ll_gpio.h"
@@ -82,7 +81,8 @@
 
 #define SLEEP_TIMEMS	1
 
-int _g_bsp_dtty_echo = 0;
+extern int _g_bsp_dtty_init;
+extern int _g_bsp_dtty_echo;
 
 static void Configure_USART(void) {
 
@@ -145,10 +145,8 @@ int dtty_init(void) {
 
 	Configure_USART();
 
-	return 0;
-}
+	_g_bsp_dtty_init = 1;
 
-int dtty_geterror(void) {
 	return 0;
 }
 
@@ -160,7 +158,15 @@ int dtty_disable(void) {
 	return 0;
 }
 
+int dtty_geterror(void) {
+	return 0;
+}
+
 int dtty_getc(char *ch_p) {
+	if (!_g_bsp_dtty_init) {
+		dtty_init();
+	}
+
 	unsigned int i;
 
 	if (NULL == ch_p) {
@@ -208,6 +214,10 @@ int dtty_getc(char *ch_p) {
 }
 
 int dtty_putc(int ch) {
+	if (!_g_bsp_dtty_init) {
+		dtty_init();
+	}
+
 	for (;;) {
 		if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE)) {
 			break;
@@ -219,74 +229,30 @@ int dtty_putc(int ch) {
 	return 0;
 }
 
-int dtty_puts(const char *str, int max) {
-	int i = 0;
+int dtty_putn(const char * str, int len) {
+    int i = 0;
 
-	if (NULL == str) {
-		return -2;
-	}
+    if (NULL == str) {
+        return -2;
+    }
 
-	if (0 > max) {
-		return -3;
-	}
+    if (0 > len) {
+        return -3;
+    }
 
-	for (i = 0; i < max; i++) {
-		if ('\0' == *str) {
-			break;
-		}
-		dtty_putc(*str);
-		str++;
-	}
+    for (i = 0; i < len; i++) {
+        dtty_putc(*str);
+        str++;
+    }
 
-	return i;
-}
-
-int dtty_putn(const char *str, int len) {
-	int i = 0;
-
-	if (NULL == str) {
-		return -2;
-	}
-
-	if (0 > len) {
-		return -3;
-	}
-
-	for (i = 0; i < len; i++) {
-		dtty_putc(*str);
-		str++;
-	}
-
-	return i;
-}
-
-int dtty_gets(char *str, int max) {
-	int i;
-	int r;
-
-	if (NULL == str) {
-		return -2;
-	}
-
-	if (0 > max) {
-		return -3;
-	}
-
-	for (i = 0; i < max; i++) {
-		r = dtty_getc(&str[i]);
-		if (0 != r || '\0' == str[i] || '\n' == str[i] || '\r' == str[i]) {
-			break;
-		}
-	}
-	if (0 != i && max == i) {
-		i--;
-	}
-	str[i] = '\0';
-
-	return i;
+    return i;
 }
 
 int dtty_kbhit(void) {
+	if (!_g_bsp_dtty_init) {
+		dtty_init();
+	}
+
 	if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
 		return 1;
 	} else {
@@ -294,55 +260,8 @@ int dtty_kbhit(void) {
 	}
 }
 
-int dtty_setecho(int echo) {
-	_g_bsp_dtty_echo = echo;
-
-	return 0;
-}
-
-#else
-
-int dtty_init(void) {
-	return 0;
-}
-
-int dtty_enable(void) {
-	return 0;
-}
-
-int dtty_disable(void) {
-	return 0;
-}
-
-int dtty_getc(char *ch_p) {
-	return 0;
-}
-
-int dtty_putc(int ch) {
-	return 0;
-}
-
-int dtty_puts(const char *str, int max) {
-	return 0;
-}
-
-int dtty_putn(const char *str, int len) {
-	return 0;
-}
-
-int dtty_gets(char *str, int max) {
-	return 0;
-}
-
-int dtty_kbhit(void) {
-	return 0;
-}
-
-int dtty_setecho(int echo) {
-	return 0;
-}
-
-#endif /* (UBINOS__BSP__USE_DTTY == ...) */
+#endif /* (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) */
+#endif /* (UBINOS__BSP__USE_DTTY == 1) */
 
 #endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */

@@ -33,13 +33,15 @@
 #if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__SAM9XE512EK)
 
 #if (UBINOS__BSP__USE_DTTY == 1)
+#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART)
 
 #define SLEEP_TIMEMS	1
 
-int _g_bsp_dtty_echo	= 0;
+extern int _g_bsp_dtty_init;
+extern int _g_bsp_dtty_echo;
 
 int dtty_init(void) {
-	_g_bsp_dtty_echo	= 0;
+	_g_bsp_dtty_echo = 0;
 
 	/* Reset and disable receiver */
 	AT91C_BASE_DBGU->DBGU_CR = AT91C_US_RSTRX | AT91C_US_RSTTX;
@@ -65,15 +67,21 @@ int dtty_init(void) {
 	/* Enable transmitter */
 	AT91C_BASE_DBGU->DBGU_CR = AT91C_US_TXEN | AT91C_US_RXEN;
 
+	_g_bsp_dtty_init = 1;
+
 	return 0;
 }
 
 int dtty_enable(void) {
-	return -10;
+	return 0;
 }
 
 int dtty_disable(void) {
-	return -10;
+	return 0;
+}
+
+int dtty_geterror(void) {
+	return 0;
 }
 
 int dtty_getc(char * ch_p) {
@@ -81,6 +89,10 @@ int dtty_getc(char * ch_p) {
 
 	if (NULL == ch_p) {
 		return -2;
+	}
+
+	if (!_g_bsp_dtty_init) {
+		dtty_init();
 	}
 
 #if (INCLUDE__UBINOS__UBIK == 1)
@@ -125,6 +137,10 @@ int dtty_getc(char * ch_p) {
 #pragma GCC push_options
 #pragma GCC target ("arm")
 int dtty_putc(int ch) {
+	if (!_g_bsp_dtty_init) {
+		dtty_init();
+	}
+
     for (;;)
     {
         if (AT91C_BASE_DBGU->DBGU_CSR & AT91C_US_TXRDY) {
@@ -135,28 +151,6 @@ int dtty_putc(int ch) {
     AT91C_BASE_DBGU->DBGU_THR = (ch & 0xFF);
 
     return 0;
-}
-
-int dtty_puts(const char * str, int max) {
-	int i = 0;
-
-	if (NULL == str) {
-		return -2;
-	}
-
-	if (0 > max) {
-		return -3;
-	}
-
-	for (i=0; i<max; i++) {
-		if ('\0' == *str) {
-			break;
-		}
-		dtty_putc(*str);
-		str++;
-	}
-
-	return i;
 }
 
 int dtty_putn(const char * str, int len) {
@@ -179,33 +173,11 @@ int dtty_putn(const char * str, int len) {
 }
 #pragma GCC pop_options
 
-int dtty_gets(char * str, int max) {
-	int i;
-	int r;
-
-	if (NULL == str) {
-		return -2;
-	}
-
-	if (0 > max) {
-		return -3;
-	}
-
-	for (i=0; i<max; i++) {
-		r = dtty_getc(&str[i]);
-		if (0 != r || '\0' == str[i] || '\n' == str[i] || '\r' == str[i]) {
-			break;
-		}
-	}
-	if (0 != i && max == i) {
-		i--;
-	}
-	str[i] = '\0';
-
-	return i;
-}
-
 int dtty_kbhit(void) {
+	if (!_g_bsp_dtty_init) {
+		dtty_init();
+	}
+
 	if (AT91C_BASE_DBGU->DBGU_CSR & AT91C_US_RXRDY) {
 		return 1;
 	} else {
@@ -213,57 +185,8 @@ int dtty_kbhit(void) {
 	}
 }
 
-int dtty_setecho(int echo) {
-	_g_bsp_dtty_echo = echo;
-
-	return 0;
-}
-
-#else
-
-
-int dtty_init(void) {
-    return 0;
-}
-
-int dtty_enable(void) {
-    return 0;
-}
-
-int dtty_disable(void) {
-    return 0;
-}
-
-
-int dtty_getc(char * ch_p) {
-    return 0;
-}
-
-int dtty_putc(int ch)  {
-    return 0;
-}
-
-int dtty_puts(const char * str, int max) {
-    return 0;
-}
-
-int dtty_putn(const char * str, int len) {
-    return 0;
-}
-
-int dtty_gets(char * str, int max) {
-    return 0;
-}
-
-int dtty_kbhit(void) {
-    return 0;
-}
-
-int dtty_setecho(int echo) {
-    return 0;
-}
-
-#endif /* (UBINOS__BSP__USE_DTTY == ...) */
+#endif /* (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) */
+#endif /* (UBINOS__BSP__USE_DTTY == 1) */
 
 #endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__SAM9XE512EK) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */

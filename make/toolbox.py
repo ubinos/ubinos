@@ -85,6 +85,10 @@ def parse_mapfile_get_value(sfn, symbol):
         if -1 != line.find(symbol + " ="):
             return int(line.split()[0], 16)
 
+    for line in lines:
+        if -1 != line.find(symbol + "\n"):
+            return int(line.split()[0], 16)
+
     return 0
 
 def show_mapfile_info(sfn):
@@ -175,7 +179,12 @@ def show_mapfile_info(sfn):
         print("ram2 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram2 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-        
+    
+    addr = parse_mapfile_get_value(sfn, "  _SEGGER_RTT")
+    if addr > 0:
+        print("SEGGER RTT CB address        = 0x%08x (%12d)" % (addr, addr))
+        print("")
+
     print("")
 
 if __name__ == '__main__':
