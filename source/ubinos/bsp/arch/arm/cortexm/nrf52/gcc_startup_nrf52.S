@@ -35,6 +35,91 @@ NOTICE: This file has been modified by Nordic Semiconductor ASA.
 #endif
 #endif
 
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+
+#define _NMI_Handler                 bsp_ubik_irq_handler
+#define _HardFault_Handler           bsp_ubik_irq_handler
+#define _MemoryManagement_Handler    bsp_ubik_irq_handler
+#define _BusFault_Handler            bsp_ubik_irq_handler
+#define _UsageFault_Handler          bsp_ubik_irq_handler
+
+#define _SVC_Handler                 bsp_ubik_swi_handler
+#define _DebugMon_Handler            bsp_ubik_irq_handler
+
+#define _PendSV_Handler              bsp_ubik_psv_handler
+
+	#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#define _SysTick_Handler             0
+		#if (UBINOS__UBIK__TICK_RTC_NO == 0)
+#define _RTC0_IRQHandler             bsp_ubik_tick_handler
+#define _RTC1_IRQHandler             RTC1_IRQHandler
+#define _RTC2_IRQHandler             RTC2_IRQHandler
+		#elif (UBINOS__UBIK__TICK_RTC_NO == 1)
+#define _RTC0_IRQHandler             RTC0_IRQHandler
+#define _RTC1_IRQHandler             bsp_ubik_tick_handler
+#define _RTC2_IRQHandler             RTC2_IRQHandler
+		#elif (UBINOS__UBIK__TICK_RTC_NO == 2)
+#define _RTC0_IRQHandler             RTC0_IRQHandler
+#define _RTC1_IRQHandler             RTC1_IRQHandler
+#define _RTC2_IRQHandler             bsp_ubik_tick_handler
+		#else
+			#error "Unsupported UBINOS__UBIK__TICK_RTC_NO"
+		#endif
+	#else
+#define _SysTick_Handler             bsp_ubik_tick_handler
+#define _RTC0_IRQHandler             RTC0_IRQHandler
+#define _RTC1_IRQHandler             RTC1_IRQHandler
+#define _RTC2_IRQHandler             RTC2_IRQHandler
+	#endif
+
+#else
+
+#define _NMI_Handler                 NMI_Handler
+#define _HardFault_Handler           HardFault_Handler
+#define _MemoryManagement_Handler    MemoryManagement_Handler
+#define _BusFault_Handler            BusFault_Handler
+#define _UsageFault_Handler          UsageFault_Handler
+
+#define _SVC_Handler                 SVC_Handler
+#define _DebugMon_Handler            DebugMon_Handler
+
+#define _PendSV_Handler              PendSV_Handler
+
+#define _SysTick_Handler             SysTick_Handler
+#define _RTC0_IRQHandler             RTC0_IRQHandler
+#define _RTC1_IRQHandler             RTC1_IRQHandler
+#define _RTC2_IRQHandler             RTC2_IRQHandler
+
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
+
+#if   (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
+
+#define _USBD_IRQHandler             0
+#define _UARTE1_IRQHandler           0
+#define _QSPI_IRQHandler             0
+#define _CRYPTOCELL_IRQHandler       0
+
+#define _PWM3_IRQHandler             0
+
+#define _SPIM3_IRQHandler            0
+
+#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA)
+
+#define _USBD_IRQHandler             USBD_IRQHandler
+#define _UARTE1_IRQHandler           UARTE1_IRQHandler
+#define _QSPI_IRQHandler             UARTE1_IRQHandler
+#define _CRYPTOCELL_IRQHandler       CRYPTOCELL_IRQHandler
+
+#define _PWM3_IRQHandler             PWM3_IRQHandler
+
+#define _SPIM3_IRQHandler            SPIM3_IRQHandler
+
+#else
+    #error "Unsupported UBINOS__BSP__CPU_MODEL"
+#endif
+
     .section .stack
 #if defined(__STARTUP_CONFIG)
     .align __STARTUP_CONFIG_STACK_ALIGNEMENT
@@ -60,37 +145,20 @@ __StackTop:
 __isr_vector:
     .long   __StackTop                  /* Top of Stack */
     .long   Reset_Handler
-#if (INCLUDE__UBINOS__UBIK == 1)
-    .long   bsp_ubik_irq_handler        /* NMI_Handler */
-    .long   bsp_ubik_irq_handler        /* HardFault_Handler */
-    .long   bsp_ubik_irq_handler        /* MemoryManagement_Handler */
-    .long   bsp_ubik_irq_handler        /* BusFault_Handler */
-    .long   bsp_ubik_irq_handler        /* UsageFault_Handler */
+    .long   _NMI_Handler                /* NMI_Handler */
+    .long   _HardFault_Handler          /* HardFault_Handler */
+    .long   _MemoryManagement_Handler   /* MemoryManagement_Handler */
+    .long   _BusFault_Handler           /* BusFault_Handler */
+    .long   _UsageFault_Handler         /* UsageFault_Handler */
     .long   0                           /* Reserved */
     .long   0                           /* Reserved */
     .long   0                           /* Reserved */
     .long   0                           /* Reserved */
-    .long   bsp_ubik_swi_handler        /* SVC_Handler */
-    .long   bsp_ubik_irq_handler        /* DebugMon_Handler */
+    .long   _SVC_Handler                /* SVC_Handler */
+    .long   _DebugMon_Handler           /* DebugMon_Handler */
     .long   0                           /* Reserved */
-    .long   bsp_ubik_psv_handler        /* PendSV_Handler */
-    .long   bsp_ubik_systick_handler    /* SysTick_Handler */
-#else
-    .long   NMI_Handler
-    .long   HardFault_Handler
-    .long   MemoryManagement_Handler
-    .long   BusFault_Handler
-    .long   UsageFault_Handler
-    .long   0                           /* Reserved */
-    .long   0                           /* Reserved */
-    .long   0                           /* Reserved */
-    .long   0                           /* Reserved */
-    .long   SVC_Handler
-    .long   DebugMon_Handler
-    .long   0                           /* Reserved */
-    .long   PendSV_Handler
-    .long   SysTick_Handler
-#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+    .long   _PendSV_Handler             /* PendSV_Handler */
+    .long   _SysTick_Handler            /* SysTick_Handler */
 
   /* External Interrupts */
     .long   POWER_CLOCK_IRQHandler
@@ -104,13 +172,13 @@ __isr_vector:
     .long   TIMER0_IRQHandler
     .long   TIMER1_IRQHandler
     .long   TIMER2_IRQHandler
-    .long   RTC0_IRQHandler
+    .long   _RTC0_IRQHandler
     .long   TEMP_IRQHandler
     .long   RNG_IRQHandler
     .long   ECB_IRQHandler
     .long   CCM_AAR_IRQHandler
     .long   WDT_IRQHandler
-    .long   RTC1_IRQHandler
+    .long   _RTC1_IRQHandler
     .long   QDEC_IRQHandler
     .long   COMP_LPCOMP_IRQHandler
     .long   SWI0_EGU0_IRQHandler
@@ -129,32 +197,18 @@ __isr_vector:
     .long   PWM1_IRQHandler
     .long   PWM2_IRQHandler
     .long   SPIM2_SPIS2_SPI2_IRQHandler
-    .long   RTC2_IRQHandler
+    .long   _RTC2_IRQHandler
     .long   I2S_IRQHandler
     .long   FPU_IRQHandler
-#if   (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA)
+    .long   _USBD_IRQHandler
+    .long   _UARTE1_IRQHandler
+    .long   _QSPI_IRQHandler
+    .long   _CRYPTOCELL_IRQHandler
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */
+    .long   _PWM3_IRQHandler
     .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-#elif (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA)
-    .long   USBD_IRQHandler
-    .long   UARTE1_IRQHandler
-    .long   QSPI_IRQHandler
-    .long   CRYPTOCELL_IRQHandler
-    .long   0                           /*Reserved */
-    .long   0                           /*Reserved */
-    .long   PWM3_IRQHandler
-    .long   0                           /*Reserved */
-    .long   SPIM3_IRQHandler
-#else
-    #error "Unsupported UBINOS__BSP__CPU_MODEL"
-#endif
+    .long   _SPIM3_IRQHandler
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */
     .long   0                           /*Reserved */

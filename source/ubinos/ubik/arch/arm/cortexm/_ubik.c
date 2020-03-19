@@ -1,8 +1,8 @@
 /*
-  Copyright (C) 2011 RTLab, Yu Jin Park, Sung Ho Park
+  Copyright (C) 2009 Sung Ho Park
   Contact: ubinos.org@gmail.com
 
-  This file is part of the lib_ubik_armcortexm component of the Ubinos.
+  This file is part of the lib_ubik_port_arm_sam7x256ek component of the Ubinos.
 
   GNU General Public License Usage
   This file may be used under the terms of the GNU
@@ -206,8 +206,11 @@ void bsp_ubik_swi_handler(void) {
 	}
 }
 
-void bsp_ubik_systick_handler(void) {
+void bsp_ubik_tick_handler(void) {
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#else
     unsigned int    status = 0;
+#endif
     edlist_pt       tempedlist;
     _task_pt        task;
     #if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
@@ -217,8 +220,13 @@ void bsp_ubik_systick_handler(void) {
     _sigobj_pt      sigobj;
     int             i;
 
-    status = SysTick->CTRL;
-    if (0 != (0x00010000 & status)) {
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+	{
+    	_ubik_tick_rtcisr_clear();
+#else
+	status = SysTick->CTRL;
+	if (0 != (0x00010000 & status)) {
+#endif
 
     	ARM_INTERRUPT_DISABLE();
 

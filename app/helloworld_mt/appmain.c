@@ -56,7 +56,7 @@ static void helloworld_mt_task1func(void * arg) {
 	for (unsigned int i = 0; ; i++) {
 	    delayms = (rand() % 10 + 1) * 200;
 		printf("1: hello world ! (%u) (delay = %4d ms)\n\r", i, delayms);
-		task_sleep(delayms);
+		task_sleepms(delayms);
 	}
 }
 
@@ -71,7 +71,7 @@ static void helloworld_mt_task2func(void * arg) {
     for (unsigned int i = 0; ; i++) {
         delayms = (rand() % 10 + 1) * 200;
         printf("2: hello world ! (%u) (delay = %4d ms)\n\r", i, delayms);
-        task_sleep(delayms);
+        task_sleepms(delayms);
     }
 }
 

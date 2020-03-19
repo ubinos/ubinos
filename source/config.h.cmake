@@ -254,7 +254,16 @@
 
 #if (INCLUDE__UBINOS__UBIK == 1)
 
+#define UBINOS__UBIK__TICK_TYPE__SYSTICK                  1
+#define UBINOS__UBIK__TICK_TYPE__RTC                      2
+#define UBINOS__UBIK__TICK_TYPE                           UBINOS__UBIK__TICK_TYPE__@UBINOS__UBIK__TICK_TYPE@
 #define UBINOS__UBIK__TICK_PER_SEC                        @UBINOS__UBIK__TICK_PER_SEC@
+
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+
+#define UBINOS__UBIK__TICK_RTC_NO                        @UBINOS__UBIK__TICK_RTC_NO@
+
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 
 #define UBINOS__UBIK__TASK_NAME_SIZE_MAX                  @UBINOS__UBIK__TASK_NAME_SIZE_MAX@
 #define UBINOS__UBIK__TASK_PRIORITY_MAX                   @UBINOS__UBIK__TASK_PRIORITY_MAX@

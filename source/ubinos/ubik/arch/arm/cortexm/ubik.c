@@ -1,8 +1,8 @@
 /*
-  Copyright (C) 2011 RTLab, Yu Jin Park, Sung Ho Park
+  Copyright (C) 2009 Sung Ho Park
   Contact: ubinos.org@gmail.com
 
-  This file is part of the lib_ubik_armcortexm component of the Ubinos.
+  This file is part of the lib_ubik component of the Ubinos.
 
   GNU General Public License Usage
   This file may be used under the terms of the GNU
@@ -297,6 +297,9 @@ unsigned int ubik_ticktotimems(unsigned int tick) {
     return tick;
 }
 
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#else
+
 int _ubik_inittick(void) {
     int r;
     int i;
@@ -322,7 +325,9 @@ int _ubik_inittick(void) {
 
     // System Tick Configuration
     r = SysTick_Config(counter);
-    assert(r == 0);
+    if (0 != r) {
+        return -1;
+    }
 
     // Set exception priority
     NVIC_SetPriorityGrouping(NVIC_PRIO_GROUP);
@@ -336,6 +341,7 @@ int _ubik_inittick(void) {
     return 0;
 }
 
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 
 void _ubik_task_schedule_irq() {
     if (0 == _ubik_tasklockcount && 0 != _bsp_kernel_active) {

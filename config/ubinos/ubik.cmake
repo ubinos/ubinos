@@ -1,6 +1,7 @@
 set(INCLUDE__UBINOS__UBIK                                                       TRUE)
 
 
+set_cache_default(UBINOS__UBIK__TICK_TYPE                                       "SYSTICK" STRING "Tick Type [SYSTICK | RTC]")
 set_cache_default(UBINOS__UBIK__TICK_PER_SEC                                    1000    STRING "Ticks per second")
 
 set_cache_default(UBINOS__UBIK__TASK_NAME_SIZE_MAX                              15      STRING "Maximum name size of task")
@@ -51,6 +52,13 @@ else()
 
 endif()
 
+
+if(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
+
+set_cache_default(UBINOS__UBIK__TICK_RTC_NO                                     2       STRING "RTC Number for tick [0 | 1 | 2]")
+
+endif(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
+
 ########
 
 set(_tmp_all_flags "")
@@ -58,6 +66,17 @@ set(_tmp_all_flags "")
 if(INCLUDE__UBINOS__UBIK)
 	set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_PRESENT")
 endif()
+
+if(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
+
+    if((UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA") OR (UBINOS__BSP__CPU_MODEL STREQUAL "NRF52840XXAA"))
+		set(_tmp_all_flags "${_tmp_all_flags} -u nrf_drv_clock_init")
+		set(_tmp_all_flags "${_tmp_all_flags} -u app_error_handler_bare")
+	else()
+        message(FATAL_ERROR "This CPU model does not support RTC tick")
+	endif()
+
+endif(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
 
 set(CMAKE_ASM_FLAGS "${_tmp_all_flags} ${CMAKE_ASM_FLAGS}")
 set(CMAKE_C_FLAGS   "${_tmp_all_flags} ${CMAKE_C_FLAGS}")

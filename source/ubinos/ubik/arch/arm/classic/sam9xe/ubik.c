@@ -92,7 +92,7 @@ unsigned int ubik_ticktotimems(unsigned int tick) {
 	return tick;
 }
 
-void _ubik_tickisr(void) {
+void bsp_ubik_tick_handler(void) {
 	unsigned int 	status = 0;
 	edlist_pt		tempedlist;
 	_task_pt		task;
@@ -122,7 +122,7 @@ void _ubik_tickisr(void) {
 			#if !(UBINOS__UBIK__EXCLUDE_HRTICK_TICKISR_DELAY_CHECK == 1)
 			hrtick	= _ubik_hrtick_htimer_p->TC_CV;
 			if (hrtick > (_ubik_hrtick_hrtickpertick * 2)) {
-				dtty_puts("_ubik_tickisr: interrupt was delayed\r\n", 80);
+				dtty_puts("bsp_ubik_tick_handler: interrupt was delayed\r\n", 80);
 				bsp_abortsystem();
 			}
 			#endif /* !(UBINOS__UBIK__EXCLUDE_HRTICK_TICKISR_DELAY_CHECK == 1) */
@@ -249,7 +249,7 @@ int _ubik_inittick(void) {
 	tickpersec = ubik_gettickpersec();
 	counter = ((clockfreqk * 1000) / 16 / tickpersec) - 1;
 
-	r = intr_connectisr(AT91C_ID_SYS, _ubik_tickisr, intr_gethighestpriority(), INTR_OPT__LEVEL | INTR_OPT__HIGH);
+	r = intr_connectisr(AT91C_ID_SYS, bsp_ubik_tick_handler, intr_gethighestpriority(), INTR_OPT__LEVEL | INTR_OPT__HIGH);
 	if (0 != r) {
 		return -1;
 	}

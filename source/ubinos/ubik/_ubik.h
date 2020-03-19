@@ -79,11 +79,6 @@ void _ubik_port_comp_start(void);
 int _ubik_inittick(void);
 
 /**
- * tick 인터럽트 서비스 루틴
- */
-void _ubik_tickisr(void);
-
-/**
  * 소프트웨어 인터럽트 서비스 루틴
  */
 void _ubik_swisr(unsigned int swino);
@@ -416,6 +411,9 @@ void _task_stackinit(_task_pt task, void * arg);
 
 void _task_idlefunc(void * arg);
 void _task_rootfunc(void * arg);
+
+void _ubik_tick_rtcisr_clear(void);
+void _ubik_idle_cpu_sleep(void);
 
 void _task_changelist(_task_pt task);
 void _task_yield(void);

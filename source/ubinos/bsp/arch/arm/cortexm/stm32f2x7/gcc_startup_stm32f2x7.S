@@ -71,7 +71,7 @@ __isr_vector:
     .long   bsp_ubik_irq_handler        /* DebugMon_Handler */
     .long   0                           /* Reserved */
     .long   bsp_ubik_psv_handler        /* PendSV_Handler */
-    .long   bsp_ubik_systick_handler    /* SysTick_Handler */
+    .long   bsp_ubik_tick_handler       /* SysTick_Handler */
 #else
     .long   NMI_Handler
     .long   HardFault_Handler

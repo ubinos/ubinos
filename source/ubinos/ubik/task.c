@@ -1508,6 +1508,9 @@ void _task_idlefunc(void * arg) {
 		}
 #endif
 
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+		_ubik_idle_cpu_sleep();
+#endif
 	}
 }
 
