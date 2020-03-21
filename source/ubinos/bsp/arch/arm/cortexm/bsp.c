@@ -65,6 +65,8 @@ void bsp_busywait(unsigned int count) {
     __asm__ __volatile__ (
             "cmp    r0, #0                                      \n\t"
             "beq    2f                                          \n\t"
+            "nop                                                \n\t"
+            "nop                                                \n\t"
             "1:                                                 \n\t"
             "subs   r0, r0, #1                                  \n\t"
             "bne    1b                                          \n\t"

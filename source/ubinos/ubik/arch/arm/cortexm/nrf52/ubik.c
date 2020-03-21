@@ -70,8 +70,13 @@ int _ubik_inittick(void) {
 
     __disable_irq();
 
-    _ubik_tickcount     = 0;
-    _ubik_tickcounth    = 0;
+    _ubik_tickcount = 0;
+    _ubik_tickcounth = 0;
+
+#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
+    _ubik_tickrtccount = 0;
+    _ubik_tickrtccount_init = 0;
+#endif
 
     tickpersec = ubik_gettickpersec();
     prescaler = (32768 / tickpersec) - 1;
@@ -102,6 +107,10 @@ int _ubik_inittick(void) {
 
 void _ubik_tick_rtcisr_clear(void) {
     nrf_rtc_event_clear(_TICK_RTC, NRF_RTC_EVENT_TICK);
+}
+
+unsigned int _ubik_tick_rtccount_get(void) {
+	return nrf_rtc_counter_get(_TICK_RTC);
 }
 
 void _ubik_idle_cpu_sleep(void) {

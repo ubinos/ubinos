@@ -309,8 +309,8 @@ int _ubik_inittick(void) {
 
     __disable_irq();
 
-    _ubik_tickcount     = 0;
-    _ubik_tickcounth    = 0;
+    _ubik_tickcount = 0;
+    _ubik_tickcounth = 0;
 
     r = bsp_getmckfreqk(&clockfreqk);
     if (0 != r) {

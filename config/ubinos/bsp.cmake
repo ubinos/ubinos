@@ -328,7 +328,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     set(_tmp_all_flags "${_tmp_all_flags} -fno-strict-aliasing")
     set(_tmp_all_flags "${_tmp_all_flags} -fno-builtin")
     set(_tmp_all_flags "${_tmp_all_flags} -fshort-enums")
-    set(_tmp_all_flags "${_tmp_all_flags} -falign-functions=64")
+    set(_tmp_all_flags "${_tmp_all_flags} -falign-functions=16")
 
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections")

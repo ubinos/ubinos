@@ -208,9 +208,14 @@ void bsp_ubik_swi_handler(void) {
 
 void bsp_ubik_tick_handler(void) {
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
+	unsigned int tickrtccount;
+	unsigned int tickrtccount_diff;
+	unsigned int i;
+#endif /* (UBINOS__UBIK__TICK_RTC_CHECK == 1) */
 #else
     unsigned int    status = 0;
-#endif
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
     edlist_pt       tempedlist;
     _task_pt        task;
     #if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
@@ -218,120 +223,170 @@ void bsp_ubik_tick_handler(void) {
     #endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
     _wtask_pt       wtask;
     _sigobj_pt      sigobj;
-    int             i;
+    int             j;
 
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
-	{
-    	_ubik_tick_rtcisr_clear();
+
+	_ubik_tick_rtcisr_clear();
+
+	if (_bsp_kernel_active != 0) {
+
+#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
+
+		tickrtccount = _ubik_tick_rtccount_get();
+		if (_ubik_tickrtccount_init) {
+			if (_ubik_tickrtccount < tickrtccount) {
+				tickrtccount_diff = tickrtccount - _ubik_tickrtccount;
+			}
+			else {
+				tickrtccount_diff = tickrtccount + (UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) + 1;
+			}
+		}
+		else {
+			tickrtccount_diff = 1;
+			_ubik_tickrtccount_init = 1;
+		}
+		_ubik_tickrtccount = tickrtccount;
+
+#if (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__CORRECT)
+
+		for (i = 0; i < tickrtccount_diff; i++) {
+
+#elif (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__ABORT)
+
+		(void) i;
+		if (tickrtccount_diff != 1) {
+			dtty_puts("\r\nrtc tick check fail\r\n", 80);
+			bsp_abortsystem();
+		}
+
+		{
+
 #else
-	status = SysTick->CTRL;
-	if (0 != (0x00010000 & status)) {
-#endif
 
-    	ARM_INTERRUPT_DISABLE();
+	#error "Unsupported UBINOS__UBIK__TICK_RTC_CHECK_TYPE"
 
-        ////////////////
+#endif /* (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__CORRECT) */
 
-        _ubik_tickcount++;
+#else
 
-        ////////////////
+		{
 
-        if (0 == _ubik_tickcount) {
-            _ubik_tickcounth++;
+#endif /* (UBINOS__UBIK__TICK_RTC_CHECK == 1) */
 
-            tempedlist                      = _task_list_blocked_timed_cur;
-            _task_list_blocked_timed_cur    = _task_list_blocked_timed_next;
-            _task_list_blocked_timed_next   = tempedlist;
+#else
 
-            #if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
-            tempedlist                      = _stimer_list_cur;
-            _stimer_list_cur                = _stimer_list_next;
-            _stimer_list_next               = tempedlist;
-            #endif
-        }
+	if (_bsp_kernel_active != 0) {
 
-        for (;;) {
-            task = _tasklist_head(_task_list_blocked_timed_cur);
-            if (NULL != task && _ubik_tickcount >= task->wakeuptick) {
-                for (i=0; i<task->wtask_count; i++) {
-                    wtask = &task->wtask_p[i];
-                    sigobj = _sigobj_wtasklist_owner(wtask);
-                    if (NULL != sigobj) {
-                        wtask->sigtype  = SIGOBJ_SIGTYPE__TIMEOUT;
-                        task->wtask_recvcount++;
-                        _sigobj_wtasklist_remove(wtask);
-                        _sigobj_wtasklist_notifychange(sigobj);
-                    }
-                }
-                task->state             = TASK_STATE__READY;
-                task->wakeuptick        = 0;
-                _task_changelist(task);
-            }
-            else {
-                break;
-            }
-        }
+		status = SysTick->CTRL;
+		if (0 != (0x00010000 & status)) {
 
-#if       !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
-        for (;;) {
-            stimer = _stimerlist_head(_stimer_list_cur);
-            if (NULL != stimer && _ubik_tickcount >= stimer->wakeuptick) {
-                switch (stimer->sigobj->type) {
-                case OBJTYPE__UBIK_SEM:
-                    sem_give((sem_pt) stimer->sigobj);
-                    if (0 == stimer->oneshot) {
-                        _stimerlist_add(stimer);
-                    }
-                    else {
-                        _stimerlist_remove(stimer);
-                        stimer->running = 0;
-                    }
-                    break;
-                case OBJTYPE__UBIK_SIGNAL:
-                    if (0 == stimer->broadcast) {
-                        signal_send((signal_pt) stimer->sigobj, stimer->sigtype);
-                    } else {
-                        signal_broadcast((signal_pt) stimer->sigobj, stimer->sigtype);
-                    }
-                    if (0 == stimer->oneshot) {
-                        _stimerlist_add(stimer);
-                    }
-                    else {
-                        _stimerlist_remove(stimer);
-                        stimer->running = 0;
-                    }
-                    break;
-                default:
-                    _stimerlist_remove(stimer);
-                    stimer->running = 0;
-                    break;
-                }
-            }
-            else {
-                break;
-            }
-        }
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
+
+			ARM_INTERRUPT_DISABLE();
+
+			////////////////
+
+			_ubik_tickcount++;
+
+			////////////////
+
+			if (0 == _ubik_tickcount) {
+				_ubik_tickcounth++;
+
+				tempedlist                      = _task_list_blocked_timed_cur;
+				_task_list_blocked_timed_cur    = _task_list_blocked_timed_next;
+				_task_list_blocked_timed_next   = tempedlist;
+
+				#if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
+				tempedlist                      = _stimer_list_cur;
+				_stimer_list_cur                = _stimer_list_next;
+				_stimer_list_next               = tempedlist;
+				#endif
+			}
+
+			for (;;) {
+				task = _tasklist_head(_task_list_blocked_timed_cur);
+				if (NULL != task && _ubik_tickcount >= task->wakeuptick) {
+					for (j=0; j<task->wtask_count; j++) {
+						wtask = &task->wtask_p[j];
+						sigobj = _sigobj_wtasklist_owner(wtask);
+						if (NULL != sigobj) {
+							wtask->sigtype  = SIGOBJ_SIGTYPE__TIMEOUT;
+							task->wtask_recvcount++;
+							_sigobj_wtasklist_remove(wtask);
+							_sigobj_wtasklist_notifychange(sigobj);
+						}
+					}
+					task->state             = TASK_STATE__READY;
+					task->wakeuptick        = 0;
+					_task_changelist(task);
+				}
+				else {
+					break;
+				}
+			}
+
+#if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
+			for (;;) {
+				stimer = _stimerlist_head(_stimer_list_cur);
+				if (NULL != stimer && _ubik_tickcount >= stimer->wakeuptick) {
+					switch (stimer->sigobj->type) {
+					case OBJTYPE__UBIK_SEM:
+						sem_give((sem_pt) stimer->sigobj);
+						if (0 == stimer->oneshot) {
+							_stimerlist_add(stimer);
+						}
+						else {
+							_stimerlist_remove(stimer);
+							stimer->running = 0;
+						}
+						break;
+					case OBJTYPE__UBIK_SIGNAL:
+						if (0 == stimer->broadcast) {
+							signal_send((signal_pt) stimer->sigobj, stimer->sigtype);
+						} else {
+							signal_broadcast((signal_pt) stimer->sigobj, stimer->sigtype);
+						}
+						if (0 == stimer->oneshot) {
+							_stimerlist_add(stimer);
+						}
+						else {
+							_stimerlist_remove(stimer);
+							stimer->running = 0;
+						}
+						break;
+					default:
+						_stimerlist_remove(stimer);
+						stimer->running = 0;
+						break;
+					}
+				}
+				else {
+					break;
+				}
+			}
 #endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
 
-        ARM_INTERRUPT_ENABLE();
+			ARM_INTERRUPT_ENABLE();
 
-        ////////////////
+			////////////////
 
 #if !(UBINOS__UBIK__EXCLUDE_TICK_HOOKFUNC == 1)
-        if (NULL != _ubik_tickhookfunc_func) {
-            _ubik_tickhookfunc_func();
-        }
+			if (NULL != _ubik_tickhookfunc_func) {
+				_ubik_tickhookfunc_func();
+			}
 #endif /* !(UBINOS__UBIK__EXCLUDE_TICK_HOOKFUNC == 1) */
 
-        ////////////////
+			////////////////
 
-        if (0 == _ubik_tasklockcount && 0 != _bsp_kernel_active) {
-			arm_set_pendsv();
-        }
+			if (0 == _ubik_tasklockcount) {
+				arm_set_pendsv();
+			}
 
-        //////////////////
-
-    }
+			//////////////////
+		}
+	}
 }
 
 void bsp_ubik_irq_handler(void) {

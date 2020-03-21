@@ -74,6 +74,13 @@ volatile unsigned int	_ubik_tickcounth							= 0;		/* system tick count high val
 volatile unsigned int	_ubik_tasklockcount							= 0;		/* task lock nesting count */
 volatile unsigned int	_ubik_rtpriority							= 0;		/* lowest priority of task considered as a real-time task */
 
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
+volatile unsigned int	_ubik_tickrtccount							= 0;		/* RTC count for tick */
+volatile int			_ubik_tickrtccount_init						= 0;		/* Is RTC count for tick initialized */
+#endif
+#endif
+
 		 edlist_t		_task_list_blocked_timed_a[2]				= {{0,},};	/* timed blocked task list array */
 volatile edlist_pt		_task_list_blocked_timed_cur 				= NULL;		/* current timed blocked task list pointer */
 volatile edlist_pt		_task_list_blocked_timed_next 				= NULL;		/* next timed blocked task list pointer */
@@ -121,8 +128,6 @@ int ubik_comp_init(unsigned int idle_stackdepth) {
 	#define	__FUNCNAME__	"ubik_comp_init"
 	int r;
 
-	_ubik_tickcount		= 0;
-	_ubik_tickcounth	= 0;
 	_ubik_tasklockcount	= 0;
 	_ubik_rtpriority	= INT_MAX;
 

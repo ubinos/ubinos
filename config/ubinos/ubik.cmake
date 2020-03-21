@@ -55,7 +55,11 @@ endif()
 
 if(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
 
-set_cache_default(UBINOS__UBIK__TICK_RTC_NO                                     2       STRING "RTC Number for tick [0 | 1 | 2]")
+set_cache_default(UBINOS__UBIK__TICK_RTC_NO                                     2         STRING "RTC Number for tick [0 | 1 | 2]")
+set_cache_default(UBINOS__UBIK__TICK_RTC_COUNT_MAX                              0xFFFFFFL STRING "Maximum RTC count for tick")
+
+set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK                                  TRUE      BOOL "Enable RTC check")
+set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK_TYPE                             "ABORT" STRING "RTC check type [CORRECT | ABORT]")
 
 endif(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
 
@@ -67,16 +71,22 @@ if(INCLUDE__UBINOS__UBIK)
 	set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_PRESENT")
 endif()
 
-if(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
+if(UBINOS__UBIK__TICK_TYPE STREQUAL "SYSTICK")
 
-    if((UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA") OR (UBINOS__BSP__CPU_MODEL STREQUAL "NRF52840XXAA"))
+elseif(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
+
+	if((UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA") OR (UBINOS__BSP__CPU_MODEL STREQUAL "NRF52840XXAA"))
 		set(_tmp_all_flags "${_tmp_all_flags} -u nrf_drv_clock_init")
 		set(_tmp_all_flags "${_tmp_all_flags} -u app_error_handler_bare")
 	else()
-        message(FATAL_ERROR "This CPU model does not support RTC tick")
+		message(FATAL_ERROR "This CPU model does not support RTC tick")
 	endif()
 
-endif(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
+else()
+
+	message(FATAL_ERROR "Unsupported UBINOS__UBIK__TICK_TYPE")
+
+endif()
 
 set(CMAKE_ASM_FLAGS "${_tmp_all_flags} ${CMAKE_ASM_FLAGS}")
 set(CMAKE_C_FLAGS   "${_tmp_all_flags} ${CMAKE_C_FLAGS}")

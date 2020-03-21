@@ -413,6 +413,7 @@ void _task_idlefunc(void * arg);
 void _task_rootfunc(void * arg);
 
 void _ubik_tick_rtcisr_clear(void);
+unsigned int _ubik_tick_rtccount_get(void);
 void _ubik_idle_cpu_sleep(void);
 
 void _task_changelist(_task_pt task);
@@ -453,6 +454,13 @@ extern volatile unsigned int	_ubik_tickcounth;							/* system tick count high v
 extern volatile unsigned int	_ubik_tasklockcount;						/* task lock nesting count */
 extern volatile unsigned int	_ubik_rtpriority;							/* lowest priority of task considered as a real-time task */
 
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
+extern volatile unsigned int	_ubik_tickrtccount;							/* RTC count for tick */
+extern volatile int				_ubik_tickrtccount_init;					/* Is RTC count for tick initialized */
+#endif
+#endif
+
 extern			edlist_t		_task_list_blocked_timed_a[2];				/* timed blocked task list array */
 extern volatile edlist_pt		_task_list_blocked_timed_cur;				/* current timed blocked task list pointer */
 extern volatile edlist_pt		_task_list_blocked_timed_next;				/* next timed blocked task list pointer */
@@ -491,7 +499,7 @@ extern			tickhookfunc_ft		_ubik_tickhookfunc_func;
 
 #if !(UBINOS__UBIK__EXCLUDE_HRTICK == 1)
 extern volatile unsigned int	_ubik_hrtick_active;						/* variable representing whether high resolution tick is active or not */
-extern volatile unsigned int   _ubik_hrtick_hrtickpertick;
+extern volatile unsigned int	_ubik_hrtick_hrtickpertick;
 #endif /* !(UBINOS__UBIK__EXCLUDE_HRTICK == 1) */
 
 #ifdef	__cplusplus
