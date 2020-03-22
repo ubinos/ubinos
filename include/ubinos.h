@@ -84,26 +84,6 @@ extern "C"
  * 준비ready 상태, 수행running 상태, 대기blocked 상태인 태스크는 스스로 또는 다른 태스크가 중지suspend하기를 원할 때(task_suspend 함수를 호출 할 때) 중지suspended 상태가 된다. 중지suspended 상태인 태스크는 다른 태스크가 재시작resume 시켜 줄 때(task_resume 함수를 호출 할 때)만 중지suspended 상태에서 벗어날 수 있다. 대기blocked 상태에서 중지suspended 상태가 된 태스크는 지정한 조건이 만족되더라도 준비ready 상태가 되지 않는다. 그리고 만족되기를 기다리는 조건이 지정한 시간이 지나는 것일 경우, 중지suspended 상태에 머무른 시간은 지나간 시간으로 인정되지 않는다. 중지suspended 상태인 태스크는 재시작resume되면 중지suspended 상태가 되기 직전 상태로 돌아간다. 좀 더 정확히 말하자면, 직전 상태가 준비ready 상태와 수행 running 상태였던 태스크는 준비ready 상태가 된다. 그리고 직전 상태가 대기blocked 상태였던 태스크는 재시작resume된 시점에 지정한 조건이 만족될 경우 준비ready 상태가, 그렇지 않을 경우 대기blocked 상태가 된다.
  *
  *
- * <b>문맥 교환 context switching</b>
- *
- * 수행 태스크를 전환하려면, 먼저 현재 태스크가 수행하던 작업을 나중에 이어서 수행할 수 있도록 현재 작업 내용을 저장한 후, 다음 태스크가 이전에 수행하는 작업을 이어서 수행할 수 있도록 저장되어 있는 다음 태스크의 작업 내용을 복원해야 한다. 저장하고 복원해야 하는 작업 내용은 CPU 레지스터 및 몇몇 전역 변수의 값이다. 이 값들은 문맥context이라 불리며, 이 문맥context을 저장하고 복원하는 작업은 문맥 교환 context switching 이라 불린다.
- *
- * 다음 그림은 ARM 플랫폼 용 유비노스 커널의 문맥 교환 context switching 과정을 보여준다.
- *
- * \image html ubik_task_context_switching_diagram.png
- *
- * ARM 플랫폼용 유비노스의 문맥에는 ARM CPU의 레지스터인 R0~R12, SP, LR, PC, SPSR의 값, 그리고 전역변수인 _bsp_critcount의 값이 포함된다. R0~R12는 범용 레지스터이고, SP는 스택 포인터, LR은 프로시저 복귀 주소, PC는 다음에 수행할 CPU 인스트럭션instruction 주소를 보관하는 레지스터이다. _bsp_critcount에는 현재 태스크의 크리티컬 섹션 critical section 재진입 횟수가 보관된다. 유비노스 커널은 문맥context을 스택에 저장한다. 스택에 저장된 문맥context의 시작 주소는 태스크 컨트롤 블록의 한 필드인 stacktop에 보관되며, 문맥context을 복원할 때 유비노스 커널은 이 필드의 값을 사용해 저장된 문맥에 접근한다. 전역변수인 _task_cur 에는 현재 태스크의 태스크 컨트롤 블록 주소가 보관된다. 문맥 교환 context switching 과정을 좀 더 자세히 설명하면 다음과 같다.
- *
- *	1. R0~R12, SP, LR, PC, SPSR의 값을 현재 태스크의 스택에 저장한다.
- *	2. _bsp_critcount의 값을 현재 태스크의 스택에 저장한다.
- *	3. 스택에 저장된 문맥context의 시작 주소를 현재 태스크 컨트롤 블록의 stacktop에 저장한다.
- *	4. _task_cur의 값을 다음 태스크의 태스크 컨트롤 블록 주소로 변경한다.
- *	5. _bsp_critcount의 값을 다음 태스크의 스택에 저장되어 있는 값으로 변경한다.
- *	6. R0~R12, SP, LR, PC, SPSR의 값을 다음 태스크의 스택에 저장되어 있는 값으로 변경한다.
- *
- * 이 문맥 교환 context switching 작업은 인터럽트의 핸들러 내에서 수행된다. 때문에 이 문맥 교환 context switching 작업이 수행되는 시점에, 현재 태스크의 CPU 상태 정보는 인터럽트 발생 직전의 CPU 상태 정보가 저장되는 SPSR에 저장되어 있다. 또한 저장되어 있는 다음 태스크의 CPU 상태 정보를 SPSR에 설정한 후 인터럽트를 종료함으로써 다음 태스크의 CPU 상태 정보를 복원할 수 있다.
- *
- *
  * <b>선점형 스케줄링 preemptive scheduling</b>
  *
  * 현재 태스크보다 높은 우선순위를 가진 태스크가 수행될 준비가 되었거나, 한 수행 주기 time slice 가 끝나서 같은 우선순위를 가진 다음 순서의 태스크를 수행할 시점이 되었을 때, 수행 태스크 전환은 유비노스 커널에 의해 자동적이고 강제적으로 이루어진다. 이러한 태스크 전환 방식은 선점형 방식이라 불린다.
@@ -199,28 +179,6 @@ extern "C"
  *	* <a href="stimer_8h.html">세마포어 타이머  인터페이스</a>
  *
  *	* \subpage stimer_example
- * <br>
- *
- *
- * \section intr_sec 인터럽트
- *
- * 인터럽트란 주변장치가 프로세서 코어에게 처리해야 하는 일이 생겼음을 비동기적으로 알리는 수단이다. 일반적으로 인터럽트는 다음 시퀀스 다이어그램sequence diagram처럼 처리된다.
- *
- * \image html ubik_intr_sequence_chart_general.gif
- *
- * 인터럽트가 발생하면 프로세서 코어는 인터럽트 비활성화 등의 일들을 수행한 다음 제어권을 예외 벡터exception vector에게 넘긴다. 제어권을 넘겨 받은 예외 벡터exception vector는 그 제어권을 사용자가 지정한 인터럽트 서비스 루틴에게 넘긴다. 제어권을 넘겨 받은 인터럽트 서비스 루틴은 기존 작업 내용을 저장하고 인터럽트를 발생 시킨 주변장치가 요구하는 일을 처리한  후, 다시 기존 작업 내용을 복원하고 인터럽트 처리를 종료한다. 그러면 프로세서 코어는 인터럽트 활성화 등의 일들을 처리한 다음 인터럽트 발생 이전 작업을 다시 수행한다.
- *
- * 유비노스 커널의 인터럽트 처리 방식은 다음 시퀀스 다이어그램sequence diagram과 같다. 앞서 언급한 일반적인 인터럽트 처리 방식과 조금 다르다.
- *
- * \image html ubik_intr_sequence_chart_ubik.gif
- *
- * 인터럽트 발생부터 예외 벡터exception vector로 제어권이 넘어가는 과정까지는 같다. 그러나 예외 벡터exception vector는 제어권을 사용자가 지정한 인터럽트 서비스 루틴이 아닌 유비노스 커널 인터럽트 처리기(ubik_irq_handler)로 넘긴다. 제어권을 넘겨 받은 유비노스 커널 인터럽트 처리기(ubik_irq_handler)는 기존 작업 내용을 저장한 후 제어권을 비에스피 예외 처리기(bsp_exception_handler)로 넘긴다. 제어권을 넘겨 받은 비에스피 예외 처리기(bsp_exception_handler)는 제어권을 사용자 지정 인터럽트 서비스 루틴으로 넘긴다. 제어권을 넘겨 받은 인터럽트 서비스 루틴은 인터럽트를 발생 시킨 주변장치가 요구하는 일을 처리한 후 제어권을 다시 비에스피 예외 처리기(bsp_exception_handler)로 넘긴다. 제어권을 다시 넘겨 받은 비에스피 예외 처리기(bsp_exception_handler)는 인터럽트 처리가 태스크의 수행 순서를 변화시킬 수 있으므로 작업 수행 순서를 다시 정한다(reschedule). 그리고 제어권을 유비노스 커널 인터럽트 처리기(ubik_irq_handler)로 다시 넘긴다. 그러면 유비노스 커널 인터럽트 처리기(ubik_irq_handler)가 다시 수행할 작업 내용을 복원하고 인터럽트 처리를 종료한다. 그 다음 과정은 일반적인 인터럽트 처리 방식과 같다.
- *
- * 이 처리 방식에서는 모든 인터럽트 서비스 루틴이 공통적으로 수행해야 하는 작업 내용 저장과 복원 등의 일을 이미 구현되어 있는 유비노스 커널 인터럽트 처리기(ubik_irq_handler)와 비에스피 예외 처리기(bsp_exception_handler)가 처리한다. 인터럽트 서비스 루틴은 인터럽트를 발생 시킨 주변장치가 요구하는 일 처리만 하면 된다. 따라서 앞서 설명한 일반적인 인터럽트 처리 방식에 비해 인터럽트 서비스 루틴 작성이 쉽다.
- *
- *	* <a href="intr_8h.html">인터럽트  인터페이스</a>
- *
- *	* \subpage intr_example
  * <br>
  *
  *
