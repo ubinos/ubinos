@@ -40,9 +40,6 @@ SYStem.CPU STM32F207ZG
 SYStem.CONFIG.DEBUGPORTTYPE SWD
 IF hardware.COMBIPROBE()||hardware.UTRACE()
 (
-  ; The trace was tested on a  nRF52 Development Kit without trace signals on a debug header.
-  ; To test the trace a test adapter has used, that maps the trace signals according to the
-  ; MIPI34 spec.
   SYStem.CONFIG.CONNECTOR MIPI34
 )
 SYStem.Option DUALPORT ON
@@ -51,7 +48,9 @@ SYStem.JtagClock CTCK 10MHz
 SYStem.Up
 
 ; --------------------------------------------------------------------------------
-; Setup pin multiplexing for parallel trace.
+; initialize OFFCHIP trace (ETM, ITM)
+IF COMBIPROBE()||UTRACE()||Analyzer()
+(
 ; Prevent error during power saving states and stop peripherals in debug mode
   Data.Set E:0xE0042004 %Long 0yXXXXxxxxXXX11111XXXXxxxxXXXXx111  ; DBGMCU_CR
 ; Setup GPIO clock
@@ -61,12 +60,6 @@ SYStem.Up
   Data.Set E:0x40021008 %Long 0yXXXXxxxxXXXXxxxxXX1111111111xxxx  ; GPOIE_PORTSPEED
   Data.Set E:0x40021020 %Long 0yXXXX00000000000000000000XXXXxxxx  ; GPIOE_AFRL
 
-; --------------------------------------------------------------------------------
-; initialize offchip-trace (ETM ON, ITM ON)
-IF hardware.COMBIPROBE()||hardware.UTRACE()||Analyzer()
-(
-  ; set PinMux and enable Clocks
-
   TPIU.PortSize 1
   TPIU.PortMode Continuous
   ITM.DataTrace CorrelatedData
@@ -74,19 +67,16 @@ IF hardware.COMBIPROBE()||hardware.UTRACE()||Analyzer()
   ETM.Trace ON
   ETM.ON
 )
-IF hardware.COMBIPROBE()||hardware.UTRACE()
+IF COMBIPROBE()||UTRACE()
 (
   Trace.METHOD CAnalyzer
   Trace.AutoInit ON
-  IF VERSION.BUILD.BASE()>=74752.
+  IF CAnalyzer.FEATURE(TPIU.TERMINATION)
   (
-    CAnalyzer.AutoFocus
+    ; pins have limited output current with low supply voltage -> disable Termination
+    ;Trace.TERMination OFF
   )
-  ELSE
-  (
-    ; for uTrace & Combiprobe use manual calibration
-    ; CAnalyzer.ClockDELAY Large
-  )
+  Trace.AutoFocus
 )
 IF Analyzer()
 (
