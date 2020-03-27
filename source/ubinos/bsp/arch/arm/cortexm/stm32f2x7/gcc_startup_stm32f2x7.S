@@ -30,7 +30,6 @@
 #if (INCLUDE__UBINOS__BSP == 1)
 #if (UBINOS__BSP__CPU_MODEL__STM32F2X7 == 1)
 
-    
   .syntax unified
   .cpu cortex-m3
   .thumb

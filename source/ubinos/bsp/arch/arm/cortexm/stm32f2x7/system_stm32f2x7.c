@@ -46,11 +46,6 @@
 
 #include <ubinos/bsp/arch.h>
 
-extern void SystemClock_Config(void);
-#ifdef DATA_IN_ExtSRAM
-extern void SystemInit_ExtMemCtl(void)
-#endif /* DATA_IN_ExtSRAM */
-
 #if (INCLUDE__UBINOS__BSP == 1)
 #if (UBINOS__BSP__CPU_MODEL__STM32F2X7 == 1)
 
@@ -123,6 +118,16 @@ const uint8_t APBPrescTable[8] = { 0, 0, 0, 0, 1, 2, 3, 4 };
  * @}
  */
 
+/** @addtogroup STM32F2xx_System_Private_FunctionPrototypes
+ * @{
+ */
+
+extern void SystemClock_Config(void);
+
+#ifdef DATA_IN_ExtSRAM
+extern void SystemInit_ExtMemCtl(void)
+#endif /* DATA_IN_ExtSRAM */
+
 /** @addtogroup STM32F2xx_System_Private_Functions
  * @{
  */
@@ -178,93 +183,15 @@ void SystemInit(void) {
 	LL_FLASH_EnableInstCache();
 	LL_FLASH_EnablePrefetch();
 #else
-    LL_FLASH_DisablePrefetch();
-    LL_FLASH_DisableInstCache();
+	LL_FLASH_DisablePrefetch();
+	LL_FLASH_DisableInstCache();
 #endif /* (UBINOS__BSP__USE_ICACHE == 1) */
 #if (UBINOS__BSP__USE_DCACHE == 1)
 	LL_FLASH_EnableDataCache();
 #else
-    LL_FLASH_DisableDataCache();
+	LL_FLASH_DisableDataCache();
 #endif /* (UBINOS__BSP__USE_DCACHE == 1) */
 }
-
-#ifdef DATA_IN_ExtSRAM
-/**
- * @brief  Setup the external memory controller.
- *         Called in startup_stm32f2xx.s before jump to main.
- *         This function configures the external SRAM mounted on STM322xG_EVAL board
- *         This SRAM will be used as program data memory (including heap and stack).
- * @param  None
- * @retval None
- */
-__WEAK void SystemInit_ExtMemCtl(void) {
-	__IO uint32_t tmp = 0x00;
-
-	/*-- GPIOs Configuration -----------------------------------------------------*/
-	/* Enable GPIOD, GPIOE, GPIOF and GPIOG interface clock */
-	RCC->AHB1ENR |= 0x00000078;
-	/* Delay after an RCC peripheral clock enabling */
-	tmp = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
-	(void) (tmp);
-
-	/* Connect PDx pins to FSMC Alternate function */
-	GPIOD->AFR[0] = 0x00CCC0CC;
-	GPIOD->AFR[1] = 0xCCCCCCCC;
-	/* Configure PDx pins in Alternate function mode */
-	GPIOD->MODER = 0xAAAA0A8A;
-	/* Configure PDx pins speed to 100 MHz */
-	GPIOD->OSPEEDR = 0xFFFF0FCF;
-	/* Configure PDx pins Output type to push-pull */
-	GPIOD->OTYPER = 0x00000000;
-	/* No pull-up, pull-down for PDx pins */
-	GPIOD->PUPDR = 0x00000000;
-
-	/* Connect PEx pins to FSMC Alternate function */
-	GPIOE->AFR[0] = 0xC00CC0CC;
-	GPIOE->AFR[1] = 0xCCCCCCCC;
-	/* Configure PEx pins in Alternate function mode */
-	GPIOE->MODER = 0xAAAA828A;
-	/* Configure PEx pins speed to 100 MHz */
-	GPIOE->OSPEEDR = 0xFFFFC3CF;
-	/* Configure PEx pins Output type to push-pull */
-	GPIOE->OTYPER = 0x00000000;
-	/* No pull-up, pull-down for PEx pins */
-	GPIOE->PUPDR = 0x00000000;
-
-	/* Connect PFx pins to FSMC Alternate function */
-	GPIOF->AFR[0] = 0x00CCCCCC;
-	GPIOF->AFR[1] = 0xCCCC0000;
-	/* Configure PFx pins in Alternate function mode */
-	GPIOF->MODER = 0xAA000AAA;
-	/* Configure PFx pins speed to 100 MHz */
-	GPIOF->OSPEEDR = 0xFF000FFF;
-	/* Configure PFx pins Output type to push-pull */
-	GPIOF->OTYPER = 0x00000000;
-	/* No pull-up, pull-down for PFx pins */
-	GPIOF->PUPDR = 0x00000000;
-
-	/* Connect PGx pins to FSMC Alternate function */
-	GPIOG->AFR[0] = 0x00CCCCCC;
-	GPIOG->AFR[1] = 0x000000C0;
-	/* Configure PGx pins in Alternate function mode */
-	GPIOG->MODER = 0x00085AAA;
-	/* Configure PGx pins speed to 100 MHz */
-	GPIOG->OSPEEDR = 0x000CAFFF;
-	/* Configure PGx pins Output type to push-pull */
-	GPIOG->OTYPER = 0x00000000;
-	/* No pull-up, pull-down for PGx pins */
-	GPIOG->PUPDR = 0x00000000;
-
-	/*--FSMC Configuration -------------------------------------------------------*/
-	/* Enable the FSMC interface clock */
-	RCC->AHB3ENR |= 0x00000001;
-
-	/* Configure and enable Bank1_SRAM2 */
-	FSMC_Bank1->BTCR[2] = 0x00001011;
-	FSMC_Bank1->BTCR[3] = 0x00000201;
-	FSMC_Bank1E->BWTR[2] = 0x0FFFFFFF;
-}
-#endif /* DATA_IN_ExtSRAM */
 
 /**
  * @brief  Update SystemCoreClock variable according to Clock Register Values.
@@ -344,6 +271,84 @@ __WEAK void SystemCoreClockUpdate(void) {
 	/* HCLK frequency */
 	SystemCoreClock >>= tmp;
 }
+
+#ifdef DATA_IN_ExtSRAM
+/**
+ * @brief  Setup the external memory controller.
+ *         Called in startup_stm32f2xx.s before jump to main.
+ *         This function configures the external SRAM mounted on STM322xG_EVAL board
+ *         This SRAM will be used as program data memory (including heap and stack).
+ * @param  None
+ * @retval None
+ */
+__WEAK void SystemInit_ExtMemCtl(void) {
+	__IO uint32_t tmp = 0x00;
+
+	/*-- GPIOs Configuration -----------------------------------------------------*/
+	/* Enable GPIOD, GPIOE, GPIOF and GPIOG interface clock */
+	RCC->AHB1ENR |= 0x00000078;
+	/* Delay after an RCC peripheral clock enabling */
+	tmp = READ_BIT(RCC->AHB1ENR, RCC_AHB1ENR_GPIODEN);
+	(void) (tmp);
+
+	/* Connect PDx pins to FSMC Alternate function */
+	GPIOD->AFR[0] = 0x00CCC0CC;
+	GPIOD->AFR[1] = 0xCCCCCCCC;
+	/* Configure PDx pins in Alternate function mode */
+	GPIOD->MODER = 0xAAAA0A8A;
+	/* Configure PDx pins speed to 100 MHz */
+	GPIOD->OSPEEDR = 0xFFFF0FCF;
+	/* Configure PDx pins Output type to push-pull */
+	GPIOD->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PDx pins */
+	GPIOD->PUPDR = 0x00000000;
+
+	/* Connect PEx pins to FSMC Alternate function */
+	GPIOE->AFR[0] = 0xC00CC0CC;
+	GPIOE->AFR[1] = 0xCCCCCCCC;
+	/* Configure PEx pins in Alternate function mode */
+	GPIOE->MODER = 0xAAAA828A;
+	/* Configure PEx pins speed to 100 MHz */
+	GPIOE->OSPEEDR = 0xFFFFC3CF;
+	/* Configure PEx pins Output type to push-pull */
+	GPIOE->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PEx pins */
+	GPIOE->PUPDR = 0x00000000;
+
+	/* Connect PFx pins to FSMC Alternate function */
+	GPIOF->AFR[0] = 0x00CCCCCC;
+	GPIOF->AFR[1] = 0xCCCC0000;
+	/* Configure PFx pins in Alternate function mode */
+	GPIOF->MODER = 0xAA000AAA;
+	/* Configure PFx pins speed to 100 MHz */
+	GPIOF->OSPEEDR = 0xFF000FFF;
+	/* Configure PFx pins Output type to push-pull */
+	GPIOF->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PFx pins */
+	GPIOF->PUPDR = 0x00000000;
+
+	/* Connect PGx pins to FSMC Alternate function */
+	GPIOG->AFR[0] = 0x00CCCCCC;
+	GPIOG->AFR[1] = 0x000000C0;
+	/* Configure PGx pins in Alternate function mode */
+	GPIOG->MODER = 0x00085AAA;
+	/* Configure PGx pins speed to 100 MHz */
+	GPIOG->OSPEEDR = 0x000CAFFF;
+	/* Configure PGx pins Output type to push-pull */
+	GPIOG->OTYPER = 0x00000000;
+	/* No pull-up, pull-down for PGx pins */
+	GPIOG->PUPDR = 0x00000000;
+
+	/*--FSMC Configuration -------------------------------------------------------*/
+	/* Enable the FSMC interface clock */
+	RCC->AHB3ENR |= 0x00000001;
+
+	/* Configure and enable Bank1_SRAM2 */
+	FSMC_Bank1->BTCR[2] = 0x00001011;
+	FSMC_Bank1->BTCR[3] = 0x00000201;
+	FSMC_Bank1E->BWTR[2] = 0x0FFFFFFF;
+}
+#endif /* DATA_IN_ExtSRAM */
 
 #endif /* (UBINOS__BSP__CPU_MODEL__STM32F2X7 == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
