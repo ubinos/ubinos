@@ -54,6 +54,8 @@ extern "C"
 #include "arch/arm/cortexm/nrf52dk.h"
 #elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NUCLEOF207ZG)
 #include "arch/arm/cortexm/stm3221geval.h"
+#elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32F769IEVAL)
+#include "arch/arm/cortexm/stm32f769ieval.h"
 #else
 #error "Unsupported UBINOS__BSP__BOARD_MODEL"
 #endif

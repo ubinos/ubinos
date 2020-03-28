@@ -30,46 +30,31 @@
 #include "../_bsp.h"
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL)
+#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32F769IEVAL)
 
 #if (UBINOS__BSP__USE_DTTY == 1)
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART)
 
-#include "../stm32f2/stm32f2xx_ll_bus.h"
-#include "../stm32f2/stm32f2xx_ll_gpio.h"
-#include "../stm32f2/stm32f2xx_ll_usart.h"
+#include "../stm32f7/stm32f7xx_ll_bus.h"
+#include "../stm32f7/stm32f7xx_ll_gpio.h"
+#include "../stm32f7/stm32f7xx_ll_usart.h"
+#include "../stm32f7/stm32f7xx_ll_rcc.h"
 
-#if (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 3)
+#if (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 1)
 
-#define USARTx_INSTANCE               USART3
-#define USARTx_CLK_ENABLE()           LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3)
+#define USARTx_INSTANCE               USART1
+#define USARTx_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
+#define USARTx_CLK_SOURCE()           LL_RCC_SetUSARTClockSource(LL_RCC_USART1_CLKSOURCE_PCLK2)
 
-#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USARTx_TX_PIN                 LL_GPIO_PIN_10
-#define USARTx_TX_GPIO_PORT           GPIOC
+#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+#define USARTx_TX_PIN                 LL_GPIO_PIN_9
+#define USARTx_TX_GPIO_PORT           GPIOA
 #define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_AF_7)
 
-#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USARTx_RX_PIN                 LL_GPIO_PIN_11
-#define USARTx_RX_GPIO_PORT           GPIOC
+#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+#define USARTx_RX_PIN                 LL_GPIO_PIN_10
+#define USARTx_RX_GPIO_PORT           GPIOA
 #define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_AF_7)
-
-#define APB_Div 4
-
-#elif (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 6)
-
-#define USARTx_INSTANCE               USART6
-#define USARTx_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART6)
-
-#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USARTx_TX_PIN                 LL_GPIO_PIN_6
-#define USARTx_TX_GPIO_PORT           GPIOC
-#define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_AF_8)
-
-#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC)
-#define USARTx_RX_PIN                 LL_GPIO_PIN_7
-#define USARTx_RX_GPIO_PORT           GPIOC
-#define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_AF_8)
 
 #define APB_Div 2
 
@@ -86,7 +71,9 @@ extern int _g_bsp_dtty_echo;
 
 static void Configure_USART(void) {
 
-	/* (1) Enable the peripheral clock of GPIO Port */
+	/* (1) Enable GPIO clock and configures the USART pins *********************/
+
+	/* Enable the peripheral clock of GPIO Port */
 
 	/* Configure Tx Pin as : Alternate function, High Speed, Push pull, Pull up */
 	USARTx_TX_GPIO_CLK_ENABLE();
@@ -106,6 +93,9 @@ static void Configure_USART(void) {
 
 	/* (2) Enable USART peripheral clock and clock source ***********************/
 	USARTx_CLK_ENABLE();
+
+	/* Set clock source */
+	USARTx_CLK_SOURCE();
 
 	/* (3) Configure USART functional parameters ********************************/
 
@@ -127,14 +117,14 @@ static void Configure_USART(void) {
 	/* Reset value is LL_USART_OVERSAMPLING_16 */
 	LL_USART_SetOverSampling(USARTx_INSTANCE, LL_USART_OVERSAMPLING_16);
 
-	/* Set Baudrate to 115200 using APB frequency set to 120000000/APB_Div Hz */
+	/* Set Baudrate to 115200 using APB frequency set to 216000000/APB_Div Hz */
 	/* Frequency available for USART peripheral can also be calculated through LL RCC macro */
 	/* Ex :
-	 Periphclk = LL_RCC_GetUSARTClockFreq(Instance); or LL_RCC_GetUARTClockFreq(Instance); depending on USART/UART instance
+	  Periphclk = LL_RCC_GetUSARTClockFreq(Instance); or LL_RCC_GetUARTClockFreq(Instance); depending on USART/UART instance
 
-	 In this example, Peripheral Clock is expected to be equal to 120000000/APB_Div Hz => equal to SystemCoreClock/APB_Div
-	 */
-	LL_USART_SetBaudRate(USARTx_INSTANCE, SystemCoreClock / APB_Div, LL_USART_OVERSAMPLING_16, 115200);
+	  In this example, Peripheral Clock is expected to be equal to 216000000/APB_Div Hz => equal to SystemCoreClock/APB_Div
+	*/
+	LL_USART_SetBaudRate(USARTx_INSTANCE, SystemCoreClock/APB_Div, LL_USART_OVERSAMPLING_16, 115200);
 
 	/* (4) Enable USART *********************************************************/
 	LL_USART_Enable(USARTx_INSTANCE);
@@ -263,6 +253,6 @@ int dtty_kbhit(void) {
 #endif /* (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) */
 #endif /* (UBINOS__BSP__USE_DTTY == 1) */
 
-#endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL) */
+#endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32F769IEVAL) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

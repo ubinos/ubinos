@@ -16,6 +16,12 @@
   *
   ******************************************************************************
   */
+
+#include <ubinos/bsp/arch.h>
+
+#if (INCLUDE__UBINOS__BSP == 1)
+#if (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1)
+
 #if defined(USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
@@ -436,6 +442,9 @@ void LL_USART_ClockStructInit(LL_USART_ClockInitTypeDef *USART_ClockInitStruct)
   */
 
 #endif /* USE_FULL_LL_DRIVER */
+
+#endif /* (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
 

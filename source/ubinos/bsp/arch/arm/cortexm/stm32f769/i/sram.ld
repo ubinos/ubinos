@@ -61,9 +61,11 @@ SECTIONS
         __text_start__ = .;
 
         __isr_vector_start__ = .;
+        __relocated_isr_vector_start__ = .;
         KEEP(*(.isr_vector))
         . = ALIGN(4);
         __isr_vector_end__ = .;
+        __relocated_isr_vector_end__ = .;
 
         *(.text*)
 
@@ -87,23 +89,23 @@ SECTIONS
         *(.rodata*)
 
         KEEP(*(.eh_frame*))
-    } > FLASH
+    } > RAM
     
     .mem_section_dummy_rom :
     {
         . = ALIGN(4);
-    } > FLASH
+    } > RAM
 
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > FLASH
+    } > RAM
 
     __exidx_start = .;
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    } > FLASH
+    } > RAM
     __exidx_end = .;
 
     __text_end__ = .;
@@ -112,16 +114,7 @@ SECTIONS
 
 SECTIONS
 {
-    .relocated_isr_vector (COPY) :
-    {
-        . = ALIGN(128);
-        __relocated_isr_vector_start__ = .;
-        . = . + (__isr_vector_end__ - __isr_vector_start__);
-        . = ALIGN(128);
-        __relocated_isr_vector_end__ = .;
-    } > RAM
-
-    .data __relocated_isr_vector_end__ : AT (__etext)
+    .data :
     {
         __data_start__ = .;
         *(vtable)
@@ -205,8 +198,8 @@ SECTIONS
     ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
     
     /* Check if text sections + data exceeds FLASH limit */
-    DataInitFlashUsed = __bss_start__ - __data_start__;
-    CodeFlashUsed = __etext - ORIGIN(FLASH);
+    DataInitFlashUsed = 0;
+    CodeFlashUsed = 0;
     TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
     

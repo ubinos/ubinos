@@ -12,11 +12,11 @@ set(INCLUDE__UBINOS__BSP                                                        
 
 
 set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
-set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M4 | CORTEX_M3]")
+set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M7 | CORTEX_M4 | CORTEX_M3]")
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
-set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG]")
+set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG | STM32F769NI]")
 
-set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | STM3221GEVAL | NUCLEOF207ZG]")
+set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | STM3221GEVAL | NUCLEOF207ZG | STM32F769IEVAL]")
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | SDRAM | FLASH_SDRAM | SRAM_SDRAM]")
 
@@ -57,10 +57,10 @@ set_cache_default(UBINOS__BSP__USE_RELOCATED_ISR_VECTOR                         
 
     if(UBINOS__BSP__CPU_TYPE STREQUAL "ARM926EJ_S")
     
-set_cache_default(UBINOS__BSP__CPU_ARMTHUMBSTATE                                ""      STRING "CPU default ARM/THUMB state [ARM | THUMB]")
+set_cache_default(UBINOS__BSP__CPU_ARMTHUMBSTATE                                "ARM"   STRING "CPU default ARM/THUMB state [ARM | THUMB]")
 set_cache_default(UBINOS__BSP__INCLUDE_INTERRUPT_DISABLE_ENABLE_RETRY           TRUE    BOOL "Include interrupt disable enable retry")
 
-    elseif((UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3"))
+    elseif((UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M7") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3"))
 
 set_cache_default(UBINOS__BSP__CPU_TYPE__CORTEX_MX                              TRUE    BOOL "ARM Cortex-M family CPU Type")
     
@@ -102,6 +102,11 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            
 set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F2X7                             TRUE    BOOL "STM32F2X7 family CPU Model")
 set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F2XX                             TRUE    BOOL "STM32F2XX family CPU Model")
 
+    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F769NI")
+
+set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F7XX                             TRUE    BOOL "STM32F7XX family CPU Model")
+set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F769                             TRUE    BOOL "STM32F769 family CPU Model")
+
     else()
 
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
@@ -119,10 +124,14 @@ set_cache_default(UBINOS__BSP__NRF52_ENABLE_TRACE                               
 
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOF207ZG"))
 
-set_cache_default(UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER "3"              STRING "[3 | 6]")
-set_cache_default(UBINOS__BSP__STM32F2_HSE_VALUE              "25000000U"      STRING "Value of the External oscillator in Hz [25000000U | 8000000U]")
+set_cache_default(UBINOS__BSP__STM32_RCC_HSE_CONFIG           "ON"             STRING "[ON | OFF | BYPASS]")
+set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      STRING "Value of the External oscillator in Hz [25000000U | 8000000U]")
 
-set_cache_default(UBINOS__BSP__STM32F2_RCC_HSE_CONFIG         "BYPASS"         STRING "[BYPASS| ON | OFF]")
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"           STRING "[3 | 6]")
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL")
+
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"           STRING "[1]")
 
     else()
 
@@ -169,6 +178,11 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     if(UBINOS__BSP__CPU_TYPE STREQUAL "ARM926EJ_S")
     
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=arm926ej-s")
+        
+    elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M7")
+    
+        set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m7")
+        set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
         
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4")
     
@@ -270,17 +284,32 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
             set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F217xx")
 
-            if(NOT UBINOS__BSP__STM32F2_HSE_VALUE STREQUAL "")
-                set(_tmp_all_flags "${_tmp_all_flags} -DHSE_VALUE=${UBINOS__BSP__STM32F2_HSE_VALUE}")
+            if(NOT UBINOS__BSP__STM32_HSE_VALUE STREQUAL "")
+                set(_tmp_all_flags "${_tmp_all_flags} -DHSE_VALUE=${UBINOS__BSP__STM32_HSE_VALUE}")
             endif()
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F207ZG")
 
             set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F207xx")
 
-            if(NOT UBINOS__BSP__STM32F2_HSE_VALUE STREQUAL "")
-                set(_tmp_all_flags "${_tmp_all_flags} -DHSE_VALUE=${UBINOS__BSP__STM32F2_HSE_VALUE}")
+            if(NOT UBINOS__BSP__STM32_HSE_VALUE STREQUAL "")
+                set(_tmp_all_flags "${_tmp_all_flags} -DHSE_VALUE=${UBINOS__BSP__STM32_HSE_VALUE}")
             endif()
+
+    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F769NI")
+
+            set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F769xx")
+
+        if(UBINOS__BSP__USE_SOFTFLOAT)
+        
+            set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
+        
+        else()
+            
+            set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
+            set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv5-d16")
+            
+        endif()
 
     else()
     
@@ -312,6 +341,8 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         endif()
         
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOF207ZG"))
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL")
 
     else()
     

@@ -45,7 +45,12 @@
   * @{
   */
 
-#include "stm32f7xx.h"
+#include <ubinos/bsp/arch.h>
+
+#if (INCLUDE__UBINOS__BSP == 1)
+#if (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1)
+
+#include "../stm32f7/stm32f7xx_ll_system.h"
 
 #if !defined  (HSE_VALUE) 
   #define HSE_VALUE    ((uint32_t)25000000) /*!< Default value of the External oscillator in Hz */
@@ -122,8 +127,11 @@
 /** @addtogroup STM32F7xx_System_Private_FunctionPrototypes
   * @{
   */
+
+extern void SystemClock_Config(void);
+
 #if defined (DATA_IN_ExtSRAM) || defined (DATA_IN_ExtSDRAM)
-  static void SystemInit_ExtMemCtl(void); 
+extern void SystemInit_ExtMemCtl(void);
 #endif /* DATA_IN_ExtSRAM || DATA_IN_ExtSDRAM */
 
 /**
@@ -176,6 +184,26 @@ void SystemInit(void)
 #else
   SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
 #endif
+
+	SystemClock_Config();
+
+	SystemCoreClockUpdate();
+
+#if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
+	extern unsigned int relocated_isr_vector_start __asm__ ("__relocated_isr_vector_start__");
+	SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
+	__DSB();
+#endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
+#if (UBINOS__BSP__USE_ICACHE == 1)
+	SCB_EnableICache();
+#else
+	SCB_DisableICache();
+#endif /* (UBINOS__BSP__USE_ICACHE == 1) */
+#if (UBINOS__BSP__USE_DCACHE == 1)
+	SCB_EnableDCache();
+#else
+	SCB_DisableDCache();
+#endif /* (UBINOS__BSP__USE_DCACHE == 1) */
 }
 
 /**
@@ -214,7 +242,7 @@ void SystemInit(void)
   * @param  None
   * @retval None
   */
-void SystemCoreClockUpdate(void)
+__WEAK void SystemCoreClockUpdate(void)
 {
   uint32_t tmp = 0, pllvco = 0, pllp = 2, pllsource = 0, pllm = 2;
   
@@ -271,7 +299,7 @@ void SystemCoreClockUpdate(void)
   * @param  None
   * @retval None
   */
-void SystemInit_ExtMemCtl(void)
+__WEAK void SystemInit_ExtMemCtl(void)
 {
   __IO uint32_t tmp = 0;
 #if defined (DATA_IN_ExtSDRAM) && defined (DATA_IN_ExtSRAM)
@@ -647,4 +675,8 @@ void SystemInit_ExtMemCtl(void)
 /**
   * @}
   */    
+
+#endif /* (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

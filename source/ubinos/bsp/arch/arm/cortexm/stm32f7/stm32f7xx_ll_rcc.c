@@ -16,6 +16,12 @@
   *
   ******************************************************************************
   */
+
+#include <ubinos/bsp/arch.h>
+
+#if (INCLUDE__UBINOS__BSP == 1)
+#if (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1)
+
 #if defined(USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
@@ -1579,5 +1585,8 @@ uint32_t RCC_PLLI2S_GetFreqDomain_I2S(void)
   */
 
 #endif /* USE_FULL_LL_DRIVER */
+
+#endif /* (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

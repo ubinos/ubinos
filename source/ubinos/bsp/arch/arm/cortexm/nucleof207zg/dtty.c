@@ -39,7 +39,7 @@
 #include "../stm32f2/stm32f2xx_ll_gpio.h"
 #include "../stm32f2/stm32f2xx_ll_usart.h"
 
-#if (UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER == 3)
+#if (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 3)
 
 #define USARTx_INSTANCE               USART3
 #define USARTx_CLK_ENABLE()           LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3)
@@ -58,7 +58,7 @@
 
 #else
 
-#error "Unsupported UBINOS__BSP__STM32F2_USARTx_INSTANCE_NUMBER"
+#error "Unsupported UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER"
 
 #endif
 

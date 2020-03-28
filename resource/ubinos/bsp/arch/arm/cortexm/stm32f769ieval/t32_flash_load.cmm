@@ -1,0 +1,82 @@
+;
+; Copyright (C) 2009 Sung Ho Park
+; Contact: ubinos.org@gmail.com
+;
+; This file is part of the bsp_sam7x256ek component of the Ubinos.
+;
+; GNU General Public License Usage
+; This file may be used under the terms of the GNU
+; General Public License version 3.0 as published by the Free Software
+; Foundation and appearing in the file license_gpl3.txt included in the
+; packaging of this file. Please review the following information to
+; ensure the GNU General Public License version 3.0 requirements will be
+; met: http://www.gnu.org/copyleft/gpl.html.
+;
+; GNU Lesser General Public License Usage
+; Alternatively, this file may be used under the terms of the GNU Lesser
+; General Public License version 2.1 as published by the Free Software
+; Foundation and appearing in the file license_lgpl.txt included in the
+; packaging of this file. Please review the following information to
+; ensure the GNU Lesser General Public License version 2.1 requirements
+; will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
+;
+; Commercial Usage
+; Alternatively, licensees holding valid commercial licenses may 
+; use this file in accordance with the commercial license agreement 
+; provided with the software or, alternatively, in accordance with the 
+; terms contained in a written agreement between you and rightful owner.
+;
+
+; --------------------------------------------------------------------------------
+
+print "begin"
+
+; --------------------------------------------------------------------------------
+; initialize and start the debugger
+
+RESet
+SYStem.RESet
+SYStem.CPU STM32F769NI
+SYStem.CONFIG.DEBUGPORTTYPE SWD
+IF hardware.COMBIPROBE()||hardware.UTRACE()
+(
+  SYStem.CONFIG.CONNECTOR MIPI20T
+)
+SYStem.Option DUALPORT ON
+SYStem.MemAccess DAP
+SYStem.JtagClock CTCK 10MHz
+SYStem.Up
+
+; --------------------------------------------------------------------------------
+; Flash programming
+
+FLASH.RESet
+FLASH.Create 1. 0x08000000--0x0801FFFF  0x8000 TARGET Byte 0. /AutoInc   ; sector 0..3
+FLASH.Create 1. 0x08020000--0x0803FFFF 0x20000 TARGET Byte 4.
+FLASH.Create 1. 0x08040000--0x0807FFFF 0x40000 TARGET Byte 5.
+FLASH.Create 1. 0x08080000--0x080FFFFF 0x40000 TARGET Byte 6. /AutoInc   ; sector 6..7
+FLASH.Create 1. 0x08100000--0x081FFFFF 0x40000 TARGET Byte 8. /AutoInc   ; sector 8..11
+
+FLASH.CreateALIAS 0x00200000++0x001FFFFF 0x08000000
+
+FLASH.TARGET 0x20000000 EAHB:0x20001000 0x2000 ~~~~/flash_writer.elf /DualPort
+
+; ReProgram Flash
+FLASH.ReProgram ALL
+Data.LOAD.Elf ~~~~/app.elf
+FLASH.ReProgram OFF
+
+; --------------------------------------------------------------------------------
+
+Register.Set PC Reset_Handler
+
+Break.Set main
+Mode.Hll
+
+; --------------------------------------------------------------------------------
+
+print "end"
+
+ENDDO
+
+
