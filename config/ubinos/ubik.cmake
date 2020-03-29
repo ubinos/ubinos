@@ -36,7 +36,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
     if(UBINOS__BSP__CPU_TYPE STREQUAL "ARM926EJ_S")
     
-    elseif((UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3"))
+    elseif(UBINOS__BSP__CPU_TYPE__CORTEX_MX)
 
 set_cache_default(UBINOS__UBIK__USE_PENDSV_TASK_YIELD                           TRUE    BOOL "Use PendSV for task yield instead of SVC")
     
