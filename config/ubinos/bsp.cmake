@@ -16,7 +16,7 @@ set_cache_default(UBINOS__BSP__CPU_TYPE                                         
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
 set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG | STM32F769NI]")
 
-set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | STM3221GEVAL | NUCLEOF207ZG | STM32F769IEVAL]")
+set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | STM3221GEVAL | NUCLEOF207ZG | STM32F769IEVAL | STM32F769IDISCO]")
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | SDRAM | FLASH_SDRAM | SRAM_SDRAM]")
 
@@ -129,7 +129,7 @@ set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      S
 
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"           STRING "[3 | 6]")
 
-    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL")
+    elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO"))
 
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"           STRING "[1]")
 
@@ -342,8 +342,8 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOF207ZG"))
 
-    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL")
-
+    elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO"))
+    
     else()
     
         message(FATAL_ERROR "Unsupported UBINOS__BSP__BOARD_MODEL")
