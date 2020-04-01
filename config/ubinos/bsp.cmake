@@ -340,9 +340,21 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             
         endif()
         
-    elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOF207ZG"))
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL")
 
-    elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO"))
+        set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM322xG_EVAL")
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOF207ZG")
+
+        set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F2XX_NUCLEO_144")
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL")
+    
+        set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F769I_EVAL")
+    
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO")
+
+        set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F769I_DISCO")
     
     else()
     
