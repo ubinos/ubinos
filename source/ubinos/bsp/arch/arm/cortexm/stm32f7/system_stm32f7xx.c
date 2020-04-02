@@ -129,6 +129,7 @@
   */
 
 extern void SystemClock_Config(void);
+extern void MPU_Config(void);
 
 #if defined (DATA_IN_ExtSRAM) || defined (DATA_IN_ExtSDRAM)
 extern void SystemInit_ExtMemCtl(void);
@@ -194,6 +195,9 @@ void SystemInit(void)
 	SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
 	__DSB();
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
+
+	MPU_Config();
+
 #if (UBINOS__BSP__USE_ICACHE == 1)
 	SCB_EnableICache();
 #else

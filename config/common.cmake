@@ -98,6 +98,30 @@ macro(___project_add_app)
                         "RAM2"
                         ${UBINOS__BSP__LINK_MEMMAP_RAM2_ORIGIN}
                         ${UBINOS__BSP__LINK_MEMMAP_RAM2_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM3"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM3_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM3_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM4"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM4_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM4_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM5"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM5_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM5_LENGTH})
     endif()
 
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")

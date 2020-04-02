@@ -24,10 +24,18 @@ set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH_ORIGIN                         
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH_LENGTH                         0       STRING "FLASH length of link memory map")
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN                           0       STRING "RAM origin address of link memory map")
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH                           0       STRING "RAM length of link memory map")
+
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH2_ORIGIN                        0       STRING "FLASH2 origin address of link memory map")
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH2_LENGTH                        0       STRING "FLASH2 length of link memory map")
+
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM2_ORIGIN                          0       STRING "RAM2 origin address of link memory map")
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM2_LENGTH                          0       STRING "RAM2 length of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM3_ORIGIN                          0       STRING "RAM3 origin address of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM3_LENGTH                          0       STRING "RAM3 length of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM4_ORIGIN                          0       STRING "RAM4 origin address of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM4_LENGTH                          0       STRING "RAM4 length of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM5_ORIGIN                          0       STRING "RAM5 origin address of link memory map")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_RAM5_LENGTH                          0       STRING "RAM5 length of link memory map")
 
 set_cache_default(UBINOS__BSP__USE_MMU                                          FALSE   BOOL "Use MMU")
 set_cache_default(UBINOS__BSP__USE_ICACHE                                       FALSE   BOOL "Use i-cache")
@@ -132,6 +140,8 @@ set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"           S
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO"))
 
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"           STRING "[1]")
+
+set_cache_default(UBINOS__BSP__STM32_ENABLE_ETHERNET                           FALSE    BOOL "")
 
     else()
 
