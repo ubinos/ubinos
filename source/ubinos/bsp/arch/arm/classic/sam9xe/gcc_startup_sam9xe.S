@@ -126,6 +126,7 @@ error___
 
 /* Setup temporary stack */
     ldr     sp, =__stack_temp
+Reset_Breakpoint:
 /* Execute lowlevel_init function. */
     bl      lowlevel_init
 

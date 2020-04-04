@@ -79,17 +79,65 @@ macro(___project_add_app)
                 COMMAND ${PROJECT_TOOLBOX} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
-                        "RAM"
-                        ${UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN}
-                        ${UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH})
+                        "FLASH2"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH2_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH2_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
                 COMMAND ${PROJECT_TOOLBOX} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
-                        "FLASH2"
-                        ${UBINOS__BSP__LINK_MEMMAP_FLASH2_ORIGIN}
-                        ${UBINOS__BSP__LINK_MEMMAP_FLASH2_LENGTH})
+                        "FLASH3"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH3_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH3_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "FLASH4"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH4_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH4_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "FLASH5"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH5_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH5_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "FLASH6"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH6_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH6_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "FLASH7"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH7_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH7_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "FLASH8"
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH8_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_FLASH8_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
                 COMMAND ${PROJECT_TOOLBOX} refine_linkscript
@@ -122,6 +170,30 @@ macro(___project_add_app)
                         "RAM5"
                         ${UBINOS__BSP__LINK_MEMMAP_RAM5_ORIGIN}
                         ${UBINOS__BSP__LINK_MEMMAP_RAM5_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM6"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM6_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM6_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM7"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM7_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM7_LENGTH})
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
+                        "RAM8"
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM8_ORIGIN}
+                        ${UBINOS__BSP__LINK_MEMMAP_RAM8_LENGTH})
     endif()
 
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")

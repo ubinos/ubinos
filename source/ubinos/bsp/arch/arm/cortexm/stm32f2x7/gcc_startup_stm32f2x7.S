@@ -226,6 +226,7 @@ Reset_Handler:
  *
  * All addresses must be aligned to 4 bytes boundary.
  */
+Reset_Breakpoint:
     ldr r1, =__etext
     ldr r2, =__data_start__
     ldr r3, =__bss_start__
