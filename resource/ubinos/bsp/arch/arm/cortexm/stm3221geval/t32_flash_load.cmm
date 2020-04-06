@@ -45,6 +45,7 @@ IF hardware.COMBIPROBE()||hardware.UTRACE()
 SYStem.Option DUALPORT ON
 SYStem.MemAccess DAP
 SYStem.JtagClock CTCK 10MHz
+Trace.DISable
 SYStem.Up
 
 ; --------------------------------------------------------------------------------

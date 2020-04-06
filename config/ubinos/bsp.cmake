@@ -125,10 +125,14 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            
 
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F207ZG"))
 
+set_cache_default(UBINOS__BSP__CPU_MODEL__STM32XXXX                             TRUE    BOOL "STM32XXXX family CPU Model")
+
 set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F2X7                             TRUE    BOOL "STM32F2X7 family CPU Model")
 set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F2XX                             TRUE    BOOL "STM32F2XX family CPU Model")
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F769NI")
+
+set_cache_default(UBINOS__BSP__CPU_MODEL__STM32XXXX                             TRUE    BOOL "STM32XXXX family CPU Model")
 
 set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F7XX                             TRUE    BOOL "STM32F7XX family CPU Model")
 set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F769                             TRUE    BOOL "STM32F769 family CPU Model")
@@ -150,16 +154,20 @@ set_cache_default(UBINOS__BSP__NRF52_ENABLE_TRACE                               
 
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOF207ZG"))
 
+set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               FALSE   BOOL "")
+
 set_cache_default(UBINOS__BSP__STM32_RCC_HSE_CONFIG           "ON"             STRING "[ON | OFF | BYPASS]")
 set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      STRING "Value of the External oscillator in Hz [25000000U | 8000000U]")
 
-set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"           STRING "[3 | 6]")
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"            STRING "[3 | 6]")
 
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO"))
 
-set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"           STRING "[1]")
+set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               FALSE   BOOL "")
 
-set_cache_default(UBINOS__BSP__STM32_ENABLE_ETHERNET                           FALSE    BOOL "")
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1]")
+
+set_cache_default(UBINOS__BSP__STM32_ENABLE_ETHERNET                            FALSE    BOOL "")
 
     else()
 
@@ -379,6 +387,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL")
     
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F769I_EVAL")
+        set(_tmp_all_flags "${_tmp_all_flags} -DUSE_IOEXPANDER")
     
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO")
 
@@ -390,6 +399,11 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         
     endif()
     
+	if(UBINOS__BSP__STM32_ENABLE_TRACE)
+	
+		set(_tmp_all_flags "${_tmp_all_flags} -DSTM32_ENABLE_TRACE")
+	
+	endif()
 
     set(_tmp_all_flags "${_tmp_all_flags} -D__STACK_SIZE=${UBINOS__BSP__STACK_SIZE}")
 

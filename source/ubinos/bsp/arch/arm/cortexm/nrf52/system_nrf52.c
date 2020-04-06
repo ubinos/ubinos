@@ -374,6 +374,10 @@ static bool errata_182(void) {
 
 /*lint --flb "Leave library region" */
 
+__WEAK void SystemInit2(void)
+{
+}
+
 #endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52832XXAA) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

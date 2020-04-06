@@ -186,28 +186,11 @@ void SystemInit(void)
   SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
 #endif
 
-	SystemClock_Config();
-
-	SystemCoreClockUpdate();
-
 #if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
 	extern unsigned int relocated_isr_vector_start __asm__ ("__relocated_isr_vector_start__");
 	SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
 	__DSB();
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
-
-	MPU_Config();
-
-#if (UBINOS__BSP__USE_ICACHE == 1)
-	SCB_EnableICache();
-#else
-	SCB_DisableICache();
-#endif /* (UBINOS__BSP__USE_ICACHE == 1) */
-#if (UBINOS__BSP__USE_DCACHE == 1)
-	SCB_EnableDCache();
-#else
-	SCB_DisableDCache();
-#endif /* (UBINOS__BSP__USE_DCACHE == 1) */
 }
 
 /**
@@ -668,6 +651,29 @@ __WEAK void SystemInit_ExtMemCtl(void)
 }
 #endif /* DATA_IN_ExtSRAM || DATA_IN_ExtSDRAM */
 
+__WEAK void SystemInit2(void)
+{
+	MPU_Config();
+
+#if (UBINOS__BSP__USE_ICACHE == 1)
+	SCB_EnableICache();
+#else
+	SCB_DisableICache();
+#endif /* (UBINOS__BSP__USE_ICACHE == 1) */
+#if (UBINOS__BSP__USE_DCACHE == 1)
+	SCB_EnableDCache();
+#else
+	SCB_DisableDCache();
+#endif /* (UBINOS__BSP__USE_DCACHE == 1) */
+
+	SystemClock_Config();
+
+	SystemCoreClockUpdate();
+}
+
+#endif /* (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
+
 /**
   * @}
   */
@@ -679,8 +685,5 @@ __WEAK void SystemInit_ExtMemCtl(void)
 /**
   * @}
   */    
-
-#endif /* (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1) */
-#endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

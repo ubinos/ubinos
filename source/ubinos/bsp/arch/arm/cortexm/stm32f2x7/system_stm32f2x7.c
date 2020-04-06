@@ -123,6 +123,7 @@ const uint8_t APBPrescTable[8] = { 0, 0, 0, 0, 1, 2, 3, 4 };
  */
 
 extern void SystemClock_Config(void);
+extern void MPU_Config(void);
 
 #ifdef DATA_IN_ExtSRAM
 extern void SystemInit_ExtMemCtl(void)
@@ -170,27 +171,11 @@ void SystemInit(void) {
 	SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
 #endif
 
-	SystemClock_Config();
-
-	SystemCoreClockUpdate();
-
 #if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
 	extern unsigned int relocated_isr_vector_start __asm__ ("__relocated_isr_vector_start__");
 	SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
 	__DSB();
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
-#if (UBINOS__BSP__USE_ICACHE == 1)
-	LL_FLASH_EnableInstCache();
-	LL_FLASH_EnablePrefetch();
-#else
-	LL_FLASH_DisablePrefetch();
-	LL_FLASH_DisableInstCache();
-#endif /* (UBINOS__BSP__USE_ICACHE == 1) */
-#if (UBINOS__BSP__USE_DCACHE == 1)
-	LL_FLASH_EnableDataCache();
-#else
-	LL_FLASH_DisableDataCache();
-#endif /* (UBINOS__BSP__USE_DCACHE == 1) */
 }
 
 /**
@@ -349,6 +334,28 @@ __WEAK void SystemInit_ExtMemCtl(void) {
 	FSMC_Bank1E->BWTR[2] = 0x0FFFFFFF;
 }
 #endif /* DATA_IN_ExtSRAM */
+
+__WEAK void SystemInit2(void)
+{
+	MPU_Config();
+
+#if (UBINOS__BSP__USE_ICACHE == 1)
+	LL_FLASH_EnableInstCache();
+	LL_FLASH_EnablePrefetch();
+#else
+	LL_FLASH_DisablePrefetch();
+	LL_FLASH_DisableInstCache();
+#endif /* (UBINOS__BSP__USE_ICACHE == 1) */
+#if (UBINOS__BSP__USE_DCACHE == 1)
+	LL_FLASH_EnableDataCache();
+#else
+	LL_FLASH_DisableDataCache();
+#endif /* (UBINOS__BSP__USE_DCACHE == 1) */
+
+	SystemClock_Config();
+
+	SystemCoreClockUpdate();
+}
 
 #endif /* (UBINOS__BSP__CPU_MODEL__STM32F2X7 == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */

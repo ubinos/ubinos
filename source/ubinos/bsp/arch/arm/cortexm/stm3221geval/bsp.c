@@ -104,6 +104,9 @@ __WEAK void SystemClock_Config(void) {
 	SystemCoreClock = (UBINOS__BSP__CLOCK_FREQ_MAIN * 1000);
 }
 
+__WEAK void MPU_Config(void) {
+}
+
 #endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM3221GEVAL) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

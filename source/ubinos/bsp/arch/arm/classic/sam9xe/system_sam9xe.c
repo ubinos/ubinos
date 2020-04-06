@@ -73,6 +73,10 @@ void SystemInit(void) {
 
 #pragma GCC pop_options
 
+__attribute__((weak)) void SystemInit2(void)
+{
+}
+
 #endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__SAM9XE512) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

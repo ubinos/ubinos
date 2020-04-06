@@ -39,6 +39,8 @@
 #include <ubinos/ubik.h>
 #endif
 
+extern void SystemInit2(void);
+
 int main(void) {
     unsigned char * buf_p;
     unsigned int heapaddr;
@@ -49,6 +51,8 @@ int main(void) {
     (void) heapaddr;
     (void) heapsize;
     (void) r;
+
+    SystemInit2();
 
     r = bsp_comp_init();
     if (0 != r) {
