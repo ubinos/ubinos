@@ -16,9 +16,9 @@ set_cache(UBINOS__BSP__USE_DCACHE                                               
 
 set_cache(UBINOS__BSP__USE_RELOCATED_ISR_VECTOR                                   TRUE            BOOL)
 
-set_cache(UBINOS__BSP__CLOCK_FREQ_MAIN                                            216000          STRING)
+set_cache(UBINOS__BSP__CLOCK_FREQ_MAIN                                            200000          STRING)
 set_cache(UBINOS__BSP__CLOCK_FREQ_SLOW                                            32              STRING)
-set_cache(UBINOS__BSP__BUSYWAITCOUNT_PER_MS                                       215696          STRING)
+set_cache(UBINOS__BSP__BUSYWAITCOUNT_PER_MS                                       199681          STRING)
 
 set_cache(UBINOS__BSP__STACK_SIZE                                                 0x800           STRING)
 
