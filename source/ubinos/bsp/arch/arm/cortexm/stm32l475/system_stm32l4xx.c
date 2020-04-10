@@ -89,7 +89,12 @@
   * @{
   */
 
-#include "stm32l4xx.h"
+#include <ubinos/bsp/arch.h>
+
+#if (INCLUDE__UBINOS__BSP == 1)
+#if (UBINOS__BSP__STM32_STM32L475 == 1)
+
+#include "../stm32l4/stm32l4xx_ll_system.h"
 
 #if !defined  (HSE_VALUE)
   #define HSE_VALUE    ((uint32_t)8000000) /*!< Value of the External oscillator in Hz */
@@ -163,6 +168,9 @@
   * @{
   */
 
+extern void SystemClock_Config(void);
+extern void MPU_Config(void);
+
 /**
   * @}
   */
@@ -208,6 +216,12 @@ void SystemInit(void)
 #else
   SCB->VTOR = FLASH_BASE | VECT_TAB_OFFSET; /* Vector Table Relocation in Internal FLASH */
 #endif
+
+#if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
+	extern unsigned int relocated_isr_vector_start __asm__ ("__relocated_isr_vector_start__");
+	SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
+	__DSB();
+#endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
 }
 
 /**
@@ -320,6 +334,30 @@ void SystemCoreClockUpdate(void)
   SystemCoreClock >>= tmp;
 }
 
+__WEAK void SystemInit2(void)
+{
+	MPU_Config();
+
+#if (UBINOS__BSP__USE_ICACHE == 1)
+	LL_FLASH_EnableInstCache();
+	LL_FLASH_EnablePrefetch();
+#else
+	LL_FLASH_DisablePrefetch();
+	LL_FLASH_DisableInstCache();
+#endif /* (UBINOS__BSP__USE_ICACHE == 1) */
+#if (UBINOS__BSP__USE_DCACHE == 1)
+	LL_FLASH_EnableDataCache();
+#else
+	LL_FLASH_DisableDataCache();
+#endif /* (UBINOS__BSP__USE_DCACHE == 1) */
+
+	SystemClock_Config();
+
+	SystemCoreClockUpdate();
+}
+
+#endif /* (UBINOS__BSP__STM32_STM32L475 == 1) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /**
   * @}

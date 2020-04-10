@@ -26,124 +26,73 @@
   ******************************************************************************
   */
 
-  .syntax unified
+#include <ubinos_config.h>
+
+#if (INCLUDE__UBINOS__BSP == 1)
+#if (UBINOS__BSP__STM32_STM32L475 == 1)
+
+	.syntax unified
 	.cpu cortex-m4
 	.fpu softvfp
 	.thumb
 
-.global	g_pfnVectors
-.global	Default_Handler
-
-/* start address for the initialization values of the .data section.
-defined in linker script */
-.word	_sidata
-/* start address for the .data section. defined in linker script */
-.word	_sdata
-/* end address for the .data section. defined in linker script */
-.word	_edata
-/* start address for the .bss section. defined in linker script */
-.word	_sbss
-/* end address for the .bss section. defined in linker script */
-.word	_ebss
-
 .equ  BootRAM,        0xF1E0F85F
-/**
- * @brief  This is the code that gets called when the processor first
- *          starts execution following a reset event. Only the absolutely
- *          necessary set is performed, after which the application
- *          supplied main() routine is called.
- * @param  None
- * @retval : None
-*/
 
-    .section	.text.Reset_Handler
-	.weak	Reset_Handler
-	.type	Reset_Handler, %function
-Reset_Handler:
-  ldr   sp, =_estack    /* Atollic update: set stack pointer */
+	.section .stack
+#if defined(__STACK_SIZE)
+	.align 3
+	.equ    Stack_Size, __STACK_SIZE
+#else
+	.align 3
+	.equ    Stack_Size, 8192
+#endif
+	.globl __StackTop
+	.globl __StackLimit
+__StackLimit:
+	.space Stack_Size
+	.size __StackLimit, . - __StackLimit
+__StackTop:
+	.size __StackTop, . - __StackTop
 
-/* Copy the data segment initializers from flash to SRAM */
-  movs	r1, #0
-  b	LoopCopyDataInit
+	.section .isr_vector
+	.align 2
+	.globl __isr_vector
+__isr_vector:
+	.word   __StackTop                  /* Top of Stack */
+	.word   Reset_Handler
+#if (INCLUDE__UBINOS__UBIK == 1)
+	.word   bsp_ubik_irq_handler        /* NMI_Handler */
+	.word   bsp_ubik_irq_handler        /* HardFault_Handler */
+	.word   bsp_ubik_irq_handler        /* MemoryManagement_Handler */
+	.word   bsp_ubik_irq_handler        /* BusFault_Handler */
+	.word   bsp_ubik_irq_handler        /* UsageFault_Handler */
+	.word   0                           /* Reserved */
+	.word   0                           /* Reserved */
+	.word   0                           /* Reserved */
+	.word   0                           /* Reserved */
+	.word   bsp_ubik_swi_handler        /* SVC_Handler */
+	.word   bsp_ubik_irq_handler        /* DebugMon_Handler */
+	.word   0                           /* Reserved */
+	.word   bsp_ubik_psv_handler        /* PendSV_Handler */
+	.word   bsp_ubik_tick_handler       /* SysTick_Handler */
+#else
+	.word   NMI_Handler
+	.word   HardFault_Handler
+	.word   MemManage_Handler
+	.word   BusFault_Handler
+	.word   UsageFault_Handler
+	.word   0                           /* Reserved */
+	.word   0                           /* Reserved */
+	.word   0                           /* Reserved */
+	.word   0                           /* Reserved */
+	.word   SVC_Handler
+	.word   DebugMon_Handler
+	.word   0                           /* Reserved */
+	.word   PendSV_Handler
+	.word   SysTick_Handler
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
-CopyDataInit:
-	ldr	r3, =_sidata
-	ldr	r3, [r3, r1]
-	str	r3, [r0, r1]
-	adds	r1, r1, #4
-
-LoopCopyDataInit:
-	ldr	r0, =_sdata
-	ldr	r3, =_edata
-	adds	r2, r0, r1
-	cmp	r2, r3
-	bcc	CopyDataInit
-	ldr	r2, =_sbss
-	b	LoopFillZerobss
-/* Zero fill the bss segment. */
-FillZerobss:
-	movs	r3, #0
-	str	r3, [r2], #4
-
-LoopFillZerobss:
-	ldr	r3, = _ebss
-	cmp	r2, r3
-	bcc	FillZerobss
-
-/* Call the clock system intitialization function.*/
-    bl  SystemInit
-/* Call static constructors */
-    bl __libc_init_array
-/* Call the application's entry point.*/
-	bl	main
-
-LoopForever:
-    b LoopForever
-    
-.size	Reset_Handler, .-Reset_Handler
-
-/**
- * @brief  This is the code that gets called when the processor receives an
- *         unexpected interrupt.  This simply enters an infinite loop, preserving
- *         the system state for examination by a debugger.
- *
- * @param  None
- * @retval : None
-*/
-    .section	.text.Default_Handler,"ax",%progbits
-Default_Handler:
-Infinite_Loop:
-	b	Infinite_Loop
-	.size	Default_Handler, .-Default_Handler
-/******************************************************************************
-*
-* The minimal vector table for a Cortex-M4.  Note that the proper constructs
-* must be placed on this to ensure that it ends up at physical address
-* 0x0000.0000.
-*
-******************************************************************************/
- 	.section	.isr_vector,"a",%progbits
-	.type	g_pfnVectors, %object
-	.size	g_pfnVectors, .-g_pfnVectors
-
-
-g_pfnVectors:
-	.word	_estack
-	.word	Reset_Handler
-	.word	NMI_Handler
-	.word	HardFault_Handler
-	.word	MemManage_Handler
-	.word	BusFault_Handler
-	.word	UsageFault_Handler
-	.word	0
-	.word	0
-	.word	0
-	.word	0
-	.word	SVC_Handler
-	.word	DebugMon_Handler
-	.word	0
-	.word	PendSV_Handler
-	.word	SysTick_Handler
+  /* External Interrupts */
 	.word	WWDG_IRQHandler
 	.word	PVD_PVM_IRQHandler
 	.word	TAMP_STAMP_IRQHandler
@@ -227,6 +176,114 @@ g_pfnVectors:
 	.word	RNG_IRQHandler
 	.word	FPU_IRQHandler
 
+	.size __isr_vector, . - __isr_vector
+
+
+/* Reset Handler */
+
+	.text
+	.thumb
+	.thumb_func
+	.align 1
+	.globl Reset_Handler
+	.type Reset_Handler, %function
+Reset_Handler:
+/* set stack pointer */
+	ldr sp, =__StackTop
+
+/* Loop to copy data from read only memory to RAM.
+ * The ranges of copy from/to are specified by following symbols:
+ *      __etext: LMA of start of the section to copy from. Usually end of text
+ *      __data_start__: VMA of start of the section to copy to.
+ *      __bss_start__: VMA of end of the section to copy to. Normally __data_end__ is used, but by using __bss_start__
+ *                    the user can add their own initialized data section before BSS section with the INTERT AFTER command.
+ *
+ * All addresses must be aligned to 4 bytes boundary.
+ */
+Reset_Breakpoint:
+	ldr r1, =__etext
+	ldr r2, =__data_start__
+	ldr r3, =__bss_start__
+
+	cmp r1, r2
+	beq .L_loop1_done
+
+	subs r3, r3, r2
+	ble .L_loop1_done
+
+.L_loop1:
+	subs r3, r3, #4
+	ldr r0, [r1,r3]
+	str r0, [r2,r3]
+	bgt .L_loop1
+
+.L_loop1_done:
+
+#if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
+/* Loop to copy isr vector to relocated address */
+
+	ldr r1, =__isr_vector_start__
+	ldr r2, =__relocated_isr_vector_start__
+	ldr r3, =__relocated_isr_vector_end__
+
+	cmp r1, r2
+	beq .L_loop2_done
+
+	subs r3, r3, r2
+	ble .L_loop2_done
+
+.L_loop2:
+	subs r3, r3, #4
+	ldr r0, [r1,r3]
+	str r0, [r2,r3]
+	bgt .L_loop2
+
+.L_loop2_done:
+
+#endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
+
+/* This part of work usually is done in C library startup code. Otherwise,
+ * define __STARTUP_CLEAR_BSS to enable it in this startup. This section
+ * clears the RAM where BSS data is located.
+ *
+ * The BSS section is specified by following symbols
+ *    __bss_start__: start of the BSS section.
+ *    __bss_end__: end of the BSS section.
+ *
+ * All addresses must be aligned to 4 bytes boundary.
+ */
+#ifdef __STARTUP_CLEAR_BSS
+	ldr r1, =__bss_start__
+	ldr r2, =__bss_end__
+
+	movs r0, 0
+
+	subs r2, r2, r1
+	ble .L_loop3_done
+
+.L_loop3:
+	subs r2, r2, #4
+	str r0, [r1, r2]
+	bgt .L_loop3
+
+.L_loop3_done:
+#endif /* __STARTUP_CLEAR_BSS */
+
+/* Execute SystemInit function. */
+	bl SystemInit
+
+/* Call _start function provided by libraries.
+ * If those libraries are not accessible, define __START as your entry point.
+ */
+#ifndef __START
+#define __START _start
+#endif
+	bl __START
+
+	.pool
+	.size   Reset_Handler,.-Reset_Handler
+
+	.section ".text"
 
 /*******************************************************************************
 *
@@ -235,17 +292,26 @@ g_pfnVectors:
 * this definition.
 *
 *******************************************************************************/
+	.globl  Default_Handler
+	.type   Default_Handler, %function
+Default_Handler:
+#if (INCLUDE__UBINOS__UBIK == 1)
+	b       bsp_ubik_irq_handler
+#else
+	b       .
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+	.size   Default_Handler, . - Default_Handler
 
-  .weak	NMI_Handler
+	.weak	NMI_Handler
 	.thumb_set NMI_Handler,Default_Handler
 
-  .weak	HardFault_Handler
+	.weak	HardFault_Handler
 	.thumb_set HardFault_Handler,Default_Handler
 
-  .weak	MemManage_Handler
+	.weak	MemManage_Handler
 	.thumb_set MemManage_Handler,Default_Handler
 
-  .weak	BusFault_Handler
+	.weak	BusFault_Handler
 	.thumb_set BusFault_Handler,Default_Handler
 
 	.weak	UsageFault_Handler
@@ -447,13 +513,13 @@ g_pfnVectors:
 	.thumb_set DMA2_Channel5_IRQHandler,Default_Handler
 
 	.weak	DFSDM1_FLT0_IRQHandler
-	.thumb_set DFSDM1_FLT0_IRQHandler,Default_Handler	
+	.thumb_set DFSDM1_FLT0_IRQHandler,Default_Handler
 	
 	.weak	DFSDM1_FLT1_IRQHandler
-	.thumb_set DFSDM1_FLT1_IRQHandler,Default_Handler	
+	.thumb_set DFSDM1_FLT1_IRQHandler,Default_Handler
 	
 	.weak	DFSDM1_FLT2_IRQHandler
-	.thumb_set DFSDM1_FLT2_IRQHandler,Default_Handler	
+	.thumb_set DFSDM1_FLT2_IRQHandler,Default_Handler
 	
 	.weak	COMP_IRQHandler
 	.thumb_set COMP_IRQHandler,Default_Handler
@@ -462,10 +528,10 @@ g_pfnVectors:
 	.thumb_set LPTIM1_IRQHandler,Default_Handler
 	
 	.weak	LPTIM2_IRQHandler
-	.thumb_set LPTIM2_IRQHandler,Default_Handler	
+	.thumb_set LPTIM2_IRQHandler,Default_Handler
 	
 	.weak	OTG_FS_IRQHandler
-	.thumb_set OTG_FS_IRQHandler,Default_Handler	
+	.thumb_set OTG_FS_IRQHandler,Default_Handler
 	
 	.weak	DMA2_Channel6_IRQHandler
 	.thumb_set DMA2_Channel6_IRQHandler,Default_Handler	
@@ -474,16 +540,16 @@ g_pfnVectors:
 	.thumb_set DMA2_Channel7_IRQHandler,Default_Handler	
 	
 	.weak	LPUART1_IRQHandler
-	.thumb_set LPUART1_IRQHandler,Default_Handler	
+	.thumb_set LPUART1_IRQHandler,Default_Handler
 	
 	.weak	QUADSPI_IRQHandler
-	.thumb_set QUADSPI_IRQHandler,Default_Handler	
+	.thumb_set QUADSPI_IRQHandler,Default_Handler
 	
 	.weak	I2C3_EV_IRQHandler
-	.thumb_set I2C3_EV_IRQHandler,Default_Handler	
+	.thumb_set I2C3_EV_IRQHandler,Default_Handler
 	
 	.weak	I2C3_ER_IRQHandler
-	.thumb_set I2C3_ER_IRQHandler,Default_Handler	
+	.thumb_set I2C3_ER_IRQHandler,Default_Handler
 	
 	.weak	SAI1_IRQHandler
 	.thumb_set SAI1_IRQHandler,Default_Handler
@@ -502,4 +568,8 @@ g_pfnVectors:
 	
 	.weak	FPU_IRQHandler
 	.thumb_set FPU_IRQHandler,Default_Handler
+
+#endif /* (UBINOS__BSP__STM32_STM32L475 == 1) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
