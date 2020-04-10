@@ -782,6 +782,18 @@
 	make -f makefile.mk $@ CONFIG_NAME=helloworld_stm32l475eiot01_baremetal
 	@echo ""
 	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : helloworld multi-tasking application"
+	@echo "Target board    : stm32l475eiot01"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=helloworld_mt_stm32l475eiot01
+	@echo ""
+	@echo ""
 
 
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
