@@ -48,7 +48,7 @@
 #include <ubinos/bsp/arch.h>
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1)
+#if (UBINOS__BSP__STM32_STM32F7XX == 1)
 
 #include "../stm32f7/stm32f7xx_ll_system.h"
 
@@ -671,7 +671,7 @@ __WEAK void SystemInit2(void)
 	SystemCoreClockUpdate();
 }
 
-#endif /* (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1) */
+#endif /* (UBINOS__BSP__STM32_STM32F7XX == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /**

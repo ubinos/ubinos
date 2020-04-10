@@ -28,7 +28,7 @@
 #include <ubinos_config.h>
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1)
+#if (UBINOS__BSP__STM32_STM32F7XX == 1)
 
   .syntax unified
   .cpu cortex-m7
@@ -684,7 +684,7 @@ Default_Handler:
    .weak      MDIOS_IRQHandler            
    .thumb_set MDIOS_IRQHandler,Default_Handler   
 
-#endif /* (UBINOS__BSP__CPU_MODEL__STM32F7XX == 1) */
+#endif /* (UBINOS__BSP__STM32_STM32F7XX == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/		

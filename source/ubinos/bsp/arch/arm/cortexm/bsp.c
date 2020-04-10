@@ -30,7 +30,7 @@
 #include "_bsp.h"
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__CPU_TYPE__CORTEX_MX == 1)
+#if (UBINOS__BSP__CORTEX_MX == 1)
 
 #include <stdio.h>
 
@@ -200,6 +200,6 @@ unsigned int arm_get_svcpend(void) {
     return (value >> 15);
 }
 
-#endif /* (UBINOS__BSP__CPU_TYPE__CORTEX_MX == 1) */
+#endif /* (UBINOS__BSP__CORTEX_MX == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

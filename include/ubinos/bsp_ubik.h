@@ -66,7 +66,7 @@ void bsp_ubik_task_schedule_irq();
 
 void bsp_ubik_swisr(unsigned int swino);
 
-#if (UBINOS__BSP__CPU_TYPE__CORTEX_MX == 1)
+#if (UBINOS__BSP__CORTEX_MX == 1)
 
 void __attribute__((naked)) bsp_ubik_psv_handler(void);
 
@@ -74,7 +74,7 @@ void bsp_ubik_swi_handler(void);
 void bsp_ubik_tick_handler(void);
 void bsp_ubik_irq_handler(void);
 
-#endif /* (UBINOS__BSP__CPU_TYPE__CORTEX_MX == 1) */
+#endif /* (UBINOS__BSP__CORTEX_MX == 1) */
 
 #ifdef	__cplusplus
 }

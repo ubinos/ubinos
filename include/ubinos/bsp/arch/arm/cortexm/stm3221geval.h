@@ -45,7 +45,7 @@ extern "C" {
 #include <ubinos_config.h>
 #include <ubinos/bsp/intr.h>
 
-#if (UBINOS__BSP__CPU_MODEL__STM32F2X7 == 1)
+#if (UBINOS__BSP__STM32_STM32F2X7 == 1)
 #include "stm32f2/stm32f2xx.h"
 #else
 #error "Unsupported UBINOS__BSP__CPU_MODEL"

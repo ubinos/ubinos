@@ -88,7 +88,7 @@ set_cache_default(UBINOS__BSP__INCLUDE_INTERRUPT_DISABLE_ENABLE_RETRY           
 
     elseif((UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M7") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3"))
 
-set_cache_default(UBINOS__BSP__CPU_TYPE__CORTEX_MX                              TRUE    BOOL "ARM Cortex-M family CPU Type")
+set_cache_default(UBINOS__BSP__CORTEX_MX                                        TRUE    BOOL "ARM Cortex-M family CPU Type")
     
     else()
     
@@ -125,24 +125,24 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            
 
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F207ZG"))
 
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32XXXX                             TRUE    BOOL "STM32XXXX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
 
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F2X7                             TRUE    BOOL "STM32F2X7 family CPU Model")
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F2XX                             TRUE    BOOL "STM32F2XX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32F2X7                                  TRUE    BOOL "STM32F2X7 family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32F2XX                                  TRUE    BOOL "STM32F2XX family CPU Model")
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32L475VG")
 
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32XXXX                             TRUE    BOOL "STM32XXXX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
 
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F4XX                             TRUE    BOOL "STM32F4XX family CPU Model")
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F475                             TRUE    BOOL "STM32F475 family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32L4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32L475                                  TRUE    BOOL "STM32L475 family CPU Model")
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F769NI")
 
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32XXXX                             TRUE    BOOL "STM32XXXX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
 
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F7XX                             TRUE    BOOL "STM32F7XX family CPU Model")
-set_cache_default(UBINOS__BSP__CPU_MODEL__STM32F769                             TRUE    BOOL "STM32F769 family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32F7XX                                  TRUE    BOOL "STM32F7XX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32F769                                  TRUE    BOOL "STM32F769 family CPU Model")
 
     else()
 
@@ -168,7 +168,7 @@ set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      S
 
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"            STRING "[3 | 6]")
 
-    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L475VG")
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L475EIOT01")
 
 set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               FALSE   BOOL "")
 
