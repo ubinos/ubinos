@@ -28,10 +28,10 @@ set_cache(UBINOS__BSP__LINKSCRIPT_FILE "${PROJECT_UBINOS_DIR}/source/ubinos/bsp/
 
 set_cache(UBINOS__BSP__FLASH_WRITER_FILE "" PATH)
 
-set_cache(UBINOS__BSP__OPENOCD_CONFIG_FILE "" PATH)
+set_cache(UBINOS__BSP__OPENOCD_CONFIG_FILE "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm32l475eiot01/openocd.cfg" PATH)
 
-set_cache(UBINOS__BSP__GDBSCRIPT_FILE_LOAD "" PATH)
-set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET "" PATH)
+set_cache(UBINOS__BSP__GDBSCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/gdb_flash_load_openocd.gdb" PATH)
+set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/gdb_flash_reset_openocd.gdb" PATH)
 
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD "" PATH)
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET "" PATH)
@@ -43,4 +43,5 @@ set_cache(UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT 96 STRING)
 set_cache(UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE 16 STRING)
 
 include(${CMAKE_CURRENT_LIST_DIR}/../../arm.cmake)
+
 
