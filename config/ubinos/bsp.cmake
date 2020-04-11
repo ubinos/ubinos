@@ -298,7 +298,6 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             
         endif()
         
-        
         if(UBINOS__BSP__NRF52_NRF52)
         
             set(_tmp_all_flags "${_tmp_all_flags} -DNRF52")
@@ -356,7 +355,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         else()
             
             set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
-            set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv5-d16")
+            set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv4-sp-d16")
             
         endif()
 
