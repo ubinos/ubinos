@@ -769,6 +769,18 @@
 	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_stm32l475eiot01_baremetal
 	@echo ""
 	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : ubinos library"
+	@echo "Target board    : stm32l475eiot01"
+	@echo "OS Kernel       : none"
+	@echo "Link memory map : flash_aws"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_stm32l475eiot01_baremetal_aws
+	@echo ""
+	@echo ""
 
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 	@echo ""
