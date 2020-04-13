@@ -20,11 +20,11 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 
 MEMORY
 {
-    FLASH (rx)  : ORIGIN = <FLASH_ORIGIN>,  LENGTH = <FLASH_LENGTH>
+    FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
     FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
-    RAM (rwx)   : ORIGIN = <RAM_ORIGIN>,    LENGTH = <RAM_LENGTH>
-	RAM2 (xrw)  : ORIGIN = <RAM2_ORIGIN>,   LENGTH = <RAM2_LENGTH>
-	RAM3 (xrw)  : ORIGIN = <RAM3_ORIGIN>,   LENGTH = <RAM3_LENGTH>
+    RAM (rwx) : ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
+	RAM2 (xrw) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
+	RAM3 (xrw) : ORIGIN = <RAM3_ORIGIN>, LENGTH = <RAM3_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -112,10 +112,10 @@ SECTIONS
     __text_end__ = .;
     __etext = .;
 
-  UNINIT_FIXED_LOC (NOLOAD) :
-  {
-    *(UNINIT_FIXED_LOC)
-  } >FLASH2
+    UNINIT_FIXED_LOC (NOLOAD) :
+    {
+        *(UNINIT_FIXED_LOC)
+    } >FLASH2
 }
 
 SECTIONS
