@@ -45,6 +45,7 @@
  */
 
 #include <ubinos/bsp/arch.h>
+#include <ubinos/bsp.h>
 
 #if (INCLUDE__UBINOS__BSP == 1)
 #if (UBINOS__BSP__STM32_STM32F2X7 == 1)
@@ -126,7 +127,7 @@ extern void SystemClock_Config(void);
 extern void MPU_Config(void);
 
 #ifdef DATA_IN_ExtSRAM
-extern void SystemInit_ExtMemCtl(void)
+extern void SystemInit_ExtMemCtl(void);
 #endif /* DATA_IN_ExtSRAM */
 
 /** @addtogroup STM32F2xx_System_Private_Functions
@@ -159,9 +160,9 @@ void SystemInit(void) {
 
 	/* Disable all interrupts */
 	RCC->CIR = 0x00000000;
-
 #ifdef DATA_IN_ExtSRAM
 	SystemInit_ExtMemCtl();
+	bsp_busywaitms(100);
 #endif /* DATA_IN_ExtSRAM */
 
 	/* Configure the Vector Table location add offset address ------------------*/

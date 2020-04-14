@@ -197,10 +197,22 @@ SECTIONS
         __StackTop = .;
         PROVIDE(__stack = .);
     } > RAM
+
+    /* Remove information from the standard libraries */
+    /DISCARD/ :
+    {
+        libc.a ( * )
+        libm.a ( * )
+        libgcc.a ( * )
+    }
+
+    .ARM.attributes 0 : { *(.ARM.attributes) }
 }
 
 SECTIONS
 {
+    __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
+
     /* Check if data + heap + stack exceeds RAM limit */
     ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
     
@@ -210,19 +222,16 @@ SECTIONS
     TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
     
+    __flash_start__                 = ORIGIN(FLASH);
     __flash_size__                  = LENGTH(FLASH);
     __flash_usage__                 = TotalFlashUsed;
     __ram_start__                   = ORIGIN(RAM);
     __ram_size__                    = LENGTH(RAM);
     __ram_static_usage__            = __bss_end__ - ORIGIN(RAM);
-    __flash2_size__                 = 0;
-    __flash2_usage__                = 0;
-    __ram2_size__                   = 0;
-    __ram2_static_usage__           = 0;
     __entry_address__               = Reset_Handler;
-    __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__; 
+    __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__;
     __text_size__                   = __text_end__ - __text_start__;
-    __relocated_isr_vector_size__   = __relocated_isr_vector_end__ - __relocated_isr_vector_start__; 
+    __relocated_isr_vector_size__   = __relocated_isr_vector_end__ - __relocated_isr_vector_start__;
     __data_size__                   = SIZEOF(.data);
     __bss_size__                    = SIZEOF(.bss);
     __stack_top__                   = __StackTop;
@@ -232,4 +241,5 @@ SECTIONS
     __heap_limit__                  = __HeapLimit;
     __heap_size__                   = SIZEOF(.heap);
 }
+
 

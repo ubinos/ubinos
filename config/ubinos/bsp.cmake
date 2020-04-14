@@ -18,7 +18,7 @@ set_cache_default(UBINOS__BSP__CPU_MODEL                                        
 
 set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | STM3221GEVAL | NUCLEOF207ZG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO]")
 
-set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | SDRAM | FLASH_SDRAM | SRAM_SDRAM]")
+set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | FLASH_EXTSRAM | FLASH_EXTSDRAM | EXTFLASH_EXTSDRAM]")
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH_ORIGIN                         0       STRING "FLASH origin address of link memory map")
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_FLASH_LENGTH                         0       STRING "FLASH length of link memory map")
@@ -66,6 +66,7 @@ set_cache_default(UBINOS__BSP__BUSYWAITCOUNT_PER_MS                             
 set_cache_default(UBINOS__BSP__USE_DTTY                                         TRUE    BOOL "Use dtty (debug tty)")
 set_cache_default(UBINOS__BSP__DTTY_TYPE                                        "UART"  STRING "dtty type [UART | EXTERNAL]")
 
+set_cache_default(UBINOS__BSP__USE_EXTSRAM                                      FALSE   BOOL "Use external SRAM")
 set_cache_default(UBINOS__BSP__USE_EXTSDRAM                                     FALSE   BOOL "Use external SDRAM")
 set_cache_default(UBINOS__BSP__USE_EXTNORFLASH                                  FALSE   BOOL "Use external NOR Flash")
 
@@ -406,6 +407,12 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL")
 
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM322xG_EVAL")
+        
+        if(UBINOS__BSP__USE_EXTSRAM)
+        
+        	set(_tmp_all_flags "${_tmp_all_flags} -DDATA_IN_ExtSRAM")
+        
+        endif(UBINOS__BSP__USE_EXTSRAM)
 
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOF207ZG")
 

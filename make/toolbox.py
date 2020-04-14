@@ -156,28 +156,76 @@ def show_mapfile_info(sfn):
     print("stack size                   = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
+    addr = parse_mapfile_get_value(sfn, "__flash_start__")
     size = parse_mapfile_get_value(sfn, "__flash_size__")
     usage = parse_mapfile_get_value(sfn, "__flash_usage__")
     if size > 0:
+        print("flash start                  = 0x%08x (%12d) bytes" % (addr, addr))
         print("flash size                   = 0x%08x (%12d) bytes" % (size, size))
         print("flash usage                  = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-        size = parse_mapfile_get_value(sfn, "__ram_size__")
-        usage = parse_mapfile_get_value(sfn, "__ram_static_usage__")
+
+    addr = parse_mapfile_get_value(sfn, "__flash2_start__")
+    size = parse_mapfile_get_value(sfn, "__flash2_size__")
+    usage = parse_mapfile_get_value(sfn, "__flash2_usage__")
+    if size > 0:
+        print("flash2 start                 = 0x%08x (%12d) bytes" % (addr, addr))
+        print("flash2 size                  = 0x%08x (%12d) bytes" % (size, size))
+        print("flash2 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
+        print("")
+        
+    addr = parse_mapfile_get_value(sfn, "__flash3_start__")
+    size = parse_mapfile_get_value(sfn, "__flash3_size__")
+    usage = parse_mapfile_get_value(sfn, "__flash3_usage__")
+    if size > 0:
+        print("flash3 start                 = 0x%08x (%12d) bytes" % (addr, addr))
+        print("flash3 size                  = 0x%08x (%12d) bytes" % (size, size))
+        print("flash3 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
+        print("")
+        
+    addr = parse_mapfile_get_value(sfn, "__flash4_start__")
+    size = parse_mapfile_get_value(sfn, "__flash4_size__")
+    usage = parse_mapfile_get_value(sfn, "__flash4_usage__")
+    if size > 0:
+        print("flash4 start                 = 0x%08x (%12d) bytes" % (addr, addr))
+        print("flash4 size                  = 0x%08x (%12d) bytes" % (size, size))
+        print("flash4 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
+        print("")
+                
+    addr = parse_mapfile_get_value(sfn, "__ram_start__")
+    size = parse_mapfile_get_value(sfn, "__ram_size__")
+    usage = parse_mapfile_get_value(sfn, "__ram_static_usage__")
+    if size > 0:
+        print("ram start                    = 0x%08x (%12d) bytes" % (addr, addr))
         print("ram size                     = 0x%08x (%12d) bytes" % (size, size))
         print("ram static usage             = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    size = parse_mapfile_get_value(sfn, "__flash2_size__")
-    usage = parse_mapfile_get_value(sfn, "__flash2_usage__")
+    addr = parse_mapfile_get_value(sfn, "__ram2_start__")
+    size = parse_mapfile_get_value(sfn, "__ram2_size__")
+    usage = parse_mapfile_get_value(sfn, "__ram2_static_usage__")
     if size > 0:
-        print("flash2 size                  = 0x%08x (%12d) bytes" % (size, size))
-        print("flash2 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
-        print("")
-        size = parse_mapfile_get_value(sfn, "__ram2_size__")
-        usage = parse_mapfile_get_value(sfn, "__ram2_static_usage__")
+        print("ram2 start                   = 0x%08x (%12d) bytes" % (addr, addr))
         print("ram2 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram2 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
+        print("")
+    
+    addr = parse_mapfile_get_value(sfn, "__ram3_start__")
+    size = parse_mapfile_get_value(sfn, "__ram3_size__")
+    usage = parse_mapfile_get_value(sfn, "__ram3_static_usage__")
+    if size > 0:
+        print("ram3 start                   = 0x%08x (%12d) bytes" % (addr, addr))
+        print("ram3 size                    = 0x%08x (%12d) bytes" % (size, size))
+        print("ram3 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
+        print("")
+    
+    addr = parse_mapfile_get_value(sfn, "__ram4_start__")
+    size = parse_mapfile_get_value(sfn, "__ram4_size__")
+    usage = parse_mapfile_get_value(sfn, "__ram4_static_usage__")
+    if size > 0:
+        print("ram4 start                   = 0x%08x (%12d) bytes" % (addr, addr))
+        print("ram4 size                    = 0x%08x (%12d) bytes" % (size, size))
+        print("ram4 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
     
     addr = parse_mapfile_get_value(sfn, "  _SEGGER_RTT")

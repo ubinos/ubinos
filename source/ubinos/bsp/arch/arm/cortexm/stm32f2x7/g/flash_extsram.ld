@@ -22,6 +22,7 @@ MEMORY
 {
     FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
     RAM (rwx) :  ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
+    RAM2 (rwx) :  ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -61,11 +62,9 @@ SECTIONS
         __text_start__ = .;
 
         __isr_vector_start__ = .;
-        __relocated_isr_vector_start__ = .;
         KEEP(*(.isr_vector))
         . = ALIGN(4);
         __isr_vector_end__ = .;
-        __relocated_isr_vector_end__ = .;
 
         *(.text*)
 
@@ -89,23 +88,23 @@ SECTIONS
         *(.rodata*)
 
         KEEP(*(.eh_frame*))
-    } > RAM
+    } > FLASH
     
     .mem_section_dummy_rom :
     {
         . = ALIGN(4);
-    } > RAM
+    } > FLASH
 
     .ARM.extab :
     {
         *(.ARM.extab* .gnu.linkonce.armextab.*)
-    } > RAM
+    } > FLASH
 
     __exidx_start = .;
     .ARM.exidx :
     {
         *(.ARM.exidx* .gnu.linkonce.armexidx.*)
-    } > RAM
+    } > FLASH
     __exidx_end = .;
 
     __text_end__ = .;
@@ -114,7 +113,16 @@ SECTIONS
 
 SECTIONS
 {
-    .data :
+    .relocated_isr_vector (COPY) :
+    {
+        . = ALIGN(128);
+        __relocated_isr_vector_start__ = .;
+        . = . + (__isr_vector_end__ - __isr_vector_start__);
+        . = ALIGN(128);
+        __relocated_isr_vector_end__ = .;
+    } > RAM
+
+    .data : AT (__etext)
     {
         __data_start__ = .;
         *(vtable)
@@ -144,12 +152,12 @@ SECTIONS
         . = ALIGN(4);
         /* All data end */
         __data_end__ = .;
-    } > RAM
+    } > RAM2
 
     .mem_section_dummy_ram :
     {
         . = ALIGN(4);
-    } > RAM
+    } > RAM2
 
     .bss :
     {
@@ -159,7 +167,7 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
         __bss_end__ = .;
-    } > RAM
+    } > RAM2
 
     /* .stack_dummy section doesn't contains any symbols. It is only
      * used for linker to calculate size of stack sections, and assign
@@ -175,10 +183,10 @@ SECTIONS
         __HeapBase = .;
         __end__ = .;
         PROVIDE(end = .);
-        . = ORIGIN(RAM) + LENGTH(RAM) - SIZEOF(.stack_dummy);
+        . = ORIGIN(RAM2) + LENGTH(RAM2) - SIZEOF(.stack_dummy);
         . = ALIGN(4);
         __HeapLimit = .;
-    } > RAM
+    } > RAM2
 
     .stack __HeapLimit (COPY):
     {
@@ -189,7 +197,7 @@ SECTIONS
         . = ALIGN(4);
         __StackTop = .;
         PROVIDE(__stack = .);
-    } > RAM
+    } > RAM2
 
     /* Remove information from the standard libraries */
     /DISCARD/ :
@@ -206,12 +214,12 @@ SECTIONS
 {
     __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
 
-    /* Check if data + heap + stack exceeds RAM limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
+    /* Check if data + heap + stack exceeds RAM2 limit */
+    ASSERT(__StackLimit >= __HeapLimit, "region RAM2 overflowed with stack")
     
     /* Check if text sections + data exceeds FLASH limit */
-    DataInitFlashUsed = 0;
-    CodeFlashUsed = 0;
+    DataInitFlashUsed = __bss_start__ - __data_start__;
+    CodeFlashUsed = __etext - ORIGIN(FLASH);
     TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
     
@@ -220,7 +228,10 @@ SECTIONS
     __flash_usage__                 = TotalFlashUsed;
     __ram_start__                   = ORIGIN(RAM);
     __ram_size__                    = LENGTH(RAM);
-    __ram_static_usage__            = __bss_end__ - ORIGIN(RAM);
+    __ram_static_usage__            = __relocated_isr_vector_end__ - __relocated_isr_vector_start__;
+    __ram2_start__                  = ORIGIN(RAM2);
+    __ram2_size__                   = LENGTH(RAM2);
+    __ram2_static_usage__           = __bss_end__ - ORIGIN(RAM2);
     __entry_address__               = Reset_Handler;
     __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__;
     __text_size__                   = __text_end__ - __text_start__;
