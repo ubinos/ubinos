@@ -289,6 +289,19 @@ __WEAK void SystemInit_ExtMemCtl(void) {
 	/* No pull-up, pull-down for PDx pins */
 	GPIOD->PUPDR = 0x00000000;
 
+#if defined(STM32_ENABLE_TRACE)
+	/* Connect PEx pins to FSMC Alternate function */
+	GPIOE->AFR[0] = 0xC00CC0CC  & 0xF00000FF;
+	GPIOE->AFR[1] = 0xCCCCCCCC;
+	/* Configure PEx pins in Alternate function mode */
+	GPIOE->MODER = (0xAAAA828A   & 0xFFFFC00F) | 0x00002AA0;
+	/* Configure PEx pins speed to 100 MHz */
+	GPIOE->OSPEEDR = (0xFFFFC3CF & 0xFFFFC00F) | 0x00003FF0;
+	/* Configure PEx pins Output type to push-pull */
+	GPIOE->OTYPER = 0x00000000  & 0xFFFFC00F;
+	/* No pull-up, pull-down for PEx pins */
+	GPIOE->PUPDR = 0x00000000   & 0xFFFFC00F;
+#else
 	/* Connect PEx pins to FSMC Alternate function */
 	GPIOE->AFR[0] = 0xC00CC0CC;
 	GPIOE->AFR[1] = 0xCCCCCCCC;
@@ -300,6 +313,7 @@ __WEAK void SystemInit_ExtMemCtl(void) {
 	GPIOE->OTYPER = 0x00000000;
 	/* No pull-up, pull-down for PEx pins */
 	GPIOE->PUPDR = 0x00000000;
+#endif
 
 	/* Connect PFx pins to FSMC Alternate function */
 	GPIOF->AFR[0] = 0x00CCCCCC;
