@@ -59,7 +59,13 @@ set_cache_default(UBINOS__UBIK__TICK_RTC_NO                                     
 set_cache_default(UBINOS__UBIK__TICK_RTC_COUNT_MAX                              0xFFFFFFL STRING "Maximum RTC count for tick")
 
 set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK                                  TRUE      BOOL "Enable RTC check")
-set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK_TYPE                             "ABORT" STRING "RTC check type [CORRECT | ABORT]")
+set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK_TYPE                             "CORRECT" STRING "RTC check type [CORRECT | ABORT]")
+
+set_cache_default(UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE                        TRUE      BOOL "Enable to sleep when idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE                  TRUE      BOOL "Enable to ignore tick when idle")
+
+set_cache_default(UBINOS__UBIK__TICK_RTC_IGNORE_TICK_COUNT_MIN                  10        STRING "Minimum tick count to ignore while idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_IGNORE_TICK_COUNT_MARGIN               0         STRING "Margin of tick count to ignore while idle")
 
 endif(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
 

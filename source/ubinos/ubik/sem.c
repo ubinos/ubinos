@@ -202,7 +202,7 @@ int sem_take_timed(sem_pt _sem, unsigned int tick) {
 	}
 	else {
 		_task_cur->timed		= 1;
-		_task_cur->wakeuptick 	= tick;
+		_task_cur->waittick		= tick;
 	}
 
 	r = sem_take(_sem);

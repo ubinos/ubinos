@@ -469,7 +469,7 @@ int task_suspend(task_pt _task) {
 		task->suspended = 1;
 
 		if (TASK_STATE__BLOCKED == task->state) {
-			_task_calcremainingtimeout(task);
+			_task_recalculate_waittick(task);
 			_task_sigobj_notifywtaskchange(task);
 		}
 
@@ -615,7 +615,7 @@ int task_resume(task_pt _task) {
 			_task_changelist(task);
 		}
 		else if (0 != task->timed) {
-			task->wakeuptick += _ubik_tickcount;
+			task->wakeuptick = _ubik_tickcount + task->waittick;
 		}
 	}
 
@@ -664,12 +664,13 @@ int task_sleep(unsigned int tick) {
 
 	if ((0 == _bsp_kernel_active) || (OBJTYPE__UBIK_IDLETASK  == _task_cur->type)) {
 		bsp_busywait(bsp_getbusywaitcountperms() * ubik_ticktotimems(tick));
-		_task_cur->wakeuptick 	= 0;
+		_task_cur->waittick 	= 0;
 	}
 	else {
 		ubik_entercrit();
 
 		_task_cur->timed		= 1;
+		_task_cur->waittick 	= tick;
 		_task_cur->wakeuptick 	= _ubik_tickcount + tick;
 		_task_cur->state 		= TASK_STATE__BLOCKED;
 
@@ -1084,12 +1085,12 @@ int task_waitforsigobjs(void ** _sigobj_p, int * sigtype_p, void ** param_p, int
 	}
 
 	if (0 != _task_cur->timed) {
-		if (0 == _task_cur->wakeuptick) {
+		if (0 == _task_cur->waittick) {
 			r = SIGOBJ_SIGTYPE__TIMEOUT;
 			goto end1;
 		}
 		else {
-			_task_cur->wakeuptick += _ubik_tickcount;
+			_task_cur->wakeuptick = _ubik_tickcount + _task_cur->waittick;
 		}
 	}
 
@@ -1212,7 +1213,7 @@ int task_waitforsigobjs_timed(void ** sigobj_p, int * sigtype_p, void ** param_p
 	}
 
 	_task_cur->timed		= 1;
-	_task_cur->wakeuptick 	= tick;
+	_task_cur->waittick		= tick;
 
 	r = task_waitforsigobjs(sigobj_p, sigtype_p, param_p, count, waitopt);
 
@@ -1369,7 +1370,7 @@ int task_join_timed(task_pt * task_p, int * result_p, int count, unsigned int ti
 	}
 
 	_task_cur->timed		= 1;
-	_task_cur->wakeuptick 	= tick;
+	_task_cur->waittick 	= tick;
 
 	r = task_join(task_p, result_p, count);
 
@@ -1401,7 +1402,7 @@ unsigned int task_getremainingtimeout(void) {
 		return 0;
 	}
 
-	return _task_cur->wakeuptick;
+	return _task_cur->waittick;
 
 	#undef __FUNCNAME__
 }
@@ -1414,7 +1415,7 @@ unsigned int task_getremainingtimeoutms(void) {
 		return 0;
 	}
 
-	return ubik_ticktotimems(_task_cur->wakeuptick);
+	return ubik_ticktotimems(_task_cur->waittick);
 
 	#undef __FUNCNAME__
 }
@@ -1461,9 +1462,7 @@ void _task_init(_task_pt task) {
 	task->suspended				= 0;
 	task->timed					= 0;
 	task->sysflag01				= 0;
-	task->stackext				= 0;
 	task->waitall				= 0;
-	task->waitmask				= 0;
 	task->reserved3				= 0;
 
 	task->priority				= 0;
@@ -1471,6 +1470,7 @@ void _task_init(_task_pt task) {
 
 	task->reserved4				= 0;
 
+	task->waittick				= 0;
 	task->wakeuptick			= 0;
 
 	task->func					= NULL;
@@ -1509,8 +1509,10 @@ void _task_idlefunc(void * arg) {
 #endif
 
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1)
 		_ubik_idle_cpu_sleep();
-#endif
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 	}
 }
 

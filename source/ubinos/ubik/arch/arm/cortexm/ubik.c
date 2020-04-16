@@ -244,6 +244,9 @@ void _task_yield(void) {
 #endif /* (UBINOS__UBIK__USE_PENDSV_TASK_YIELD == 1) */
 	    }
 	    else {
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1)
+			_ubik_idle_cpu_wakeup();
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1) */
 	        arm_set_pendsv();
 	    }
 	}

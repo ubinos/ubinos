@@ -86,10 +86,9 @@ int _ubik_inittick(void) {
 
 	nrf_drv_clock_lfclk_request(NULL);
 
+	nrf_rtc_event_clear(_TICK_RTC, NRF_RTC_EVENT_TICK);
+    nrf_rtc_event_clear(_TICK_RTC, NRF_RTC_EVENT_COMPARE_0);
 	nrf_rtc_prescaler_set(_TICK_RTC, prescaler);
-	nrf_rtc_int_enable(_TICK_RTC, RTC_INTENSET_TICK_Msk);
-	nrf_rtc_task_trigger(_TICK_RTC, NRF_RTC_TASK_CLEAR);
-	nrf_rtc_task_trigger(_TICK_RTC, NRF_RTC_TASK_START);
 
     // Set exception priority
     NVIC_SetPriorityGrouping(NVIC_PRIO_GROUP);
@@ -102,19 +101,89 @@ int _ubik_inittick(void) {
     NVIC_SetPriority(_TICK_RTC_IRQ_NO, NVIC_PRIO_SYSTICK);
     NVIC_EnableIRQ(_TICK_RTC_IRQ_NO);
 
+    nrf_rtc_int_enable(_TICK_RTC, NRF_RTC_INT_TICK_MASK);
+
+	nrf_rtc_task_trigger(_TICK_RTC, NRF_RTC_TASK_CLEAR);
+	nrf_rtc_task_trigger(_TICK_RTC, NRF_RTC_TASK_START);
+
     return 0;
 }
 
 void _ubik_tick_rtcisr_clear(void) {
-    nrf_rtc_event_clear(_TICK_RTC, NRF_RTC_EVENT_TICK);
+	nrf_rtc_event_clear(_TICK_RTC, NRF_RTC_EVENT_TICK);
 }
 
 unsigned int _ubik_tick_rtccount_get(void) {
 	return nrf_rtc_counter_get(_TICK_RTC);
 }
 
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1)
+
+void _ubik_idle_cpu_wakeup(void) {
+#if (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1)
+	if (nrf_rtc_int_is_enabled(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK)) {
+
+		nrf_rtc_int_disable(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK);
+		nrf_rtc_event_clear(_TICK_RTC, NRF_RTC_EVENT_COMPARE_0);
+
+		nrf_rtc_int_enable(_TICK_RTC, RTC_INTENSET_TICK_Msk);
+
+		__DSB();
+	}
+#endif /* (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1) */
+}
+
 void _ubik_idle_cpu_sleep(void) {
-    // Wait for an event.
+#if (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1)
+	_task_pt task = NULL;
+	unsigned int next_wakeuptick = UINT_MAX;
+	unsigned int ignore_tick_count = 0;
+	unsigned int next_wakeuprtctick = UBINOS__UBIK__TICK_RTC_COUNT_MAX;
+
+	if (_ubik_tickrtccount_init && !nrf_rtc_int_is_enabled(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK)) {
+		ubik_entercrit();
+
+		task = _tasklist_head(_task_list_blocked_timed_cur);
+		if (NULL != task) {
+			next_wakeuptick = task->wakeuptick;
+		}
+#if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
+		_stimer_pt      stimer = NULL;
+		stimer = _stimerlist_head(_stimer_list_cur);
+		if (NULL != stimer) {
+			if(next_wakeuptick > stimer->wakeuptick) {
+				next_wakeuptick = stimer->wakeuptick;
+			}
+		}
+#endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
+
+		ignore_tick_count = next_wakeuptick - _ubik_tickcount;
+		ignore_tick_count = min(ignore_tick_count, UBINOS__UBIK__TICK_RTC_COUNT_MAX);
+
+		if (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_COUNT_MIN <= ignore_tick_count) {
+			ignore_tick_count -= UBINOS__UBIK__TICK_RTC_IGNORE_TICK_COUNT_MARGIN;
+
+			if ((UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) >= ignore_tick_count) {
+				next_wakeuprtctick = _ubik_tickrtccount + ignore_tick_count;
+			}
+			else {
+				next_wakeuprtctick = ignore_tick_count - (UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) - 1;
+			}
+
+			nrf_rtc_int_disable(_TICK_RTC, NRF_RTC_INT_TICK_MASK);
+			nrf_rtc_event_clear(_TICK_RTC, NRF_RTC_EVENT_TICK);
+
+			nrf_rtc_cc_set(_TICK_RTC, 0, next_wakeuprtctick);
+			nrf_rtc_event_clear(_TICK_RTC, NRF_RTC_EVENT_COMPARE_0);
+			nrf_rtc_int_enable(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK);
+
+			__DSB();
+		}
+
+		ubik_exitcrit();
+	}
+#endif /* (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1) */
+
 #ifdef SOFTDEVICE_PRESENT
     if (nrf_sdh_is_enabled())
     {
@@ -132,6 +201,8 @@ void _ubik_idle_cpu_sleep(void) {
         __WFE();
     }
 }
+
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1) */
 
 #endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 

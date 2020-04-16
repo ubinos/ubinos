@@ -242,7 +242,7 @@ int msgq_receive_timed(msgq_pt _msgq, unsigned char * msg, unsigned int tick) {
 	}
 	else {
 		_task_cur->timed		= 1;
-		_task_cur->wakeuptick 	= tick;
+		_task_cur->waittick		= tick;
 	}
 
 	r = msgq_receive(_msgq, msg);

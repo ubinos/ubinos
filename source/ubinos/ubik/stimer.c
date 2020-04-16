@@ -91,7 +91,7 @@ int stimer_create(stimer_pt * stimer_p) {
 
 	edlist_link_init(&stimer->stimerlist_link);
 
-	stimer->tick					= 0;
+	stimer->waittick				= 0;
 	stimer->wakeuptick				= 0;
 
 	stimer->sigobj					= NULL;
@@ -266,7 +266,7 @@ int stimer_set(stimer_pt _stimer, unsigned int tick, sem_pt sem, unsigned int op
 		stimer->oneshot	= 0;
 	}
 
-	stimer->tick		= tick;
+	stimer->waittick	= tick;
 
 	stimer->sigobj		= sigobj;
 
@@ -348,7 +348,7 @@ int stimer_set_signal(stimer_pt _stimer, unsigned int tick, signal_pt signal, in
 		stimer->broadcast	= 0;
 	}
 
-	stimer->tick		= tick;
+	stimer->waittick	= tick;
 
 	stimer->sigobj		= sigobj;
 
@@ -397,7 +397,7 @@ int stimer_start(stimer_pt _stimer) {
 		goto end1;
 	}
 
-	if (0 >= stimer->tick) {
+	if (0 >= stimer->waittick) {
 		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
 		r = -2;
 		goto end1;

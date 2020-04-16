@@ -334,7 +334,7 @@ int ubik_sprintkernelinfo(char * buf, int max) {
 	stimer = _kernel_monitor_stimerlist_head(&_kernel_monitor_stimerlist);
 	for (; NULL != stimer; stimer = _kernel_monitor_stimerlist_next(stimer)) {
 		if (r < max) r += snprintf(&buf[r], max-r, "|stimer  |0x%08x |0x%08x |0x%08x |%d       |%d\r\n",
-				(unsigned int) stimer, (unsigned int) (stimer->sigobj), stimer->tick, stimer->oneshot, stimer->running);
+				(unsigned int) stimer, (unsigned int) (stimer->sigobj), stimer->waittick, stimer->oneshot, stimer->running);
 	}
 	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
 	if (r < max) r += snprintf(&buf[r], max-r, "\r\n");
@@ -529,7 +529,7 @@ int ubik_printkernelinfo(void) {
 	stimer = _kernel_monitor_stimerlist_head(&_kernel_monitor_stimerlist);
 	for (; NULL != stimer; stimer = _kernel_monitor_stimerlist_next(stimer)) {
 		printf("|stimer  |0x%08x |0x%08x |0x%08x |%d       |%d\r\n",
-				(unsigned int) stimer, (unsigned int) (stimer->sigobj), stimer->tick, stimer->oneshot, stimer->running);
+				(unsigned int) stimer, (unsigned int) (stimer->sigobj), stimer->waittick, stimer->oneshot, stimer->running);
 	}
 	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
 	printf("\r\n");
@@ -647,7 +647,7 @@ void _stimerlist_add(_stimer_pt stimer) {
 
 	_stimerlist_remove(stimer);
 
-	stimer->wakeuptick = _ubik_tickcount + stimer->tick;
+	stimer->wakeuptick = _ubik_tickcount + stimer->waittick;
 
 	if (_ubik_tickcount >= stimer->wakeuptick) {
 		stimerlist = _stimer_list_next;

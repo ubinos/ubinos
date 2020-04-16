@@ -216,7 +216,7 @@ int condv_wait_timed(condv_pt _condv, mutex_pt _mutex, unsigned int tick) {
 	}
 
 	_task_cur->timed		= 1;
-	_task_cur->wakeuptick 	= tick;
+	_task_cur->waittick		= tick;
 
 	r = condv_wait(_condv, _mutex);
 

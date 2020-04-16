@@ -235,7 +235,6 @@ int _sigobj_wait(_sigobj_pt sigobj, _wtask_pt wtask) {
 	#define	__FUNCNAME__	"_sigobj_wait"
 	int r;
 	unsigned int critcount;
-	unsigned int wakeuptick;
 	unsigned int spintick;
 
 	if (0 >= _bsp_critcount) {
@@ -244,15 +243,11 @@ int _sigobj_wait(_sigobj_pt sigobj, _wtask_pt wtask) {
 	}
 
 	if (0 != _task_cur->timed) {
-		if (0 == _task_cur->wakeuptick) {
+		if (0 == _task_cur->waittick) {
 			r = SIGOBJ_SIGTYPE__TIMEOUT;
 			goto end0;
 		}
-		wakeuptick = _task_cur->wakeuptick;
-		_task_cur->wakeuptick += _ubik_tickcount;
-	}
-	else {
-		wakeuptick = 0;
+		_task_cur->wakeuptick = _ubik_tickcount + _task_cur->waittick;
 	}
 
 	_task_cur->wtask_count		= 1;
@@ -267,16 +262,16 @@ int _sigobj_wait(_sigobj_pt sigobj, _wtask_pt wtask) {
 	if (OBJTYPE__UBIK_IDLETASK  == _task_cur->type) {
 		for (;;) {
 			if (0 != _task_cur->timed) {
-				if (wakeuptick <= 0) {
+				if (_task_cur->waittick <= 0) {
 					wtask->sigtype = SIGOBJ_SIGTYPE__TIMEOUT;
 					_task_cur->wtask_recvcount++;
 					_sigobj_wtasklist_remove(wtask);
 					_sigobj_wtasklist_notifychange(sigobj);
 
-					_task_cur->wakeuptick = 0;
+					_task_cur->waittick = 0;
 					break;
 				}
-				spintick = min(UBINOS__UBIK__IDLETASK_SPINWAIT_INTERVALTICK, wakeuptick);
+				spintick = min(UBINOS__UBIK__IDLETASK_SPINWAIT_INTERVALTICK, _task_cur->waittick);
 			}
 			else {
 				spintick = UBINOS__UBIK__IDLETASK_SPINWAIT_INTERVALTICK;
@@ -290,11 +285,10 @@ int _sigobj_wait(_sigobj_pt sigobj, _wtask_pt wtask) {
 			_bsp_critcount = critcount;
 
 			if (0 != _task_cur->timed) {
-				wakeuptick -= spintick;
+				_task_cur->waittick -= spintick;
 			}
 
 			if (SIGOBJ_SIGTYPE__FAIL != wtask->sigtype) {
-				_task_cur->wakeuptick = wakeuptick;
 				break;
 			}
 		}
@@ -331,14 +325,14 @@ int _sigobj_send(_sigobj_pt sigobj, int sigtype) {
 
 		if (task->wtask_waitcount == task->wtask_recvcount) {
 			task->state = TASK_STATE__READY;
-			_task_calcremainingtimeout(task);
+			_task_recalculate_waittick(task);
 			_task_changelist(task);
 		}
 		else if (0 == task->waitall) {
 			_task_sigobj_removewtask(task);
 
 			task->state = TASK_STATE__READY;
-			_task_calcremainingtimeout(task);
+			_task_recalculate_waittick(task);
 			_task_changelist(task);
 		}
 		////////////////
@@ -373,14 +367,14 @@ int _sigobj_broadcast(_sigobj_pt sigobj, int sigtype) {
 
 				if (task->wtask_waitcount == task->wtask_recvcount) {
 					task->state = TASK_STATE__READY;
-					_task_calcremainingtimeout(task);
+					_task_recalculate_waittick(task);
 					_task_changelist(task);
 				}
 				else if (0 == task->waitall) {
 					_task_sigobj_removewtask(task);
 
 					task->state = TASK_STATE__READY;
-					_task_calcremainingtimeout(task);
+					_task_recalculate_waittick(task);
 					_task_changelist(task);
 				}
 				////////////////

@@ -208,32 +208,38 @@ void bsp_ubik_swi_handler(void) {
 
 void bsp_ubik_tick_handler(void) {
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
-#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
+	#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
 	unsigned int tickrtccount;
 	unsigned int tickrtccount_diff;
-	unsigned int i;
-#endif /* (UBINOS__UBIK__TICK_RTC_CHECK == 1) */
+	#endif /* (UBINOS__UBIK__TICK_RTC_CHECK == 1) */
 #else
     unsigned int    status = 0;
 #endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
     edlist_pt       tempedlist;
     _task_pt        task;
-    #if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
+#if !(UBINOS__UBIK__EXCLUDE_STIMER == 1)
     _stimer_pt      stimer;
-    #endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
+#endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
     _wtask_pt       wtask;
     _sigobj_pt      sigobj;
     int             j;
 
+////////
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
 
 	_ubik_tick_rtcisr_clear();
 
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1)
+	_ubik_idle_cpu_wakeup();
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1) */
+
 	if (_bsp_kernel_active != 0) {
 
-#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
+	////////
+	#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
 
 		tickrtccount = _ubik_tick_rtccount_get();
+
 		if (_ubik_tickrtccount_init) {
 			if (_ubik_tickrtccount < tickrtccount) {
 				tickrtccount_diff = tickrtccount - _ubik_tickrtccount;
@@ -246,15 +252,35 @@ void bsp_ubik_tick_handler(void) {
 			tickrtccount_diff = 1;
 			_ubik_tickrtccount_init = 1;
 		}
+
 		_ubik_tickrtccount = tickrtccount;
 
-#if (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__CORRECT)
+		////////
+		#if (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__CORRECT)
 
-		for (i = 0; i < tickrtccount_diff; i++) {
+		while(tickrtccount_diff > 0) {
 
-#elif (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__ABORT)
+			////////////////
 
-		(void) i;
+			ARM_INTERRUPT_DISABLE();
+
+			if (_ubik_tickcount == UINT_MAX) {
+				tickrtccount_diff -= 1;
+				_ubik_tickcount = 0;
+			}
+			else {
+				if ((_ubik_tickcount + tickrtccount_diff) < _ubik_tickcount) {
+					tickrtccount_diff -= (UINT_MAX - _ubik_tickcount);
+					_ubik_tickcount = UINT_MAX;
+				}
+				else {
+					_ubik_tickcount += tickrtccount_diff;
+					tickrtccount_diff = 0;
+				}
+			}
+
+		#elif (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__ABORT)
+
 		if (tickrtccount_diff != 1) {
 			dtty_puts("\r\nrtc tick check fail\r\n", 80);
 			bsp_abortsystem();
@@ -262,34 +288,47 @@ void bsp_ubik_tick_handler(void) {
 
 		{
 
-#else
+			////////////////
 
-	#error "Unsupported UBINOS__UBIK__TICK_RTC_CHECK_TYPE"
+			ARM_INTERRUPT_DISABLE();
 
-#endif /* (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__CORRECT) */
+			_ubik_tickcount++;
 
-#else
+		#else /* (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__...) */
+
+			#error "Unsupported UBINOS__UBIK__TICK_RTC_CHECK_TYPE"
+
+		#endif /* (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__...) */
+		////////
+
+	#else /* (UBINOS__UBIK__TICK_RTC_CHECK == ...) */
 
 		{
 
-#endif /* (UBINOS__UBIK__TICK_RTC_CHECK == 1) */
+			////////////////
 
-#else
+			ARM_INTERRUPT_DISABLE();
+
+			_ubik_tickcount++;
+
+	#endif /* (UBINOS__UBIK__TICK_RTC_CHECK == ...) */
+	////////
+
+#else /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__...) */
 
 	if (_bsp_kernel_active != 0) {
 
 		status = SysTick->CTRL;
 		if (0 != (0x00010000 & status)) {
 
-#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
+			////////////////
 
 			ARM_INTERRUPT_DISABLE();
 
-			////////////////
-
 			_ubik_tickcount++;
 
-			////////////////
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__...) */
+////////
 
 			if (0 == _ubik_tickcount) {
 				_ubik_tickcounth++;
@@ -319,7 +358,7 @@ void bsp_ubik_tick_handler(void) {
 						}
 					}
 					task->state             = TASK_STATE__READY;
-					task->wakeuptick        = 0;
+					task->waittick          = 0;
 					_task_changelist(task);
 				}
 				else {

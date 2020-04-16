@@ -91,14 +91,12 @@ extern "C" {
 
 #define ARM_INTERRUPT_ENABLE() {		\
 	__set_BASEPRI(0x00);				\
-	__SEV();							\
 	__DSB();							\
 	__ISB();							\
 }
 
 #define ARM_INTERRUPT_DISABLE() {		\
 	__set_BASEPRI(NVIC_BASEPRI_REAL);	\
-	__SEV();							\
 	__DSB();							\
 	__ISB();							\
 }

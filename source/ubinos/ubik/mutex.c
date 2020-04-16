@@ -193,7 +193,7 @@ int mutex_lock_timed(mutex_pt _mutex, unsigned int tick) {
 	}
 
 	_task_cur->timed		= 1;
-	_task_cur->wakeuptick 	= tick;
+	_task_cur->waittick		= tick;
 
 	r = mutex_lock(_mutex);
 

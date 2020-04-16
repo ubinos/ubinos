@@ -164,7 +164,7 @@ void bsp_ubik_tick_handler(void) {
 						}
 					}
 					task->state				= TASK_STATE__READY;
-					task->wakeuptick		= 0;
+					task->waittick			= 0;
 					_task_changelist(task);
 				}
 				else {

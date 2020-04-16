@@ -194,10 +194,10 @@ typedef	struct __task_t {
 	} 					wtask;
 
 	struct __wtask_t *	wtask_p;
-	int					wtask_max;
-	int					wtask_count;
-	int					wtask_waitcount;
-	int					wtask_recvcount;
+	int					wtask_max;			/* 이 태스크가 기다를 수 있는 시그널 객체 수 최대값 */
+	int					wtask_count; 		/* 이 태스크가 기다리는 시그널 객체 수 (기다릴 수 없는 상태의 객체 수 포함) */
+	int					wtask_waitcount;	/* 이 태스크가 실제로 기다리는 시그널 객체 수 (기다릴 수 없는 상태의 객체 수 제외) */
+	int					wtask_recvcount;	/* 이 태스크가 시그널을 받은 객체 수 */
 
 	edlist_t			osigobjlist;
 
@@ -205,16 +205,15 @@ typedef	struct __task_t {
 	unsigned int		suspended				:  1;
 	unsigned int		timed					:  1;
 	unsigned int		sysflag01				:  1;
-	unsigned int		stackext				:  1;
 	unsigned int		waitall					:  1;
-	unsigned int		waitmask				:  8;
-	unsigned int		reserved3				:  1;
+	unsigned int		reserved3				: 10;
 
 	unsigned int		priority				:  8;
 	unsigned int		priority_ori			:  8;
 
 	unsigned int		reserved4				: 16;
 
+	unsigned int		waittick;
 	unsigned int		wakeuptick;
 
 	taskfunc_ft			func;
@@ -236,12 +235,19 @@ typedef	struct __task_t {
 
 typedef _task_t * _task_pt;
 
+/*
+ * 시그널을 기다리는 태스크 객체 형 구현
+ *
+ * 태스크는 자신이 기다리는 시그널 객체 수 만큼 이 객체를 가진다.
+ * 태스크는 자신이 기다리는 시그널 객체에게 이 객체의 포인터를 전달한다.
+ * 시그널 객체는 자신을 기다리는 태스크에 이 객체를 사용해 접근한다.
+ */
 typedef struct __wtask_t _wtask_t;
 
 typedef _wtask_t * _wtask_pt;
 
 /*
- * 타이머 객체 형 구현
+ * 세마포어 타이머 객체 형 구현
  */
 typedef	struct __stimer_t {
 	unsigned int		type					:  8;
@@ -259,7 +265,7 @@ typedef	struct __stimer_t {
 		edlist_pt			list;
 	}					stimerlist_link;
 
-	unsigned int		tick;
+	unsigned int		waittick;
 	unsigned int		wakeuptick;
 
 	_sigobj_pt			sigobj;
@@ -412,22 +418,25 @@ void _task_stackinit(_task_pt task, void * arg);
 void _task_idlefunc(void * arg);
 void _task_rootfunc(void * arg);
 
+
 void _ubik_tick_rtcisr_clear(void);
 unsigned int _ubik_tick_rtccount_get(void);
+
 void _ubik_idle_cpu_sleep(void);
+void _ubik_idle_cpu_wakeup(void);
 
 void _task_changelist(_task_pt task);
 void _task_yield(void);
 void _task_applypriority(_task_pt task);
 void _task_collectgarbage(void);
 
-#define _task_calcremainingtimeout(task) {											\
+#define _task_recalculate_waittick(task) {											\
 	if (0 != task->timed) {															\
 		if (_ubik_tickcount >= task->wakeuptick) {									\
-			task->wakeuptick = UINT_MAX - _ubik_tickcount + task->wakeuptick + 1;	\
+			task->waittick = UINT_MAX - _ubik_tickcount + task->wakeuptick + 1;	\
 		}																			\
 		else {																		\
-			task->wakeuptick -= _ubik_tickcount;									\
+			task->waittick = task->wakeuptick - _ubik_tickcount;					\
 		}																			\
 	}																				\
 }
