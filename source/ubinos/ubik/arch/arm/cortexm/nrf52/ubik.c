@@ -39,6 +39,8 @@
 	#error "Project nrf5sdk is necessary to use RTC tick"
 #endif
 
+#include <assert.h>
+
 #include <nrf.h>
 #include <nrf_gpio.h>
 #include <nrf_drv_rtc.h>
@@ -133,6 +135,41 @@ void _ubik_idle_cpu_wakeup(void) {
 #endif /* (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1) */
 }
 
+static void __pwr_mgmt_fpu_sleep_prepare(void)
+{
+   uint32_t original_fpscr;
+
+   original_fpscr = __get_FPSCR();
+   /*
+    * Clear FPU exceptions.
+    * Without this step, the FPU interrupt is marked as pending,
+    * preventing system from sleeping. Exceptions cleared:
+    * - IOC - Invalid Operation cumulative exception bit.
+    * - DZC - Division by Zero cumulative exception bit.
+    * - OFC - Overflow cumulative exception bit.
+    * - UFC - Underflow cumulative exception bit.
+    * - IXC - Inexact cumulative exception bit.
+    * - IDC - Input Denormal cumulative exception bit.
+    */
+   __set_FPSCR(original_fpscr & ~0x9Fu);
+   __DMB();
+   NVIC_ClearPendingIRQ(FPU_IRQn);
+
+   /*
+    * The last chance to indicate an error in FPU to the user
+    * as the FPSCR is now cleared
+    *
+    * This assert is related to previous FPU operations
+    * and not power management.
+    *
+    * Critical FPU exceptions signaled:
+    * - IOC - Invalid Operation cumulative exception bit.
+    * - DZC - Division by Zero cumulative exception bit.
+    * - OFC - Overflow cumulative exception bit.
+    */
+   assert((original_fpscr & 0x7) == 0);
+}
+
 void _ubik_idle_cpu_sleep(void) {
 #if (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1)
 	_task_pt task = NULL;
@@ -180,8 +217,29 @@ void _ubik_idle_cpu_sleep(void) {
 			__DSB();
 		}
 
+#if (__FPU_USED == 1)
+		__pwr_mgmt_fpu_sleep_prepare();
+#endif /* (__FPU_USED == 1) */
+
 		ubik_exitcrit();
 	}
+	else {
+
+#if (__FPU_USED == 1)
+		ubik_entercrit();
+		__pwr_mgmt_fpu_sleep_prepare();
+		ubik_exitcrit();
+#endif /* (__FPU_USED == 1) */
+
+	}
+#else
+
+#if (__FPU_USED == 1)
+	ubik_entercrit();
+	__pwr_mgmt_fpu_sleep_prepare();
+	ubik_exitcrit();
+#endif /* (__FPU_USED == 1) */
+
 #endif /* (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1) */
 
 #ifdef SOFTDEVICE_PRESENT

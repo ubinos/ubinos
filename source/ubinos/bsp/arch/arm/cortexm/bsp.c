@@ -170,14 +170,12 @@ unsigned int arm_get_epsr(void) {
 
 void arm_set_pendsv(void) {
     SCB->ICSR = (1 << 28);
-    __SEV();
     __DSB();
     __ISB();
 }
 
 void arm_clear_pendsv(void) {
     SCB->ICSR = (1 << 27);
-    __SEV();
     __DSB();
     __ISB();
 }
@@ -190,8 +188,8 @@ unsigned int arm_get_pendsv(void) {
 
 void arm_set_svcpend(void) {
     SCB->SHCSR = (1 << 15);
-    ARM_DATASYNC()
-    ;
+    __DSB();
+    __ISB();
 }
 
 unsigned int arm_get_svcpend(void) {
