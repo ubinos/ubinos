@@ -264,14 +264,14 @@ void bsp_ubik_tick_handler(void) {
 
 			ARM_INTERRUPT_DISABLE();
 
-			if (_ubik_tickcount == UINT_MAX) {
+			if (_ubik_tickcount == UBINOS__UBIK__TICK_COUNT_MAX) {
 				tickrtccount_diff -= 1;
 				_ubik_tickcount = 0;
 			}
 			else {
 				if ((_ubik_tickcount + tickrtccount_diff) < _ubik_tickcount) {
-					tickrtccount_diff -= (UINT_MAX - _ubik_tickcount);
-					_ubik_tickcount = UINT_MAX;
+					tickrtccount_diff -= (UBINOS__UBIK__TICK_COUNT_MAX - _ubik_tickcount);
+					_ubik_tickcount = UBINOS__UBIK__TICK_COUNT_MAX;
 				}
 				else {
 					_ubik_tickcount += tickrtccount_diff;

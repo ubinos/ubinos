@@ -78,7 +78,7 @@ tickcount_t ubik_gettickdiff(tickcount_t tick1, tickcount_t tick2) {
 	tickcount_t diff;
 
 	if (tick1.high > tick2.high) {
-		diff.high = UINT_MAX - tick1.high + 1 + tick2.high;
+		diff.high = UBINOS__UBIK__TICK_COUNT_MAX - tick1.high + 1 + tick2.high;
 	}
 	else {
 		diff.high = tick2.high - tick1.high;
@@ -86,7 +86,7 @@ tickcount_t ubik_gettickdiff(tickcount_t tick1, tickcount_t tick2) {
 
 	if (tick1.low > tick2.low) {
 		diff.high--;
-		diff.low = UINT_MAX - tick1.low + 1 + tick2.low;
+		diff.low = UBINOS__UBIK__TICK_COUNT_MAX - tick1.low + 1 + tick2.low;
 	}
 	else {
 		diff.low = tick2.low - tick1.low;

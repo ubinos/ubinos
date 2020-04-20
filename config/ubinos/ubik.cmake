@@ -3,6 +3,7 @@ set(INCLUDE__UBINOS__UBIK                                                       
 
 set_cache_default(UBINOS__UBIK__TICK_TYPE                                       "SYSTICK" STRING "Tick Type [SYSTICK | RTC]")
 set_cache_default(UBINOS__UBIK__TICK_PER_SEC                                    1000    STRING "Ticks per second")
+set_cache_default(UBINOS__UBIK__TICK_COUNT_MAX                                  "UINT_MAX" STRING "Maximum tick count")
 
 set_cache_default(UBINOS__UBIK__TASK_NAME_SIZE_MAX                              15      STRING "Maximum name size of task")
 set_cache_default(UBINOS__UBIK__TASK_PRIORITY_MAX                               9       STRING "Maximum priority of task")

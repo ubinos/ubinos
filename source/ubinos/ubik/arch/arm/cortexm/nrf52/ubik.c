@@ -173,7 +173,7 @@ static void __pwr_mgmt_fpu_sleep_prepare(void)
 void _ubik_idle_cpu_sleep(void) {
 #if (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1)
 	_task_pt task = NULL;
-	unsigned int next_wakeuptick = UINT_MAX;
+	unsigned int next_wakeuptick = UBINOS__UBIK__TICK_COUNT_MAX;
 	unsigned int ignore_tick_count = 0;
 	unsigned int next_wakeuprtctick = UBINOS__UBIK__TICK_RTC_COUNT_MAX;
 

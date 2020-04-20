@@ -433,7 +433,7 @@ void _task_collectgarbage(void);
 #define _task_recalculate_waittick(task) {											\
 	if (0 != task->timed) {															\
 		if (_ubik_tickcount >= task->wakeuptick) {									\
-			task->waittick = UINT_MAX - _ubik_tickcount + task->wakeuptick + 1;	\
+			task->waittick = UBINOS__UBIK__TICK_COUNT_MAX - _ubik_tickcount + task->wakeuptick + 1;	\
 		}																			\
 		else {																		\
 			task->waittick = task->wakeuptick - _ubik_tickcount;					\

@@ -185,7 +185,7 @@ int ubik_hrtick_gettickdiff(hrtick_t * tick1_p, hrtick_t * tick2_p, hrtick_t * t
 	}
 
 	if (tick1_p->high > tick2_p->high) {
-		tickdiff_p->high = UINT_MAX - tick1_p->high + 1 + tick2_p->high;
+		tickdiff_p->high = UBINOS__UBIK__TICK_COUNT_MAX - tick1_p->high + 1 + tick2_p->high;
 	}
 	else {
 		tickdiff_p->high = tick2_p->high - tick1_p->high;
@@ -193,7 +193,7 @@ int ubik_hrtick_gettickdiff(hrtick_t * tick1_p, hrtick_t * tick2_p, hrtick_t * t
 
 	if (tick1_p->low > tick2_p->low) {
 		tickdiff_p->high--;
-		tickdiff_p->low = UINT_MAX - tick1_p->low + 1 + tick2_p->low;
+		tickdiff_p->low = UBINOS__UBIK__TICK_COUNT_MAX - tick1_p->low + 1 + tick2_p->low;
 	}
 	else {
 		tickdiff_p->low = tick2_p->low - tick1_p->low;
@@ -202,7 +202,7 @@ int ubik_hrtick_gettickdiff(hrtick_t * tick1_p, hrtick_t * tick2_p, hrtick_t * t
 	if (tick1_p->hrtick > tick2_p->hrtick) {
 		if (0 >= tickdiff_p->low) {
 			tickdiff_p->high--;
-			tickdiff_p->low = UINT_MAX;
+			tickdiff_p->low = UBINOS__UBIK__TICK_COUNT_MAX;
 		}
 		else {
 			tickdiff_p->low--;

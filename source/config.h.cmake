@@ -323,6 +323,7 @@
 #define UBINOS__UBIK__TICK_TYPE__RTC                      2
 #define UBINOS__UBIK__TICK_TYPE                           UBINOS__UBIK__TICK_TYPE__@UBINOS__UBIK__TICK_TYPE@
 #define UBINOS__UBIK__TICK_PER_SEC                        @UBINOS__UBIK__TICK_PER_SEC@
+#define UBINOS__UBIK__TICK_COUNT_MAX                      @UBINOS__UBIK__TICK_COUNT_MAX@ 
 
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
 
