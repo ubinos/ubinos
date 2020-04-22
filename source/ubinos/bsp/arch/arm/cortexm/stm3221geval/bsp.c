@@ -77,7 +77,13 @@ __WEAK void SystemClock_Config(void) {
 	LL_FLASH_SetLatency(LL_FLASH_LATENCY_3);
 
 	/* Main PLL configuration and activation */
+#if (UBINOS__BSP__STM32_HSE_VALUE == 25000000U)
 	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_25, 240, LL_RCC_PLLP_DIV_2);
+#elif (UBINOS__BSP__STM32_HSE_VALUE == 8000000U)
+	LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_8, 240, LL_RCC_PLLP_DIV_2);
+#else
+	#error "Unsupported UBINOS__BSP__STM32_HSE_VALUE"
+#endif /* (UBINOS__BSP__STM32_HSE_VALUE == 25000000U) */
 	LL_RCC_PLL_Enable();
 	while (LL_RCC_PLL_IsReady() != 1) {
 	};
