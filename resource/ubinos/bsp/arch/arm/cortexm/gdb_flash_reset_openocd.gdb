@@ -41,7 +41,8 @@ symbol-file
 
 symbol-file app.elf
 
-break appmain
+break main
 
 quit
+
 

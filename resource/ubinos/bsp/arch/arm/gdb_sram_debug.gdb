@@ -40,7 +40,7 @@ symbol-file
 load app.elf
 symbol-file app.elf
 
-break appmain
+break main
 
 continue
 

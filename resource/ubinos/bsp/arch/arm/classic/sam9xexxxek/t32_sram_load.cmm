@@ -59,7 +59,7 @@ WAIT 10.ms
 data.load.elf ~~~~/app.elf
 register.set pc 0x00300000
 
-break.set appmain
+break.set main
 Mode.Mix
 
 print "end"

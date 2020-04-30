@@ -50,7 +50,7 @@ symbol-file app.elf
 
 monitor reg pc = 0x00000A81
 
-break appmain
+break main
 
 quit
 

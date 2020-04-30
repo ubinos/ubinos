@@ -65,7 +65,7 @@ symbol-file app.elf
 
 monitor reg pc = 0x00300000
 
-#break appmain
+#break main
 
 quit
 

@@ -48,7 +48,7 @@ symbol-file app.elf
 
 monitor reg pc = Reset_Handler
 
-break appmain
+break main
 
 quit
 

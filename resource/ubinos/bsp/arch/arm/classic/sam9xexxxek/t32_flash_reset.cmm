@@ -65,7 +65,7 @@ wait !run()
 data.load.elf ~~~~/app.elf /nocode
 register.set pc 0x00200000
 
-break.set appmain
+break.set main
 Mode.Mix
 
 print "end"
