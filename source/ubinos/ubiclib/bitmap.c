@@ -423,7 +423,7 @@ int bitmap_getbit(bitmap_pt bitmap, unsigned int index) {
 int bitmap_setbit(bitmap_pt bitmap, unsigned int index, int value) {
 	#define LOGM_TAG	"bitmap_setbit"
 
-	int i;
+	unsigned int i;
 	unsigned int level;
 	unsigned int offset;
 	unsigned int bitindex;
@@ -480,7 +480,7 @@ int bitmap_setbit(bitmap_pt bitmap, unsigned int index, int value) {
 int bitmap_setbitall(bitmap_pt bitmap, int value) {
 	#define LOGM_TAG	"bitmap_setbitall"
 
-	int i, j;
+	unsigned int i, j;
 	unsigned int level;
 	unsigned int offset;
 	unsigned int bitsize;

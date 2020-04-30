@@ -21,6 +21,7 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 MEMORY
 {
     FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
+    FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
     RAM (rwx) :  ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
     RAM2 (rwx) :  ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
 }
@@ -50,6 +51,7 @@ MEMORY
  *   __HeapLimit
  *   __StackLimit
  *   __StackTop
+ *   __StackTopTemp
  *   __stack
  */
 
@@ -109,6 +111,11 @@ SECTIONS
 
     __text_end__ = .;
     __etext = .;
+
+    UNINIT_FIXED_LOC (NOLOAD) :
+    {
+        *(UNINIT_FIXED_LOC)
+    } >FLASH2
 }
 
 SECTIONS
@@ -214,8 +221,8 @@ SECTIONS
 {
     __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
 
-    /* Check if data + heap + stack exceeds RAM2 limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region RAM2 overflowed with stack")
+    /* Check if data + heap + stack exceeds limit */
+    ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")
     
     /* Check if text sections + data exceeds FLASH limit */
     DataInitFlashUsed = __bss_start__ - __data_start__;
@@ -229,6 +236,9 @@ SECTIONS
     __ram_start__                   = ORIGIN(RAM);
     __ram_size__                    = LENGTH(RAM);
     __ram_static_usage__            = __relocated_isr_vector_end__ - __relocated_isr_vector_start__;
+    __flash2_start__                = ORIGIN(FLASH2);
+    __flash2_size__                 = LENGTH(FLASH2);
+    __flash2_usage__                = LENGTH(FLASH2);
     __ram2_start__                  = ORIGIN(RAM2);
     __ram2_size__                   = LENGTH(RAM2);
     __ram2_static_usage__           = __bss_end__ - ORIGIN(RAM2);

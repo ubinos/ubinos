@@ -453,14 +453,11 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     set(_tmp_all_flags "${_tmp_all_flags} -fshort-enums")
     set(_tmp_all_flags "${_tmp_all_flags} -falign-functions=16")
 
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections")
-
-    set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} gcc)
-    set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} c)
-    set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} nosys)
     set(PROJECT_LIBRARIES ${PROJECT_LIBRARIES} m)
-    
+
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs --specs=nosys.specs")
+
 else()
 
     message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_ARCH")
@@ -474,9 +471,11 @@ endif()
 set(_tmp_all_flags "${_tmp_all_flags} -g3")
 set(_tmp_all_flags "${_tmp_all_flags} -Wall -Werror -fmessage-length=0")
 
+set(_tmp_all_flags "${_tmp_all_flags} -D_GNU_SOURCE")
+
 set(CMAKE_ASM_FLAGS "${_tmp_all_flags} ${CMAKE_ASM_FLAGS} -x assembler-with-cpp -D__ASSEMBLY__")
 set(CMAKE_C_FLAGS   "${_tmp_all_flags} ${CMAKE_C_FLAGS} -std=c99")
-set(CMAKE_CXX_FLAGS "${_tmp_all_flags} ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "${_tmp_all_flags} ${CMAKE_CXX_FLAGS} -std=gnu++98 -fno-exceptions -fno-rtti -Wno-c++14-compat")
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T\"${PROJECT_BINARY_DIR}/linkscript.ld\"")

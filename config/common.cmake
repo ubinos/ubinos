@@ -277,7 +277,7 @@ macro(___project_add_app)
     endif()
 
     add_executable(${PROJECT_EXE_NAME} ${PROJECT_APP_SOURCES})
-    target_link_libraries(${PROJECT_EXE_NAME} ${PROJECT_LIBRARIES})
+    target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
     
     add_custom_target(reset
         COMMAND  ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_reset.gdb

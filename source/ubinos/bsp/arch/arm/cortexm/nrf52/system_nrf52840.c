@@ -45,20 +45,14 @@ static bool errata_136(void);
 
 
 #if defined ( __CC_ARM )
-    uint32_t SystemCoreClock __attribute__((used)) = __SYSTEM_CLOCK_64M;
+uint32_t SystemCoreClock __attribute__((used)) = __SYSTEM_CLOCK_64M;
 #elif defined ( __ICCARM__ )
-    __root uint32_t SystemCoreClock = __SYSTEM_CLOCK_64M;
+__root uint32_t SystemCoreClock = __SYSTEM_CLOCK_64M;
 #elif defined ( __GNUC__ )
-    uint32_t SystemCoreClock __attribute__((used)) = __SYSTEM_CLOCK_64M;
+uint32_t SystemCoreClock __attribute__((used)) = __SYSTEM_CLOCK_64M;
 #endif
 
-void SystemCoreClockUpdate(void)
-{
-    SystemCoreClock = __SYSTEM_CLOCK_64M;
-}
-
-void SystemInit(void)
-{
+void SystemInit(void) {
     /* Enable SWO trace functionality. If ENABLE_SWO is not defined, SWO pin will be used as GPIO (see Product
        Specification to see which one). */
     #if defined (ENABLE_SWO)
@@ -183,27 +177,15 @@ void SystemInit(void)
         }
     #endif
 
-    SystemCoreClockUpdate();
-
-
-#if defined(NRF52840_XXAA)
 #if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
     extern unsigned int relocated_isr_vector_start       __asm__ ("__relocated_isr_vector_start__");
     SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
     __DSB();
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
-
-#if (UBINOS__BSP__USE_ICACHE == 1)
-    NRF_NVMC->ICACHECNF = (NVMC_ICACHECNF_CACHEEN_Enabled << NVMC_ICACHECNF_CACHEEN_Pos) & NVMC_ICACHECNF_CACHEEN_Msk;
-#else
-    NRF_NVMC->ICACHECNF = (NVMC_ICACHECNF_CACHEEN_Disabled << NVMC_ICACHECNF_CACHEEN_Pos) & NVMC_ICACHECNF_CACHEEN_Msk;
-#endif
-#endif
 }
 
 
-static bool errata_36(void)
-{
+static bool errata_36(void) {
     if (*(uint32_t *)0x10000130ul == 0x8ul){
         if (*(uint32_t *)0x10000134ul == 0x0ul){
             return true;
@@ -224,8 +206,7 @@ static bool errata_36(void)
 }
 
 
-static bool errata_66(void)
-{
+static bool errata_66(void) {
     if (*(uint32_t *)0x10000130ul == 0x8ul){
         if (*(uint32_t *)0x10000134ul == 0x0ul){
             return true;
@@ -246,8 +227,7 @@ static bool errata_66(void)
 }
 
 
-static bool errata_98(void)
-{
+static bool errata_98(void) {
     if (*(uint32_t *)0x10000130ul == 0x8ul){
         if (*(uint32_t *)0x10000134ul == 0x0ul){
             return true;
@@ -258,8 +238,7 @@ static bool errata_98(void)
 }
 
 
-static bool errata_103(void)
-{
+static bool errata_103(void) {
     if (*(uint32_t *)0x10000130ul == 0x8ul){
         if (*(uint32_t *)0x10000134ul == 0x0ul){
             return true;
@@ -270,8 +249,7 @@ static bool errata_103(void)
 }
 
 
-static bool errata_115(void)
-{
+static bool errata_115(void) {
     if (*(uint32_t *)0x10000130ul == 0x8ul){
         if (*(uint32_t *)0x10000134ul == 0x0ul){
             return true;
@@ -282,8 +260,7 @@ static bool errata_115(void)
 }
 
 
-static bool errata_120(void)
-{
+static bool errata_120(void) {
     if (*(uint32_t *)0x10000130ul == 0x8ul){
         if (*(uint32_t *)0x10000134ul == 0x0ul){
             return true;
@@ -294,8 +271,7 @@ static bool errata_120(void)
 }
 
 
-static bool errata_136(void)
-{
+static bool errata_136(void) {
     if (*(uint32_t *)0x10000130ul == 0x8ul){
         if (*(uint32_t *)0x10000134ul == 0x0ul){
             return true;
@@ -317,10 +293,23 @@ static bool errata_136(void)
 
 /*lint --flb "Leave library region" */
 
-__WEAK void SystemInit2(void)
-{
+void SystemCoreClockUpdate(void) {
+    SystemCoreClock = __SYSTEM_CLOCK_64M;
+}
+
+__WEAK void SystemInit2(void) {
+#if defined(NRF52840_XXAA)
+#if (UBINOS__BSP__USE_ICACHE == 1)
+    NRF_NVMC->ICACHECNF = (NVMC_ICACHECNF_CACHEEN_Enabled << NVMC_ICACHECNF_CACHEEN_Pos) & NVMC_ICACHECNF_CACHEEN_Msk;
+#else
+    NRF_NVMC->ICACHECNF = (NVMC_ICACHECNF_CACHEEN_Disabled << NVMC_ICACHECNF_CACHEEN_Pos) & NVMC_ICACHECNF_CACHEEN_Msk;
+#endif
+#endif
+
+    SystemCoreClockUpdate();
 }
 
 #endif /* (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__NRF52840XXAA) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
+
 

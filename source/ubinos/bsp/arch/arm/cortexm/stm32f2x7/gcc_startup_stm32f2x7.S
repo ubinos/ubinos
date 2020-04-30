@@ -240,7 +240,7 @@ Reset_Breakpoint:
 .L_loop0_done:
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
 
-/* Execute SystemInit function. */
+/* Execute SystemInit function. (SystemInit function should not use data section.) */
     bl SystemInit
 
 /* Loop to copy data from read only memory to RAM.
