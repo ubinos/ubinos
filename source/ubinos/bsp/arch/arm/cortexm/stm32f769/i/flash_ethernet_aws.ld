@@ -23,8 +23,8 @@ MEMORY
     FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
     FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
     RAM (rwx) : ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
-	RAM2 (xrw) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
-	RAM3 (xrw) : ORIGIN = <RAM3_ORIGIN>, LENGTH = <RAM3_LENGTH>
+    RAM2 (xrw) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
+    RAM3 (xrw) : ORIGIN = <RAM3_ORIGIN>, LENGTH = <RAM3_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -52,6 +52,7 @@ MEMORY
  *   __HeapLimit
  *   __StackLimit
  *   __StackTop
+ *   __StackTopTemp
  *   __stack
  */
 
@@ -206,23 +207,26 @@ SECTIONS
         PROVIDE(__stack = .);
     } > RAM
 
-  /* Remove information from the standard libraries */
-  /DISCARD/ :
-  {
-    libc.a ( * )
-    libm.a ( * )
-    libgcc.a ( * )
-  }
+    .sram2_non_cached_device (NOLOAD) : { *(.sram2_non_cached_device) } >RAM2
+    .sram2_non_cached_normal (NOLOAD) : { *(.sram2_non_cached_normal) } >RAM3
 
-  .ARM.attributes 0 : { *(.ARM.attributes) }
-  .sram2_non_cached_device (NOLOAD) : { *(.sram2_non_cached_device) } >RAM2
-  .sram2_non_cached_normal (NOLOAD) : { *(.sram2_non_cached_normal) } >RAM3
+    /* Remove information from the standard libraries */
+    /DISCARD/ :
+    {
+        libc.a ( * )
+        libm.a ( * )
+        libgcc.a ( * )
+    }
+
+    .ARM.attributes 0 : { *(.ARM.attributes) }
 }
 
 SECTIONS
 {
-    /* Check if data + heap + stack exceeds RAM limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
+    __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
+
+    /* Check if data + heap + stack exceeds limit */
+    ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")
     
     /* Check if text sections + data exceeds FLASH limit */
     DataInitFlashUsed = __bss_start__ - __data_start__;
@@ -230,19 +234,25 @@ SECTIONS
     TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
     
+    __flash_start__                 = ORIGIN(FLASH);
     __flash_size__                  = LENGTH(FLASH);
     __flash_usage__                 = TotalFlashUsed;
     __ram_start__                   = ORIGIN(RAM);
     __ram_size__                    = LENGTH(RAM);
     __ram_static_usage__            = __bss_end__ - ORIGIN(RAM);
-    __flash2_size__                 = 0;
-    __flash2_usage__                = 0;
-    __ram2_size__                   = 0;
-    __ram2_static_usage__           = 0;
+    __flash2_start__                = ORIGIN(FLASH2);
+    __flash2_size__                 = LENGTH(FLASH2);
+    __flash2_usage__                = LENGTH(FLASH2);
+    __ram2_start__                  = ORIGIN(RAM2);
+    __ram2_size__                   = LENGTH(RAM2);
+    __ram2_static_usage__           = LENGTH(RAM2);
+    __ram3_start__                  = ORIGIN(RAM3);
+    __ram3_size__                   = LENGTH(RAM3);
+    __ram3_static_usage__           = LENGTH(RAM3);
     __entry_address__               = Reset_Handler;
-    __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__; 
+    __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__;
     __text_size__                   = __text_end__ - __text_start__;
-    __relocated_isr_vector_size__   = __relocated_isr_vector_end__ - __relocated_isr_vector_start__; 
+    __relocated_isr_vector_size__   = __relocated_isr_vector_end__ - __relocated_isr_vector_start__;
     __data_size__                   = SIZEOF(.data);
     __bss_size__                    = SIZEOF(.bss);
     __stack_top__                   = __StackTop;
@@ -252,4 +262,5 @@ SECTIONS
     __heap_limit__                  = __HeapLimit;
     __heap_size__                   = SIZEOF(.heap);
 }
+
 

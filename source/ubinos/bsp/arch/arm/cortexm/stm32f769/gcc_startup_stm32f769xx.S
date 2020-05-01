@@ -213,8 +213,34 @@ __isr_vector:
     .globl Reset_Handler
     .type Reset_Handler, %function
 Reset_Handler:
-/* set stack pointer */
-    ldr sp, =__StackTop
+/* set temporary stack pointer */
+    ldr sp, =__StackTopTemp
+Reset_Breakpoint:
+
+#if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
+/* Loop to copy isr vector to relocated address */
+
+    ldr r1, =__isr_vector_start__
+    ldr r2, =__relocated_isr_vector_start__
+    ldr r3, =__relocated_isr_vector_end__
+
+    cmp r1, r2
+    beq .L_loop0_done
+
+    subs r3, r3, r2
+    ble .L_loop0_done
+
+.L_loop0:
+    subs r3, r3, #4
+    ldr r0, [r1,r3]
+    str r0, [r2,r3]
+    bgt .L_loop0
+
+.L_loop0_done:
+#endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
+
+/* Execute SystemInit function. (SystemInit function should not use data section.) */
+    bl SystemInit
 
 /* Loop to copy data from read only memory to RAM.
  * The ranges of copy from/to are specified by following symbols:
@@ -225,7 +251,6 @@ Reset_Handler:
  *
  * All addresses must be aligned to 4 bytes boundary.
  */
-Reset_Breakpoint:
     ldr r1, =__etext
     ldr r2, =__data_start__
     ldr r3, =__bss_start__
@@ -244,29 +269,6 @@ Reset_Breakpoint:
 
 .L_loop1_done:
 
-#if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
-/* Loop to copy isr vector to relocated address */
-
-    ldr r1, =__isr_vector_start__
-    ldr r2, =__relocated_isr_vector_start__
-    ldr r3, =__relocated_isr_vector_end__
-
-    cmp r1, r2
-    beq .L_loop2_done
-
-    subs r3, r3, r2
-    ble .L_loop2_done
-
-.L_loop2:
-    subs r3, r3, #4
-    ldr r0, [r1,r3]
-    str r0, [r2,r3]
-    bgt .L_loop2
-
-.L_loop2_done:
-
-#endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
-
 /* This part of work usually is done in C library startup code. Otherwise,
  * define __STARTUP_CLEAR_BSS to enable it in this startup. This section
  * clears the RAM where BSS data is located.
@@ -284,18 +286,18 @@ Reset_Breakpoint:
     movs r0, 0
 
     subs r2, r2, r1
-    ble .L_loop3_done
+    ble .L_loop2_done
 
-.L_loop3:
+.L_loop2:
     subs r2, r2, #4
     str r0, [r1, r2]
-    bgt .L_loop3
+    bgt .L_loop2
 
-.L_loop3_done:
+.L_loop2_done:
 #endif /* __STARTUP_CLEAR_BSS */
 
-/* Execute SystemInit function. */
-    bl SystemInit
+/* set stack pointer */
+    ldr sp, =__StackTop
 
 /* Call _start function provided by libraries.
  * If those libraries are not accessible, define __START as your entry point.
@@ -315,7 +317,7 @@ Reset_Breakpoint:
 * Provide weak aliases for each Exception handler to the Default_Handler. 
 * As they are weak aliases, any function with the same name will override 
 * this definition.
-* 
+*
 *******************************************************************************/
     .globl  Default_Handler
     .type   Default_Handler, %function
