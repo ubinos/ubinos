@@ -49,6 +49,7 @@ MEMORY
  *   __HeapLimit
  *   __StackLimit
  *   __StackTop
+ *   __StackTopTemp
  *   __stack
  */
 
@@ -213,8 +214,8 @@ SECTIONS
 {
     __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
 
-    /* Check if data + heap + stack exceeds RAM limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
+    /* Check if data + heap + stack exceeds limit */
+    ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")
     
     /* Check if text sections + data exceeds FLASH limit */
     DataInitFlashUsed = __bss_start__ - __data_start__;
