@@ -123,6 +123,7 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT                         
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_NAME                            ""      STRING "[S132 | S140]")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION                 ""      STRING "[6]")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            ""      PATH "nRF52 softdevice file")
+set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_INCLUDE_DIR                     ""      PATH "nRF52 softdevice include directory")
 
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F207ZG"))
 
