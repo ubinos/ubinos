@@ -48,15 +48,21 @@ macro(___project_config_end)
 
     file(WRITE ${PROJECT_BASE_DIR}/include/${PROJECT_NAME}_config.h "#include \"${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h\"\n")
     include_directories(${PROJECT_BASE_DIR}/include)
+
+	set(_tmp_include_flags)
+    get_property(_tmp_include_dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
+    foreach(_dir ${_tmp_include_dirs})
+        set(_tmp_include_flags "${_tmp_include_flags} -I${_dir}")
+    endforeach()
     
-    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_asm.txt "${CMAKE_ASM_FLAGS}")
-    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_c.txt "${CMAKE_C_FLAGS}")
-    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS}")
+    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_asm.txt "${CMAKE_ASM_FLAGS} ${_tmp_include_flags}")
+    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_c.txt "${CMAKE_C_FLAGS} ${_tmp_include_flags}")
+    file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS} ${_tmp_include_flags}")
     
     file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/../Default)
-    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_asm.txt "${CMAKE_ASM_FLAGS}")
-    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_c.txt "${CMAKE_C_FLAGS}")
-    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS}")
+    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_asm.txt "${CMAKE_ASM_FLAGS} ${_tmp_include_flags}")
+    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_c.txt "${CMAKE_C_FLAGS} ${_tmp_include_flags}")
+    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS} ${_tmp_include_flags}")
 endmacro(___project_config_end)
 
 macro(___project_add_app)

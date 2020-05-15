@@ -10,7 +10,7 @@ set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION 6 STRING)
 set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_FILE "${PROJECT_LIBRARY_DIR}/nrf5sdk_wrapper/source/components/softdevice/s132/hex/s132_nrf52_6.1.1_softdevice.hex" PATH)
 set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_INCLUDE_DIR "${PROJECT_LIBRARY_DIR}/nrf5sdk_wrapper/source/components/softdevice/s132/headers" PATH)
 
-set_cache(UBINOS__BSP__GDBSCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nrf52dk/gdb_flash_load_softdevice_jlink.gdb" PATH)
+set_cache(UBINOS__BSP__GDBSCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nrf52dk/gdb_flash_load_softdevice.gdb" PATH)
 set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nrf52dk/gdb_flash_reset_softdevice.gdb" PATH)
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nrf52dk/t32_flash_load_softdevice.cmm" PATH)
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nrf52dk/t32_flash_reset_softdevice.cmm" PATH)
