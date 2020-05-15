@@ -51,6 +51,18 @@ Trace.DISable
 SYStem.Up
 
 ; --------------------------------------------------------------------------------
+; turn on ram power
+Data.Set AD:0x40000900 %Long 0x0000FFFF
+Data.Set AD:0x40000910 %Long 0x0000FFFF
+Data.Set AD:0x40000920 %Long 0x0000FFFF
+Data.Set AD:0x40000930 %Long 0x0000FFFF
+Data.Set AD:0x40000940 %Long 0x0000FFFF
+Data.Set AD:0x40000950 %Long 0x0000FFFF
+Data.Set AD:0x40000960 %Long 0x0000FFFF
+Data.Set AD:0x40000970 %Long 0x0000FFFF
+Data.Set AD:0x40000980 %Long 0x0000FFFF
+
+; --------------------------------------------------------------------------------
 ; Load
 
 Data.LOAD.Elf ~~~~/app.elf
