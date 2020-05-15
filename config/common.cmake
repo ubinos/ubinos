@@ -631,9 +631,7 @@ macro(project_end)
             DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif()
     
-    if(CMAKE_VERBOSE_MAKEFILE)
-        ___project_show()
-    endif(CMAKE_VERBOSE_MAKEFILE)
+    ___project_show()
 endmacro(project_end)
 
 
