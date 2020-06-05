@@ -3,11 +3,13 @@
 import os
 import sys
 import multiprocessing
+import platform
 from distutils.spawn import find_executable
 
 def print_help():
     print("===============================================================================")
     print("Usage:")
+    print("    %s system_name" % (sys.argv[0]))
     print("    %s cpu_count" % (sys.argv[0]))
     print("    %s realpath <file name>" % (sys.argv[0]))
     print("    %s is_existing_path <path name>" % (sys.argv[0]))
@@ -22,6 +24,9 @@ def print_help():
     print("    %s replace_string <source file name> <destination file name> <old string> <new string>" % (sys.argv[0]))
     print("===============================================================================")
 
+def system_name():
+    print(platform.system())
+    
 def cpu_count():
     print(multiprocessing.cpu_count())
 
@@ -293,7 +298,9 @@ if __name__ == '__main__':
     if 2 > len(sys.argv):
         print_help()
     else:
-        if "cpu_count" == sys.argv[1]:
+        if "system_name" == sys.argv[1]:
+            system_name()
+        elif "cpu_count" == sys.argv[1]:
             cpu_count()
         elif "realpath" == sys.argv[1]:
             if 3 > len(sys.argv):
