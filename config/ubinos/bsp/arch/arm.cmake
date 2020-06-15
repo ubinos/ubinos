@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 set_cache(UBINOS__BSP__CPU_ARCH                                                   "ARM"           STRING)
 set_cache(UBINOS__BSP__CPU_ENDIAN                                                 "LITTLE"        STRING)
 

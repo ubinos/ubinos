@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 set_cache(UBINOS__BSP__CPU_MODEL                                                 "NRF52840XXAA"  STRING)
 
 set_cache(UBINOS__BSP__BOARD_MODEL                                               "NRF52840DK"    STRING)

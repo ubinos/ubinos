@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 if(___UBINOS_COMMON_CMAKE)
   return()
 endif()
@@ -521,10 +527,6 @@ macro(___project_show)
     message(STATUS "")
     message(STATUS "----------------------------------------------------------------------------")
     message(STATUS "")
-    message(STATUS "UBINOS__VERSION_MAJOR            = ${UBINOS__VERSION_MAJOR}")
-    message(STATUS "UBINOS__VERSION_MINOR            = ${UBINOS__VERSION_MINOR}")
-    message(STATUS "UBINOS__VERSION_PATCH            = ${UBINOS__VERSION_PATCH}")
-    message(STATUS "UBINOS__VERSION_TWEAK            = ${UBINOS__VERSION_TWEAK}")
     message(STATUS "UBINOS__VERSION                  = ${UBINOS__VERSION}")
     message(STATUS "")
     message(STATUS "UBINOS__BSP__BOARD_MODEL         = ${UBINOS__BSP__BOARD_MODEL}")
@@ -641,5 +643,4 @@ macro(project_end)
 
     ___project_show()
 endmacro(project_end)
-
 

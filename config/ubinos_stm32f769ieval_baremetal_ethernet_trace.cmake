@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 set_cache(UBINOS__BSP__CLOCK_FREQ_MAIN 100000 STRING)
 set_cache(UBINOS__BSP__BUSYWAITCOUNT_PER_MS 99840 STRING)
 

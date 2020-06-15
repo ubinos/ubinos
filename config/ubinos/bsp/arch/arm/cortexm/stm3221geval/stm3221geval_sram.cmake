@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 set_cache(UBINOS__BSP__LINK_MEMMAP_TYPE                                           "SRAM"          STRING)
 
 set_cache(UBINOS__BSP__USE_ICACHE                                                 FALSE           BOOL)

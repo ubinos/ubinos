@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 set_cache(UBINOS__BSP__CPU_MODEL                                                 "STM32F207ZG"   STRING)
 
 set_cache(UBINOS__BSP__BOARD_MODEL                                               "NUCLEOF207ZG"  STRING)

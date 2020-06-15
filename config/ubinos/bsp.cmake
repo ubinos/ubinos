@@ -1,8 +1,44 @@
-set(UBINOS__VERSION_MAJOR 3)
-set(UBINOS__VERSION_MINOR 0)
-set(UBINOS__VERSION_PATCH 2)
-set(UBINOS__VERSION_TWEAK 0)
-set(UBINOS__VERSION "${UBINOS__VERSION_MAJOR}.${UBINOS__VERSION_MINOR}.${UBINOS__VERSION_PATCH}-${UBINOS__VERSION_TWEAK}")
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
+file(READ "${CMAKE_CURRENT_LIST_DIR}/../../VERSION" _ver)
+
+string(REGEX MATCH "VERSION_MAJOR([ \t\r\n]*)([0-9]*)" _ ${_ver})
+set(UBINOS__VERSION_MAJOR ${CMAKE_MATCH_2})
+
+string(REGEX MATCH "VERSION_MINOR([ \t\r\n]*)([0-9]*)" _ ${_ver})
+set(UBINOS__VERSION_MINOR ${CMAKE_MATCH_2})
+
+string(REGEX MATCH "VERSION_PATCH([ \t\r\n]*)([0-9]*)" _ ${_ver})
+set(UBINOS__VERSION_PATCH ${CMAKE_MATCH_2})
+
+string(REGEX MATCH "VERSION_TWEAK([ \t\r\n]*)([0-9]*)" _ ${_ver})
+set(UBINOS__VERSION_TWEAK ${CMAKE_MATCH_2})
+
+if(UBINOS__VERSION_MAJOR GREATER_EQUAL 10)
+    set(_ver_major "${UBINOS__VERSION_MAJOR}")
+else()
+    set(_ver_major "0${UBINOS__VERSION_MAJOR}")
+endif()
+if(UBINOS__VERSION_MINOR GREATER_EQUAL 10)
+    set(_ver_minor "${UBINOS__VERSION_MINOR}")
+else()
+    set(_ver_minor "0${UBINOS__VERSION_MINOR}")
+endif()
+if(UBINOS__VERSION_PATCH GREATER_EQUAL 10)
+    set(_ver_patch "${UBINOS__VERSION_PATCH}")
+else()
+    set(_ver_patch "0${UBINOS__VERSION_PATCH}")
+endif()
+if(UBINOS__VERSION_TWEAK GREATER_EQUAL 10)
+    set(_ver_tweak "${UBINOS__VERSION_TWEAK}")
+else()
+    set(_ver_tweak "0${UBINOS__VERSION_TWEAK}")
+endif()
+set(UBINOS__VERSION "${_ver_major}.${_ver_minor}.${_ver_patch}-${_ver_tweak}")
 
 
 ########
@@ -481,5 +517,4 @@ set(CMAKE_CXX_FLAGS "${_tmp_all_flags} ${CMAKE_CXX_FLAGS} -std=gnu++98 -fno-exce
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T\"${PROJECT_BINARY_DIR}/linkscript.ld\"")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u main")
-
 

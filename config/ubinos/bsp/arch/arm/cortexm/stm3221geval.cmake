@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 set_cache(UBINOS__BSP__CPU_TYPE                                                  "CORTEX_M3"     STRING)
 set_cache(UBINOS__BSP__CPU_ARMTHUMBSTATE                                         "THUMB"         STRING)
 set_cache(UBINOS__BSP__CPU_MODEL                                                 "STM32F217IG"   STRING)

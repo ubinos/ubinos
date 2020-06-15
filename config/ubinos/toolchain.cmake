@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 set_cache_default(PROJECT_BUILD_TYPE                                            "Debug" STRING "Build type [None | Debug | Release | MinSizeRel]")
 
 set_cache_default(PROJECT_TOOLCHAIN_PREFIX                                      ""      STRING "Toolchain prefix [arm-none-eabi]")

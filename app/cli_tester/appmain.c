@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) 2009 Sung Ho Park
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
 #include <ubinos.h>
 
 #if (INCLUDE__APP__cli_tester == 1)

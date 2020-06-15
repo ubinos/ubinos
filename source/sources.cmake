@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 if(INCLUDE__UBINOS__BSP)
     get_filename_component(_tmp_source_dir "${CMAKE_CURRENT_LIST_DIR}/ubinos/bsp" ABSOLUTE)
     file(GLOB_RECURSE _tmp_sources

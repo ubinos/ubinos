@@ -1,3 +1,9 @@
+#
+# Copyright (c) 2019 Sung Ho Park and CSOS
+# 
+# SPDX-License-Identifier: Apache-2.0
+#
+
 set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_ORIGIN 0x20000000 STRING)
 set_cache(UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH 0x0007C000 STRING)
 
