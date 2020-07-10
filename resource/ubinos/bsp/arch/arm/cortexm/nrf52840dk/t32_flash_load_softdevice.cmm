@@ -53,10 +53,10 @@ FLASH.Create 2. 0x10001000++0x0FFF &pagesize NOP Long  ; UICR area
 FLASH.TARGET 0x20000000 0x20001000 0x800 ~~~~/flash_writer.elf
 
 ; ReProgram Flash
-FLASH.ReProgram 0x00000000++0x00025FFF
+FLASH.ReProgram 0x00000000++0x00026FFF
 Data.LOAD.IntelHex ~~~~/nrf52_softdevice.hex
 FLASH.ReProgram OFF
-FLASH.ReProgram 0x00026000++0x0005A000
+FLASH.ReProgram 0x00027000++0x000D9000
 Data.LOAD.Elf ~~~~/app.elf
 FLASH.ReProgram OFF
 
