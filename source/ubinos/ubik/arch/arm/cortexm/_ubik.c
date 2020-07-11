@@ -206,9 +206,9 @@ void bsp_ubik_tick_handler(void) {
 
 	_ubik_tick_rtcisr_clear();
 
-#if (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1)
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)
 	_ubik_idle_cpu_wakeup();
-#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1) */
 
 	if (_bsp_kernel_active != 0) {
 

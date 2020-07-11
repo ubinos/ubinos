@@ -96,10 +96,10 @@ unsigned int _ubik_tick_rtccount_get(void) {
 	return nrf_rtc_counter_get(_TICK_RTC);
 }
 
-#if (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1)
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)
 
 void _ubik_idle_cpu_wakeup(void) {
-#if (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1)
+#if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1)
 	if (nrf_rtc_int_is_enabled(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK)) {
 
 		nrf_rtc_int_disable(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK);
@@ -109,7 +109,7 @@ void _ubik_idle_cpu_wakeup(void) {
 
 		__DSB();
 	}
-#endif /* (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1) */
 }
 
 static void __pwr_mgmt_fpu_sleep_prepare(void)
@@ -148,7 +148,7 @@ static void __pwr_mgmt_fpu_sleep_prepare(void)
 }
 
 void _ubik_idle_cpu_sleep(void) {
-#if (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1)
+#if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1)
 	_task_pt task = NULL;
 	unsigned int next_wakeuptick = UBINOS__UBIK__TICK_COUNT_MAX;
 	unsigned int ignore_tick_count = 0;
@@ -174,8 +174,8 @@ void _ubik_idle_cpu_sleep(void) {
 		ignore_tick_count = next_wakeuptick - _ubik_tickcount;
 		ignore_tick_count = min(ignore_tick_count, UBINOS__UBIK__TICK_RTC_COUNT_MAX);
 
-		if (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_COUNT_MIN <= ignore_tick_count) {
-			ignore_tick_count -= UBINOS__UBIK__TICK_RTC_IGNORE_TICK_COUNT_MARGIN;
+		if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN <= ignore_tick_count) {
+			ignore_tick_count -= UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN;
 
 			if ((UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) >= ignore_tick_count) {
 				next_wakeuprtctick = _ubik_tickrtccount + ignore_tick_count;
@@ -209,7 +209,7 @@ void _ubik_idle_cpu_sleep(void) {
 #endif /* (__FPU_USED == 1) */
 
 	}
-#else
+#else /* (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1) */
 
 #if (__FPU_USED == 1)
 	ubik_entercrit();
@@ -217,7 +217,7 @@ void _ubik_idle_cpu_sleep(void) {
 	ubik_exitcrit();
 #endif /* (__FPU_USED == 1) */
 
-#endif /* (UBINOS__UBIK__TICK_RTC_IGNORE_TICK_WHEN_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1) */
 
 #ifdef SOFTDEVICE_PRESENT
     if (nrf_sdh_is_enabled())
@@ -237,7 +237,7 @@ void _ubik_idle_cpu_sleep(void) {
     }
 }
 
-#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_WHEN_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1) */
 
 #endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 
