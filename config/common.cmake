@@ -410,7 +410,7 @@ macro(___project_add_app)
                         ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
     endif()
 
-    if(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT AND NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
+    if(NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
