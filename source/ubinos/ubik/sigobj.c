@@ -6,6 +6,14 @@
 
 #include "_ubik.h"
 
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)
+#if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1)
+#include <ubinos/bsp_ubik.h>
+#endif /* (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
+
 #if (INCLUDE__UBINOS__UBIK == 1)
 
 #include <stdio.h>
@@ -293,6 +301,18 @@ int _sigobj_send(_sigobj_pt sigobj, int sigtype) {
 
 	wtask = _sigobj_wtasklist_gettask(sigobj);
 	if (NULL != wtask) {
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)
+#if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1)
+	    if (0 != _bsp_kernel_active) {
+	        if (0 != bsp_isintr()) {
+	            bsp_ubik_tick_handler();
+	        }
+	    }
+#endif /* (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
+
 		task = wtask->task;
 
 		/////////////
@@ -331,6 +351,17 @@ int _sigobj_broadcast(_sigobj_pt sigobj, int sigtype) {
 
 	wtask = _sigobj_wtasklist_head(sigobj);
 	if (NULL != wtask) {
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+#if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)
+#if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1)
+        if (0 != _bsp_kernel_active) {
+            if (0 != bsp_isintr()) {
+                bsp_ubik_tick_handler();
+            }
+        }
+#endif /* (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1) */
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 		for (;;) {
 			wtask_next = _sigobj_wtasklist_next(wtask);
 
