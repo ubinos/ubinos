@@ -72,6 +72,7 @@ set_cache_default(UBINOS__UBIK__TICK_RTC_SLEEP_IDLE                             
 set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE                          TRUE      BOOL "Enable to ignore tick when idle")
 
 set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN    10        STRING "Minimum tick count to ignore while idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX    0xFFFFF0L STRING "Maximum tick count to ignore while idle. It must be less than UBINOS__UBIK__TICK_RTC_COUNT_MAX")
 set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN 0         STRING "Margin of tick count to ignore while idle")
 
 endif(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")

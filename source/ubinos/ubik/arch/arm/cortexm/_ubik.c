@@ -218,7 +218,7 @@ void bsp_ubik_tick_handler(void) {
 		tickrtccount = _ubik_tick_rtccount_get();
 
 		if (_ubik_tickrtccount_init) {
-			if (_ubik_tickrtccount < tickrtccount) {
+			if (_ubik_tickrtccount <= tickrtccount) {
 				tickrtccount_diff = tickrtccount - _ubik_tickrtccount;
 			}
 			else {

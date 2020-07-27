@@ -172,7 +172,7 @@ void _ubik_idle_cpu_sleep(void) {
 #endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
 
 		ignore_tick_count = next_wakeuptick - _ubik_tickcount;
-		ignore_tick_count = min(ignore_tick_count, UBINOS__UBIK__TICK_RTC_COUNT_MAX);
+		ignore_tick_count = min(ignore_tick_count, UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX);
 
 		if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN <= ignore_tick_count) {
 			ignore_tick_count -= UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN;
