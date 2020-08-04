@@ -22,14 +22,6 @@ int appmain(int argc, char * argv[]) {
 	printf("helloworld (build time: %s %s)\r\n", __TIME__, __DATE__);
 	printf("================================================================================\r\n");
 	printf("\r\n");
-#if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-    r = heap_printheapinfo(NULL);
-    if (0 == r) {
-        printf("\r\n");
-        printf("================================================================================\r\n");
-        printf("\r\n");
-    }
-#endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
     printf("\r\n");
 
 	for (unsigned int i = 0; ; i++) {

@@ -12,23 +12,23 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define CLI_PROMPT__DEFAULT	"cli> "
 #define CLI_SLEEP_TICK 1
-#define CLI_BUF_SIZE 127
-#define CLI_PROMPT_SIZE 31
+#define CLI_CMD_SIZE_MAX 127
+#define CLI_PROMPT_SIZE_MAX 31
+#define CLI_PROMPT__DEFAULT	"cli> "
 
-char _cli_buf[CLI_BUF_SIZE + 1] = { 0, };
-char _cli_prompt[CLI_PROMPT_SIZE + 1] = { 0, };
+char _cli_cmd_buf[CLI_CMD_SIZE_MAX + 1] = { 0, };
+char _cli_prompt_buf[CLI_PROMPT_SIZE_MAX + 1] = { 0, };
 
 cli_hookfunc_ft _cli_hookfunc = NULL;
 void *_cli_hookarg = NULL;
 
 cli_helphookfunc_ft _cli_helphookfunc = NULL;
 
-static int cli_rootfunc(char *str, int max, void *arg);
+static int cli_rootfunc(char *str, int len, void *arg);
 
-static int cli_cmdfunc__help(char *str, int max, void *arg);
-static int cli_cmdfunc__set(char *str, int max, void *arg);
+static int cli_cmdfunc__help(char *str, int len, void *arg);
+static int cli_cmdfunc__set(char *str, int len, void *arg);
 
 int cli_sethookfunc(cli_hookfunc_ft hookfunc, void *arg) {
 	_cli_hookfunc = hookfunc;
@@ -47,7 +47,7 @@ int cli_setprompt(char *prompt) {
 	int r = -1;
 
 	if (prompt) {
-		strncpy(_cli_prompt, prompt, CLI_PROMPT_SIZE);
+		strncpy(_cli_prompt_buf, prompt, CLI_PROMPT_SIZE_MAX);
 		r = 0;
 	}
 
@@ -55,169 +55,207 @@ int cli_setprompt(char *prompt) {
 }
 
 void cli_main(void *arg) {
-	int r = 0;
+	int r = -1;
 	int len;
 
-	if (strlen(_cli_prompt) == 0) {
-		strncpy(_cli_prompt, CLI_PROMPT__DEFAULT, CLI_PROMPT_SIZE);
+	if (strlen(_cli_prompt_buf) == 0) {
+		strncpy(_cli_prompt_buf, CLI_PROMPT__DEFAULT, CLI_PROMPT_SIZE_MAX);
 	}
 
-	printf("\n\r%s", _cli_prompt);
+	printf("\r\n%s", _cli_prompt_buf);
 	fflush(stdout);
-	while (0 == r) {
-		len = dtty_gets(_cli_buf, CLI_BUF_SIZE);
+	do {
+		len = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
 		if (0 < len) {
-			printf("\n\r%s\n\r", _cli_buf);
+			printf("\r\n%s\r\n", _cli_cmd_buf);
 
-			r = cli_rootfunc(_cli_buf, CLI_BUF_SIZE, arg);
+			r = cli_rootfunc(_cli_cmd_buf, len, arg);
 			if (0 != r) {
 				if (NULL != _cli_hookfunc) {
-					r = _cli_hookfunc(_cli_buf, CLI_BUF_SIZE, arg);
+					r = _cli_hookfunc(_cli_cmd_buf, len, arg);
 				}
 			}
 		} else {
-			printf("\n\r\n\r");
+			printf("\r\n");
 			r = -1;
 		}
 
 		if (0 != r) {
-			cli_cmdfunc__help(_cli_buf, CLI_BUF_SIZE, arg);
+			cli_cmdfunc__help(_cli_cmd_buf, len, arg);
 			if (NULL != _cli_helphookfunc) {
 				_cli_helphookfunc();
 			}
 		}
 
-		printf("\n\r%s", _cli_prompt);
+		printf("\r\n%s", _cli_prompt_buf);
 		fflush(stdout);
-
-		r = 0;
-	}
+	} while (1);
 }
 
-static int cli_rootfunc(char *str, int max, void *arg) {
+static int cli_rootfunc(char *str, int len, void *arg) {
 	int r = -1;
-	char *tstr;
-	int tmax;
-	void *targ;
+	char *tmpstr;
+	int tmplen;
+	char *cmd = NULL;
+	int cmdlen;
 
-	tstr = str;
-	tmax = max;
-	targ = arg;
-	if (tmax > 4 && strncmp(tstr, "set ", 4) == 0) {
-		printf("\n\r");
-		tstr = &str[4];
-		tmax = max - 4;
-		targ = arg;
-		r = cli_cmdfunc__set(tstr, tmax, targ);
-	}
+	tmpstr = str;
+	tmplen = len;
+
+	do {
+		cmd = "set ";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
+			tmpstr = &tmpstr[cmdlen];
+			tmplen -= cmdlen;
+
+			printf("\r\n");
+
+			r = cli_cmdfunc__set(tmpstr, tmplen, arg);
+			break;
+		}
+
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	else if (strncmp(tstr, "mi", tmax) == 0) {
-		printf("\n\r");
-		heap_printheapinfo(NULL);
-		r = 0;
-	}
+		cmd = "mi";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
+			printf("\r\n");
+			heap_printheapinfo(NULL);
+
+			r = 0;
+			break;
+		}
 #endif
+
 #if ( (INCLUDE__UBINOS__UBIK == 1) && !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) )
-	else if (strncmp(tstr, "ki", tmax) == 0) {
-		printf("\n\r");
-		ubik_printkernelinfo();
-		r = 0;
-	}
+		cmd = "ki";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
+			printf("\r\n");
+			ubik_printkernelinfo();
+
+			r = 0;
+			break;
+		}
 #endif
+	} while(0);
 
 	return r;
 }
 
-static int cli_cmdfunc__help(char *str, int max, void *arg) {
-	printf("h           : help\n\r");
+static int cli_cmdfunc__help(char *str, int len, void *arg) {
+	printf("h                       : help\r\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("mi          : memory information\n\r");
+	printf("mi                      : memory information\r\n");
 #endif
 #if ( (INCLUDE__UBINOS__UBIK == 1) && !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) )
-	printf("ki          : kernel information\n\r");
+	printf("ki                      : kernel information\r\n");
 #endif
-	printf("set echo    : set echo\n\r");
+	printf("set echo <on|off>       : set echo on/off\r\n");
 #if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
-	printf("set logm    : set log message level\n\r");
+	printf("set logm                : set log message level\r\n");
 #endif
 
 	return 0;
 }
 
-static int cli_cmdfunc__set(char *str, int max, void *arg) {
+static int cli_cmdfunc__set(char *str, int len, void *arg) {
 	int r = -1;
-	int len;
-	int value;
-	int value2;
-	char *tstr;
-	int tmax;
+	char *tmpstr;
+	int tmplen;
+	char *cmd = NULL;
+	int cmdlen;
 
-	tstr = str;
-	tmax = max;
-	if (0 == strncmp(tstr, "echo", tmax)) {
-		printf("    set echo\n\r");
-		printf("        on/off?\n\r");
-		printf("            on              : 1\n\r");
-		printf("            off             : 0\n\r");
-		len = dtty_gets(_cli_buf, CLI_BUF_SIZE);
-		if (0 < len) {
-			printf("%s\n\r", _cli_buf);
-			value = atoi(_cli_buf);
-			printf("        set echo %s\n\r", value ? "on" : "off");
-			r = dtty_setecho(value);
-			if (0 == r) {
-				printf("            success\n\r");
-			} else {
-				printf("            fail\n\r");
-			}
-			r = 0;
-		} else {
-			r = -1;
-		}
-	}
-#if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
-	else if (0 == strncmp(tstr, "logm", tmax)) {
-		printf("    set log message level\n\r");
-		printf("        category?\n\r");
-		printf("            all             : %d\n\r", LOGM_CATEGORY__ALL);
-		printf("            default         : %d\n\r", LOGM_CATEGORY__DEFAULT);
-		printf("            heap            : %d\n\r", LOGM_CATEGORY__HEAP);
-		printf("            bitmap          : %d\n\r", LOGM_CATEGORY__BITMAP);
-		printf("            user00          : %d\n\r", LOGM_CATEGORY__USER00);
-		printf("            user01          : %d\n\r", LOGM_CATEGORY__USER01);
-		printf("            user02          : %d\n\r", LOGM_CATEGORY__USER02);
-		len = dtty_gets(_cli_buf, CLI_BUF_SIZE);
-		if (0 < len) {
-			printf("%s\n\r", _cli_buf);
-			value = atoi(_cli_buf);
-			printf("        level?\n\r");
-			printf("            none            : %d\n\r", LOGM_LEVEL__NONE);
-			printf("            always          : %d\n\r", LOGM_LEVEL__ALWAYS);
-			printf("            fatal           : %d\n\r", LOGM_LEVEL__FATAL);
-			printf("            error           : %d\n\r", LOGM_LEVEL__ERROR);
-			printf("            warning         : %d\n\r", LOGM_LEVEL__WARNING);
-			printf("            info            : %d\n\r", LOGM_LEVEL__INFO);
-			printf("            debug           : %d\n\r", LOGM_LEVEL__DEBUG);
-			len = dtty_gets(_cli_buf, CLI_BUF_SIZE);
-			if (0 < len) {
-				printf("%s\n\r", _cli_buf);
-				value2 = atoi(_cli_buf);
-				printf("        set log message level of category %d to %d\n\r", value, value2);
-				r = logm_setlevel(value, value2);
+	int id;
+	int level;
+
+	tmpstr = str;
+	tmplen = len;
+
+	do
+	{
+		cmd = "echo ";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+		{
+			tmpstr = &tmpstr[cmdlen];
+			tmplen -= cmdlen;
+
+			cmd = "on";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				r = dtty_setecho(1);
 				if (0 == r) {
-					printf("            success\n\r");
+					printf("    success\r\n");
 				} else {
-					printf("            fail\n\r");
+					printf("    fail\r\n");
 				}
-				r = 0;
-			} else {
-				r = -1;
+				break;
 			}
-		} else {
-			r = -1;
+
+			cmd = "off";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				r = dtty_setecho(0);
+				if (0 == r) {
+					printf("    success\r\n");
+				} else {
+					printf("    fail\r\n");
+				}
+				break;
+			}
 		}
-	}
+
+#if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
+		cmd = "logm";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+		{
+			printf("    input category id\r\n");
+			printf("        %4d : all    \r\n", LOGM_CATEGORY__ALL);
+			printf("        %4d : default\r\n", LOGM_CATEGORY__DEFAULT);
+			printf("        %4d : heap   \r\n", LOGM_CATEGORY__HEAP);
+			printf("        %4d : bitmap \r\n", LOGM_CATEGORY__BITMAP);
+			printf("        %4d : user00 \r\n", LOGM_CATEGORY__USER00);
+			printf("        %4d : user01 \r\n", LOGM_CATEGORY__USER01);
+			printf("        %4d : user02 \r\n", LOGM_CATEGORY__USER02);
+
+			tmplen = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
+			if (0 >= tmplen) {
+				r = -1;
+				break;
+			}
+			printf("%s\r\n", _cli_cmd_buf);
+			id = atoi(_cli_cmd_buf);
+
+			printf("    input level\r\n");
+			printf("        %4d : none   \r\n", LOGM_LEVEL__NONE);
+			printf("        %4d : always \r\n", LOGM_LEVEL__ALWAYS);
+			printf("        %4d : fatal  \r\n", LOGM_LEVEL__FATAL);
+			printf("        %4d : error  \r\n", LOGM_LEVEL__ERROR);
+			printf("        %4d : warning\r\n", LOGM_LEVEL__WARNING);
+			printf("        %4d : info   \r\n", LOGM_LEVEL__INFO);
+			printf("        %4d : debug  \r\n", LOGM_LEVEL__DEBUG);
+
+			tmplen = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
+			if (0 >= tmplen) {
+				r = -1;
+				break;
+			}
+			printf("%s\r\n", _cli_cmd_buf);
+			level = atoi(_cli_cmd_buf);
+
+			r = logm_setlevel(id, level);
+			if (0 == r) {
+				printf("            success\r\n");
+			} else {
+				printf("            fail\r\n");
+			}
+		}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1) */
+	} while (0);
 
 	return r;
 }

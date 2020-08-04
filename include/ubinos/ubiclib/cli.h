@@ -23,7 +23,7 @@ extern "C" {
 #include <ubinos/type.h>
 
 /** cli 후크 함수 포인터  형 정의 */
-typedef int (*cli_hookfunc_ft)(char *str, int max, void *arg);
+typedef int (*cli_hookfunc_ft)(char *str, int len, void *arg);
 
 /** cli help 후크 함수 포인터  형 정의 */
 typedef void (*cli_helphookfunc_ft)();

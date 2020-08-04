@@ -12,9 +12,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-static int clihookfunc(char *str, int max, void *arg);
 static void clihelphookfunc();
-static void mycmd();
+static int clihookfunc(char *str, int len, void *arg);
+static int mycmd(char *str, int len, void *arg);
 
 int appmain(int argc, char *argv[]) {
 	int r;
@@ -24,6 +24,8 @@ int appmain(int argc, char *argv[]) {
 	printf("command line interface tester (build time: %s %s)\n\r", __TIME__, __DATE__);
 	printf("================================================================================\n\r");
 	printf("\n\r");
+
+	dtty_setecho(1);
 
 	r = cli_sethookfunc(clihookfunc, NULL);
 	if (0 != r) {
@@ -50,32 +52,37 @@ int appmain(int argc, char *argv[]) {
 	return 0;
 }
 
-static int clihookfunc(char *str, int max, void *arg) {
+static int clihookfunc(char *str, int len, void *arg) {
 	int r = -1;
-	char *tstr;
-	int tmax;
-	void *targ;
+	char *tmpstr;
+	int tmplen;
+	char *cmd = NULL;
+	int cmdlen;
 
-	tstr = str;
-	tmax = max;
-	targ = arg;
-	(void) targ;
+	tmpstr = str;
+	tmplen = len;
 
-	if (strncmp(tstr, "mc", tmax) == 0) {
-		mycmd();
-		r = 0;
+	cmd = "mc";
+	cmdlen = strlen(cmd);
+	if (tmplen >= cmdlen && strncmp(tmpstr, cmd, tmplen) == 0) {
+		tmpstr = &tmpstr[cmdlen];
+		tmplen -= cmdlen;
+
+		r = mycmd(tmpstr, tmplen, arg);
 	}
 
 	return r;
 }
 
 static void clihelphookfunc() {
-	printf("mc          : my command\n\r");
+	printf("mc                      : my command\n\r");
 }
 
-static void mycmd() {
+static int mycmd(char *str, int len, void *arg) {
 	printf("\n\r");
 	printf("do my command\n\r");
+
+	return 0;
 }
 
 #endif /* (INCLUDE__APP__cli_tester == 1) */

@@ -25,14 +25,6 @@ int appmain(int argc, char * argv[]) {
 	printf("helloworld_mt (multi-tasking) (build time: %s %s)\n\r", __TIME__, __DATE__);
 	printf("================================================================================\n\r");
     printf("\n\r");
-#if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-    r = heap_printheapinfo(NULL);
-    if (0 == r) {
-        printf("\n\r");
-        printf("================================================================================\n\r");
-        printf("\n\r");
-    }
-#endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
     srand(time(NULL));
 
