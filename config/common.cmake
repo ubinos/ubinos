@@ -268,6 +268,11 @@ macro(___project_add_app)
                 COMMAND ${CMAKE_COMMAND} -E copy
                         ${UBINOS__BSP__OPENOCD_CONFIG_FILE}
                         ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg)
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                        ${UBINOS__BSP__OPENOCD_CONFIG_FILE}
+                        ${CMAKE_CURRENT_BINARY_DIR}/../Default/openocd.cfg)
     endif()
 
     if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
