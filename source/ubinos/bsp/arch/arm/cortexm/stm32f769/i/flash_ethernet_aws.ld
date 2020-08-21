@@ -123,7 +123,7 @@ SECTIONS
 {
     .relocated_isr_vector (COPY) :
     {
-        . = ALIGN(128);
+        . = ALIGN(256);
         __relocated_isr_vector_start__ = .;
         . = . + (__isr_vector_end__ - __isr_vector_start__);
         . = ALIGN(128);
