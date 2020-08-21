@@ -311,7 +311,7 @@ Reset_Breakpoint:
 
 .L_loop0_done:
 
-#if (UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT == 1)
+#if (UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT == 1) || (UBINOS__BSP__NRF52_MBR_PRESENT == 1)
 /* Copy handlers of softdevice to relocated address */
     movs r1, #0
     ldr r2, =__relocated_isr_vector_start__
@@ -345,7 +345,7 @@ Reset_Breakpoint:
     ldr r0, [r1,r3]
     str r0, [r2,r3]
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */
-#endif /* (UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT == 1) */
+#endif /* (UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT == 1) || (UBINOS__BSP__NRF52_MBR_PRESENT == 1) */
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
 
 /* Execute SystemInit function. (SystemInit function should not use data section.) */

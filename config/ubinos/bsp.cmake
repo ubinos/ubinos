@@ -161,6 +161,8 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION                 
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            ""      PATH "nRF52 softdevice file")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_INCLUDE_DIR                     ""      PATH "nRF52 softdevice include directory")
 
+set_cache_default(UBINOS__BSP__NRF52_MBR_PRESENT                                FALSE   BOOL "")
+
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F207ZG"))
 
 set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
@@ -363,6 +365,12 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         if(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT)
         
             set(_tmp_all_flags "${_tmp_all_flags} -DSOFTDEVICE_PRESENT")
+            
+        endif()
+
+        if(UBINOS__BSP__NRF52_MBR_PRESENT)
+        
+            set(_tmp_all_flags "${_tmp_all_flags} -DMBR_PRESENT")
             
         endif()
         
