@@ -96,6 +96,84 @@ SECTIONS
     {
         . = ALIGN(4);
     } > FLASH
+    .sdh_soc_observers :
+    {
+        PROVIDE(__start_sdh_soc_observers = .);
+        KEEP(*(SORT(.sdh_soc_observers*)))
+        PROVIDE(__stop_sdh_soc_observers = .);
+    } > FLASH
+    .sdh_state_observers :
+    {
+        PROVIDE(__start_sdh_state_observers = .);
+        KEEP(*(SORT(.sdh_state_observers*)))
+        PROVIDE(__stop_sdh_state_observers = .);
+    } > FLASH
+    .sdh_stack_observers :
+    {
+        PROVIDE(__start_sdh_stack_observers = .);
+        KEEP(*(SORT(.sdh_stack_observers*)))
+        PROVIDE(__stop_sdh_stack_observers = .);
+    } > FLASH
+    .sdh_req_observers :
+    {
+        PROVIDE(__start_sdh_req_observers = .);
+        KEEP(*(SORT(.sdh_req_observers*)))
+        PROVIDE(__stop_sdh_req_observers = .);
+    } > FLASH
+    .sdh_ant_observers :
+    {
+        PROVIDE(__start_sdh_ant_observers = .);
+        KEEP(*(SORT(.sdh_ant_observers*)))
+        PROVIDE(__stop_sdh_ant_observers = .);
+    } > FLASH
+    .sdh_ble_observers :
+    {
+        PROVIDE(__start_sdh_ble_observers = .);
+        KEEP(*(SORT(.sdh_ble_observers*)))
+        PROVIDE(__stop_sdh_ble_observers = .);
+    } > FLASH
+    .pwr_mgmt_data :
+    {
+        PROVIDE(__start_pwr_mgmt_data = .);
+        KEEP(*(SORT(.pwr_mgmt_data*)))
+        PROVIDE(__stop_pwr_mgmt_data = .);
+    } > FLASH
+    .nrf_queue :
+    {
+        PROVIDE(__start_nrf_queue = .);
+        KEEP(*(.nrf_queue))
+        PROVIDE(__stop_nrf_queue = .);
+    } > FLASH
+    .nrf_balloc :
+    {
+        PROVIDE(__start_nrf_balloc = .);
+        KEEP(*(.nrf_balloc))
+        PROVIDE(__stop_nrf_balloc = .);
+    } > FLASH
+    .cli_command :
+    {
+        PROVIDE(__start_cli_command = .);
+        KEEP(*(.cli_command))
+        PROVIDE(__stop_cli_command = .);
+    } > FLASH
+    .crypto_data :
+    {
+        PROVIDE(__start_crypto_data = .);
+        KEEP(*(SORT(.crypto_data*)))
+        PROVIDE(__stop_crypto_data = .);
+    } > FLASH
+    .log_const_data :
+    {
+        PROVIDE(__start_log_const_data = .);
+        KEEP(*(SORT(.log_const_data*)))
+        PROVIDE(__stop_log_const_data = .);
+    } > FLASH
+    .log_backends :
+    {
+        PROVIDE(__start_log_backends = .);
+        KEEP(*(SORT(.log_backends*)))
+        PROVIDE(__stop_log_backends = .);
+    } > FLASH
 
     .ARM.extab :
     {
@@ -129,7 +207,7 @@ SECTIONS
         __relocated_isr_vector_end__ = .;
     } > RAM
 
-    .data : AT (__etext)
+    .data __relocated_isr_vector_end__ : AT (__etext)
     {
         __data_start__ = .;
         *(vtable)
@@ -159,15 +237,39 @@ SECTIONS
         . = ALIGN(4);
         /* All data end */
         __data_end__ = .;
-    } > RAM2
+    } > RAM
 
     .mem_section_dummy_ram __data_end__ :
     {
         . = ALIGN(4);
         PROVIDE(__stop_mem_section_dummy_ram = .);
-    } > RAM2
+    } > RAM
+    .cli_sorted_cmd_ptrs __stop_mem_section_dummy_ram :
+    {
+        PROVIDE(__start_cli_sorted_cmd_ptrs = .);
+        KEEP(*(.cli_sorted_cmd_ptrs))
+        PROVIDE(__stop_cli_sorted_cmd_ptrs = .);
+    } > RAM
+    .fs_data __stop_cli_sorted_cmd_ptrs :
+    {
+        PROVIDE(__start_fs_data = .);
+        KEEP(*(.fs_data))
+        PROVIDE(__stop_fs_data = .);
+    } > RAM
+    .log_dynamic_data __stop_fs_data :
+    {
+        PROVIDE(__start_log_dynamic_data = .);
+        KEEP(*(SORT(.log_dynamic_data*)))
+        PROVIDE(__stop_log_dynamic_data = .);
+    } > RAM
+    .log_filter_data __stop_log_dynamic_data :
+    {
+        PROVIDE(__start_log_filter_data = .);
+        KEEP(*(SORT(.log_filter_data*)))
+        PROVIDE(__stop_log_filter_data = .);
+    } > RAM
 
-    .bss __stop_mem_section_dummy_ram :
+    .bss __stop_log_filter_data :
     {
         . = ALIGN(4);
         __bss_start__ = .;
@@ -177,7 +279,7 @@ SECTIONS
         __bss_end__ = .;
         __end__ = .;
         PROVIDE(end = .);
-    } > RAM2
+    } > RAM
 
     /* .stack_dummy section doesn't contains any symbols. It is only
      * used for linker to calculate size of stack sections, and assign
@@ -187,18 +289,7 @@ SECTIONS
         KEEP(*(.stack*))
     }
 
-    .heap __bss_end__ (COPY):
-    {
-        . = ALIGN(4);
-        __HeapBase = .;
-        PROVIDE(__heap_base = .);
-        . = ORIGIN(RAM2) + LENGTH(RAM2) - SIZEOF(.stack_dummy);
-        . = ALIGN(4);
-        __HeapLimit = .;
-        PROVIDE(__heap_limit = .);
-    } > RAM2
-
-    .stack __HeapLimit (COPY):
+    .stack __bss_end__ (COPY):
     {
         . = ALIGN(8);
         __StackLimit = .;
@@ -207,7 +298,18 @@ SECTIONS
         . = ALIGN(8);
         __StackTop = .;
         PROVIDE(__stack = .);
-    } > RAM2
+    } > RAM
+
+    .heap __stack (COPY):
+    {
+        . = ALIGN(4);
+        __HeapBase = .;
+        PROVIDE(__heap_base = .);
+        . = ORIGIN(RAM) + LENGTH(RAM);
+        . = ALIGN(4);
+        __HeapLimit = .;
+        PROVIDE(__heap_limit = .);
+    } > RAM
 
     /* Remove information from the standard libraries */
     /DISCARD/ :
@@ -226,9 +328,6 @@ SECTIONS
 
     __start_ot_flash_data = ORIGIN(FLASH2);
     __stop_ot_flash_data = ORIGIN(FLASH2) + LENGTH(FLASH2);
-
-    /* Check if data + heap + stack exceeds limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")
     
     /* Check if text sections + data exceeds FLASH limit */
     DataInitFlashUsed = __bss_start__ - __data_start__;
@@ -241,13 +340,13 @@ SECTIONS
     __flash_usage__                 = TotalFlashUsed;
     __ram_start__                   = ORIGIN(RAM);
     __ram_size__                    = LENGTH(RAM);
-    __ram_static_usage__            = __relocated_isr_vector_end__ - __relocated_isr_vector_start__;
+    __ram_static_usage__            = __bss_end__ - ORIGIN(RAM);
     __flash2_start__                = ORIGIN(FLASH2);
     __flash2_size__                 = LENGTH(FLASH2);
     __flash2_usage__                = LENGTH(FLASH2);
     __ram2_start__                  = ORIGIN(RAM2);
     __ram2_size__                   = LENGTH(RAM2);
-    __ram2_static_usage__           = __bss_end__ - ORIGIN(RAM2);
+    __ram2_static_usage__           = 0;
     __entry_address__               = Reset_Handler;
     __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__;
     __text_size__                   = __text_end__ - __text_start__;

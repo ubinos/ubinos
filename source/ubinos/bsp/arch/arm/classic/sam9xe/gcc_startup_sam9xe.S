@@ -125,7 +125,7 @@ error___
 #endif
 
 /* Setup temporary stack */
-    ldr     sp, =__stack_temp
+    ldr     sp, =__StackTopTemp
 Reset_Breakpoint:
 /* Execute lowlevel_init function. */
     bl      lowlevel_init

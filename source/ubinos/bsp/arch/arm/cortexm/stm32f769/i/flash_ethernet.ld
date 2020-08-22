@@ -23,10 +23,10 @@ MEMORY
     FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
     FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
     RAM (rwx) : ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
-    RAM2 (xrw) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
-    RAM3 (xrw) : ORIGIN = <RAM3_ORIGIN>, LENGTH = <RAM3_LENGTH>
-    RAM4 (xrw) : ORIGIN = <RAM4_ORIGIN>, LENGTH = <RAM4_LENGTH>
-    RAM5 (xrw) : ORIGIN = <RAM5_ORIGIN>, LENGTH = <RAM5_LENGTH>
+    RAM2 (rwx) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
+    RAM3 (rwx) : ORIGIN = <RAM3_ORIGIN>, LENGTH = <RAM3_LENGTH>
+    RAM4 (rwx) : ORIGIN = <RAM4_ORIGIN>, LENGTH = <RAM4_LENGTH>
+    RAM5 (rwx) : ORIGIN = <RAM5_ORIGIN>, LENGTH = <RAM5_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -164,12 +164,13 @@ SECTIONS
         __data_end__ = .;
     } > RAM
 
-    .mem_section_dummy_ram :
+    .mem_section_dummy_ram __data_end__ :
     {
         . = ALIGN(4);
+        PROVIDE(__stop_mem_section_dummy_ram = .);
     } > RAM
 
-    .bss :
+    .bss __stop_mem_section_dummy_ram :
     {
         . = ALIGN(4);
         __bss_start__ = .;
@@ -177,6 +178,8 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
         __bss_end__ = .;
+        __end__ = .;
+        PROVIDE(end = .);
     } > RAM
 
     /* .stack_dummy section doesn't contains any symbols. It is only
@@ -187,32 +190,32 @@ SECTIONS
         KEEP(*(.stack*))
     }
 
-    .heap (COPY):
+    .heap __bss_end__ (COPY):
     {
         . = ALIGN(4);
         __HeapBase = .;
-        __end__ = .;
-        PROVIDE(end = .);
+        PROVIDE(__heap_base = .);
         . = ORIGIN(RAM) + LENGTH(RAM) - SIZEOF(.stack_dummy);
         . = ALIGN(4);
         __HeapLimit = .;
+        PROVIDE(__heap_limit = .);
     } > RAM
 
     .stack __HeapLimit (COPY):
     {
-        . = ALIGN(4);
+        . = ALIGN(8);
         __StackLimit = .;
         PROVIDE(__stack_limit = .);
         . = . + SIZEOF(.stack_dummy);
-        . = ALIGN(4);
+        . = ALIGN(8);
         __StackTop = .;
         PROVIDE(__stack = .);
     } > RAM
 
-    .RxDecripSection (NOLOAD) : { *(.RxDescripSection) } >RAM2
-    .TxDescripSection (NOLOAD) : { *(.DMATxDscrTab_section) } >RAM3
-    .RxarraySection (NOLOAD) : { *(.RxBUF) } >RAM4
-    .TxarraySection (NOLOAD) : { *(.TxBUF) } >RAM5 
+    .RxDecripSection (NOLOAD) : { *(.RxDescripSection) } > RAM2
+    .TxDescripSection (NOLOAD) : { *(.DMATxDscrTab_section) } > RAM3
+    .RxarraySection (NOLOAD) : { *(.RxBUF) } > RAM4
+    .TxarraySection (NOLOAD) : { *(.TxBUF) } > RAM5 
 
     /* Remove information from the standard libraries */
     /DISCARD/ :
@@ -228,6 +231,9 @@ SECTIONS
 SECTIONS
 {
     __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
+
+    __start_ot_flash_data = ORIGIN(FLASH2);
+    __stop_ot_flash_data = ORIGIN(FLASH2) + LENGTH(FLASH2);
 
     /* Check if data + heap + stack exceeds limit */
     ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")

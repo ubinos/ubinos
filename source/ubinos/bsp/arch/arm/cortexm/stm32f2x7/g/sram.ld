@@ -21,7 +21,9 @@ OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 MEMORY
 {
     FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
-    RAM (rwx) :  ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
+    FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
+    RAM (rwx) : ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
+    RAM2 (rwx) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -147,12 +149,13 @@ SECTIONS
         __data_end__ = .;
     } > RAM
 
-    .mem_section_dummy_ram :
+    .mem_section_dummy_ram __data_end__ :
     {
         . = ALIGN(4);
+        PROVIDE(__stop_mem_section_dummy_ram = .);
     } > RAM
 
-    .bss :
+    .bss __stop_mem_section_dummy_ram :
     {
         . = ALIGN(4);
         __bss_start__ = .;
@@ -160,6 +163,8 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
         __bss_end__ = .;
+        __end__ = .;
+        PROVIDE(end = .);
     } > RAM
 
     /* .stack_dummy section doesn't contains any symbols. It is only
@@ -170,24 +175,24 @@ SECTIONS
         KEEP(*(.stack*))
     }
 
-    .heap (COPY):
+    .heap __bss_end__ (COPY):
     {
         . = ALIGN(4);
         __HeapBase = .;
-        __end__ = .;
-        PROVIDE(end = .);
+        PROVIDE(__heap_base = .);
         . = ORIGIN(RAM) + LENGTH(RAM) - SIZEOF(.stack_dummy);
         . = ALIGN(4);
         __HeapLimit = .;
+        PROVIDE(__heap_limit = .);
     } > RAM
 
     .stack __HeapLimit (COPY):
     {
-        . = ALIGN(4);
+        . = ALIGN(8);
         __StackLimit = .;
         PROVIDE(__stack_limit = .);
         . = . + SIZEOF(.stack_dummy);
-        . = ALIGN(4);
+        . = ALIGN(8);
         __StackTop = .;
         PROVIDE(__stack = .);
     } > RAM
@@ -207,6 +212,9 @@ SECTIONS
 {
     __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
 
+    __start_ot_flash_data = ORIGIN(FLASH2);
+    __stop_ot_flash_data = ORIGIN(FLASH2) + LENGTH(FLASH2);
+
     /* Check if data + heap + stack exceeds limit */
     ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")
     
@@ -222,6 +230,12 @@ SECTIONS
     __ram_start__                   = ORIGIN(RAM);
     __ram_size__                    = LENGTH(RAM);
     __ram_static_usage__            = __bss_end__ - ORIGIN(RAM);
+    __flash2_start__                = ORIGIN(FLASH2);
+    __flash2_size__                 = LENGTH(FLASH2);
+    __flash2_usage__                = LENGTH(FLASH2);
+    __ram2_start__                  = ORIGIN(RAM2);
+    __ram2_size__                   = LENGTH(RAM2);
+    __ram2_static_usage__           = 0;
     __entry_address__               = Reset_Handler;
     __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__;
     __text_size__                   = __text_end__ - __text_start__;

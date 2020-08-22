@@ -45,10 +45,10 @@ int main(void) {
     }
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-    extern char   end;           /* Set by linker.  */
-    extern char   __stack_limit; /* Set by linker.  */
-    heapaddr = (unsigned int) &end;
-    heapsize = ((unsigned int) &__stack_limit) - heapaddr;
+    extern char   __heap_base;  /* Set by linker.  */
+    extern char   __heap_limit; /* Set by linker.  */
+    heapaddr = (unsigned int) &__heap_base;
+    heapsize = ((unsigned int) &__heap_limit) - heapaddr;
     r = ubiclib_heap_comp_init(heapaddr, heapsize);
     if (HEAP_ERR__UNSUPPORTED == r) {
         dtty_puts("heap_comp_init : unsupported\r\n", 80);

@@ -15,14 +15,15 @@
  * the new terms are clearly indicated on the first page of each file where
  * they apply.
  */
+
 OUTPUT_FORMAT ("elf32-littlearm", "elf32-bigarm", "elf32-littlearm")
 
 MEMORY
 {
-    FLASH (rx) :  ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
-    RAM (rwx) :   ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
+    FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
     FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
-    RAM2 (rwx) :  ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
+    RAM (rwx) : ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
+    RAM2 (rwx) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -50,8 +51,10 @@ MEMORY
  *   __HeapLimit
  *   __StackLimit
  *   __StackTop
+ *   __StackTopTemp
  *   __stack
  */
+
 ENTRY(Reset_Handler)
 
 SECTIONS
@@ -144,15 +147,15 @@ SECTIONS
         . = ALIGN(4);
         /* All data end */
         __data_end__ = .;
-
     } > RAM
 
-    .mem_section_dummy_ram :
+    .mem_section_dummy_ram __data_end__ :
     {
         . = ALIGN(4);
+        PROVIDE(__stop_mem_section_dummy_ram = .);
     } > RAM
 
-    .bss :
+    .bss __stop_mem_section_dummy_ram :
     {
         . = ALIGN(4);
         __bss_start__ = .;
@@ -160,6 +163,8 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
         __bss_end__ = .;
+        __end__ = .;
+        PROVIDE(end = .);
     } > RAM
 
     /* .stack_dummy section doesn't contains any symbols. It is only
@@ -170,15 +175,15 @@ SECTIONS
         KEEP(*(.stack*))
     }
 
-    .heap (COPY):
+    .heap __bss_end__ (COPY):
     {
         . = ALIGN(4);
         __HeapBase = .;
-        __end__ = .;
-        PROVIDE(end = .);
+        PROVIDE(__heap_base = .);
         . = ORIGIN(RAM2) + LENGTH(RAM2) - SIZEOF(.stack_dummy);
         . = ALIGN(4);
         __HeapLimit = .;
+        PROVIDE(__heap_limit = .);
     } > RAM2
 
     .stack __HeapLimit (COPY):
@@ -192,13 +197,26 @@ SECTIONS
         PROVIDE(__stack = .);
     } > RAM2
 
-    __stack_temp = ORIGIN(RAM) + LENGTH(RAM);
+    /* Remove information from the standard libraries */
+    /DISCARD/ :
+    {
+        libc.a ( * )
+        libm.a ( * )
+        libgcc.a ( * )
+    }
+
+    .ARM.attributes 0 : { *(.ARM.attributes) }
 }
 
 SECTIONS
 {
-    /* Check if data + heap + stack exceeds RAM limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region RAM overflowed with stack")
+    __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
+
+    __start_ot_flash_data = ORIGIN(FLASH2);
+    __stop_ot_flash_data = ORIGIN(FLASH2) + LENGTH(FLASH2);
+
+    /* Check if data + heap + stack exceeds limit */
+    ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")
     
     /* Check if text sections + data exceeds FLASH limit */
     DataInitFlashUsed = 0;
@@ -206,19 +224,22 @@ SECTIONS
     TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
     
+    __flash_start__                 = ORIGIN(FLASH);
     __flash_size__                  = LENGTH(FLASH);
     __flash_usage__                 = TotalFlashUsed;
     __ram_start__                   = ORIGIN(RAM);
     __ram_size__                    = LENGTH(RAM);
     __ram_static_usage__            = __bss_end__ - ORIGIN(RAM);
+    __flash2_start__                = ORIGIN(FLASH2);
     __flash2_size__                 = LENGTH(FLASH2);
-    __flash2_usage__                = 0;
+    __flash2_usage__                = LENGTH(FLASH2);
+    __ram2_start__                  = ORIGIN(RAM2);
     __ram2_size__                   = LENGTH(RAM2);
     __ram2_static_usage__           = 0;
     __entry_address__               = Reset_Handler;
-    __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__; 
+    __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__;
     __text_size__                   = __text_end__ - __text_start__;
-    __relocated_isr_vector_size__   = __relocated_isr_vector_end__ - __relocated_isr_vector_start__; 
+    __relocated_isr_vector_size__   = __relocated_isr_vector_end__ - __relocated_isr_vector_start__;
     __data_size__                   = SIZEOF(.data);
     __bss_size__                    = SIZEOF(.bss);
     __stack_top__                   = __StackTop;
@@ -228,4 +249,5 @@ SECTIONS
     __heap_limit__                  = __HeapLimit;
     __heap_size__                   = SIZEOF(.heap);
 }
+
 

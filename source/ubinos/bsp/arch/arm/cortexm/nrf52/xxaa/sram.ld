@@ -22,8 +22,8 @@ MEMORY
 {
     FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
     FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
-    RAM (rwx) :  ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
-    RAM2 (rwx) :  ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
+    RAM (rwx) : ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
+    RAM2 (rwx) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -227,36 +227,37 @@ SECTIONS
         __data_end__ = .;
     } > RAM
 
-    .mem_section_dummy_ram :
+    .mem_section_dummy_ram __data_end__ :
     {
         . = ALIGN(4);
+        PROVIDE(__stop_mem_section_dummy_ram = .);
     } > RAM
-    .cli_sorted_cmd_ptrs :
+    .cli_sorted_cmd_ptrs __stop_mem_section_dummy_ram :
     {
         PROVIDE(__start_cli_sorted_cmd_ptrs = .);
         KEEP(*(.cli_sorted_cmd_ptrs))
         PROVIDE(__stop_cli_sorted_cmd_ptrs = .);
     } > RAM
-    .fs_data :
+    .fs_data __stop_cli_sorted_cmd_ptrs :
     {
         PROVIDE(__start_fs_data = .);
         KEEP(*(.fs_data))
         PROVIDE(__stop_fs_data = .);
     } > RAM
-    .log_dynamic_data :
+    .log_dynamic_data __stop_fs_data :
     {
         PROVIDE(__start_log_dynamic_data = .);
         KEEP(*(SORT(.log_dynamic_data*)))
         PROVIDE(__stop_log_dynamic_data = .);
     } > RAM
-    .log_filter_data :
+    .log_filter_data __stop_log_dynamic_data :
     {
         PROVIDE(__start_log_filter_data = .);
         KEEP(*(SORT(.log_filter_data*)))
         PROVIDE(__stop_log_filter_data = .);
     } > RAM
 
-    .bss :
+    .bss __stop_log_filter_data :
     {
         . = ALIGN(4);
         __bss_start__ = .;
@@ -264,6 +265,8 @@ SECTIONS
         *(COMMON)
         . = ALIGN(4);
         __bss_end__ = .;
+        __end__ = .;
+        PROVIDE(end = .);
     } > RAM
 
     /* .stack_dummy section doesn't contains any symbols. It is only
@@ -274,24 +277,24 @@ SECTIONS
         KEEP(*(.stack*))
     }
 
-    .heap (COPY):
+    .heap __bss_end__ (COPY):
     {
         . = ALIGN(4);
         __HeapBase = .;
-        __end__ = .;
-        PROVIDE(end = .);
+        PROVIDE(__heap_base = .);
         . = ORIGIN(RAM) + LENGTH(RAM) - SIZEOF(.stack_dummy);
         . = ALIGN(4);
         __HeapLimit = .;
+        PROVIDE(__heap_limit = .);
     } > RAM
 
     .stack __HeapLimit (COPY):
     {
-        . = ALIGN(4);
+        . = ALIGN(8);
         __StackLimit = .;
         PROVIDE(__stack_limit = .);
         . = . + SIZEOF(.stack_dummy);
-        . = ALIGN(4);
+        . = ALIGN(8);
         __StackTop = .;
         PROVIDE(__stack = .);
     } > RAM
