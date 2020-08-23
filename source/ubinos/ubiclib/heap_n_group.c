@@ -800,7 +800,7 @@ void * _heap_n_group_allocate_block(_heap_pt heap, unsigned int size) {
 #if 1
 	b1i 	 = bitmap_getlsb2(region->fblbm, bxi);
 #else
-	for (b1i=bxi; b1i<region->fblcount; b1i++) {
+	for (b1i = bxi; b1i < region->fblcount; b1i++) {
 		if (0 < region->fbl_ap[b1i].count) {
 			break;
 		}

@@ -21,19 +21,19 @@ extern "C" {
 
 
 #if !defined(UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM)
-	#define UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM			UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT
+	#define UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM		UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT
 	#define UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE			UBINOS__UBICLIB__HEAP_LOCK_TYPE__MUTEX
-	#define UBINOS__UBICLIB__HEAP_DIR0_M					(2)
+	#define UBINOS__UBICLIB__HEAP_DIR0_M				(2)
 	#define UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT			(2)
-	#define UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE		(4)
+	#define UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE	(4)
 #endif
 
 #if !defined(UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM)
-	#define UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM			UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP
+	#define UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM		UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP
 	#define UBINOS__UBICLIB__HEAP_DIR1_LOCKTYPE			UBINOS__UBICLIB__HEAP_LOCK_TYPE__MUTEX
-	#define UBINOS__UBICLIB__HEAP_DIR1_M					(16)
+	#define UBINOS__UBICLIB__HEAP_DIR1_M				(16)
 	#define UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT			(1202)	// 64M -> 1264 - 64 + 1 + 1 = 1202
-	#define UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE		(164)	// 1202 -> 164
+	#define UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE	(164)	// 1202 -> 164
 #endif
 
 
@@ -57,12 +57,14 @@ extern "C" {
 	#define HEAP_TAG_SIZE				INT_SIZE				// 2
 	#define HEAP_TAG_BITSIZE			(HEAP_TAG_SIZE * 8)		// 16
 
-#if (1 != UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDY)
+#if (1 != UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY)
 	#error "16 bit system can not support weighted buddy algorithm"
 #else
+	// definitions for group system and buddy systems
 	#define HEAP_G_TAG_A_______BITSIZE	(1)						// available
 	#define HEAP_G_TAG__D______BITSIZE	(1)						// direction
-	#define HEAP_G_TAG___G_____BITSIZE	(1)						// group system
+	#define HEAP_G_TAG___G_____BITSIZE	(1)						// is group system or buddy system
+
 	#define HEAP_G_TAG____K____BITSIZE	(4)						// level
 	#define HEAP_G_TAG_____L___BITSIZE	(3)						// weight of left tail
 	#define HEAP_G_TAG______R__BITSIZE	(3)						// weight of right tail
@@ -79,8 +81,10 @@ extern "C" {
 	#define HEAP_G_K_MAX				(15)					// 2 ^ HEAP_G_TAG____K____BITSIZE = 2 ^ 4 - 1 = 15
 	#define HEAP_G_M_MAX				(8)						// 2 ^ HEAP_G_TAG_______B_BITSIZE = 2 ^ 3     = 8
 
+	// definitions for linear search systems (best fit, first fit, last fit)
 	#define HEAP_L_BLOCK_ASIZE_OFFSET	(1)						// 2 byte align
 	#define HEAP_L_BLOCK_ASIZE_MAX		(0x3FFE)				// (2 ^ (16 - 3) - 1) * 2 = 16,382 = 0x3FFE
+																// (2 ^ (bit size of machine - bit size of TAG_ADG) - zero value count) * (2 ^ HEAP_L_BLOCK_ASIZE_OFFSET)
 #endif
 
 #elif	(4 == INT_SIZE)	// 32 bit machine
@@ -91,10 +95,12 @@ extern "C" {
 	#define HEAP_TAG_SIZE				(INT_SIZE)				// 4
 	#define HEAP_TAG_BITSIZE			(HEAP_TAG_SIZE * 8)		// 32
 
-#if (1 != UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDY)
+#if (1 != UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY)
+	// definitions for group system and buddy systems
 	#define HEAP_G_TAG_A_______BITSIZE	(1)						// available
 	#define HEAP_G_TAG__D______BITSIZE	(1)						// direction
-	#define HEAP_G_TAG___G_____BITSIZE	(4)						// group system
+	#define HEAP_G_TAG___G_____BITSIZE	(4)						// is group system or buddy system (if weighted buddy, it also contains block type information)
+
 	#define HEAP_G_TAG____K____BITSIZE	(5)						// level
 	#define HEAP_G_TAG_____L___BITSIZE	(7)						// weight of left tail
 	#define HEAP_G_TAG______R__BITSIZE	(7)						// weight of right tail
@@ -109,14 +115,18 @@ extern "C" {
 	#define HEAP_G_TAG_______B_MASK		(0x0000007F)
 
 	#define HEAP_G_K_MAX				(31)					// 2 ^ HEAP_G_TAG____K____BITSIZE = 2 ^ 5 - 1 = 31
-	#define HEAP_G_M_MAX				(128)					// 2 ^ HEAP_G_TAG_______B_BITSIZE = 2 ^ 8     = 256
+	#define HEAP_G_M_MAX				(128)					// 2 ^ HEAP_G_TAG_______B_BITSIZE = 2 ^ 7     = 128
 
+	// definitions for linear search systems (best fit, first fit, last fit)
 	#define HEAP_L_BLOCK_ASIZE_OFFSET	(2)						// 4 byte align
 	#define HEAP_L_BLOCK_ASIZE_MAX		(0x0FFFFFFC)			// (2 ^ (32 - 6) - 1) * 4 = 268,435,452 = 0x0FFFFFFC
+																// (2 ^ (bit size of machine - bit size of TAG_ADG) - zero value count) * (2 ^ HEAP_L_BLOCK_ASIZE_OFFSET)
 #else
+	// definitions for group system and buddy systems
 	#define HEAP_G_TAG_A_______BITSIZE	(1)						// available
 	#define HEAP_G_TAG__D______BITSIZE	(1)						// direction
-	#define HEAP_G_TAG___G_____BITSIZE	(1)						// group system
+	#define HEAP_G_TAG___G_____BITSIZE	(1)						// is group system or buddy system
+
 	#define HEAP_G_TAG____K____BITSIZE	(5)						// level
 	#define HEAP_G_TAG_____L___BITSIZE	(8)						// weight of left tail
 	#define HEAP_G_TAG______R__BITSIZE	(8)						// weight of right tail
@@ -133,8 +143,10 @@ extern "C" {
 	#define HEAP_G_K_MAX				(31)					// 2 ^ HEAP_G_TAG____K____BITSIZE = 2 ^ 5 - 1 = 31
 	#define HEAP_G_M_MAX				(256)					// 2 ^ HEAP_G_TAG_______B_BITSIZE = 2 ^ 8     = 256
 
+	// definitions for linear search systems (best fit, first fit, last fit)
 	#define HEAP_L_BLOCK_ASIZE_OFFSET	(2)						// 4 byte align
 	#define HEAP_L_BLOCK_ASIZE_MAX		(0x7FFFFFFC)			// (2 ^ (32 - 3) - 1) * 4 = 2,147,483,644 = 0x7FFFFFFC
+																// (2 ^ (bit size of machine - bit size of TAG_ADG) - zero value count) * (2 ^ HEAP_L_BLOCK_ASIZE_OFFSET)
 #endif
 
 #else
@@ -386,10 +398,10 @@ typedef struct {
 
 	unsigned int		limit;
 
-	unsigned int		fblcount;
-	unsigned int		fbloffset;
-	edlist_pt			fbl_ap;
-	bitmap_pt			fblbm;
+	unsigned int		fblcount; // free block list count
+	unsigned int		fbloffset; // free block list index offset (calculated from HEAP_BLOCK_ASIZE_MIN)
+	edlist_pt			fbl_ap; // free block list pointer array
+	bitmap_pt			fblbm; // free block list index empty bitmap pointer
 
 	unsigned int		dregs_size;
 
@@ -420,10 +432,10 @@ typedef struct __heap_t {
 	unsigned int		asize_max;
 	unsigned int		rsize_max;
 
-	_heap_region_t		region[2];
+	_heap_region_t		region[2]; // heap region array, 0: normal direction, 1: reverse direction
 
-	void * (* allocate_block_afp[2]) (struct __heap_t *, unsigned int);
-	int    (*  release_block_afp[2]) (struct __heap_t *, void *);
+	void * (* allocate_block_afp[2]) (struct __heap_t *, unsigned int); // allocate block function pointer array, 0: normal direction, 1: reverse direction
+	int    (*  release_block_afp[2]) (struct __heap_t *, void *); // release block function pointer array, 0: normal direction, 1: reverse direction
 } _heap_t;
 
 typedef _heap_t * _heap_pt;
