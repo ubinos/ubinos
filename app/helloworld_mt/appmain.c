@@ -30,12 +30,12 @@ int appmain(int argc, char * argv[]) {
 
 	r = task_create(NULL, helloworld_mt_task1func, NULL, task_getmiddlepriority(), 0, "task1");
 	if (0 != r) {
-		logme("fail at task_create\r\n");
+		logme("fail at task_create");
 	}
 
 	r = task_create(NULL, helloworld_mt_task2func, NULL, task_getmiddlepriority(), 0, "task2");
     if (0 != r) {
-        logme("fail at task_create\r\n");
+        logme("fail at task_create");
     }
 
 	ubik_comp_start();

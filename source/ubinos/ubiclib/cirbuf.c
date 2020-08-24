@@ -8,30 +8,35 @@
 
 #if !(UBINOS__UBICLIB__EXCLUDE_CIRBUF == 1)
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
 int cirbuf_create(cirbuf_pt * cirbuf_p, unsigned int maxsize) {
 	return cirbuf_create_ext(cirbuf_p, maxsize, 0);
 }
 
 int cirbuf_create_ext(cirbuf_pt * cirbuf_p, unsigned int maxsize, unsigned int option) {
-	#define	__FUNCNAME__	"cirbuf_create_ext"
 	cirbuf_pt cirbuf;
 
+	assert(cirbuf_p != NULL);
+
 	if (NULL == cirbuf_p) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		return -2;
 	}
 
 	if (0 >= maxsize) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		return -3;
 	}
 
 	cirbuf = malloc(sizeof(cirbuf_t) + maxsize);
 	if (NULL == cirbuf) {
-		logme(""__FUNCNAME__": fail at malloc()\r\n");
+		logme("fail at malloc()");
 		return -1;
 	}
 
@@ -48,20 +53,21 @@ int cirbuf_create_ext(cirbuf_pt * cirbuf_p, unsigned int maxsize, unsigned int o
 	*cirbuf_p = cirbuf;
 
 	return 0;
-	#undef __FUNCNAME__
 }
 
 int cirbuf_delete(cirbuf_pt * cirbuf_p) {
-	#define	__FUNCNAME__	"cirbuf_delete"
 	cirbuf_pt cirbuf;
 
+	assert(cirbuf_p != NULL);
+	assert(*cirbuf_p != NULL);
+
 	if (NULL == cirbuf_p) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		return -2;
 	}
 
 	if (NULL == *cirbuf_p) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		return -2;
 	}
 
@@ -72,12 +78,10 @@ int cirbuf_delete(cirbuf_pt * cirbuf_p) {
 	*cirbuf_p = NULL;
 
 	return 0;
-	#undef __FUNCNAME__
 }
 
 
 int cirbuf_write(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsigned int * written_p) {
-	#define	__FUNCNAME__	"cirbuf_write"
 	unsigned char *	cirbuf__head;
 	unsigned char *	cirbuf__tail;
 	unsigned int	cirbuf__size;
@@ -86,13 +90,16 @@ int cirbuf_write(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsig
 	unsigned int 	size2;
 	unsigned int 	sizeold;
 
+	assert(cirbuf != NULL);
+	assert(buf != NULL);
+
 	if (NULL == cirbuf) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		return -2;
 	}
 
 	if (NULL == buf) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		return -3;
 	}
 
@@ -105,7 +112,7 @@ int cirbuf_write(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsig
 
 	if (cirbuf->maxsize < size)
 	{
-		logme(""__FUNCNAME__": parameter 3 is wrong\r\n");
+		logme("parameter 3 is wrong");
 		return -4;
 	}
 
@@ -187,11 +194,9 @@ int cirbuf_write(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsig
 	}
 
 	return 0;
-	#undef __FUNCNAME__
 }
 
 int cirbuf_read(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsigned int * read_p) {
-	#define	__FUNCNAME__	"cirbuf_read"
 	unsigned char *	cirbuf__head;
 	unsigned char *	cirbuf__tail;
 	unsigned int	cirbuf__size;
@@ -199,13 +204,16 @@ int cirbuf_read(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsign
 	unsigned int 	size1;
 	unsigned int 	size2;
 
+	assert(cirbuf != NULL);
+	assert(buf != NULL);
+
 	if (NULL == cirbuf) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		return -2;
 	}
 
 	if (NULL == buf) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		return -3;
 	}
 
@@ -230,7 +238,7 @@ int cirbuf_read(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsign
 	}
 
 	if (cirbuf__size < size) {
-		logme(""__FUNCNAME__": parameter 3 is wrong\r\n");
+		logme("parameter 3 is wrong");
 		return -4;
 	}
 
@@ -274,14 +282,13 @@ int cirbuf_read(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsign
 	}
 
 	return 0;
-	#undef __FUNCNAME__
 }
 
 int cirbuf_clear(cirbuf_pt cirbuf) {
-	#define	__FUNCNAME__	"cirbuf_clear"
+	assert(cirbuf != NULL);
 
 	if (NULL == cirbuf) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		return -2;
 	}
 
@@ -301,7 +308,6 @@ int cirbuf_clear(cirbuf_pt cirbuf) {
 	}
 
 	return 0;
-	#undef __FUNCNAME__
 }
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_CIRBUF == 1) */

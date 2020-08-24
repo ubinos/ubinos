@@ -8,7 +8,11 @@
 
 #if !(UBINOS__UBICLIB__EXCLUDE_LIST == 1)
 
+#include <assert.h>
 #include <stdlib.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
 list_elmt_pt list_elmt_create(void * data) {
 	list_elmt_pt elmt;
@@ -36,13 +40,13 @@ int list_create(list_pt * list_p) {
 	list_pt list;
 
 	if (NULL == list_p) {
-		logme("list_p is NULL\r\n");
+		logme("list_p is NULL");
 		return -2;
 	}
 
 	list = malloc(sizeof(list_t));
 	if (NULL == list) {
-		logme("malloc(...) fail\r\n");
+		logme("malloc(...) fail");
 		return -1;
 	}
 
@@ -59,19 +63,19 @@ int list_delete(list_pt * list_p) {
 	list_pt list;
 
 	if (NULL == list_p) {
-		logme("list_p is NULL\r\n");
+		logme("list_p is NULL");
 		return -2;
 	}
 
 	if (NULL == *list_p) {
-		logme("*list_p is NULL\r\n");
+		logme("*list_p is NULL");
 		return -2;
 	}
 
 	list = *list_p;
 
 	if (0 != list->count) {
-		logme("**list_p is not empty\r\n");
+		logme("**list_p is not empty");
 		return -2;
 	}
 
@@ -88,12 +92,12 @@ int list_delete(list_pt * list_p) {
 
 int list_insertnext(list_pt list, list_elmt_pt ref, list_elmt_pt elmt) {
 	if (NULL == list) {
-		logme("list is NULL\r\n");
+		logme("list is NULL");
 		return -2;
 	}
 
 	if (NULL == elmt) {
-		logme("elmt is NULL\r\n");
+		logme("elmt is NULL");
 		return -4;
 	}
 
@@ -117,12 +121,12 @@ int list_insertnext(list_pt list, list_elmt_pt ref, list_elmt_pt elmt) {
 
 int list_inserttail(list_pt list, list_elmt_pt elmt) {
 	if (NULL == list) {
-		logme("list is NULL\r\n");
+		logme("list is NULL");
 		return -2;
 	}
 
 	if (NULL == elmt) {
-		logme("elmt is NULL\r\n");
+		logme("elmt is NULL");
 		return -4;
 	}
 
@@ -147,17 +151,17 @@ int list_removenext(list_pt list, list_elmt_pt ref, list_elmt_pt * elmt_p) {
 	list_elmt_pt elmt;
 
 	if (NULL == list) {
-		logme("list is NULL\r\n");
+		logme("list is NULL");
 		return -2;
 	}
 
 	if (NULL == list->head) {
-		logme("list is empty\r\n");
+		logme("list is empty");
 		return -1;
 	}
 
 	if (NULL != ref && NULL == ref->next) {
-		logme("next is NULL\r\n");
+		logme("next is NULL");
 		return -1;
 	}
 
@@ -195,11 +199,11 @@ int list_find(list_pt list, list_elmt_pt * elmt_p, void * data) {
 	list_elmt_pt elmt;
 
 	if (NULL == list) {
-		logme("list is NULL\r\n");
+		logme("list is NULL");
 		return -2;
 	}
 	if (NULL == elmt_p) {
-		logme("elmt_p is NULL\r\n");
+		logme("elmt_p is NULL");
 		return -3;
 	}
 
@@ -225,7 +229,7 @@ int list_findandremove(list_pt list, list_elmt_pt * elmt_p, void * data) {
 	list_elmt_pt elmt;
 
 	if (NULL == list) {
-		logme("list is NULL\r\n");
+		logme("list is NULL");
 		return -2;
 	}
 

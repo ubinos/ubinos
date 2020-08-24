@@ -10,46 +10,54 @@
 
 #if (INCLUDE__UBINOS__UBIK == 1)
 
+#include <assert.h>
 #include <string.h>
 
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__MSGQ
 
 int msgq_create(msgq_pt * msgq_p, unsigned int msgsize, unsigned int maxcount) {
+	logmfd("msgq_p 0x%x, msgsize %d maxcount %d", msgq_p, msgsize, maxcount);
+
 	return msgq_create_ext(msgq_p, msgsize, maxcount, 0);
 }
 
 int msgq_create_ext(msgq_pt * msgq_p, unsigned int msgsize, unsigned int maxcount, unsigned int option) {
-	#define	__FUNCNAME__	"msgq_create_ext"
 	int r;
 	int r2;
 	_sigobj_pt sigobj;
 	cirbuf_pt cirbuf;
 
+	assert(msgq_p != NULL);
+
+	logmfd("msgq_p 0x%x, msgsize %d maxcount %d, option 0x%x", msgq_p, msgsize, maxcount, option);
+
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == msgq_p) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end0;
 	}
 
 	if (0 >= msgsize || UBINOS__UBIK__MSGQ_MSGSIZE_MAX < msgsize) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
 
 	if (0 >= maxcount) {
-		logme(""__FUNCNAME__": parameter 3 is wrong\r\n");
+		logme("parameter 3 is wrong");
 		r = -4;
 		goto end0;
 	}
@@ -57,7 +65,7 @@ int msgq_create_ext(msgq_pt * msgq_p, unsigned int msgsize, unsigned int maxcoun
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	r = mutex_lock(_kernel_monitor_mutex);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+		logme("fail at mutex_lock()");
 		r = -1;
 		goto end0;
 	}
@@ -65,17 +73,17 @@ int msgq_create_ext(msgq_pt * msgq_p, unsigned int msgsize, unsigned int maxcoun
 
 	r = cirbuf_create_ext(&cirbuf, msgsize * maxcount, CIRBUF_OPT__NOOVERWRITE);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at cirbuf_create_ext()\r\n");
+		logme("fail at cirbuf_create_ext()");
 		r = -1;
 		goto end1;
 	}
 
 	r = _sigobj_create(&sigobj);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at _sigobj_create()\r\n");
+		logme("fail at _sigobj_create()");
 		r2 = cirbuf_delete(&cirbuf);
 		if (0 != r2) {
-			logme(""__FUNCNAME__": fail at cirbuf_delete()\r\n");
+			logme("fail at cirbuf_delete()");
 		}
 		goto end1;
 	}
@@ -101,54 +109,66 @@ end1:
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	r2 = mutex_unlock(_kernel_monitor_mutex);
 	if (0 != r2) {
-		logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+		logme("fail at mutex_unlock()");
 		r = -1;
 	}
 	#endif
 
 end0:
+	if (r == 0) {
+		logmfd("msgq 0x%x is created", sigobj);
+	}
+
 	return r;
-	#undef __FUNCNAME__
 }
 
 int msgq_delete(msgq_pt * msgq_p) {
+	assert(msgq_p != NULL);
+	assert(*msgq_p != NULL);
+
+	logmfd("msgq_p 0x%x, *msgq_p 0x%x", msgq_p, *msgq_p);
+
 	return _sigobj_delete((_sigobj_pt *) msgq_p);
 }
 
 int msgq_receive(msgq_pt _msgq, unsigned char * msg) {
-	#define	__FUNCNAME__	"msgq_receive"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _msgq;
 	_task_pt task = _task_cur;
 
+	assert(_msgq != NULL);
+	assert(msg != NULL);
+
+	logmfv("msgq 0x%x, msg 0x%x", _msgq, msg);
+
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 == task->sysflag01) {
 		if (0 != bsp_isintr()) {
-			logme(""__FUNCNAME__": in interrupt\r\n");
+			logme("in interrupt");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _bsp_critcount) {
-			logme(""__FUNCNAME__": in critical section\r\n");
+			logme("in critical section");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _ubik_tasklockcount) {
-			logme(""__FUNCNAME__": task is locked\r\n");
+			logme("task is locked");
 			r = -1;
 			goto end0;
 		}
 	}
 
 	if (NULL == msg) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
@@ -159,7 +179,7 @@ int msgq_receive(msgq_pt _msgq, unsigned char * msg) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_MSGQ != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -167,7 +187,7 @@ int msgq_receive(msgq_pt _msgq, unsigned char * msg) {
 	if (0 < sigobj->count) {
 		r = cirbuf_read(sigobj->msgbuf, msg, sigobj->msgsize_1 + 1, NULL);
 		if (0 != r) {
-			logme(""__FUNCNAME__": fail at cirbuf_read()\r\n");
+			logme("fail at cirbuf_read()");
 			r = -1;
 			goto end1;
 		}
@@ -178,7 +198,7 @@ int msgq_receive(msgq_pt _msgq, unsigned char * msg) {
 			task->wtask_p->msg = msg;
 			r = _sigobj_wait(sigobj, task->wtask_p);
 			if (SIGOBJ_SIGTYPE__TIMEOUT != r && 0 != r) {
-				logme(""__FUNCNAME__": fail at _sigobj_wait()\r\n");
+				logme("fail at _sigobj_wait()");
 			}
 			task->wtask_p->msg = NULL;
 		}
@@ -192,16 +212,19 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int msgq_receive_timed(msgq_pt _msgq, unsigned char * msg, unsigned int tick) {
-	#define	__FUNCNAME__	"msgq_receive_timed"
 	int r;
 	unsigned int sysflag01_old = 0;
 
+	assert(_msgq != NULL);
+	assert(msg != NULL);
+
+	logmfv("msgq 0x%x, msg 0x%x, tick %d", _msgq, msg, tick);
+
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		r = -1;
 		goto end0;
 	}
@@ -212,7 +235,7 @@ int msgq_receive_timed(msgq_pt _msgq, unsigned char * msg, unsigned int tick) {
 			_task_cur->sysflag01 = 1;
 		}
 		else {
-			logme(""__FUNCNAME__": in interrupt\r\n");
+			logme("in interrupt");
 			r = -1;
 			goto end0;
 		}
@@ -233,28 +256,36 @@ int msgq_receive_timed(msgq_pt _msgq, unsigned char * msg, unsigned int tick) {
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int msgq_receive_timedms(msgq_pt _msgq, unsigned char * msg, unsigned int timems) {
+	assert(_msgq != NULL);
+	assert(msg != NULL);
+
+	logmfv("msgq 0x%x, msg 0x%x, timems %d", _msgq, msg, timems);
+
 	return msgq_receive_timed(_msgq, msg, ubik_timemstotick(timems));
 }
 
 int msgq_send(msgq_pt _msgq, unsigned char * msg) {
-	#define	__FUNCNAME__	"msgq_send"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _msgq;
 	_task_pt otask;
 	_wtask_pt wtask;
 
+	assert(_msgq != NULL);
+	assert(msg != NULL);
+
+	logmfv("msgq 0x%x, msg 0x%x", _msgq, msg);
+
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == msg) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
@@ -265,7 +296,7 @@ int msgq_send(msgq_pt _msgq, unsigned char * msg) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_MSGQ != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -274,14 +305,14 @@ int msgq_send(msgq_pt _msgq, unsigned char * msg) {
 	if (	(0 == bsp_isintr() && NULL != otask && _task_cur != otask)	||
 			(0 != bsp_isintr() && NULL != otask						)		)
 	{
-		logme(""__FUNCNAME__": current task is not an appropriate sender\r\n");
+		logme("current task is not an appropriate sender");
 		r = -1;
 		goto end1;
 	}
 
 	if (sigobj->maxcount == sigobj->count) {
 		if (0 == sigobj->ignoreoverflow) {
-			logme(""__FUNCNAME__": count is over max count\r\n");
+			logme("count is over max count");
 			r = UBIK_ERR__OVERFLOWED;
 		}
 		else {
@@ -293,7 +324,7 @@ int msgq_send(msgq_pt _msgq, unsigned char * msg) {
 		if (NULL == wtask) {
 			r = cirbuf_write(sigobj->msgbuf, msg, sigobj->msgsize_1 + 1, NULL);
 			if (0 != r) {
-				logme(""__FUNCNAME__": fail at cirbuf_write()\r\n");
+				logme("fail at cirbuf_write()");
 				r = -1;
 				goto end1;
 			}
@@ -301,7 +332,7 @@ int msgq_send(msgq_pt _msgq, unsigned char * msg) {
 		}
 		else {
 			if (NULL == wtask->msg) {
-				logme(""__FUNCNAME__": message buffer of task is NULL.\r\n");
+				logme("message buffer of task is NULL.");
 				r = -1;
 				goto end1;
 			}
@@ -309,7 +340,7 @@ int msgq_send(msgq_pt _msgq, unsigned char * msg) {
 			memcpy(wtask->msg, msg, sigobj->msgsize_1 + 1);
 			r = _sigobj_send(sigobj, SIGOBJ_SIGTYPE__SUCCESS);
 			if (0 != r) {
-				logme(""__FUNCNAME__": fail at _sigobj_send()\r\n");
+				logme("fail at _sigobj_send()");
 			}
 		}
 	}
@@ -319,16 +350,18 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int msgq_clear(msgq_pt _msgq) {
-	#define	__FUNCNAME__	"msgq_clear"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _msgq;
 
+	assert(_msgq != NULL);
+
+	logmfd("msgq 0x%x", _msgq);
+
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
@@ -339,14 +372,14 @@ int msgq_clear(msgq_pt _msgq) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_MSGQ != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
 
 	r = cirbuf_clear(sigobj->msgbuf);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at cirbuf_clear()\r\n");
+		logme("fail at cirbuf_clear()");
 	}
 	else {
 		sigobj->count = 0;
@@ -357,17 +390,19 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int msgq_setsender(msgq_pt _msgq, task_pt _task) {
-	#define	__FUNCNAME__	"msgq_setsender"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _msgq;
 	_task_pt task = (_task_pt) _task;
 
+	assert(_msgq != NULL);
+
+	logmfd("msgq 0x%x, task 0x%x", _msgq, _task);
+
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
@@ -378,14 +413,14 @@ int msgq_setsender(msgq_pt _msgq, task_pt _task) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_MSGQ != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
 
 	r = _sigobj_setsender(sigobj, task);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at _sigobj_setsender()\r\n");
+		logme("fail at _sigobj_setsender()");
 	}
 
 end1:
@@ -393,22 +428,20 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int msgq_getcount(msgq_pt _msgq, unsigned int * count_p) {
-	#define	__FUNCNAME__	"msgq_getcount"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _msgq;
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == count_p) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
@@ -419,7 +452,7 @@ int msgq_getcount(msgq_pt _msgq, unsigned int * count_p) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_MSGQ != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -433,7 +466,6 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */

@@ -8,9 +8,12 @@
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
 
-
+#include <assert.h>
 #include <stdlib.h>
 #include <stdio.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__HEAP
 
 #if HEAP_BLOCK_ASIZE_MIN < 0
 	#error "HEAP_BLOCK_ASIZE_MIN should be larger than 0"
@@ -29,8 +32,6 @@ bitmap_t		__ubiclib_defaultheap_fblbm1;
 unsigned char	__ubiclib_defaultheap_fblbm1_buf[UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE];
 
 int ubiclib_heap_comp_init(unsigned int addr, unsigned int size) {
-	#define LOGM_TAG	"ubiclib_heap_comp_init"
-
 	int r;
 
 	if (HEAP_BLOCK_ASIZE_MIN <= HEAP_BLOCK_OVERHEAD) {
@@ -67,13 +68,9 @@ int ubiclib_heap_comp_init(unsigned int addr, unsigned int size) {
 	_ubiclib_heap = &__ubiclib_defaultheap;
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int ubiclib_heap_comp_init_reent(void) {
-	#define LOGM_TAG	"ubiclib_heap_comp_init_reent"
-
 	int r = 0;
 
 	if (NULL == _ubiclib_heap) {
@@ -105,42 +102,24 @@ int ubiclib_heap_comp_init_reent(void) {
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 void * mallocn(size_t size) {
-	#define LOGM_TAG	"mallocn"
-
 	return _heap_allocate_block(_ubiclib_heap, 0, SIZETOUINT(size));
-
-	#undef LOGM_TAG
 }
 
 void * mallocr(size_t size) {
-	#define LOGM_TAG	"mallocr"
-
 	return _heap_allocate_block(_ubiclib_heap, 1, SIZETOUINT(size));
-
-	#undef LOGM_TAG
 }
 
 #else /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
 void * mallocn(size_t size) {
-	#define LOGM_TAG	"mallocn"
-
 	return malloc(size);
-
-	#undef LOGM_TAG
 }
 
 void * mallocr(size_t size) {
-	#define LOGM_TAG	"mallocr"
-
 	return malloc(size);
-
-	#undef LOGM_TAG
 }
 
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
@@ -150,8 +129,6 @@ int _heap_init(	_heap_pt heap, unsigned int addr, unsigned int size,
 				unsigned int fblcount0, edlist_pt fbl0_p, bitmap_pt fblbm0,
 				int algorithm1, int locktype1, unsigned int m1,
 				unsigned int fblcount1, edlist_pt fbl1_p, bitmap_pt fblbm1	)	{
-	#define LOGM_TAG	"_heap_init"
-
 	int r;
 	//unsigned int i;
 	//unsigned int log2m;
@@ -355,14 +332,10 @@ int _heap_init(	_heap_pt heap, unsigned int addr, unsigned int size,
 
 end0:
 	return r;
-
-	#undef LOGM_TAG
 }
 
 
 void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size) {
-	#define LOGM_TAG	"_heap_allocate_block           "
-
 	register void * ptr = NULL;
 
 	if (NULL == heap) {
@@ -394,16 +367,12 @@ void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size) {
 	ptr = heap->allocate_block_afp[dir](heap, size);
 
 end0:
-	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, ptr 0x%08x\r\n", bsp_task_getcur(), heap, dir, ptr);
+	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, ptr 0x%08x", bsp_task_getcur(), heap, dir, ptr);
 
 	return ptr;
-
-	#undef LOGM_TAG
 }
 
 int _heap_release_block(_heap_pt heap, void * ptr) {
-	#define LOGM_TAG	"_heap_release_block            "
-
 	register int r2 = 0;
 	register int dir = 0;
 
@@ -447,29 +416,21 @@ int _heap_release_block(_heap_pt heap, void * ptr) {
 	r2 = heap->release_block_afp[dir](heap, ptr);
 
 end0:
-	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, result %d\r\n", bsp_task_getcur(), heap, dir, r2);
+	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, result %d", bsp_task_getcur(), heap, dir, r2);
 
 	return r2;
-
-	#undef LOGM_TAG
 }
 
 
 int heap_create(heap_pt * heap_p, unsigned int addr, unsigned int size) {
-	#define LOGM_TAG	"heap_create"
-
 	return heap_create_ext(	heap_p, addr, size,
 							UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM, UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE, UBINOS__UBICLIB__HEAP_DIR0_M, UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT,
 							UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM, UBINOS__UBICLIB__HEAP_DIR1_LOCKTYPE, UBINOS__UBICLIB__HEAP_DIR1_M, UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT	);
-
-	#undef LOGM_TAG
 }
 
 int heap_create_ext(heap_pt * heap_p, unsigned int addr, unsigned int size,
 					int algorithm0, int locktype0, unsigned int m0, unsigned int fblcount0,
 					int algorithm1, int locktype1, unsigned int m1, unsigned int fblcount1	) {
-	#define LOGM_TAG	"heap_create_ext"
-
 	int r;
 	_heap_pt heap;
 	edlist_pt fbl0_p = NULL;
@@ -636,13 +597,9 @@ int heap_create_ext(heap_pt * heap_p, unsigned int addr, unsigned int size,
 	heap_logmfd("heap was created: heap 0x%08x, size 0x%08x, addr %d", heap, heap->size, heap->addr);
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_delete(heap_pt * heap_p) {
-	#define LOGM_TAG	"heap_delete"
-
 	int r, r2;
 	_heap_pt heap;
 
@@ -723,50 +680,30 @@ int heap_delete(heap_pt * heap_p) {
 	heap_logmfd("heap was deleted: heap 0x%08x, size 0x%08x, addr %d", heap, heap->size, heap->addr);
 
 	return r2;
-
-	#undef LOGM_TAG
 }
 
 void * heap_malloc(heap_pt heap, unsigned int size) {
-	#define LOGM_TAG	"heap_malloc"
-
 	if (0 == bsp_ubik_isrt()) {
 		return _heap_allocate_block((_heap_pt) heap, 0, size);
 	}
 	else {
 		return _heap_allocate_block((_heap_pt) heap, 1, size);
 	}
-
-	#undef LOGM_TAG
 }
 
 void * heap_mallocn(heap_pt heap, unsigned int size) {
-	#define LOGM_TAG	"heap_mallocn"
-
 	return _heap_allocate_block((_heap_pt) heap, 0, size);
-
-	#undef LOGM_TAG
 }
 
 void * heap_mallocr(heap_pt heap, unsigned int size) {
-	#define LOGM_TAG	"heap_mallocr"
-
 	return _heap_allocate_block((_heap_pt) heap, 1, size);
-
-	#undef LOGM_TAG
 }
 
 int heap_free(heap_pt heap, void * ptr) {
-	#define LOGM_TAG	"heap_free"
-
 	return _heap_release_block((_heap_pt) heap, ptr);
-
-	#undef LOGM_TAG
 }
 
 int heap_checkblockboundary(heap_pt _heap, void * ptr) {
-	#define LOGM_TAG	"heap_checkblockboundary"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	int r;
@@ -801,13 +738,9 @@ int heap_checkblockboundary(heap_pt _heap, void * ptr) {
 	}
 
 	return r;
-
-	#undef LOGM_TAG
 }
 
 int heap_checkblockboundaryall(heap_pt _heap) {
-	#define LOGM_TAG	"heap_checkblockboundaryall"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	int r, r2;
@@ -923,13 +856,9 @@ end1:
 
 end0:
 	return r2;
-
-	#undef LOGM_TAG
 }
 
 int heap_getblocksize(heap_pt _heap, void * ptr, unsigned int * size_p) {
-	#define LOGM_TAG	"heap_getblocksize"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	_heap_block_pt block;
@@ -957,13 +886,9 @@ int heap_getblocksize(heap_pt _heap, void * ptr, unsigned int * size_p) {
 	*size_p = _tag_to_size(block->tag, log2m);
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getsize(heap_pt _heap, unsigned int * size_p) {
-	#define LOGM_TAG	"heap_getsize"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -993,13 +918,9 @@ int heap_getsize(heap_pt _heap, unsigned int * size_p) {
 	*size_p = heap->size;
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getrequestedsize(heap_pt _heap, unsigned int * size_p) {
-	#define LOGM_TAG	"heap_getrequestedsize"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1029,13 +950,9 @@ int heap_getrequestedsize(heap_pt _heap, unsigned int * size_p) {
 	*size_p = (heap->region[0].rsize + heap->region[1].rsize);
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getrequestedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p) {
-	#define LOGM_TAG	"heap_getrequestedsize_ext"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1070,13 +987,9 @@ int heap_getrequestedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getrequestedsizemax(heap_pt _heap, unsigned int * size_p) {
-	#define LOGM_TAG	"heap_getrequestedsizemax"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1106,13 +1019,9 @@ int heap_getrequestedsizemax(heap_pt _heap, unsigned int * size_p) {
 	*size_p = heap->rsize_max;
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getrequestedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p) {
-	#define LOGM_TAG	"heap_getrequestedsizemax_ext"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1147,13 +1056,9 @@ int heap_getrequestedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned 
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getallocatedcount(heap_pt _heap, unsigned int * count_p) {
-	#define LOGM_TAG	"heap_getallocatedcount"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1183,13 +1088,9 @@ int heap_getallocatedcount(heap_pt _heap, unsigned int * count_p) {
 	*count_p = (heap->region[0].abl.count + heap->region[1].abl.count);
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getallocatedcount_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p) {
-	#define LOGM_TAG	"heap_getallocatedcount_ext"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1224,13 +1125,9 @@ int heap_getallocatedcount_ext(heap_pt _heap, unsigned int * count_p, unsigned i
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getallocatedcountmax(heap_pt _heap, unsigned int * count_p) {
-	#define LOGM_TAG	"heap_getallocatedcountmax"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1260,13 +1157,9 @@ int heap_getallocatedcountmax(heap_pt _heap, unsigned int * count_p) {
 	*count_p = heap->acount_max;
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getallocatedcountmax_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p) {
-	#define LOGM_TAG	"heap_getallocatedcountmax_ext"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1301,13 +1194,9 @@ int heap_getallocatedcountmax_ext(heap_pt _heap, unsigned int * count_p, unsigne
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getallocatedsize(heap_pt _heap, unsigned int * size_p) {
-	#define LOGM_TAG	"heap_getallocatedsize"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1337,13 +1226,9 @@ int heap_getallocatedsize(heap_pt _heap, unsigned int * size_p) {
 	*size_p = (heap->region[0].asize + heap->region[1].asize);
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getallocatedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p) {
-	#define LOGM_TAG	"heap_getallocatedsize_ext"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1378,13 +1263,9 @@ int heap_getallocatedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getallocatedsizemax(heap_pt _heap, unsigned int * size_p) {
-	#define LOGM_TAG	"heap_getallocatedsizemax"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1414,13 +1295,9 @@ int heap_getallocatedsizemax(heap_pt _heap, unsigned int * size_p) {
 	*size_p = heap->asize_max;
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getallocatedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p) {
-	#define LOGM_TAG	"heap_getallocatedsizemax_ext"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1455,13 +1332,9 @@ int heap_getallocatedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned 
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getfreeblockcount(heap_pt _heap, unsigned int * count_p) {
-	#define LOGM_TAG	"heap_getfreeblockcount"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	//edlist_pt fbl;
@@ -1502,13 +1375,9 @@ int heap_getfreeblockcount(heap_pt _heap, unsigned int * count_p) {
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getfreeblockcount_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p) {
-	#define LOGM_TAG	"heap_getfreeblockcount_ext"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	//edlist_pt fbl;
@@ -1555,13 +1424,9 @@ int heap_getfreeblockcount_ext(heap_pt _heap, unsigned int * count_p, unsigned i
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int heap_getblockoverhead(heap_pt _heap, unsigned int * overhead_p) {
-	#define LOGM_TAG	"heap_getblockoverhead"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	if (NULL == heap) {
@@ -1591,15 +1456,11 @@ int heap_getblockoverhead(heap_pt _heap, unsigned int * overhead_p) {
 	*overhead_p = HEAP_BLOCK_OVERHEAD;
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_PRINTHEAPINFO == 1)
 
 int heap_printheapinfo(heap_pt _heap) {
-	#define LOGM_TAG	"heap_printheapinfo"
-
 	_heap_pt heap = (_heap_pt) _heap;
 
 	int r;
@@ -1761,8 +1622,6 @@ int heap_printheapinfo(heap_pt _heap) {
 
 end0:
 	return r;
-
-	#undef LOGM_TAG
 }
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_PRINTHEAPINFO == 1) */

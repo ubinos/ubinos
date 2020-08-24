@@ -8,10 +8,13 @@
 
 #if (INCLUDE__UBINOS__UBICLIB == 1)
 
+#include <assert.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
+
 int ubiclib_comp_init(void) {
 	int r = 0;
-
-	logm_setlevel(LOGM_CATEGORY__ALL, LOGM_LEVEL);
 
 	r = ubiclib_port_comp_init();
 

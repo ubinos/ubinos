@@ -214,10 +214,19 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
 		{
 			printf("    input category id\r\n");
-			printf("        %4d : all    \r\n", LOGM_CATEGORY__ALL);
-			printf("        %4d : default\r\n", LOGM_CATEGORY__DEFAULT);
+			printf("        %4d : all    \r\n", -1);
+			printf("        %4d : none   \r\n", LOGM_CATEGORY__NONE);
+			printf("        %4d : ubinos \r\n", LOGM_CATEGORY__UBINOS);
+			printf("        %4d : bsp    \r\n", LOGM_CATEGORY__BSP);
+			printf("        %4d : ubik   \r\n", LOGM_CATEGORY__UBIK);
+			printf("        %4d : task   \r\n", LOGM_CATEGORY__TASK);
+			printf("        %4d : sem    \r\n", LOGM_CATEGORY__SEM);
+			printf("        %4d : msgq   \r\n", LOGM_CATEGORY__MSGQ);
+			printf("        %4d : condv  \r\n", LOGM_CATEGORY__CONDV);
+			printf("        %4d : signal \r\n", LOGM_CATEGORY__SIGNAL);
+			printf("        %4d : stimer \r\n", LOGM_CATEGORY__STIMER);
+			printf("        %4d : ubiclib\r\n", LOGM_CATEGORY__UBICLIB);
 			printf("        %4d : heap   \r\n", LOGM_CATEGORY__HEAP);
-			printf("        %4d : bitmap \r\n", LOGM_CATEGORY__BITMAP);
 			printf("        %4d : user00 \r\n", LOGM_CATEGORY__USER00);
 			printf("        %4d : user01 \r\n", LOGM_CATEGORY__USER01);
 			printf("        %4d : user02 \r\n", LOGM_CATEGORY__USER02);
@@ -231,13 +240,14 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 			id = atoi(_cli_cmd_buf);
 
 			printf("    input level\r\n");
-			printf("        %4d : none   \r\n", LOGM_LEVEL__NONE);
-			printf("        %4d : always \r\n", LOGM_LEVEL__ALWAYS);
-			printf("        %4d : fatal  \r\n", LOGM_LEVEL__FATAL);
-			printf("        %4d : error  \r\n", LOGM_LEVEL__ERROR);
-			printf("        %4d : warning\r\n", LOGM_LEVEL__WARNING);
-			printf("        %4d : info   \r\n", LOGM_LEVEL__INFO);
-			printf("        %4d : debug  \r\n", LOGM_LEVEL__DEBUG);
+			printf("        %4d : none    \r\n", LOGM_LEVEL__NONE);
+			printf("        %4d : always  \r\n", LOGM_LEVEL__ALWAYS);
+			printf("        %4d : fatal   \r\n", LOGM_LEVEL__FATAL);
+			printf("        %4d : error   \r\n", LOGM_LEVEL__ERROR);
+			printf("        %4d : warning \r\n", LOGM_LEVEL__WARNING);
+			printf("        %4d : info    \r\n", LOGM_LEVEL__INFO);
+			printf("        %4d : debug   \r\n", LOGM_LEVEL__DEBUG);
+			printf("        %4d : verbose \r\n", LOGM_LEVEL__VERBOSE);
 
 			tmplen = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
 			if (0 >= tmplen) {

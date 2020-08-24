@@ -8,31 +8,37 @@
 
 #if (INCLUDE__UBINOS__UBIK == 1)
 
+#include <assert.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
 int mutex_create(mutex_pt * mutex_p) {
 	return mutex_create_ext(mutex_p, 0);
 }
-
 int mutex_create_ext(mutex_pt * mutex_p, unsigned int option) {
-	#define	__FUNCNAME__	"mutex_create_ext"
 	int r;
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	int r2;
 	#endif
 	_sigobj_pt sigobj;
 
+	assert(mutex_p != NULL);
+
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
-	r = mutex_lock(_kernel_monitor_mutex);
-	if (0 != r) {
-		logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
-		r = -1;
-		goto end0;
+	if (_kernel_monitor_mutex) {
+		r = mutex_lock(_kernel_monitor_mutex);
+		if (0 != r) {
+			logme("fail at mutex_lock()");
+			r = -1;
+			goto end0;
+		}
 	}
 	#endif
 
 	r = _sigobj_create(&sigobj);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at _sigobj_create()\r\n");
+		logme("fail at _sigobj_create()");
 		goto end1;
 	}
 
@@ -51,28 +57,33 @@ int mutex_create_ext(mutex_pt * mutex_p, unsigned int option) {
 
 end1:
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
-	r2 = mutex_unlock(_kernel_monitor_mutex);
-	if (0 != r2) {
-		logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
-		r = -1;
+	if (_kernel_monitor_mutex) {
+		r2 = mutex_unlock(_kernel_monitor_mutex);
+		if (0 != r2) {
+			logme("fail at mutex_unlock()");
+			r = -1;
+		}
 	}
 
 end0:
 	#endif
 
 	return r;
-	#undef __FUNCNAME__
 }
 
 int mutex_delete(mutex_pt * mutex_p) {
+	assert(mutex_p != NULL);
+	assert(*mutex_p != NULL);
+
 	return _sigobj_delete((_sigobj_pt *) mutex_p);
 }
 
 int mutex_lock(mutex_pt _mutex) {
-	#define	__FUNCNAME__	"mutex_lock"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _mutex;
 	_task_pt task = _task_cur;
+
+	assert(_mutex != NULL);
 
 	if (0 == _bsp_kernel_active) {
 		r = 0;
@@ -81,19 +92,19 @@ int mutex_lock(mutex_pt _mutex) {
 
 	if (0 == task->sysflag01) {
 		if (0 != bsp_isintr()) {
-			logme(""__FUNCNAME__": in interrupt\r\n");
+			logme("in interrupt");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _bsp_critcount) {
-			logme(""__FUNCNAME__": in critical section\r\n");
+			logme("in critical section");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _ubik_tasklockcount) {
-			logme(""__FUNCNAME__": task is locked\r\n");
+			logme("task is locked");
 			r = -1;
 			goto end0;
 		}
@@ -105,7 +116,7 @@ int mutex_lock(mutex_pt _mutex) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_MUTEX != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -114,7 +125,7 @@ int mutex_lock(mutex_pt _mutex) {
 		if (0 == sigobj->nopriorityinheritance) {
 			r = _sigobj_setsender(sigobj, task);
 			if (0 != r) {
-				logme(""__FUNCNAME__": fail at _sigobj_setsender()\r\n");
+				logme("fail at _sigobj_setsender()");
 				r = -1;
 				goto end1;
 			}
@@ -125,7 +136,7 @@ int mutex_lock(mutex_pt _mutex) {
 	else {
 		if (task == _task_osigobjlist_owner(sigobj)) {
 			if (sigobj->maxcount == sigobj->count) {
-				logme(""__FUNCNAME__": count is over max count\r\n");
+				logme("count is over max count");
 				r = UBIK_ERR__OVERFLOWED;
 			}
 			else {
@@ -137,7 +148,7 @@ int mutex_lock(mutex_pt _mutex) {
 			if (0 == task->sysflag01) {
 				r = _sigobj_wait(sigobj, task->wtask_p);
 				if (SIGOBJ_SIGTYPE__TIMEOUT != r && 0 != r) {
-					logme(""__FUNCNAME__": fail at _sigobj_wait()\r\n");
+					logme("fail at _sigobj_wait()");
 				}
 			}
 			else {
@@ -151,12 +162,12 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int mutex_lock_timed(mutex_pt _mutex, unsigned int tick) {
-	#define	__FUNCNAME__	"mutex_lock_timed"
 	int r;
+
+	assert(_mutex != NULL);
 
 	if (0 == _bsp_kernel_active) {
 		r = 0;
@@ -164,7 +175,7 @@ int mutex_lock_timed(mutex_pt _mutex, unsigned int tick) {
 	}
 
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
@@ -178,19 +189,21 @@ int mutex_lock_timed(mutex_pt _mutex, unsigned int tick) {
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int mutex_lock_timedms(mutex_pt _mutex, unsigned int timems) {
+	assert(_mutex != NULL);
+
 	return mutex_lock_timed(_mutex, ubik_timemstotick(timems));
 }
 
 int mutex_unlock(mutex_pt _mutex) {
-	#define	__FUNCNAME__	"mutex_unlock"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _mutex;
 	_task_pt otask;
 	_wtask_pt wtask;
+
+	assert(_mutex != NULL);
 
 	if (0 == _bsp_kernel_active) {
 		r = 0;
@@ -198,7 +211,7 @@ int mutex_unlock(mutex_pt _mutex) {
 	}
 
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
@@ -209,20 +222,20 @@ int mutex_unlock(mutex_pt _mutex) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_MUTEX != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
 
 	otask = _task_osigobjlist_owner(sigobj);
 	if (NULL != otask && _task_cur != otask) {
-		logme(""__FUNCNAME__": current task is not owner\r\n");
+		logme("current task is not owner");
 		r = -1;
 		goto end1;
 	}
 
 	if (0 == sigobj->count) {
-		logme(""__FUNCNAME__": not locked\r\n");
+		logme("not locked");
 		r = -1;
 		goto end1;
 	}
@@ -237,7 +250,7 @@ int mutex_unlock(mutex_pt _mutex) {
 			if (0 == sigobj->nopriorityinheritance) {
 				r = _sigobj_setsender(sigobj, NULL);
 				if (0 != r) {
-					logme(""__FUNCNAME__": fail at _sigobj_setsender()\r\n");
+					logme("fail at _sigobj_setsender()");
 					r = -1;
 					goto end1;
 				}
@@ -249,14 +262,14 @@ int mutex_unlock(mutex_pt _mutex) {
 			if (0 == sigobj->nopriorityinheritance) {
 				r = _sigobj_setsender(sigobj, wtask->task);
 				if (0 != r) {
-					logme(""__FUNCNAME__": fail at _sigobj_setsender()\r\n");
+					logme("fail at _sigobj_setsender()");
 					r = -1;
 					goto end1;
 				}
 			}
 			r = _sigobj_send(sigobj, SIGOBJ_SIGTYPE__SUCCESS);
 			if (0 != r) {
-				logme(""__FUNCNAME__": fail at _sigobj_send()\r\n");
+				logme("fail at _sigobj_send()");
 			}
 		}
 	}
@@ -266,13 +279,13 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int mutex_islocked(mutex_pt _mutex) {
-	#define	__FUNCNAME__	"mutex_islocked"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _mutex;
+
+	assert(_mutex != NULL);
 
 	if (0 == _bsp_kernel_active) {
 		r = 0;
@@ -285,7 +298,7 @@ int mutex_islocked(mutex_pt _mutex) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_MUTEX != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -302,7 +315,6 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */

@@ -622,6 +622,19 @@ int heap_printheapinfo(heap_pt heap);
 unsigned int heap_group_calc_fblcount(unsigned int size, unsigned int m);
 
 /*!
+ * 테일드 블록 그룹 시스템의 사용 가능 블록 리스트 수를 개산하는 함수 (최소 크기 offset을 반영하지 않고 계산)<br>
+ *
+ * @param	size				최대 멤버 수<br>
+ *
+ * @param	m					최대 멤버 수<br>
+ *
+ * @return	사용 가능 블록 리스트 수<br>
+ * 			<br>
+ * 			  0: 오류<br>
+ */
+unsigned int heap_group_calc_fblcount_raw(unsigned int size, unsigned int m);
+
+/*!
  * 가중치 버디 시스템의 사용 가능 블록 리스트 수를 개산하는 함수<br>
  *
  * @param	size				최대 멤버 수<br>

@@ -10,10 +10,13 @@
 #if (INCLUDE__UBINOS__UBIK == 1)
 #if (UBINOS__BSP__CORTEX_MX == 1)
 
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBIK
 
 int _ubik_port_comp_init(unsigned int idle_stackdepth) {
 	int r = 0;
@@ -115,18 +118,17 @@ void _task_stackinit(_task_pt task, void * arg) {
 }
 
 int task_getstacksize(task_pt _task, unsigned int * stacksize_p) {
-	#define	__FUNCNAME__	"task_getstacksize"
 	int r;
 	_task_pt task = (_task_pt)_task;
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == stacksize_p) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
@@ -143,7 +145,7 @@ int task_getstacksize(task_pt _task, unsigned int * stacksize_p) {
 	ubik_entercrit();
 
 	if (0 == task->valid || (OBJTYPE__UBIK_TASK != task->type && OBJTYPE__UBIK_IDLETASK != task->type)) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -157,7 +159,6 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_getmaxstackusage(task_pt _task, unsigned int * maxstackusage_p) {

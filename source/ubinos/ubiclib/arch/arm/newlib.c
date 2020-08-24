@@ -10,6 +10,9 @@
 #if (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__ARM)
 #if !(UBINOS__UBICLIB__NOSTDLIB == 1)
 
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
+
 #define _REENT_SMALL
 #undef _REENT_GLOBAL_STDIO_STREAMS
 
@@ -130,7 +133,7 @@ __retarget_lock_close_recursive(_LOCK_T lock)
 void
 __retarget_lock_acquire (_LOCK_T lock)
 {
-    if (lock) {
+    if (lock && lock->lock) {
         bsp_mutex_lock(lock->lock);
     }
 }
@@ -138,7 +141,7 @@ __retarget_lock_acquire (_LOCK_T lock)
 void
 __retarget_lock_acquire_recursive (_LOCK_T lock)
 {
-    if (lock) {
+    if (lock && lock->lock) {
         bsp_mutex_lock(lock->lock);
     }
 }
@@ -146,7 +149,7 @@ __retarget_lock_acquire_recursive (_LOCK_T lock)
 int
 __retarget_lock_try_acquire(_LOCK_T lock)
 {
-    if (lock) {
+    if (lock && lock->lock) {
         if(0 == bsp_mutex_lock_timed(lock->lock, 0)) {
             return 1;
         }
@@ -157,7 +160,7 @@ __retarget_lock_try_acquire(_LOCK_T lock)
 int
 __retarget_lock_try_acquire_recursive(_LOCK_T lock)
 {
-    if (lock) {
+    if (lock && lock->lock) {
         if(0 == bsp_mutex_lock_timed(lock->lock, 0)) {
             return 1;
         }
@@ -168,7 +171,7 @@ __retarget_lock_try_acquire_recursive(_LOCK_T lock)
 void
 __retarget_lock_release (_LOCK_T lock)
 {
-    if (lock) {
+    if (lock && lock->lock) {
         bsp_mutex_unlock(lock->lock);
     }
 }
@@ -176,7 +179,7 @@ __retarget_lock_release (_LOCK_T lock)
 void
 __retarget_lock_release_recursive (_LOCK_T lock)
 {
-    if (lock) {
+    if (lock && lock->lock) {
         bsp_mutex_unlock(lock->lock);
     }
 }
@@ -200,11 +203,7 @@ void * _malloc_r(struct _reent * reent_ptr, size_t size)
 
 void _free_r(struct _reent * reent_ptr, void * ptr)
 {
-    #define LOGM_TAG    "free"
-
     _heap_release_block(_ubiclib_heap, ptr);
-
-    #undef LOGM_TAG
 }
 
 size_t _malloc_usable_size_r(struct _reent * reent_ptr, void * ptr)

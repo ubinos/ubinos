@@ -6,6 +6,13 @@
 
 #include "_ubik.h"
 
+#if (INCLUDE__UBINOS__UBIK == 1)
+
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
 #if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)
 #if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1)
@@ -14,39 +21,36 @@
 #endif /* (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1) */
 #endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 
-#if (INCLUDE__UBINOS__UBIK == 1)
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
 int _sigobj_create(_sigobj_pt * sigobj_p) {
-	#define	__FUNCNAME__	"_sigobj_create"
 	int r;
 	_sigobj_pt sigobj;
 
+	assert(sigobj_p != NULL);
+
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == sigobj_p) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end0;
 	}
 
 	sigobj = malloc(sizeof(_sigobj_t));
 	if (NULL == sigobj) {
-		logme(""__FUNCNAME__": fail at malloc()\r\n");
+		logme("fail at malloc()");
 		r = -1;
 		goto end0;
 	}
@@ -80,11 +84,9 @@ int _sigobj_create(_sigobj_pt * sigobj_p) {
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int _sigobj_delete(_sigobj_pt * sigobj_p) {
-	#define	__FUNCNAME__	"_sigobj_delete"
 	int r;
 	int r2;
 	_sigobj_pt sigobj;
@@ -92,26 +94,29 @@ int _sigobj_delete(_sigobj_pt * sigobj_p) {
 	void * sigobjbuf = NULL;
 	_task_pt owner;
 
+	assert(sigobj_p != NULL);
+	assert(*sigobj_p != NULL);
+
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == sigobj_p) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end0;
 	}
@@ -121,7 +126,7 @@ int _sigobj_delete(_sigobj_pt * sigobj_p) {
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	r = mutex_lock(_kernel_monitor_mutex);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+		logme("fail at mutex_lock()");
 		r = -1;
 		goto end0;
 	}
@@ -137,7 +142,7 @@ int _sigobj_delete(_sigobj_pt * sigobj_p) {
 				OBJTYPE__UBIK_SEM 		!= sigobj->type	&&
 				OBJTYPE__UBIK_MSGQ 		!= sigobj->type		)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -147,13 +152,13 @@ int _sigobj_delete(_sigobj_pt * sigobj_p) {
 		if (0 != _bsp_kernel_active && 0 == bsp_isintr() && owner == _task_cur) {
 			r = _sigobj_setsender(sigobj, NULL);
 			if (0 != r) {
-				logme(""__FUNCNAME__": fail at _sigobj_setsender()\r\n");
+				logme("fail at _sigobj_setsender()");
 				r = -1;
 				goto end1;
 			}
 		}
 		else {
-			logme(""__FUNCNAME__": still owned\r\n");
+			logme("still owned");
 			r = -2;
 			goto end1;
 		}
@@ -168,7 +173,7 @@ int _sigobj_delete(_sigobj_pt * sigobj_p) {
 		r = _sigobj_broadcast(sigobj, SIGOBJ_SIGTYPE__TERMINATED);
 	}
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at _sigobj_broadcast()\r\n");
+		logme("fail at _sigobj_broadcast()");
 		r = -2;
 		goto end1;
 	}
@@ -194,7 +199,7 @@ end1:
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	r2 = mutex_unlock(_kernel_monitor_mutex);
 	if (0 != r2) {
-		logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+		logme("fail at mutex_unlock()");
 		r = -1;
 	}
 	#endif
@@ -202,7 +207,7 @@ end1:
 	if (NULL != msgbuf) {
 		r2 = cirbuf_delete(&msgbuf);
 		if (0 != r2) {
-			logme(""__FUNCNAME__": fail at cirbuf_delete()\r\n");
+			logme("fail at cirbuf_delete()");
 			r = -1;
 		}
 	}
@@ -213,17 +218,18 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int _sigobj_wait(_sigobj_pt sigobj, _wtask_pt wtask) {
-	#define	__FUNCNAME__	"_sigobj_wait"
 	int r;
 	unsigned int critcount;
 	unsigned int spintick;
 
+	assert(sigobj != NULL);
+	assert(wtask != NULL);
+
 	if (0 >= _bsp_critcount) {
-		logme(""__FUNCNAME__": not in critical section\r\n");
+		logme("not in critical section");
 		bsp_abortsystem();
 	}
 
@@ -291,13 +297,13 @@ int _sigobj_wait(_sigobj_pt sigobj, _wtask_pt wtask) {
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int _sigobj_send(_sigobj_pt sigobj, int sigtype) {
-	#define	__FUNCNAME__	"_sigobj_send"
 	_wtask_pt wtask;
 	_task_pt task;
+
+	assert(sigobj != NULL);
 
 	wtask = _sigobj_wtasklist_gettask(sigobj);
 	if (NULL != wtask) {
@@ -340,14 +346,14 @@ int _sigobj_send(_sigobj_pt sigobj, int sigtype) {
 	}
 
 	return 0;
-	#undef __FUNCNAME__
 }
 
 int _sigobj_broadcast(_sigobj_pt sigobj, int sigtype) {
-	#define	__FUNCNAME__	"_sigobj_broadcast"
 	_wtask_pt wtask;
 	_wtask_pt wtask_next;
 	_task_pt task;
+
+	assert(sigobj != NULL);
 
 	wtask = _sigobj_wtasklist_head(sigobj);
 	if (NULL != wtask) {
@@ -401,12 +407,12 @@ int _sigobj_broadcast(_sigobj_pt sigobj, int sigtype) {
 	}
 
 	return 0;
-	#undef __FUNCNAME__
 }
 
 int _sigobj_setsender(_sigobj_pt sigobj, _task_pt task) {
-	#define	__FUNCNAME__	"_sigobj_setsender"
 	_task_pt task_old;
+
+	assert(sigobj != NULL);
 
 	task_old = _task_osigobjlist_owner(sigobj);
 	if (task_old != task) {
@@ -421,7 +427,6 @@ int _sigobj_setsender(_sigobj_pt sigobj, _task_pt task) {
 	}
 
 	return 0;
-	#undef __FUNCNAME__
 }
 
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */

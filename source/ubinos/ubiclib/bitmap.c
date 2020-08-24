@@ -8,12 +8,12 @@
 
 #if !(UBINOS__UBICLIB__EXCLUDE_BITMAP == 1)
 
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
 #undef	LOGM_CATEGORY
-#define LOGM_CATEGORY 				LOGM_CATEGORY__BITMAP
-#undef	LOGM_TAG
+#define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
 #if		(2 == INT_SIZE)	// 16 bit machine
 
@@ -62,8 +62,6 @@
 #define INT_BIT_SIZE			(INT_SIZE * 8)
 
 unsigned int bitmap_getmapsize(unsigned int bitsize) {
-	#define LOGM_TAG	"bitmap_getmapsize"
-
 	unsigned int mapsize;
 
 	bitsize = uidiv_ceil(bitsize, INT_BIT_SIZE);
@@ -77,35 +75,31 @@ unsigned int bitmap_getmapsize(unsigned int bitsize) {
 	}
 
 	return mapsize;
-
-	#undef LOGM_TAG
 }
 
 int bitmap_init(bitmap_pt bitmap, unsigned int bitsize, unsigned char * buf, unsigned int bufsize) {
-	#define LOGM_TAG	"bitmap_init"
-
 	int i;
 	unsigned int offset;
     unsigned int needbufsize;
 
 	if (NULL == bitmap) {
-		logme("bitmap is NULL\r\n");
+		logme("bitmap is NULL");
 		return -2;
 	}
 
 	if (0 >= bitsize) {
-		logme("bitsize is wrong\r\n");
+		logme("bitsize is wrong");
 		return -3;
 	}
 
 	if (NULL == buf) {
-		logme("buf is NULL\r\n");
+		logme("buf is NULL");
 		return -4;
 	}
 
 	needbufsize =  bitmap_getmemsize(bitsize);
 	if (bufsize < needbufsize) {
-		logme("bufsize is too small\r\n");
+		logme("bufsize is too small");
 		return -5;
 	}
 
@@ -116,7 +110,7 @@ int bitmap_init(bitmap_pt bitmap, unsigned int bitsize, unsigned char * buf, uns
 
 	for (i=0;; i++) {
 		if (BITMAP_DEPTH_MAX <= i) {
-			logme("bit size is too big\r\n");
+			logme("bit size is too big");
 			return -5;
 		}
 		offset = bitmap_getmapsize(bitsize) - 1;
@@ -131,57 +125,51 @@ int bitmap_init(bitmap_pt bitmap, unsigned int bitsize, unsigned char * buf, uns
 	memset(buf, 0x00, bufsize);
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 unsigned int bitmap_getmemsize(unsigned int bitsize) {
-	#define LOGM_TAG	"bitmap_getmemsize"
-
 	unsigned int mapsize;
 
 	mapsize = bitmap_getmapsize(bitsize);
 
 	return (mapsize * INT_SIZE);
-
-	#undef LOGM_TAG
 }
 
 int bitmap_create(bitmap_pt * bitmap_p, unsigned int bitsize) {
-	#define LOGM_TAG	"bitmap_create"
-
 	int r;
 	bitmap_pt bitmap;
 	unsigned char * buf;
 	unsigned int bufsize;
 
+	assert(bitmap_p != NULL);
+
 	if (NULL == bitmap_p) {
-		logme("bitmap_p is NULL\r\n");
+		logme("bitmap_p is NULL");
 		return -2;
 	}
 
 	if (0 >= bitsize) {
-		logme("bitsize is wrong\r\n");
+		logme("bitsize is wrong");
 		return -3;
 	}
 
 	bitmap = malloc(sizeof(bitmap_t));
 	if (NULL == bitmap) {
-		logme("malloc(...) fail\r\n");
+		logme("malloc(...) fail");
 		return -1;
 	}
 
 	bufsize = bitmap_getmemsize(bitsize);
 	buf = malloc(bufsize);
 	if (NULL == buf) {
-		logme("malloc(...) fail\r\n");
+		logme("malloc(...) fail");
 		free(bitmap);
 		return -1;
 	}
 
 	r = bitmap_init(bitmap, bitsize, buf, bufsize);
 	if (0 != r) {
-		logme("fail at bitmap_init\r\n");
+		logme("fail at bitmap_init");
 		free(buf);
 		free(bitmap);
 		return -1;
@@ -190,29 +178,28 @@ int bitmap_create(bitmap_pt * bitmap_p, unsigned int bitsize) {
 	*bitmap_p = bitmap;
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int bitmap_delete(bitmap_pt * bitmap_p) {
-	#define LOGM_TAG	"bitmap_delete"
-
 	bitmap_pt bitmap;
 
+	assert(bitmap_p != NULL);
+	assert(*bitmap_p != NULL);
+
 	if (NULL == bitmap_p) {
-		logme("bitmap_p is NULL\r\n");
+		logme("bitmap_p is NULL");
 		return -2;
 	}
 
 	if (NULL == *bitmap_p) {
-		logme("*bitmap_p is NULL\r\n");
+		logme("*bitmap_p is NULL");
 		return -2;
 	}
 
 	bitmap = *bitmap_p;
 
 	if (NULL == bitmap->map) {
-		logme("map is NULL\r\n");
+		logme("map is NULL");
 		return -2;
 	}
 
@@ -222,25 +209,23 @@ int bitmap_delete(bitmap_pt * bitmap_p) {
 	*bitmap_p = NULL;
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 unsigned int bitmap_getlsb(bitmap_pt bitmap) {
-	#define LOGM_TAG	"bitmap_getlsb"
-
 	unsigned int offset;
 	unsigned int l;
 	unsigned int bi;
 	unsigned int tmp;
 
+	assert(bitmap != NULL);
+
 	if (NULL == bitmap) {
-		logme("bitmap is NULL\r\n");
+		logme("bitmap is NULL");
 		return -2;
 	}
 
 	if (0 == bitmap->level_depth) {
-		logme("depth is 0\r\n");
+		logme("depth is 0");
 		return -2;
 	}
 
@@ -260,32 +245,29 @@ unsigned int bitmap_getlsb(bitmap_pt bitmap) {
 	}
 
 	return (bi + 1);
-
-	#undef LOGM_TAG
 }
 
 unsigned int bitmap_getlsb2(bitmap_pt bitmap, unsigned int index) {
-	#define LOGM_TAG	"bitmap_getlsb2"
-
-
 	unsigned int offset;
 	unsigned int l;
 	unsigned int bi;
 	unsigned int tmp;
 	unsigned int mask;
 
+	assert(bitmap != NULL);
+
 	if (NULL == bitmap) {
-		logme("bitmap is NULL\r\n");
+		logme("bitmap is NULL");
 		return -2;
 	}
 
 	if (0 == bitmap->level_depth) {
-		logme("depth is 0\r\n");
+		logme("depth is 0");
 		return -2;
 	}
 
 	if (0 >= index || bitmap->bitsize < index) {
-		logme("index is wrong\r\n");
+		logme("index is wrong");
 		return 0;
 	}
 
@@ -326,25 +308,23 @@ unsigned int bitmap_getlsb2(bitmap_pt bitmap, unsigned int index) {
 	}
 
 	return (bi + 1);
-
-	#undef LOGM_TAG
 }
 
 unsigned int bitmap_getmsb(bitmap_pt bitmap) {
-	#define LOGM_TAG	"bitmap_getmsb"
-
 	unsigned int offset;
 	unsigned int l;
 	unsigned int bi;
 	unsigned int tmp;
 
+	assert(bitmap != NULL);
+
 	if (NULL == bitmap) {
-		logme("bitmap is NULL\r\n");
+		logme("bitmap is NULL");
 		return -2;
 	}
 
 	if (0 == bitmap->level_depth) {
-		logme("depth is 0\r\n");
+		logme("depth is 0");
 		return -2;
 	}
 
@@ -364,27 +344,25 @@ unsigned int bitmap_getmsb(bitmap_pt bitmap) {
 	}
 
 	return (bi + 1);
-
-	#undef LOGM_TAG
 }
 
 int bitmap_getbit(bitmap_pt bitmap, unsigned int index) {
-	#define LOGM_TAG	"bitmap_getbit"
-
 	unsigned int offset;
 
+	assert(bitmap != NULL);
+
 	if (NULL == bitmap) {
-		logme("bitmap is NULL\r\n");
+		logme("bitmap is NULL");
 		return -2;
 	}
 
 	if (0 == bitmap->level_depth) {
-		logme("depth is 0\r\n");
+		logme("depth is 0");
 		return -2;
 	}
 
 	if (0 >= index || bitmap->bitsize < index) {
-		logme("index is wrong\r\n");
+		logme("index is wrong");
 		return 0;
 	}
 
@@ -393,31 +371,29 @@ int bitmap_getbit(bitmap_pt bitmap, unsigned int index) {
 	offset = bitmap->level_offset_a[0];
 
 	return (bitmap->map[offset - (index >> LOG2_INT_BIT_SIZE)] >> (index & MASK_INT_BIT_SIZE)) & 0x1;
-
-	#undef LOGM_TAG
 }
 
 int bitmap_setbit(bitmap_pt bitmap, unsigned int index, int value) {
-	#define LOGM_TAG	"bitmap_setbit"
-
 	unsigned int i;
 	unsigned int level;
 	unsigned int offset;
 	unsigned int bitindex;
 	unsigned int mapindex;
 
+	assert(bitmap != NULL);
+
 	if (NULL == bitmap) {
-		logme("bitmap is NULL\r\n");
+		logme("bitmap is NULL");
 		return -2;
 	}
 
 	if (0 == bitmap->level_depth) {
-		logme("depth is 0\r\n");
+		logme("depth is 0");
 		return -2;
 	}
 
 	if (0 >= index || bitmap->bitsize < index) {
-		logme("index is wrong\r\n");
+		logme("index is wrong");
 		return 0;
 	}
 
@@ -450,26 +426,24 @@ int bitmap_setbit(bitmap_pt bitmap, unsigned int index, int value) {
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 int bitmap_setbitall(bitmap_pt bitmap, int value) {
-	#define LOGM_TAG	"bitmap_setbitall"
-
 	unsigned int i, j;
 	unsigned int level;
 	unsigned int offset;
 	unsigned int bitsize;
 	unsigned int mapsize;
 
+	assert(bitmap != NULL);
+
 	if (NULL == bitmap) {
-		logme("bitmap is NULL\r\n");
+		logme("bitmap is NULL");
 		return -2;
 	}
 
 	if (0 == bitmap->level_depth) {
-		logme("depth is 0\r\n");
+		logme("depth is 0");
 		return -2;
 	}
 
@@ -505,8 +479,6 @@ int bitmap_setbitall(bitmap_pt bitmap, int value) {
 	}
 
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_BITMAP == 1) */

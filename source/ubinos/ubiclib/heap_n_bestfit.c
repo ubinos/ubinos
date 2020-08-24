@@ -10,14 +10,17 @@
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1)
 
+#include <assert.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__HEAP
+
 #define _UBINOS__UBICLIB__HEAP_DIR	0
 #define _UBINOS__UBICLIB__HEAP_DIR_r	1
 
 int _heap_n_bestfit_init_region(
 		_heap_pt heap, unsigned int addr, unsigned int size, int locktype,
 		unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm			) {
-	#define LOGM_TAG	"_heap_n_bestfit_init_region    "
-
 	int r;
 	_heap_region_pt region;
 	unsigned int i;
@@ -78,13 +81,9 @@ int _heap_n_bestfit_init_region(
 
 end0:
 	return r;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize) {
-	#define LOGM_TAG	"_heap_n_bestfit_expand         "
-
 	_heap_region_pt region;
 	unsigned int min;
 	_heap_block_pt b1;
@@ -136,13 +135,9 @@ end0:
 	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
-
-	#undef LOGM_TAG
 }
 
 int _heap_n_bestfit_reduce(_heap_pt heap) {
-	#define LOGM_TAG	"_heap_n_bestfit_reduce         "
-
 	int r;
 	_heap_region_pt region;
 	unsigned int size_min;
@@ -209,13 +204,9 @@ end0:
 	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, result %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, r);
 
 	return r;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_n_bestfit_combine_block(_heap_pt heap, _heap_block_pt block, int endflag) {
-	#define LOGM_TAG	"_heap_n_bestfit_combine_block  "
-
 	_heap_region_pt region;
 	_heap_block_pt b1;
 	_heap_block_pt b2;
@@ -290,13 +281,9 @@ _heap_block_pt _heap_n_bestfit_combine_block(_heap_pt heap, _heap_block_pt block
 	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_n_bestfit_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize) {
-	#define LOGM_TAG	"_heap_n_bestfit_split_block    "
-
 	_heap_region_pt region;
 	unsigned int min;
 	_heap_block_pt b1;
@@ -356,13 +343,9 @@ end0:
 	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
-
-	#undef LOGM_TAG
 }
 
 void * _heap_n_bestfit_allocate_block(_heap_pt heap, unsigned int size) {
-	#define LOGM_TAG	"_heap_n_bestfit_allocate_block "
-
 	int r;
 	_heap_region_pt region;
 	_heap_block_pt b1;
@@ -584,13 +567,9 @@ end0:
 	}
 
 	return (void *) tmp;
-
-	#undef LOGM_TAG
 }
 
 int _heap_n_bestfit_release_block(_heap_pt heap, void * ptr) {
-	#define LOGM_TAG	"_heap_n_bestfit_release_block  "
-
 	int r, r2;
 	_heap_region_pt region;
 	_heap_block_pt b1;
@@ -667,8 +646,6 @@ int _heap_n_bestfit_release_block(_heap_pt heap, void * ptr) {
 
 end0:
 	return r2;
-
-	#undef LOGM_TAG
 }
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */

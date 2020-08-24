@@ -23,7 +23,7 @@ int appmain(int argc, char *argv[]) {
 
 	r = task_create(NULL, rootfunc, NULL, task_getmiddlepriority(), 192, "root");
 	if (0 != r) {
-		logme("fail at task_create\r\n");
+		logme("fail at task_create");
 	}
 
 	ubik_comp_start();

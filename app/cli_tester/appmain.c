@@ -29,22 +29,22 @@ int appmain(int argc, char *argv[]) {
 
 	r = cli_sethookfunc(clihookfunc, NULL);
 	if (0 != r) {
-		logme("fail at cli_sethookfunc\n\r");
+		logme("fail at cli_sethookfunc");
 	}
 
 	r = cli_sethelphookfunc(clihelphookfunc);
 	if (0 != r) {
-		logme("fail at cli_sethelphookfunc\n\r");
+		logme("fail at cli_sethelphookfunc");
 	}
 
 	r = cli_setprompt("cli_tester> ");
 	if (0 != r) {
-		logme("fail at cli_setprompt\n\r");
+		logme("fail at cli_setprompt");
 	}
 
 	r = task_create(NULL, cli_main, NULL, task_getmiddlepriority(), 0, "cli_main");
 	if (0 != r) {
-		logme("fail at task_create\n\r");
+		logme("fail at task_create");
 	}
 
 	ubik_comp_start();

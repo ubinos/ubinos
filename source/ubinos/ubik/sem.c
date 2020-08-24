@@ -10,31 +10,42 @@
 
 #if (INCLUDE__UBINOS__UBIK == 1)
 
+#include <assert.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__SEM
 
 int sem_create(sem_pt * sem_p) {
+	logmfd("sem_p 0x%x", sem_p);
+
 	return sem_create_ext(sem_p, 0, UINT_MAX, 0);
 }
 
 int semb_create(sem_pt * sem_p) {
+	logmfd("sem_p 0x%x", sem_p);
+
 	return sem_create_ext(sem_p, 0, 1, SEM_OPT__IGNOREOVERFLOW);
 }
 
 int sem_create_ext(sem_pt * sem_p, unsigned int initcount, unsigned int maxcount, unsigned int option) {
-	#define	__FUNCNAME__	"sem_create_ext"
 	int r;
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	int r2;
 	#endif
 	_sigobj_pt sigobj;
 
+	assert(sem_p != NULL);
+
+	logmfd("sem_p 0x%x, initcount %d, maxcount %d, option 0x%x", sem_p, initcount, maxcount, option);
+
 	if (initcount > maxcount) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
 
 	if (0 >= maxcount) {
-		logme(""__FUNCNAME__": parameter 3 is wrong\r\n");
+		logme("parameter 3 is wrong");
 		r = -4;
 		goto end0;
 	}
@@ -42,7 +53,7 @@ int sem_create_ext(sem_pt * sem_p, unsigned int initcount, unsigned int maxcount
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	r = mutex_lock(_kernel_monitor_mutex);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+		logme("fail at mutex_lock()");
 		r = -1;
 		goto end0;
 	}
@@ -50,7 +61,7 @@ int sem_create_ext(sem_pt * sem_p, unsigned int initcount, unsigned int maxcount
 
 	r = _sigobj_create(&sigobj);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at _sigobj_create()\r\n");
+		logme("fail at _sigobj_create()");
 		goto end1;
 	}
 
@@ -74,47 +85,58 @@ end1:
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	r2 = mutex_unlock(_kernel_monitor_mutex);
 	if (0 != r2) {
-		logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+		logme("fail at mutex_unlock()");
 		r = -1;
 	}
 	#endif
 
 end0:
+	if (r == 0) {
+		logmfd("sem 0x%x is created", sigobj);
+	}
+
 	return r;
-	#undef __FUNCNAME__
 }
 
 int sem_delete(sem_pt * sem_p) {
+	assert(sem_p != NULL);
+	assert(*sem_p != NULL);
+
+	logmfd("sem_p 0x%x, *sem_p 0x%x", sem_p, *sem_p);
+
 	return _sigobj_delete((_sigobj_pt *) sem_p);
 }
 
 int sem_take(sem_pt _sem) {
-	#define	__FUNCNAME__	"sem_take"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _sem;
 	_task_pt task = _task_cur;
 
+	assert(_sem != NULL);
+
+	logmfv("sem 0x%x", _sem);
+
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 == task->sysflag01) {
 		if (0 != bsp_isintr()) {
-			logme(""__FUNCNAME__": in interrupt\r\n");
+			logme("in interrupt");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _bsp_critcount) {
-			logme(""__FUNCNAME__": in critical section\r\n");
+			logme("in critical section");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _ubik_tasklockcount) {
-			logme(""__FUNCNAME__": task is locked\r\n");
+			logme("task is locked");
 			r = -1;
 			goto end0;
 		}
@@ -126,7 +148,7 @@ int sem_take(sem_pt _sem) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_SEM != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -139,7 +161,7 @@ int sem_take(sem_pt _sem) {
 		if (0 == task->sysflag01) {
 			r = _sigobj_wait(sigobj, task->wtask_p);
 			if (SIGOBJ_SIGTYPE__TIMEOUT != r && 0 != r) {
-				logme(""__FUNCNAME__": fail at _sigobj_wait()\r\n");
+				logme("fail at _sigobj_wait()");
 			}
 		}
 		else {
@@ -152,16 +174,18 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int sem_take_timed(sem_pt _sem, unsigned int tick) {
-	#define	__FUNCNAME__	"sem_take_timed"
 	int r;
 	unsigned int sysflag01_old = 0;
 
+	assert(_sem != NULL);
+
+	logmfv("sem 0x%x, tick %d", _sem , tick);
+
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		r = -1;
 		goto end0;
 	}
@@ -172,7 +196,7 @@ int sem_take_timed(sem_pt _sem, unsigned int tick) {
 			_task_cur->sysflag01 = 1;
 		}
 		else {
-			logme(""__FUNCNAME__": in interrupt\r\n");
+			logme("in interrupt");
 			r = -1;
 			goto end0;
 		}
@@ -193,22 +217,26 @@ int sem_take_timed(sem_pt _sem, unsigned int tick) {
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int sem_take_timedms(sem_pt _sem, unsigned int timems) {
+	logmfv("sem 0x%x, timems %d", _sem , timems);
+
 	return sem_take_timed(_sem, ubik_timemstotick(timems));
 }
 
 int sem_give(sem_pt _sem) {
-	#define	__FUNCNAME__	"sem_give"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _sem;
 	_task_pt otask;
 	_wtask_pt wtask;
 
+	assert(_sem != NULL);
+
+	logmfv("sem 0x%x", _sem);
+
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
@@ -219,7 +247,7 @@ int sem_give(sem_pt _sem) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_SEM != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -228,14 +256,14 @@ int sem_give(sem_pt _sem) {
 	if (	(0 == bsp_isintr() && NULL != otask && _task_cur != otask)	||
 			(0 != bsp_isintr() && NULL != otask						)		)
 	{
-		logme(""__FUNCNAME__": current task is not an appropriate giver\r\n");
+		logme("current task is not an appropriate giver");
 		r = -1;
 		goto end1;
 	}
 
 	if (sigobj->maxcount == sigobj->count) {
 		if (0 == sigobj->ignoreoverflow) {
-			logme(""__FUNCNAME__": count is over max count\r\n");
+			logme("count is over max count");
 			r  = UBIK_ERR__OVERFLOWED;
 		}
 		else {
@@ -251,7 +279,7 @@ int sem_give(sem_pt _sem) {
 		else {
 			r = _sigobj_send(sigobj, SIGOBJ_SIGTYPE__SUCCESS);
 			if (0 != r) {
-				logme(""__FUNCNAME__": fail at _sigobj_send()\r\n");
+				logme("fail at _sigobj_send()");
 			}
 		}
 	}
@@ -261,16 +289,18 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int sem_clear(sem_pt _sem) {
-	#define	__FUNCNAME__	"sem_clear"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _sem;
 
+	assert(_sem != NULL);
+
+	logmfd("sem 0x%x", _sem);
+
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
@@ -281,7 +311,7 @@ int sem_clear(sem_pt _sem) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_SEM != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -295,17 +325,19 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int sem_setsender(sem_pt _sem, task_pt _task) {
-	#define	__FUNCNAME__	"sem_setsender"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _sem;
 	_task_pt task = (_task_pt) _task;
 
+	assert(_sem != NULL);
+
+	logmfd("sem 0x%x, task 0x%x", _sem, _task);
+
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
@@ -316,14 +348,14 @@ int sem_setsender(sem_pt _sem, task_pt _task) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_SEM != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
 
 	r = _sigobj_setsender(sigobj, task);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at _sigobj_setsender()\r\n");
+		logme("fail at _sigobj_setsender()");
 	}
 
 end1:
@@ -331,22 +363,22 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int sem_getcount(sem_pt _sem, unsigned int * count_p) {
-	#define	__FUNCNAME__	"sem_getcount"
 	int r;
 	_sigobj_pt sigobj = (_sigobj_pt) _sem;
 
+	assert(_sem != NULL);
+
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == count_p) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
@@ -357,7 +389,7 @@ int sem_getcount(sem_pt _sem, unsigned int * count_p) {
 			(	0 == sigobj->valid						)	||
 			(	OBJTYPE__UBIK_SEM != sigobj->type	)		)
 	{
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -371,7 +403,6 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */

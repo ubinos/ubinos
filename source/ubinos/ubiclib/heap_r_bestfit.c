@@ -10,14 +10,17 @@
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1)
 
+#include <assert.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__HEAP
+
 #define _UBINOS__UBICLIB__HEAP_DIR	1
 #define _UBINOS__UBICLIB__HEAP_DIR_r	0
 
 int _heap_r_bestfit_init_region(
 		_heap_pt heap, unsigned int addr, unsigned int size, int locktype,
 		unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm			) {
-	#define LOGM_TAG	"_heap_r_bestfit_init_region    "
-
 	int r;
 	_heap_region_pt region;
 	unsigned int i;
@@ -78,56 +81,36 @@ int _heap_r_bestfit_init_region(
 
 end0:
 	return r;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_r_bestfit_expand(_heap_pt heap, unsigned int asize) {
-	#define LOGM_TAG	"_heap_r_bestfit_expand         "
-
+	bsp_abortsystem();
 	return NULL;
-
-	#undef LOGM_TAG
 }
 
 int _heap_r_bestfit_reduce(_heap_pt heap) {
-	#define LOGM_TAG	"_heap_r_bestfit_reduce         "
-
+	bsp_abortsystem();
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_r_bestfit_combine_block(_heap_pt heap, _heap_block_pt block, int endflag) {
-	#define LOGM_TAG	"_heap_r_bestfit_combine_block  "
-
+	bsp_abortsystem();
 	return NULL;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_r_bestfit_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize) {
-	#define LOGM_TAG	"_heap_r_bestfit_split_block    "
-
+	bsp_abortsystem();
 	return NULL;
-
-	#undef LOGM_TAG
 }
 
 void * _heap_r_bestfit_allocate_block(_heap_pt heap, unsigned int size) {
-	#define LOGM_TAG	"_heap_r_bestfit_allocate_block "
-
+	bsp_abortsystem();
 	return NULL;
-
-	#undef LOGM_TAG
 }
 
 int _heap_r_bestfit_release_block(_heap_pt heap, void * ptr) {
-	#define LOGM_TAG	"_heap_r_bestfit_release_block  "
-
+	bsp_abortsystem();
 	return 0;
-
-	#undef LOGM_TAG
 }
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */

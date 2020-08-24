@@ -8,9 +8,12 @@
 
 #if (INCLUDE__UBINOS__UBIK == 1)
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBIK
 
 #if 	(0 >= UBINOS__UBIK__TASK_NAME_SIZE_MAX)
 	#error "UBINOS__UBIK__TASK_NAME_SIZE_MAX should be larger than 0."
@@ -102,7 +105,6 @@ volatile unsigned int   _ubik_hrtick_hrtickpertick                  = UINT_MAX;
 /*****************************************************************************/
 
 int ubik_comp_init(unsigned int idle_stackdepth) {
-	#define	__FUNCNAME__	"ubik_comp_init"
 	int r;
 
 	_ubik_tasklockcount	= 0;
@@ -127,9 +129,17 @@ int ubik_comp_init(unsigned int idle_stackdepth) {
 	edlist_init(&_kernel_monitor_sigobjlist);
 	#endif
 
+	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
+	r = mutex_create(&_kernel_monitor_mutex);
+	if (0 != r) {
+		logme("fail at mutex_create");
+		goto end0;
+	}
+	#endif
+
 	r = _ubik_port_comp_init(idle_stackdepth);
 	if (r != 0) {
-		logme(""__FUNCNAME__": fail at _ubik_port_comp_init\r\n");
+		logme("fail at _ubik_port_comp_init");
 		goto end0;
 	}
 
@@ -138,14 +148,6 @@ int ubik_comp_init(unsigned int idle_stackdepth) {
 	edlist_init(&_stimer_list_a[1]);
 	_stimer_list_cur  	= &_stimer_list_a[0];
 	_stimer_list_next 	= &_stimer_list_a[1];
-	#endif
-
-	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
-	r = mutex_create(&_kernel_monitor_mutex);
-	if (0 != r) {
-		logme(""__FUNCNAME__": fail at mutex_create\r\n");
-		goto end0;
-	}
 	#endif
 
 	#if !(UBINOS__UBIK__EXCLUDE_IDLETASK_HOOKFUNC == 1)
@@ -166,7 +168,6 @@ int ubik_comp_init(unsigned int idle_stackdepth) {
 	r = 0;
 
 end0:
-	#undef __FUNCNAME__
 	return r;
 }
 
@@ -185,7 +186,6 @@ int ubik_collectgarbage(void) {
 
 int ubik_sprintkernelinfo(char * buf, int max) {
 #if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
-	#define	__FUNCNAME__	"ubik_sprintkernelinfo"
 	int r;
 	int r2;
 	_task_pt 	task;
@@ -197,25 +197,25 @@ int ubik_sprintkernelinfo(char * buf, int max) {
 	unsigned int maxstackusagedepth;
 
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == buf) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end0;
 	}
@@ -227,7 +227,7 @@ int ubik_sprintkernelinfo(char * buf, int max) {
 
 	r = mutex_lock(_kernel_monitor_mutex);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+		logme("fail at mutex_lock()");
 		r = -1;
 		goto end0;
 	}
@@ -360,19 +360,17 @@ int ubik_sprintkernelinfo(char * buf, int max) {
 
 	r2 = mutex_unlock(_kernel_monitor_mutex);
 	if (0 != r2) {
-		logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+		logme("fail at mutex_unlock()");
 		r = -1;
 	}
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 #else
-	#define	__FUNCNAME__	"ubik_sprintkernelinfo"
 	int r;
 
 	if (NULL == buf) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end0;
 	}
@@ -388,12 +386,10 @@ end0:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 #endif
 }
 int ubik_printkernelinfo(void) {
 #if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
-	#define	__FUNCNAME__	"ubik_printkernelinfo"
 	int r;
 	int r2;
 	_task_pt 	task;
@@ -405,26 +401,26 @@ int ubik_printkernelinfo(void) {
 	unsigned int maxstackusagedepth;
 
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	r = mutex_lock(_kernel_monitor_mutex);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+		logme("fail at mutex_lock()");
 		r = -1;
 		goto end0;
 	}
@@ -557,13 +553,12 @@ int ubik_printkernelinfo(void) {
 
 	r2 = mutex_unlock(_kernel_monitor_mutex);
 	if (0 != r2) {
-		logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+		logme("fail at mutex_unlock()");
 		r = -1;
 	}
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 #else
 	return 0;
 #endif

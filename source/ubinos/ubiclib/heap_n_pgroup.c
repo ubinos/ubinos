@@ -10,9 +10,13 @@
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1)
 
+#include <assert.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__HEAP
+
 #define _UBINOS__UBICLIB__HEAP_DIR	0
 #define _UBINOS__UBICLIB__HEAP_DIR_r	1
-
 
 #define _kw_to_tag(k, w, a, d)					_kblr_to_tag(k, w, 0, 0, a, d)
 
@@ -61,8 +65,6 @@
 int _heap_n_pgroup_init_region(
 		_heap_pt heap, unsigned int addr, unsigned int size, int locktype,
 		unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm			) {
-	#define LOGM_TAG	"_heap_n_pgroup_init_region       "
-
 	int r;
 	unsigned int log2m;
 	unsigned int k, w;
@@ -133,13 +135,9 @@ int _heap_n_pgroup_init_region(
 
 end0:
 	return r;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize) {
-	#define LOGM_TAG	"_heap_n_pgroup_expand            "
-
 	_heap_region_pt region;
 	unsigned int log2m, m/*, maskm*/, min;
 	unsigned int p1k, p1w_r;
@@ -227,15 +225,15 @@ _heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize) {
 			region->size += b1asize;
 		}
 		else {
-			addr = NULL;
+			addr = 0;
 		}
 		bsp_ubik_exitcrit();
 	}
 	else {
-		addr = NULL;
+		addr = 0;
 	}
 
-	if (NULL == addr) {
+	if (0 == addr) {
 		b1 = NULL;
 		goto end0;
 	}
@@ -282,13 +280,9 @@ end0:
 	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
-
-	#undef LOGM_TAG
 }
 
 int _heap_n_pgroup_reduce(_heap_pt heap) {
-	#define LOGM_TAG	"_heap_n_pgroup_reduce            "
-
 	int r;
 	_heap_region_pt region;
 	unsigned int log2m, m/*, maskm*/, offset, size_min;
@@ -389,13 +383,9 @@ end0:
 	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, result %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, r);
 
 	return r;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block, int endflag) {
-	#define LOGM_TAG	"_heap_n_pgroup_combine_block     "
-
 	_heap_region_pt region;
 	unsigned int log2m, m/*, maskm*/, offset;
 	_heap_block_pt b1;
@@ -500,13 +490,9 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
 	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
-
-	#undef LOGM_TAG
 }
 
 _heap_block_pt _heap_n_pgroup_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize) {
-	#define LOGM_TAG	"_heap_n_pgroup_split_block       "
-
 	_heap_region_pt region;
 	unsigned int log2m, m/*, maskm, offset*/, min;
 	_heap_block_pt b1;
@@ -600,13 +586,9 @@ end0:
 	heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, block 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, b1);
 
 	return b1;
-
-	#undef LOGM_TAG
 }
 
 void * _heap_n_pgroup_allocate_block(_heap_pt heap, unsigned int size) {
-	#define LOGM_TAG	"_heap_n_pgroup_allocate_block    "
-
 	int r;
 	_heap_region_pt region;
 	unsigned int log2m, m/*, maskm*/, offset, min;
@@ -728,7 +710,7 @@ void * _heap_n_pgroup_allocate_block(_heap_pt heap, unsigned int size) {
 
 end0:
 	if (NULL == b1) {
-		tmp = NULL;
+		tmp = 0;
 	}
 	else {
 		heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
@@ -738,13 +720,9 @@ end0:
 	}
 
 	return (void *) tmp;
-
-	#undef LOGM_TAG
 }
 
 int _heap_n_pgroup_release_block(_heap_pt heap, void * ptr) {
-	#define LOGM_TAG	"_heap_n_pgroup_release_block     "
-
 	int r, r2;
 	_heap_region_pt region;
 	unsigned int log2m, m/*, maskm, offset*/;
@@ -830,13 +808,9 @@ int _heap_n_pgroup_release_block(_heap_pt heap, void * ptr) {
 
 end0:
 	return r2;
-
-	#undef LOGM_TAG
 }
 
 unsigned int heap_pgroup_calc_fblcount(unsigned int size, unsigned int m) {
-	#define LOGM_TAG	"heap_pgroup_calc_fblcount        "
-
 	unsigned int log2m;
 	unsigned int k, w;
 	unsigned int fbln;
@@ -856,13 +830,9 @@ unsigned int heap_pgroup_calc_fblcount(unsigned int size, unsigned int m) {
 	fbln	= _kw_to_sn(k, w, log2m, m) - fbln + 1 + 1;
 
 	return fbln;
-
-	#undef LOGM_TAG
 }
 
 unsigned int heap_pgroup_calc_fblcount2(unsigned int size, unsigned int m) {
-	#define LOGM_TAG	"heap_pgroup_calc_fblcount2       "
-
 	unsigned int log2m;
 	unsigned int k, w;
 	unsigned int fbln;
@@ -880,8 +850,6 @@ unsigned int heap_pgroup_calc_fblcount2(unsigned int size, unsigned int m) {
 	fbln	= _kw_to_sn(k, w, log2m, m);
 
 	return fbln;
-
-	#undef LOGM_TAG
 }
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1) */

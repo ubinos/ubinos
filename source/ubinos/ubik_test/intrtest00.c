@@ -49,7 +49,7 @@ int ubik_test_intrtest00(void) {
 
 	r = sem_create(&_g_sem);
 	if (0 != r) {
-		logme("fail at sem_create\r\n");
+		logme("fail at sem_create");
 		r = -1;
 		goto end0;
 	}

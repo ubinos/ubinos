@@ -11,14 +11,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__TASK
 
 #ifndef UBINOS__UBIK__TASK_STACK_DEPTH_DEFAULT
 	#define UBINOS__UBIK__TASK_STACK_DEPTH_DEFAULT	UBINOS__UBIK__TASK_STACK_DEPTH_MIN
 #endif
 
 int task_comp_init(unsigned int idle_stackdepth) {
-	#define	__FUNCNAME__	"task_comp_init"
 	int i;
 	int r;
 
@@ -41,36 +43,40 @@ int task_comp_init(unsigned int idle_stackdepth) {
 	_task_cur = NULL;
 	r = task_create(NULL, &_task_idlefunc, NULL, TASK_PRIORITY__IDLE, idle_stackdepth, "idle");
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at task_create\r\n");
+		logme("fail at task_create");
 		goto end0;
 	}
 	_task_cur->type = OBJTYPE__UBIK_IDLETASK;
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_create(task_pt * task_p, taskfunc_ft func, void * arg, int priority, unsigned int stackdepth, const char * name) {
+	logmfd("task_p 0x%x, func 0x%x, arg 0x%x, priority %d, stackdepth %d, name %s",
+			task_p, func, arg, priority, stackdepth, name);
+
 	return task_create_ext(task_p, func, arg, priority, stackdepth, name, 0, 0);
 }
 
 int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority, unsigned int stackdepth, const char * name, unsigned int tag, unsigned int option) {
-	#define	__FUNCNAME__	"task_create_ext"
 	_task_pt task;
 	int r;
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	int r2;
 	#endif
 
+	logmfd("task_p 0x%x, func 0x%x, arg 0x%x, priority %d, stackdepth %d, name %s, tag %d, option 0x%x",
+			task_p, func, arg, priority, stackdepth, name, tag, option);
+
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
@@ -78,13 +84,13 @@ int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority
 	_task_collectgarbage();
 
 	if (NULL == func) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
 	if (TASK_PRIORITY__IDLE >= priority || UBINOS__UBIK__TASK_PRIORITY_MAX < priority) {
 		if (NULL != _task_cur || TASK_PRIORITY__IDLE != priority) {
-			logme(""__FUNCNAME__": parameter 4 is wrong\r\n");
+			logme("parameter 4 is wrong");
 			r = -5;
 			goto end0;
 		}
@@ -93,7 +99,7 @@ int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	r = mutex_lock(_kernel_monitor_mutex);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+		logme("fail at mutex_lock()");
 		r = -1;
 		goto end0;
 	}
@@ -109,7 +115,7 @@ int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority
 
 	task = malloc(sizeof(_task_t));
 	if (NULL == task) {
-		logme(""__FUNCNAME__": fail at malloc()\r\n");
+		logme("fail at malloc()");
 		r = -1;
 		goto end1;
 	}
@@ -118,7 +124,7 @@ int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority
 	task->stacksize = stackdepth * INT_SIZE;
 	task->stack = malloc(task->stacksize);
 	if (NULL == task->stack) {
-		logme(""__FUNCNAME__": fail at malloc()\r\n");
+		logme("fail at malloc()");
 		free(task);
 		r = -1;
 		goto end1;
@@ -128,7 +134,7 @@ int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority
 	#if !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1)
 	r = signal_create(&task->monitor);
 	if (0 != r) {
-		logme(""__FUNCNAME__": fail at signal_create()\r\n");
+		logme("fail at signal_create()");
 		free(task->stack);
 		free(task);
 		r = -1;
@@ -144,6 +150,8 @@ int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority
 	if (NULL != name) {
 		strncpy(task->name, name, UBINOS__UBIK__TASK_NAME_SIZE_MAX);
 	}
+
+	logmfd("task 0x%x is created", task);
 
 	ubik_entercrit();
 
@@ -173,18 +181,16 @@ end1:
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	r2 = mutex_unlock(_kernel_monitor_mutex);
 	if (0 != r2) {
-		logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+		logme("fail at mutex_unlock()");
 		r = -1;
 	}
 	#endif
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_delete(task_pt * task_p) {
-	#define	__FUNCNAME__	"task_delete"
 	int r;
 	#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 	int r2;
@@ -196,13 +202,13 @@ int task_delete(task_pt * task_p) {
 	#endif /* !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1) */
 
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
@@ -212,14 +218,16 @@ int task_delete(task_pt * task_p) {
 	if (NULL == task_p || NULL == *task_p || _task_cur == (_task_pt) (*task_p)) {
 		task = _task_cur;
 
+		logmfd("task_p 0x%x, task 0x%x", task_p, task);
+
 		if (0 == _bsp_kernel_active) {
-			logme(""__FUNCNAME__": ubik is not active\r\n");
+			logme("ubik is not active");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _ubik_tasklockcount) {
-			logme(""__FUNCNAME__": task is locked\r\n");
+			logme("task is locked");
 			r = -1;
 			goto end0;
 		}
@@ -227,7 +235,7 @@ int task_delete(task_pt * task_p) {
 		#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 		r = mutex_lock(_kernel_monitor_mutex);
 		if (0 != r) {
-			logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+			logme("fail at mutex_lock()");
 			r = -1;
 			goto end0;
 		}
@@ -239,21 +247,21 @@ int task_delete(task_pt * task_p) {
 		#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 		if (0 != _bsp_kernel_active) {
 			if (1 != task->osigobjlist.count) {
-				logme(""__FUNCNAME__": task is holding objects\r\n");
+				logme("task is holding objects");
 				r = -1;
 				goto end1;
 			}
 		}
 		else {
 			if (0 != task->osigobjlist.count) {
-				logme(""__FUNCNAME__": task is holding objects\r\n");
+				logme("task is holding objects");
 				r = -1;
 				goto end1;
 			}
 		}
 		#else
 		if (0 != task->osigobjlist.count) {
-			logme(""__FUNCNAME__": task is holding objects\r\n");
+			logme("task is holding objects");
 			r = -1;
 			goto end1;
 		}
@@ -290,7 +298,7 @@ int task_delete(task_pt * task_p) {
 			needunlock = 0;
 			r2 = mutex_unlock(_kernel_monitor_mutex);
 			if (0 != r2) {
-				logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+				logme("fail at mutex_unlock()");
 				r = -1;
 			}
 		}
@@ -301,8 +309,10 @@ int task_delete(task_pt * task_p) {
 	else {
 		task = (_task_pt) (*task_p);
 
+		logmfd("task_p 0x%x, task 0x%x", task_p, task);
+
 		if (NULL == _task_cur) {
-			logme(""__FUNCNAME__": ubik is not initialized\r\n");
+			logme("ubik is not initialized");
 			r = -1;
 			goto end0;
 		}
@@ -310,7 +320,7 @@ int task_delete(task_pt * task_p) {
 		#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
 		r = mutex_lock(_kernel_monitor_mutex);
 		if (0 != r) {
-			logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+			logme("fail at mutex_lock()");
 			r = -1;
 			goto end0;
 		}
@@ -320,13 +330,13 @@ int task_delete(task_pt * task_p) {
 		ubik_entercrit();
 
 		if (0 == task->valid || OBJTYPE__UBIK_TASK != task->type) {
-			logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+			logme("parameter 1 is wrong");
 			r = -2;
 			goto end1;
 		}
 
 		if (0 != task->osigobjlist.count) {
-			logme(""__FUNCNAME__": task is holding objects\r\n");
+			logme("task is holding objects");
 			r = -1;
 			goto end1;
 		}
@@ -369,7 +379,7 @@ end1:
 		needunlock = 0;
 		r2 = mutex_unlock(_kernel_monitor_mutex);
 		if (0 != r2) {
-			logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+			logme("fail at mutex_unlock()");
 			r = -1;
 		}
 	}
@@ -379,22 +389,22 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_suspend(task_pt _task) {
-	#define	__FUNCNAME__	"task_suspend"
 	int r;
 	_task_pt task = (_task_pt) _task;
 
+	logmfd("task 0x%x", _task);
+
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
@@ -403,13 +413,13 @@ int task_suspend(task_pt _task) {
 		task = _task_cur;
 
 		if (0 == _bsp_kernel_active) {
-			logme(""__FUNCNAME__": ubik is not active\r\n");
+			logme("ubik is not active");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _ubik_tasklockcount) {
-			logme(""__FUNCNAME__": task is locked\r\n");
+			logme("task is locked");
 			r = -1;
 			goto end0;
 		}
@@ -424,7 +434,7 @@ int task_suspend(task_pt _task) {
 	}
 	else {
 		if (NULL == _task_cur) {
-			logme(""__FUNCNAME__": ubik is not initialized\r\n");
+			logme("ubik is not initialized");
 			r = -1;
 			goto end0;
 		}
@@ -432,13 +442,13 @@ int task_suspend(task_pt _task) {
 		ubik_entercrit();
 
 		if (0 == task->valid || OBJTYPE__UBIK_TASK != task->type) {
-			logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+			logme("parameter 1 is wrong");
 			r = -2;
 			goto end1;
 		}
 
 		if (0 != task->suspended) {
-			logme(""__FUNCNAME__": task is already suspended\r\n");
+			logme("task is already suspended");
 			r = -1;
 			goto end1;
 		}
@@ -460,11 +470,9 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_resume(task_pt _task) {
-	#define	__FUNCNAME__	"task_resume"
 	int r;
 	_task_pt task = (_task_pt) _task;
 	_wtask_pt wtask;
@@ -472,26 +480,28 @@ int task_resume(task_pt _task) {
 	int i;
 	unsigned int task_sysflag01_old;
 
+	logmfd("task 0x%x", _task);
+
 	if (NULL == task || _task_cur == task) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end0;
 	}
 
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
@@ -499,13 +509,13 @@ int task_resume(task_pt _task) {
 	ubik_entercrit();
 
 	if (0 == task->valid || OBJTYPE__UBIK_TASK != task->type) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
 
 	if (0 == task->suspended) {
-		logme(""__FUNCNAME__": task is not suspended\r\n");
+		logme("task is not suspended");
 		r = -1;
 		goto end1;
 	}
@@ -530,7 +540,7 @@ int task_resume(task_pt _task) {
 				#if !(UBINOS__UBIK__EXCLUDE_CONDV == 1)
 				case OBJTYPE__UBIK_CONDV:
 					if (NULL == wtask->mutex) {
-						logme(""__FUNCNAME__": wtask->mutex is wrong\r\n");
+						logme("wtask->mutex is wrong");
 						r = -1;
 					}
 					else {
@@ -539,7 +549,7 @@ int task_resume(task_pt _task) {
 							r = SIGOBJ_SIGTYPE__TIMEOUT;
 							break;
 						default:
-							logme(""__FUNCNAME__": wtask->mutex is wrong\r\n");
+							logme("wtask->mutex is wrong");
 							r = -1;
 							break;
 						}
@@ -565,7 +575,7 @@ int task_resume(task_pt _task) {
 					break;
 				#endif /* !(UBINOS__UBIK__EXCLUDE_MSGQ == 1) */
 				default:
-					logme(""__FUNCNAME__": sigobj->type is wrong\r\n");
+					logme("sigobj->type is wrong");
 					r = -1;
 					break;
 				}
@@ -609,27 +619,27 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_sleep(unsigned int tick) {
-	#define	__FUNCNAME__	"task_sleep"
 	int r;
 
+	logmfv("tick %d", tick);
+
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _ubik_tasklockcount) {
-		logme(""__FUNCNAME__": task is locked\r\n");
+		logme("task is locked");
 		r = -1;
 		goto end0;
 	}
@@ -664,26 +674,28 @@ int task_sleep(unsigned int tick) {
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_sleepms(unsigned int timems) {
+	logmfv("timems %d", timems);
+
 	return task_sleep(ubik_timemstotick(timems));
 }
 
 int task_setpriority(task_pt _task, int priority) {
-	#define	__FUNCNAME__	"task_setpriority"
 	int r;
 	_task_pt task = (_task_pt) _task;
 
+	logmfd("task 0x%x, priority %d", _task, priority);
+
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	if (TASK_PRIORITY__IDLE >= priority || UBINOS__UBIK__TASK_PRIORITY_MAX < priority) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
@@ -695,7 +707,7 @@ int task_setpriority(task_pt _task, int priority) {
 	ubik_entercrit();
 
 	if (0 == task->valid || OBJTYPE__UBIK_TASK != task->type) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -713,16 +725,14 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_getpriority(task_pt _task) {
-	#define	__FUNCNAME__	"task_getpriority"
 	int r;
 	_task_pt task = (_task_pt) _task;
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
@@ -738,7 +748,7 @@ int task_getpriority(task_pt _task) {
 	ubik_entercrit();
 
 	if (0 == task->valid || OBJTYPE__UBIK_TASK != task->type) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -750,7 +760,6 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_gethighestpriority(void) {
@@ -776,6 +785,8 @@ void task_lock(void) {
 }
 
 void task_unlock(void) {
+	logmfd("");
+
 	ubik_entercrit();
 
 	if (0 < _ubik_tasklockcount) {
@@ -787,33 +798,34 @@ void task_unlock(void) {
 }
 
 int task_setmaxwaitsigobj(task_pt _task, int max) {
-#define	__FUNCNAME__	"task_setmaxwaitsigobj"
 	int r;
 	_task_pt task = (_task_pt) _task;
 	_wtask_pt wtask_p = NULL;
 	void * tempptr = NULL;
 	int i;
 
+	logmfd("task 0x%x, max %d", _task, max);
+
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 >= max || UBINOS__UBIK__TASK_MAXWAITSIGOBJ_MAX < max) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
@@ -826,7 +838,7 @@ int task_setmaxwaitsigobj(task_pt _task, int max) {
 		wtask_p = malloc(sizeof(_wtask_t) * max);
 		tempptr = wtask_p;
 		if (NULL == wtask_p) {
-			logme(""__FUNCNAME__": fail at malloc\r\n");
+			logme("fail at malloc");
 			r = -1;
 			goto end0;
 		}
@@ -843,13 +855,13 @@ int task_setmaxwaitsigobj(task_pt _task, int max) {
 	ubik_entercrit();
 
 	if (0 == task->valid || OBJTYPE__UBIK_TASK != task->type) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
 
 	if (0 != task->wtask_count) {
-		logme(""__FUNCNAME__": waiting for object\r\n");
+		logme("waiting for object");
 		r = -1;
 		goto end1;
 	}
@@ -883,16 +895,14 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_getmaxwaitsigobj(task_pt _task) {
-	#define	__FUNCNAME__	"task_getmaxwaitsigobj"
 	int r;
 	_task_pt task = (_task_pt) _task;
 
 	if (NULL == _task_cur) {
-		logme(""__FUNCNAME__": ubik is not initialized\r\n");
+		logme("ubik is not initialized");
 		r = -1;
 		goto end0;
 	}
@@ -904,7 +914,7 @@ int task_getmaxwaitsigobj(task_pt _task) {
 	ubik_entercrit();
 
 	if (0 == task->valid || OBJTYPE__UBIK_TASK != task->type) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -916,11 +926,9 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_waitforsigobjs(void ** _sigobj_p, int * sigtype_p, void ** param_p, int count, unsigned int waitopt) {
-	#define	__FUNCNAME__	"task_waitforsigobjs"
 	int r;
 	int r2;
 	_sigobj_pt * sigobj_p = (_sigobj_pt *) _sigobj_p;
@@ -933,40 +941,43 @@ int task_waitforsigobjs(void ** _sigobj_p, int * sigtype_p, void ** param_p, int
 	unsigned int task_sysflag01_old;
 	unsigned int task_timed_old;
 
+	logmfv("sigobj_p 0x%x, sigtype_p 0x%x, param_p 0x%x, count %d, waitopt 0x%x",
+			_sigobj_p, sigtype_p, param_p, count, waitopt);
+
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 == _task_cur->sysflag01) {
 		if (0 != bsp_isintr()) {
-			logme(""__FUNCNAME__": in interrupt\r\n");
+			logme("in interrupt");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _bsp_critcount) {
-			logme(""__FUNCNAME__": in critical section\r\n");
+			logme("in critical section");
 			r = -1;
 			goto end0;
 		}
 
 		if (0 != _ubik_tasklockcount) {
-			logme(""__FUNCNAME__": task is locked\r\n");
+			logme("task is locked");
 			r = -1;
 			goto end0;
 		}
 	}
 
 	if (NULL == sigobj_p) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end0;
 	}
 
 	if (NULL == sigtype_p) {
-		logme(""__FUNCNAME__": parameter 2 is wrong\r\n");
+		logme("parameter 2 is wrong");
 		r = -3;
 		goto end0;
 	}
@@ -974,7 +985,7 @@ int task_waitforsigobjs(void ** _sigobj_p, int * sigtype_p, void ** param_p, int
 	ubik_entercrit();
 
 	if (0 >= count || _task_cur->wtask_max < count) {
-		logme(""__FUNCNAME__": parameter 4 is wrong\r\n");
+		logme("parameter 4 is wrong");
 		r = -5;
 		goto end1;
 	}
@@ -1046,7 +1057,7 @@ int task_waitforsigobjs(void ** _sigobj_p, int * sigtype_p, void ** param_p, int
 	_task_cur->sysflag01	= task_sysflag01_old;
 
 	if (0 != count_invalid && 0 == (waitopt & TASK_WAITOPT__IGNOREINVALID)) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end1;
 	}
@@ -1099,7 +1110,7 @@ int task_waitforsigobjs(void ** _sigobj_p, int * sigtype_p, void ** param_p, int
 					r = mutex_unlock((mutex_pt) param_p[i]);
 				}
 				if (0 != r) {
-					logme(""__FUNCNAME__": fail at mutex_unlock()\r\n");
+					logme("fail at mutex_unlock()");
 					r = -4;
 					goto end1;
 				}
@@ -1148,7 +1159,7 @@ end1:
 				r2 = mutex_lock(wtask->mutex);
 				_task_cur->timed = task_timed_old;
 				if (0 != r2) {
-					logme(""__FUNCNAME__": fail at mutex_lock()\r\n");
+					logme("fail at mutex_lock()");
 					r = -4;
 				}
 			}
@@ -1170,21 +1181,22 @@ end1:
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
-int task_waitforsigobjs_timed(void ** sigobj_p, int * sigtype_p, void ** param_p, int count, unsigned int waitopt, unsigned int tick) {
-	#define	__FUNCNAME__	"task_waitforsigobjs_timed"
+int task_waitforsigobjs_timed(void ** _sigobj_p, int * sigtype_p, void ** param_p, int count, unsigned int waitopt, unsigned int tick) {
 	int r;
 
+	logmfv("sigobj_p 0x%x, sigtype_p 0x%x, param_p 0x%x, count %d, waitopt 0x%x, tick %d",
+			_sigobj_p, sigtype_p, param_p, count, waitopt, tick);
+
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
@@ -1192,22 +1204,23 @@ int task_waitforsigobjs_timed(void ** sigobj_p, int * sigtype_p, void ** param_p
 	_task_cur->timed		= 1;
 	_task_cur->waittick		= tick;
 
-	r = task_waitforsigobjs(sigobj_p, sigtype_p, param_p, count, waitopt);
+	r = task_waitforsigobjs(_sigobj_p, sigtype_p, param_p, count, waitopt);
 
 	_task_cur->timed		= 0;
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
-int task_waitforsigobjs_timedms(void ** sigobj_p, int * sigtype_p, void ** param_p, int count, unsigned int waitopt, unsigned int timems) {
-	return task_waitforsigobjs_timed(sigobj_p, sigtype_p, param_p, count, waitopt, ubik_timemstotick(timems));
+int task_waitforsigobjs_timedms(void ** _sigobj_p, int * sigtype_p, void ** param_p, int count, unsigned int waitopt, unsigned int timems) {
+	logmfv("sigobj_p 0x%x, sigtype_p 0x%x, param_p 0x%x, count %d, waitopt 0x%x, timems %d",
+			_sigobj_p, sigtype_p, param_p, count, waitopt, timems);
+
+	return task_waitforsigobjs_timed(_sigobj_p, sigtype_p, param_p, count, waitopt, ubik_timemstotick(timems));
 }
 
 #if !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1)
 int task_join(task_pt * task_p, int * result_p, int count) {
-	#define	__FUNCNAME__	"task_join"
 	int r;
 	int r2;
 	_task_pt task;
@@ -1217,38 +1230,40 @@ int task_join(task_pt * task_p, int * result_p, int count) {
 	int maxwaitcount_old;
 	unsigned int task_sysflag01_old;
 
+	logmfv("task_p 0x%x, result_p 0x%x, count %d", task_p, result_p, count);
+
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _bsp_critcount) {
-		logme(""__FUNCNAME__": in critical section\r\n");
+		logme("in critical section");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != _ubik_tasklockcount) {
-		logme(""__FUNCNAME__": task is locked\r\n");
+		logme("task is locked");
 		r = -1;
 		goto end0;
 	}
 
 	if (NULL == task_p) {
-		logme(""__FUNCNAME__": parameter 1 is wrong\r\n");
+		logme("parameter 1 is wrong");
 		r = -2;
 		goto end0;
 	}
 
 	if (0 >= count) {
-		logme(""__FUNCNAME__": parameter 3 is wrong\r\n");
+		logme("parameter 3 is wrong");
 		r = -4;
 		goto end0;
 	}
@@ -1257,7 +1272,7 @@ int task_join(task_pt * task_p, int * result_p, int count) {
 	if (maxwaitcount_old < count) {
 		r = task_setmaxwaitsigobj(NULL, count);
 		if (0 != r) {
-			logme(""__FUNCNAME__": fail at task_setmaxwaitsigobj()\r\n");
+			logme("fail at task_setmaxwaitsigobj()");
 			r = -1;
 			goto end0;
 		}
@@ -1265,7 +1280,7 @@ int task_join(task_pt * task_p, int * result_p, int count) {
 
 	sigobj_p = malloc(sizeof(void *) * count);
 	if (NULL == sigobj_p) {
-		logme(""__FUNCNAME__": fail at malloc()\r\n");
+		logme("fail at malloc()");
 		r = -1;
 		goto end1;
 	}
@@ -1273,7 +1288,7 @@ int task_join(task_pt * task_p, int * result_p, int count) {
 	if (NULL == result_p) {
 		resultbuf = malloc(sizeof(int) * count);
 		if (NULL == resultbuf) {
-			logme(""__FUNCNAME__": fail at malloc()\r\n");
+			logme("fail at malloc()");
 			free(sigobj_p);
 			r = -1;
 			goto end1;
@@ -1320,28 +1335,28 @@ end1:
 	if (maxwaitcount_old < count) {
 		r2 = task_setmaxwaitsigobj(NULL, maxwaitcount_old);
 		if (0 != r2) {
-			logme(""__FUNCNAME__": fail at task_setmaxwaitsigobj()\r\n");
+			logme("fail at task_setmaxwaitsigobj()");
 			r = -1;
 		}
 	}
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_join_timed(task_pt * task_p, int * result_p, int count, unsigned int tick) {
-	#define	__FUNCNAME__	"task_join_timed"
 	int r;
 
+	logmfv("task_p 0x%x, result_p 0x%x, count %d tick %d", task_p, result_p, count, tick);
+
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		r = -1;
 		goto end0;
 	}
 
 	if (0 != bsp_isintr()) {
-		logme(""__FUNCNAME__": in interrupt\r\n");
+		logme("in interrupt");
 		r = -1;
 		goto end0;
 	}
@@ -1355,10 +1370,11 @@ int task_join_timed(task_pt * task_p, int * result_p, int count, unsigned int ti
 
 end0:
 	return r;
-	#undef __FUNCNAME__
 }
 
 int task_join_timedms(task_pt * task_p, int * result_p, int count, unsigned int timems) {
+	logmfv("task_p 0x%x, result_p 0x%x, count %d timems %d", task_p, result_p, count, timems);
+
 	return task_join_timed(task_p, result_p, count, ubik_timemstotick(timems));
 }
 #endif /* !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1) */
@@ -1372,29 +1388,21 @@ task_pt task_getcur(void) {
 }
 
 unsigned int task_getremainingtimeout(void) {
-	#define	__FUNCNAME__	"task_getremainingtimeout"
-
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		return 0;
 	}
 
 	return _task_cur->waittick;
-
-	#undef __FUNCNAME__
 }
 
 unsigned int task_getremainingtimeoutms(void) {
-	#define	__FUNCNAME__	"task_getremainingtimeoutms"
-
 	if (0 == _bsp_kernel_active) {
-		logme(""__FUNCNAME__": ubik is not active\r\n");
+		logme("ubik is not active");
 		return 0;
 	}
 
 	return ubik_ticktotimems(_task_cur->waittick);
-
-	#undef __FUNCNAME__
 }
 
 unsigned int task_getminstackdepth(void) {
@@ -1501,7 +1509,6 @@ void _task_rootfunc(void * arg) {
 }
 
 void _task_changelist(_task_pt task) {
-	#define	__FUNCNAME__	"_task_changelist"
 	edlist_pt tasklist;
 	_task_pt ref;
 
@@ -1517,7 +1524,7 @@ void _task_changelist(_task_pt task) {
 			break;
 		case TASK_STATE__BLOCKED:
 			if (OBJTYPE__UBIK_IDLETASK  == task->type) {
-				logme(""__FUNCNAME__": idle task is blocked\r\n");
+				logme("idle task is blocked");
 				bsp_abortsystem();
 			}
 			if (0 == task->timed) {
@@ -1534,7 +1541,7 @@ void _task_changelist(_task_pt task) {
 			break;
 		case TASK_STATE__TERMINATED:
 			if (OBJTYPE__UBIK_IDLETASK  == task->type) {
-				logme(""__FUNCNAME__": idle task is terminated\r\n");
+				logme("idle task is terminated");
 				bsp_abortsystem();
 			}
 			tasklist = &_task_list_terminated;
@@ -1542,7 +1549,7 @@ void _task_changelist(_task_pt task) {
 			break;
 		default:
 			if (OBJTYPE__UBIK_IDLETASK  == task->type) {
-				logme(""__FUNCNAME__": idle task is unknown state\r\n");
+				logme("idle task is unknown state");
 				bsp_abortsystem();
 			}
 
@@ -1551,7 +1558,7 @@ void _task_changelist(_task_pt task) {
 	}
 	else {
 		if (OBJTYPE__UBIK_IDLETASK  == task->type) {
-			logme(""__FUNCNAME__": idle task is suspended\r\n");
+			logme("idle task is suspended");
 			bsp_abortsystem();
 		}
 
@@ -1582,7 +1589,6 @@ void _task_changelist(_task_pt task) {
 			_task_list_ready_cur = &_task_list_ready_a[_task_list_ready_index];
 		}
 	}
-	#undef __FUNCNAME__
 }
 
 void _task_applypriority(_task_pt task) {

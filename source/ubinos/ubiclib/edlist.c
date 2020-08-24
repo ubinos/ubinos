@@ -6,7 +6,11 @@
 
 #include "_ubiclib.h"
 
+#include <assert.h>
 #include <stdlib.h>
+
+#undef LOGM_CATEGORY
+#define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
 void * _edlist_setcur(edlist_pt edlist, void * cur)
 {
