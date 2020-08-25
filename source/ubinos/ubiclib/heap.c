@@ -1596,7 +1596,17 @@ int heap_printheapinfo(heap_pt _heap) {
 		region 	 = &heap->region[0];
 		log2m	 = region->log2m;
 
+		printf("---------\r\n");
+		printf("algorithm %d\r\n", region->algorithm);
+		printf("m %d\r\n", region->m);
+        printf("fbl count %d\r\n", region->fblcount);
+        printf("fbl offset %d\r\n", region->fbloffset);
+        printf("fbl size %d\r\n", sizeof(edlist_t) * region->fblcount);
+        printf("fbl bitmap bit size %d\r\n", region->fblbm->bitsize);
+        printf("fbl bitmap memory size %d bytes\r\n", bitmap_getmemsize(region->fblbm->bitsize));
+        printf("fbl bitmap buffer size %d bytes\r\n", region->fblbm->map_bytesize);
         printf("---------\r\n");
+
         bx = _heap_blocklist_head(&(region->abl));
         while(bx != NULL) {
             _print_block(heap, 0, bx, log2m);

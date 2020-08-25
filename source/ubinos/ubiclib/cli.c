@@ -30,6 +30,10 @@ static int cli_rootfunc(char *str, int len, void *arg);
 static int cli_cmdfunc__help(char *str, int len, void *arg);
 static int cli_cmdfunc__set(char *str, int len, void *arg);
 
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
+static int cli_cmdfunc__heap(char *str, int len, void *arg);
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
+
 int cli_sethookfunc(cli_hookfunc_ft hookfunc, void *arg) {
 	_cli_hookfunc = hookfunc;
 	_cli_hookarg = arg;
@@ -103,6 +107,7 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 	tmplen = len;
 
 	do {
+
 		cmd = "set ";
 		cmdlen = strlen(cmd);
 		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
@@ -138,25 +143,53 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 			break;
 		}
 #endif
+
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
+		cmd = "heap ";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+		{
+			tmpstr = &tmpstr[cmdlen];
+			tmplen -= cmdlen;
+
+			printf("\r\n");
+
+			r = cli_cmdfunc__heap(tmpstr, tmplen, arg);
+			break;
+		}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
+
 	} while(0);
 
 	return r;
 }
 
 static int cli_cmdfunc__help(char *str, int len, void *arg) {
-	printf("h                       : help\r\n");
+	printf("h                                   : help\r\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("mi                      : memory information\r\n");
+	printf("mi                                  : memory information\r\n");
 #endif
 #if ( (INCLUDE__UBINOS__UBIK == 1) && !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) )
-	printf("ki                      : kernel information\r\n");
+	printf("ki                                  : kernel information\r\n");
 #endif
-	printf("set echo <on|off>       : set echo on/off\r\n");
+	printf("set echo <on|off>                   : set echo on/off\r\n");
 #if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
-	printf("set logm                : set log message level\r\n");
+	printf("set logm                            : set log message level\r\n");
 #endif
-
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
+	printf("heap param <algorithm> <size> (m)   : calculate heap parameters\r\n");
+	printf("    algorithm: heap algorithm\r\n");
+	printf("        group    : group system\r\n");
+	printf("        pgroup   : pure group system (without tailing) \r\n");
+	printf("        bbuddy   : binary buddy system\r\n");
+	printf("        wbuddy   : weighted buddy system\r\n");
+	printf("        bestfit  : best fit\r\n");
+	printf("        firstfit : first fit\r\n");
+	printf("        nextfit  : next fit\r\n");
+	printf("    size: heap size \r\n");
+	printf("    m: M value for group system and pure group system\r\n");
 	return 0;
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
 }
 
 static int cli_cmdfunc__set(char *str, int len, void *arg) {
@@ -165,9 +198,6 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 	int tmplen;
 	char *cmd = NULL;
 	int cmdlen;
-
-	int id;
-	int level;
 
 	tmpstr = str;
 	tmplen = len;
@@ -213,6 +243,9 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 		cmdlen = strlen(cmd);
 		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
 		{
+			int id;
+			int level;
+
 			printf("    input category id\r\n");
 			printf("        %4d : all    \r\n", -1);
 			printf("        %4d : none   \r\n", LOGM_CATEGORY__NONE);
@@ -269,6 +302,191 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 
 	return r;
 }
+
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
+static int cli_cmdfunc__heap(char *str, int len, void *arg) {
+	int r = -1;
+	char *tmpstr;
+	int tmplen;
+	char *cmd = NULL;
+	int cmdlen;
+
+	tmpstr = str;
+	tmplen = len;
+
+	do
+	{
+		cmd = "param ";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+		{
+			tmpstr = &tmpstr[cmdlen];
+			tmplen -= cmdlen;
+
+			unsigned int region_size;
+			unsigned int region_m;
+			unsigned int fbl_count;
+			unsigned int fbl_memsize;
+			unsigned int bitmap_memsize;
+
+			r = -1;
+
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP == 1)
+			cmd = "group ";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				tmpstr = &tmpstr[cmdlen];
+				tmplen -= cmdlen;
+
+				sscanf(tmpstr, "%u %u", &region_size, &region_m);
+
+				fbl_count = heap_group_calc_fblcount(region_size, region_m);
+				fbl_memsize = sizeof(edlist_t) * fbl_count;
+				bitmap_memsize = bitmap_getmemsize(fbl_count);
+
+				r = 0;
+
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP\r\n");
+			}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP == 1) */
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1)
+			cmd = "pgroup ";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				tmpstr = &tmpstr[cmdlen];
+				tmplen -= cmdlen;
+
+				sscanf(tmpstr, "%u %u", &region_size, &region_m);
+
+				fbl_count = heap_pgroup_calc_fblcount(region_size, region_m);
+				fbl_memsize = sizeof(edlist_t) * fbl_count;
+				bitmap_memsize = bitmap_getmemsize(fbl_count);
+
+				r = 0;
+
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP\r\n");
+			}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1) */
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1)
+			cmd = "bbuddy ";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				tmpstr = &tmpstr[cmdlen];
+				tmplen -= cmdlen;
+
+				sscanf(tmpstr, "%u", &region_size);
+				region_m = 2;
+
+				fbl_count = heap_pgroup_calc_fblcount(region_size, region_m);
+				fbl_memsize = sizeof(edlist_t) * fbl_count;
+				bitmap_memsize = bitmap_getmemsize(fbl_count);
+
+				r = 0;
+
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__BBUDDY\r\n");
+			}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1) */
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1)
+			cmd = "wbuddy ";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				tmpstr = &tmpstr[cmdlen];
+				tmplen -= cmdlen;
+
+				sscanf(tmpstr, "%u", &region_size);
+				region_m = 2;
+
+				fbl_count = heap_wbuddy_calc_fblcount(region_size, region_m);
+				fbl_memsize = sizeof(edlist_t) * fbl_count;
+				bitmap_memsize = bitmap_getmemsize(fbl_count);
+
+				r = 0;
+
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY\r\n");
+			}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1) */
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1)
+			cmd = "bestfit ";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				region_m = 2;
+
+				fbl_count = 2;
+				fbl_memsize = sizeof(edlist_t) * fbl_count;
+				bitmap_memsize = bitmap_getmemsize(fbl_count);
+
+				r = 0;
+
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT\r\n");
+			}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) */
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1)
+			cmd = "firstfit ";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				region_m = 2;
+
+				fbl_count = 2;
+				fbl_memsize = sizeof(edlist_t) * fbl_count;
+				bitmap_memsize = bitmap_getmemsize(fbl_count);
+
+				r = 0;
+
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__FIRSTFIT\r\n");
+			}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) */
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1)
+			cmd = "nextfit ";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				region_m = 2;
+
+				fbl_count = 2;
+				fbl_memsize = sizeof(edlist_t) * fbl_count;
+				bitmap_memsize = bitmap_getmemsize(fbl_count);
+
+				r = 0;
+
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__NEXTFIT\r\n");
+			}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */
+
+			if (r == 0) {
+				printf("        m value                             (..._M)             : %u\r\n", region_m);
+				printf("        fbl (free block list)\r\n");
+				printf("            fbl count minimum value         (..._FBLCOUNT)      : %u\r\n", fbl_count);
+				printf("            fbl memory size                                     : %u bytes\r\n", fbl_memsize);
+				printf("        fblbm (bitmap for indexing free block list)\r\n");
+				printf("            fblbm memory size minimum value (..._FBLBM_BUFSIZE) : %u\r\n", bitmap_memsize);
+
+				r = 0;
+				break;
+			}
+			else {
+				printf(" not supported\r\n");
+				r = 0;
+				break;
+			}
+		}
+	} while (0);
+
+	return r;
+}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_CLI == 1) */
 
