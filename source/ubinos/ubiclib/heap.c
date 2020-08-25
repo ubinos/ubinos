@@ -1599,31 +1599,33 @@ int heap_printheapinfo(heap_pt _heap) {
 		printf("---------\r\n");
 		printf("algorithm %d\r\n", region->algorithm);
 		printf("m %d\r\n", region->m);
-        printf("fbl count %d\r\n", region->fblcount);
-        printf("fbl offset %d\r\n", region->fbloffset);
-        printf("fbl size %d\r\n", sizeof(edlist_t) * region->fblcount);
-        printf("fbl bitmap bit size %d\r\n", region->fblbm->bitsize);
-        printf("fbl bitmap memory size %d bytes\r\n", bitmap_getmemsize(region->fblbm->bitsize));
-        printf("fbl bitmap buffer size %d bytes\r\n", region->fblbm->map_bytesize);
-        printf("---------\r\n");
+		printf("fbl count %d\r\n", region->fblcount);
+		printf("fbl offset %d\r\n", region->fbloffset);
+		printf("fbl size %d\r\n", sizeof(edlist_t) * region->fblcount);
+		printf("fbl bitmap bit size %d\r\n", region->fblbm->bitsize);
+		printf("fbl bitmap memory size %d bytes\r\n", bitmap_getmemsize(region->fblbm->bitsize));
+		printf("fbl bitmap buffer size %d bytes\r\n", region->fblbm->map_bytesize);
+		printf("---------\r\n");
 
-        bx = _heap_blocklist_head(&(region->abl));
-        while(bx != NULL) {
-            _print_block(heap, 0, bx, log2m);
-            bx = _heap_blocklist_next(bx);
-        }
+		bx = _heap_blocklist_head(&(region->abl));
+		while(bx != NULL) {
+			_print_block(heap, 0, bx, log2m);
+			bx = _heap_blocklist_next(bx);
+		}
 
-        printf("---------\r\n");
+		printf("---------\r\n");
 		for (i=0; i<region->fblcount; i++) {
 			fbl = &region->fbl_ap[i];
-			printf("region 0 fbl %4d count: %4u\r\n", i, fbl->count);
-			bx = _heap_blocklist_head(fbl);
-	        while(bx != NULL) {
-	            _print_block(heap, 0, bx, log2m);
-	            bx = _heap_blocklist_next(bx);
-	        }
+			if (fbl->count != 0) {
+				printf("region 0 fbl %4d count: %4u\r\n", i, fbl->count);
+				bx = _heap_blocklist_head(fbl);
+				while(bx != NULL) {
+					_print_block(heap, 0, bx, log2m);
+					bx = _heap_blocklist_next(bx);
+				}
+			}
 		}
-        printf("---------\r\n");
+		printf("---------\r\n");
 
 		/////////////////////
 	///////////////////////

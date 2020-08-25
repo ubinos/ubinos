@@ -35,11 +35,12 @@ set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP                
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY               TRUE    BOOL "Exclude binary buddy system algorithm")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY               TRUE    BOOL "Exclude weighted buddy system algorithm")
 
+# maximum size = 256 KiB
 set_cache_default(UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM                          "GROUP"     STRING "Algorithm for normal heap [BESTFIT | FIRSTFIT | NEXTFIT | PGROUP | GROUP | BBUDDY | WBUDDY]")
 set_cache_default(UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE                           "MUTEX"     STRING "Lock type for normal heap [NONE | MUTEX | CRITICAL]")
-set_cache_default(UBINOS__UBICLIB__HEAP_DIR0_M                                  4           STRING "Maximum number of members of group system for normal heap")
-set_cache_default(UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT                           62          STRING "Free block list count for normal heap")
-set_cache_default(UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE                      12          STRING "Free block list bitmap buffer size for normal heap")
+set_cache_default(UBINOS__UBICLIB__HEAP_DIR0_M                                  8           STRING "Maximum number of members of group system for normal heap")
+set_cache_default(UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT                           226         STRING "Free block list count for normal heap")
+set_cache_default(UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE                      36          STRING "Free block list bitmap buffer size for normal heap")
 
 set_cache_default(UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM                          "BESTFIT"   STRING "Algorithm for reverse heap [BESTFIT | FIRSTFIT | NEXTFIT | PGROUP | GROUP | BBUDDY | WBUDDY]")
 set_cache_default(UBINOS__UBICLIB__HEAP_DIR1_LOCKTYPE                           "MUTEX"     STRING "Lock type for reverse heap [NONE | MUTEX | CRITICAL]")

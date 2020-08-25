@@ -193,12 +193,7 @@ void * _sbrk (int incr)
 
 void * _malloc_r(struct _reent * reent_ptr, size_t size)
 {
-    if (0 == bsp_ubik_isrt()) {
-        return _heap_allocate_block(_ubiclib_heap, 0, SIZETOUINT(size));
-    }
-    else {
-        return _heap_allocate_block(_ubiclib_heap, 1, SIZETOUINT(size));
-    }
+    return _heap_allocate_block(_ubiclib_heap, 0, SIZETOUINT(size));
 }
 
 void _free_r(struct _reent * reent_ptr, void * ptr)

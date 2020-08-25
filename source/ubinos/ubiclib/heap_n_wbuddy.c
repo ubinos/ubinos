@@ -988,7 +988,7 @@ unsigned int heap_wbuddy_calc_fblcount(unsigned int size, unsigned int m) {
 	return fbln;
 }
 
-unsigned int heap_wbuddy_calc_fblcount2(unsigned int size, unsigned int m) {
+unsigned int heap_wbuddy_calc_fblcount_raw(unsigned int size, unsigned int m) {
 	unsigned int k, w;
 	unsigned int fbln;
 
