@@ -86,7 +86,7 @@ macro(___project_add_app)
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld)
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "FLASH"
@@ -94,7 +94,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_FLASH_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "FLASH2"
@@ -102,7 +102,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_FLASH2_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "FLASH3"
@@ -110,7 +110,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_FLASH3_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "FLASH4"
@@ -118,7 +118,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_FLASH4_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "FLASH5"
@@ -126,7 +126,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_FLASH5_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "FLASH6"
@@ -134,7 +134,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_FLASH6_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "FLASH7"
@@ -142,7 +142,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_FLASH7_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "FLASH8"
@@ -150,7 +150,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_FLASH8_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "RAM"
@@ -158,7 +158,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_RAM_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "RAM2"
@@ -166,7 +166,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_RAM2_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "RAM3"
@@ -174,7 +174,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_RAM3_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "RAM4"
@@ -182,7 +182,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_RAM4_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "RAM5"
@@ -190,7 +190,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_RAM5_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "RAM6"
@@ -198,7 +198,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_RAM6_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "RAM7"
@@ -206,7 +206,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__LINK_MEMMAP_RAM7_LENGTH})
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_linkscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_linkscript
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         ${CMAKE_CURRENT_BINARY_DIR}/linkscript.ld
                         "RAM8"
@@ -343,7 +343,7 @@ macro(___project_add_app)
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} refine_gdbscript
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_gdbscript
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
                         ${PROJECT_EXE_NAME}.bin)
@@ -352,31 +352,31 @@ macro(___project_add_app)
     if(NOT ${UBINOS__BSP__GDBSERVER_HOST} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
                         "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
                         "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
                         "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
                         "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
                         "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
@@ -385,31 +385,31 @@ macro(___project_add_app)
     if(NOT ${UBINOS__BSP__GDBSERVER_PORT} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
                         ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
                         ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
                         ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
                         ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX} replace_string
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
                         ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
@@ -425,7 +425,7 @@ macro(___project_add_app)
 
     add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${PROJECT_TOOLBOX} show_mapfile_info
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
                     ${PROJECT_EXE_NAME}.map)
 endmacro(___project_add_app)
 
@@ -593,6 +593,7 @@ macro(project_begin)
     if("${_tmp_str}"  STREQUAL "")
         set(PROJECT_TOOLBOX "${PROJECT_UBINOS_DIR}/make/toolbox.py")
     endif()
+    set(PROJECT_TOOLBOX_RUN_CMD python ${PROJECT_TOOLBOX})
 
     set_cache_default(PROJECT_CONFIG_NAME                                       ""      STRING "Config name")
     set_cache_default(PROJECT_CONFIG_DIR                                        ""      PATH "Config directory")
