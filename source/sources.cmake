@@ -24,6 +24,16 @@ if(INCLUDE__UBINOS__UBICLIB)
     set(PROJECT_SOURCES ${PROJECT_SOURCES} ${_tmp_sources})
 endif(INCLUDE__UBINOS__UBICLIB)
 
+if(INCLUDE__UBINOS__UBICLIB_TEST)
+    get_filename_component(_tmp_source_dir "${CMAKE_CURRENT_LIST_DIR}/ubinos/ubiclib_test" ABSOLUTE)
+    file(GLOB_RECURSE _tmp_sources
+        "${_tmp_source_dir}/*.c"
+        "${_tmp_source_dir}/*.cpp"
+        "${_tmp_source_dir}/*.S"
+        "${_tmp_source_dir}/*.s")
+    set(PROJECT_SOURCES ${PROJECT_SOURCES} ${_tmp_sources})
+endif(INCLUDE__UBINOS__UBICLIB_TEST)
+
 if(INCLUDE__UBINOS__UBIK)
     get_filename_component(_tmp_source_dir "${CMAKE_CURRENT_LIST_DIR}/ubinos/ubik" ABSOLUTE)
     file(GLOB_RECURSE _tmp_sources

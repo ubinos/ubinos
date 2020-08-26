@@ -318,6 +318,18 @@
 ////////
 
 
+#cmakedefine01 INCLUDE__UBINOS__UBICLIB_TEST
+
+#if (INCLUDE__UBINOS__UBICLIB_TEST == 1)
+
+#cmakedefine01 UBINOS__UBICLIB_TEST__EXCLUDE_HEAPTEST
+
+#endif /* (INCLUDE__UBINOS__UBICLIB_TEST == 1) */
+
+
+////////
+
+
 #cmakedefine01 INCLUDE__UBINOS__UBIK
 
 #if (INCLUDE__UBINOS__UBIK == 1)
