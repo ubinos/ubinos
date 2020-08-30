@@ -26,26 +26,26 @@ static void tasktest02_task1func(void * arg) {
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 1 tries to sleep (for %d ms)\r\n", ubik_ticktotimems(sleepvalue));
+	printf("task 1 tries to sleep (for %d ms)\n", ubik_ticktotimems(sleepvalue));
 	r = task_sleep(sleepvalue);
 	if (0 != r) {
-		printf("task 1: fail at task_sleep(), err=%d\r\n", r);
+		printf("task 1: fail at task_sleep(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
-	printf("task 1 wakes up\r\n");
+	printf("task 1 wakes up\n");
 
 	for (i=0; i<(UBINOS__UBIK_TEST__TASKLOOPCOUNT * 1); i++) {
 		_g_ubik_test_count1++;
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
 end0:
-	printf("task 1 ends\r\n");
+	printf("task 1 ends\n");
 }
 
 int ubik_test_tasktest02(void) {
@@ -54,107 +54,107 @@ int ubik_test_tasktest02(void) {
 	unsigned int count1;
 	unsigned int sleepvalue = ubik_timemstotick(UBINOS__UBIK_TEST__TASKWAITTIMEMS) * UBINOS__UBIK_TEST__TASKLOOPCOUNT / 3;
 
-	printf("\r\n");
-	printf("<test>\r\n");
-	printf("<name>ubik_test_tasktest02</name>\r\n");
-	printf("<description>Test on sleep function of task</description>\n\r");
+	printf("\n");
+	printf("<test>\n");
+	printf("<name>ubik_test_tasktest02</name>\n");
+	printf("<description>Test on sleep function of task</description>\n");
 
-	printf("<message>\n\r");
+	printf("<message>\n");
 
 	_g_ubik_test_result = 0;
 
 	_g_ubik_test_count1 = 0;
 
-	printf("create task 1\r\n");
+	printf("create task 1\n");
 	r = task_create(&_g_ubik_test_task_a[0], tasktest02_task1func, NULL, task_getpriority(NULL)-1, 0, "tasktest02 task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = task_sleep(sleepvalue);
 	if (0 != r) {
-		printf("fail at task_sleep(), err=%d\r\n", r);
+		printf("fail at task_sleep(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
 	count1 = _g_ubik_test_count1;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	r = task_sleep(sleepvalue);
 	if (0 != r) {
-		printf("fail at task_sleep(), err=%d\r\n", r);
+		printf("fail at task_sleep(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
-	printf("\r\n");
+	printf("\n");
 	printf("check point 01: ");
 	if (count1 == _g_ubik_test_count1) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end1;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	r = task_sleep(sleepvalue * 2);
 	if (0 != r) {
-		printf("fail at task_sleep(), err=%d\r\n", r);
+		printf("fail at task_sleep(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
 	count1 = _g_ubik_test_count1;
-	printf("checking\r\n");
+	printf("checking\n");
 	r = task_sleep(sleepvalue);
 	if (0 != r) {
-		printf("fail at task_sleep(), err=%d\r\n", r);
+		printf("fail at task_sleep(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
 	printf("check point 02: ");
 	if (count1 != _g_ubik_test_count1) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end1;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	r = task_sleep(sleepvalue * 2);
 	if (0 != r) {
-		printf("fail at task_sleep(), err=%d\r\n", r);
+		printf("fail at task_sleep(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
 	count1 = _g_ubik_test_count1;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	r = task_sleep(sleepvalue);
 	if (0 != r) {
-		printf("fail at task_sleep(), err=%d\r\n", r);
+		printf("fail at task_sleep(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
-	printf("\r\n");
+	printf("\n");
 	printf("check point 03: ");
 	if (count1 == _g_ubik_test_count1) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end1;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	r = 0;
 
 end1:
 	r2 = task_join(_g_ubik_test_task_a, NULL, 1);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\r\n", r2);
+		printf("fail at task_join(), err=%d\n", r2);
 		r = -1;
 	}
 
@@ -166,7 +166,7 @@ end0:
 		r = 0;
 	}
 
-	printf("</message>\n\r");
+	printf("</message>\n");
 
 	printf("<result>");
 	if (0 == r) {
@@ -175,9 +175,9 @@ end0:
 	else {
 		printf("fail");
 	}
-	printf("</result>\r\n");
-	printf("</test>\r\n");
-	printf("\r\n");
+	printf("</result>\n");
+	printf("</test>\n");
+	printf("\n");
 	return r;
 }
 

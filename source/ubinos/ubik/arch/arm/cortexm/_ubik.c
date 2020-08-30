@@ -19,7 +19,7 @@ void ubik_entercrit(void) {
 
 void ubik_exitcrit(void) {
 	if (0 == _bsp_critcount) {
-		dtty_puts("\r\nubik_exitcrit fail (_bsp_critcount is already 0)\r\n", 80);
+		dtty_puts("\nubik_exitcrit fail (_bsp_critcount is already 0)\n", 80);
 		bsp_abortsystem();
 	}
 	_bsp_critcount--;
@@ -259,7 +259,7 @@ void bsp_ubik_tick_handler(void) {
 		#elif (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__ABORT)
 
 		if (tickrtccount_diff != 1) {
-			dtty_puts("\r\nrtc tick check fail\r\n", 80);
+			dtty_puts("\nrtc tick check fail\n", 80);
 			bsp_abortsystem();
 		}
 
@@ -413,7 +413,7 @@ void bsp_ubik_irq_handler(void) {
         : "=r" (exceptiontype)
     );
 
-    dtty_puts("\r\n\r\nunknown exception (", 80);
+    dtty_puts("\n\nunknown exception (", 80);
     switch (exceptiontype) {
     default:
     	if (exceptiontype >= 100) {
@@ -425,7 +425,7 @@ void bsp_ubik_irq_handler(void) {
     	dtty_putc((int) ((exceptiontype % 10) + '0'));
         break;
     }
-    dtty_puts(")\r\n", 80);
+    dtty_puts(")\n", 80);
     bsp_abortsystem();
 }
 

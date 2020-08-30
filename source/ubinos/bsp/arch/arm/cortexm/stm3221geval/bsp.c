@@ -44,7 +44,7 @@ __WEAK void SystemClock_Config(void) {
 	while (LL_RCC_HSE_IsReady() != 1) {
 	};
 #elif (UBINOS__BSP__STM32_RCC_HSE_CONFIG == UBINOS__BSP__STM32_RCC_HSE_CONFIG__OFF)
-    dtty_puts("Unsupported UBINOS__BSP__STM32_RCC_HSE_CONFIG option\r\n", 80);
+    dtty_puts("Unsupported UBINOS__BSP__STM32_RCC_HSE_CONFIG option\n", 80);
     bsp_abortsystem();
 #else
 	#error "Unsupported UBINOS__BSP__STM32_RCC_HSE_CONFIG option"

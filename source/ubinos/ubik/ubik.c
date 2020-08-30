@@ -233,11 +233,11 @@ int ubik_sprintkernelinfo(char * buf, int max) {
 	}
 
 	r = 0;
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "|task    |address    |function   |stack size   |max stack    |priority   |state   |suspended |timed |name               \r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "|type    |           |address    |(byte(depth))|usage        |(original) |        |          |      |                   \r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "|        |           |           |             |(byte(depth))|           |        |          |      |                   \r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "|task    |address    |function   |stack size   |max stack    |priority   |state   |suspended |timed |name               \n");
+	if (r < max) r += snprintf(&buf[r], max-r, "|type    |           |address    |(byte(depth))|usage        |(original) |        |          |      |                   \n");
+	if (r < max) r += snprintf(&buf[r], max-r, "|        |           |           |             |(byte(depth))|           |        |          |      |                   \n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
 
 	bsp_getstacksize(1, &stacksize);
 	stacksizedepth = stacksize/INT_SIZE;
@@ -253,8 +253,8 @@ int ubik_sprintkernelinfo(char * buf, int max) {
 		maxstackusage = 0;
 		maxstackusagedepth = 0;
 	}
-	if (r < max) r += snprintf(&buf[r], max-r, "|svc     |           |           | 0x%08x  | 0x%08x  |           |        |          |      |        \r\n", stacksize, maxstackusage);
-	if (r < max) r += snprintf(&buf[r], max-r, "|        |           |           |(0x%08x) |(0x%08x) |           |        |          |      |                   \r\n",
+	if (r < max) r += snprintf(&buf[r], max-r, "|svc     |           |           | 0x%08x  | 0x%08x  |           |        |          |      |        \n", stacksize, maxstackusage);
+	if (r < max) r += snprintf(&buf[r], max-r, "|        |           |           |(0x%08x) |(0x%08x) |           |        |          |      |                   \n",
 			stacksizedepth, maxstackusagedepth);
 
 	task = _kernel_monitor_tasklist_head(&_kernel_monitor_tasklist);
@@ -296,67 +296,67 @@ int ubik_sprintkernelinfo(char * buf, int max) {
 			if (r < max) r += snprintf(&buf[r], max-r, " (%s)", _task_idletaskhookfunc_name);
 		}
 #endif
-		if (r < max) r += snprintf(&buf[r], max-r, "\r\n");
+		if (r < max) r += snprintf(&buf[r], max-r, "\n");
 
-		if (r < max) r += snprintf(&buf[r], max-r, "|        |           |           |(0x%08x) |(0x%08x) |           |        |          |      |                   \r\n",
+		if (r < max) r += snprintf(&buf[r], max-r, "|        |           |           |(0x%08x) |(0x%08x) |           |        |          |      |                   \n",
 				stacksizedepth, maxstackusagedepth);
 	}
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "\r\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "\n");
 
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "|timer   |address    |semaphore  |period     |oneshot |running                                      \r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "|type    |           |address    |(tick)     |        |                                             \r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "|timer   |address    |semaphore  |period     |oneshot |running                                      \n");
+	if (r < max) r += snprintf(&buf[r], max-r, "|type    |           |address    |(tick)     |        |                                             \n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
 	stimer = _kernel_monitor_stimerlist_head(&_kernel_monitor_stimerlist);
 	for (; NULL != stimer; stimer = _kernel_monitor_stimerlist_next(stimer)) {
-		if (r < max) r += snprintf(&buf[r], max-r, "|stimer  |0x%08x |0x%08x |0x%08x |%d       |%d\r\n",
+		if (r < max) r += snprintf(&buf[r], max-r, "|stimer  |0x%08x |0x%08x |0x%08x |%d       |%d\n",
 				(unsigned int) stimer, (unsigned int) (stimer->sigobj), stimer->waittick, stimer->oneshot, stimer->running);
 	}
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "\r\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "\n");
 
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "|sigobj  |address    |waiting |max      |sender     |count      |max        |etc                    \r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "|type    |           |task    |priority |(owner)    |(size)     |count      |                       \r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "|        |           |count   |         |address    |           |(size)     |                       \r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "|sigobj  |address    |waiting |max      |sender     |count      |max        |etc                    \n");
+	if (r < max) r += snprintf(&buf[r], max-r, "|type    |           |task    |priority |(owner)    |(size)     |count      |                       \n");
+	if (r < max) r += snprintf(&buf[r], max-r, "|        |           |count   |         |address    |           |(size)     |                       \n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
 	sigobj = _kernel_monitor_sigobjlist_head(&_kernel_monitor_sigobjlist);
 	for (; NULL != sigobj; sigobj = _kernel_monitor_sigobjlist_next(sigobj)) {
 		switch (sigobj->type) {
 		case OBJTYPE__UBIK_SIGNAL:
-			if (r < max) r += snprintf(&buf[r], max-r, "|signal  |0x%08x |%04d    |%04d     |0x%08x |           |           |\r\n",
+			if (r < max) r += snprintf(&buf[r], max-r, "|signal  |0x%08x |%04d    |%04d     |0x%08x |           |           |\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj));
 			break;
 		case OBJTYPE__UBIK_CONDV:
-			if (r < max) r += snprintf(&buf[r], max-r, "|condv   |0x%08x |%04d    |%04d     |0x%08x |           |           |\r\n",
+			if (r < max) r += snprintf(&buf[r], max-r, "|condv   |0x%08x |%04d    |%04d     |0x%08x |           |           |\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj));
 			break;
 		case OBJTYPE__UBIK_MUTEX:
-			if (r < max) r += snprintf(&buf[r], max-r, "|mutex   |0x%08x |%04d    |%04d     |0x%08x |0x%08x |           |n: %d\r\n",
+			if (r < max) r += snprintf(&buf[r], max-r, "|mutex   |0x%08x |%04d    |%04d     |0x%08x |0x%08x |           |n: %d\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj),
 					sigobj->count, sigobj->nopriorityinheritance);
 			break;
 		case OBJTYPE__UBIK_SEM:
-			if (r < max) r += snprintf(&buf[r], max-r, "|sem     |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |i: %d\r\n",
+			if (r < max) r += snprintf(&buf[r], max-r, "|sem     |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |i: %d\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj),
 					sigobj->count, sigobj->maxcount, sigobj->ignoreoverflow);
 			break;
 		case OBJTYPE__UBIK_MSGQ:
-			if (r < max) r += snprintf(&buf[r], max-r, "|msgq    |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |msg size: 0x%04x\r\n",
+			if (r < max) r += snprintf(&buf[r], max-r, "|msgq    |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |msg size: 0x%04x\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj),
 					sigobj->count, sigobj->maxcount, sigobj->msgsize_1 + 1);
 			break;
 		default:
-			if (r < max) r += snprintf(&buf[r], max-r, "|unknown |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |type: 0x%04x\r\n",
+			if (r < max) r += snprintf(&buf[r], max-r, "|unknown |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |type: 0x%04x\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj),
 					sigobj->count, sigobj->maxcount, sigobj->type);
 			break;
 		}
 	}
 
-	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\r\n");
-	if (r < max) r += snprintf(&buf[r], max-r, "\r\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "------------------------------------------------------------------------------------------------------------------------\n");
+	if (r < max) r += snprintf(&buf[r], max-r, "\n");
 
 	r2 = mutex_unlock(_kernel_monitor_mutex);
 	if (0 != r2) {
@@ -425,11 +425,11 @@ int ubik_printkernelinfo(void) {
 		goto end0;
 	}
 
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
-	printf("|task    |address    |function   |stack size   |max stack    |priority   |state   |suspended |timed |name               \r\n");
-	printf("|type    |           |address    |(byte(depth))|usage        |(original) |        |          |      |                   \r\n");
-	printf("|        |           |           |             |(byte(depth))|           |        |          |      |                   \r\n");
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("|task    |address    |function   |stack size   |max stack    |priority   |state   |suspended |timed |name               \n");
+	printf("|type    |           |address    |(byte(depth))|usage        |(original) |        |          |      |                   \n");
+	printf("|        |           |           |             |(byte(depth))|           |        |          |      |                   \n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
 
 	bsp_getstacksize(1, &stacksize);
 	stacksizedepth = stacksize/INT_SIZE;
@@ -445,8 +445,8 @@ int ubik_printkernelinfo(void) {
 		maxstackusage = 0;
 		maxstackusagedepth = 0;
 	}
-	printf("|svc     |           |           | 0x%08x  | 0x%08x  |           |        |          |      |        \r\n", stacksize, maxstackusage);
-	printf("|        |           |           |(0x%08x) |(0x%08x) |           |        |          |      |                   \r\n",
+	printf("|svc     |           |           | 0x%08x  | 0x%08x  |           |        |          |      |        \n", stacksize, maxstackusage);
+	printf("|        |           |           |(0x%08x) |(0x%08x) |           |        |          |      |                   \n",
 			stacksizedepth, maxstackusagedepth);
 
 	task = _kernel_monitor_tasklist_head(&_kernel_monitor_tasklist);
@@ -488,66 +488,66 @@ int ubik_printkernelinfo(void) {
 			printf(" (%s)", _task_idletaskhookfunc_name);
 		}
 #endif
-		printf("\r\n");
-		printf("|        |           |           |(0x%08x) |(0x%08x) |           |        |          |      |                   \r\n",
+		printf("\n");
+		printf("|        |           |           |(0x%08x) |(0x%08x) |           |        |          |      |                   \n",
 				stacksizedepth, maxstackusagedepth);
 	}
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
-	printf("\r\n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("\n");
 
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
-	printf("|timer   |address    |semaphore  |period     |oneshot |running                                      \r\n");
-	printf("|type    |           |address    |(tick)     |        |                                             \r\n");
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("|timer   |address    |semaphore  |period     |oneshot |running                                      \n");
+	printf("|type    |           |address    |(tick)     |        |                                             \n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
 	stimer = _kernel_monitor_stimerlist_head(&_kernel_monitor_stimerlist);
 	for (; NULL != stimer; stimer = _kernel_monitor_stimerlist_next(stimer)) {
-		printf("|stimer  |0x%08x |0x%08x |0x%08x |%d       |%d\r\n",
+		printf("|stimer  |0x%08x |0x%08x |0x%08x |%d       |%d\n",
 				(unsigned int) stimer, (unsigned int) (stimer->sigobj), stimer->waittick, stimer->oneshot, stimer->running);
 	}
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
-	printf("\r\n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("\n");
 
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
-	printf("|sigobj  |address    |waiting |max      |sender     |count      |max        |etc                    \r\n");
-	printf("|type    |           |task    |priority |(owner)    |(size)     |count      |                       \r\n");
-	printf("|        |           |count   |         |address    |           |(size)     |                       \r\n");
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("|sigobj  |address    |waiting |max      |sender     |count      |max        |etc                    \n");
+	printf("|type    |           |task    |priority |(owner)    |(size)     |count      |                       \n");
+	printf("|        |           |count   |         |address    |           |(size)     |                       \n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
 	sigobj = _kernel_monitor_sigobjlist_head(&_kernel_monitor_sigobjlist);
 	for (; NULL != sigobj; sigobj = _kernel_monitor_sigobjlist_next(sigobj)) {
 		switch (sigobj->type) {
 		case OBJTYPE__UBIK_SIGNAL:
-			printf("|signal  |0x%08x |%04d    |%04d     |0x%08x |           |           |\r\n",
+			printf("|signal  |0x%08x |%04d    |%04d     |0x%08x |           |           |\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj));
 			break;
 		case OBJTYPE__UBIK_CONDV:
-			printf("|condv   |0x%08x |%04d    |%04d     |0x%08x |           |           |\r\n",
+			printf("|condv   |0x%08x |%04d    |%04d     |0x%08x |           |           |\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj));
 			break;
 		case OBJTYPE__UBIK_MUTEX:
-			printf("|mutex   |0x%08x |%04d    |%04d     |0x%08x |0x%08x |           |n: %d\r\n",
+			printf("|mutex   |0x%08x |%04d    |%04d     |0x%08x |0x%08x |           |n: %d\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj),
 					sigobj->count, sigobj->nopriorityinheritance);
 			break;
 		case OBJTYPE__UBIK_SEM:
-			printf("|sem     |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |i: %d\r\n",
+			printf("|sem     |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |i: %d\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj),
 					sigobj->count, sigobj->maxcount, sigobj->ignoreoverflow);
 			break;
 		case OBJTYPE__UBIK_MSGQ:
-			printf("|msgq    |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |msg size: 0x%04x\r\n",
+			printf("|msgq    |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |msg size: 0x%04x\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj),
 					sigobj->count, sigobj->maxcount, sigobj->msgsize_1 + 1);
 			break;
 		default:
-			printf("|unknown |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |type: 0x%04x\r\n",
+			printf("|unknown |0x%08x |%04d    |%04d     |0x%08x |0x%08x |0x%08x |type: 0x%04x\n",
 					(unsigned int) sigobj, sigobj->wtasklist.count, sigobj->wtasklist_maxpriority, (unsigned int) _task_osigobjlist_owner(sigobj),
 					sigobj->count, sigobj->maxcount, sigobj->type);
 			break;
 		}
 	}
 
-	printf("------------------------------------------------------------------------------------------------------------------------\r\n");
-	printf("\r\n");
+	printf("------------------------------------------------------------------------------------------------------------------------\n");
+	printf("\n");
 
 	r = 0;
 

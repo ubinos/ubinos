@@ -30,11 +30,11 @@ int appmain(int argc, char *argv[]) {
 	int cilen = sizeof(ci) / sizeof(int);
 	unsigned int fblcount;
 
-	printf("\n\n\n\r");
-	printf("================================================================================\n\r");
-	printf("heap tester (build time: %s %s)\n\r", __TIME__, __DATE__);
-	printf("================================================================================\n\r");
-	printf("\n\r");
+	printf("\n\n\n");
+	printf("================================================================================\n");
+	printf("heap tester (build time: %s %s)\n", __TIME__, __DATE__);
+	printf("================================================================================\n");
+	printf("\n");
 
 	r = ubik_hrtick_enable(1);
 	if (0 != r) {
@@ -55,9 +55,9 @@ int appmain(int argc, char *argv[]) {
 	params.blockcheck = 0;
 	params.skipfirsfull = 0;
 
-	printf("\r\n");
-	printf("begin\r\n");
-	printf("\r\n");
+	printf("\n");
+	printf("begin\n");
+	printf("\n");
 
 	for (int i = 0; i < cilen; i++) {
 		// group system
@@ -71,8 +71,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_urx2_a[0];
 
-			printf("\r\n");
-			printf("GROUP%d, Uniform, Uniform, %u, %u, %u\r\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("GROUP%d, Uniform, Uniform, %u, %u, %u\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 11) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP;
@@ -84,8 +84,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_erx2_a[0];
 
-			printf("\r\n");
-			printf("GROUP%d, Uniform, Exponential, %u, %u, %u\r\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("GROUP%d, Uniform, Exponential, %u, %u, %u\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 12) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP;
@@ -97,8 +97,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_nrx2_a[0];
 
-			printf("\r\n");
-			printf("GROUP%d, Uniform, Normal, %u, %u, %u\r\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("GROUP%d, Uniform, Normal, %u, %u, %u\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 
 		// binary buddy system
@@ -112,8 +112,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_urx2_a[0];
 
-			printf("\r\n");
-			printf("BBUDDY, Uniform, Uniform, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("BBUDDY, Uniform, Uniform, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 14) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__BBUDDY;
@@ -125,8 +125,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_erx2_a[0];
 
-			printf("\r\n");
-			printf("BBUDDY, Uniform, Exponential, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("BBUDDY, Uniform, Exponential, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 15) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__BBUDDY;
@@ -138,8 +138,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_nrx2_a[0];
 
-			printf("\r\n");
-			printf("BBUDDY, Uniform, Normal, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("BBUDDY, Uniform, Normal, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 
 		// weighted buddy system
@@ -153,8 +153,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_urx2_a[0];
 
-			printf("\r\n");
-			printf("WBUDDY, Uniform, Uniform, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("WBUDDY, Uniform, Uniform, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 17) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY;
@@ -166,8 +166,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_erx2_a[0];
 
-			printf("\r\n");
-			printf("WBUDDY, Uniform, Exponential, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("WBUDDY, Uniform, Exponential, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 
 		}
 		else if (ci[i] == 18) {
@@ -180,8 +180,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_nrx2_a[0];
 
-			printf("\r\n");
-			printf("WBUDDY, Uniform, Normal, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("WBUDDY, Uniform, Normal, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 
 		// best fit
@@ -195,8 +195,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_urx2_a[0];
 
-			printf("\r\n");
-			printf("BEST, Uniform, Uniform, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("BEST, Uniform, Uniform, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 20) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
@@ -208,8 +208,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_erx2_a[0];
 
-			printf("\r\n");
-			printf("BEST, Uniform, Exponential, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("BEST, Uniform, Exponential, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 21) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
@@ -221,8 +221,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_nrx2_a[0];
 
-			printf("\r\n");
-			printf("BEST, Uniform, Normal, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("BEST, Uniform, Normal, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 
 		// first fit
@@ -236,8 +236,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_urx2_a[0];
 
-			printf("\r\n");
-			printf("FIRST, Uniform, Uniform, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("FIRST, Uniform, Uniform, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 23) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__FIRSTFIT;
@@ -249,8 +249,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_erx2_a[0];
 
-			printf("\r\n");
-			printf("FIRST, Uniform, Exponential, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("FIRST, Uniform, Exponential, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 24) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__FIRSTFIT;
@@ -262,8 +262,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_nrx2_a[0];
 
-			printf("\r\n");
-			printf("FIRST, Uniform, Normal, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("FIRST, Uniform, Normal, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 
 		// next fit
@@ -277,8 +277,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_urx2_a[0];
 
-			printf("\r\n");
-			printf("NEXT, Uniform, Uniform, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("NEXT, Uniform, Uniform, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 26) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__NEXTFIT;
@@ -290,8 +290,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_erx2_a[0];
 
-			printf("\r\n");
-			printf("NEXT, Uniform, Exponential, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("NEXT, Uniform, Exponential, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 27) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__NEXTFIT;
@@ -303,8 +303,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_nrx2_a[0];
 
-			printf("\r\n");
-			printf("NEXT, Uniform, Normal, %u, %u, %u\r\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("NEXT, Uniform, Normal, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 
 		// pure group system
@@ -318,8 +318,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_urx2_a[0];
 
-			printf("\r\n");
-			printf("PGROUP%d, Uniform, Uniform, %u, %u, %u\r\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("PGROUP%d, Uniform, Uniform, %u, %u, %u\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 29) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP;
@@ -331,8 +331,8 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_erx2_a[0];
 
-			printf("\r\n");
-			printf("PGROUP%d, Uniform, Exponential, %u, %u, %u\r\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("PGROUP%d, Uniform, Exponential, %u, %u, %u\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 		else if (ci[i] == 30) {
 			params.algorithm_type 	= UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP;
@@ -344,22 +344,22 @@ int appmain(int argc, char *argv[]) {
 			params.lifetime_p 		= &ubiclib_test_heaptest_urx1_a[0];
 			params.size_p 			= &ubiclib_test_heaptest_nrx2_a[0];
 
-			printf("\r\n");
-			printf("PGROUP%d, Uniform, Normal, %u, %u, %u\r\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+			printf("\n");
+			printf("PGROUP%d, Uniform, Normal, %u, %u, %u\n", params.m, params.heapsize, fblcount, bitmap_getmemsize(fblcount));
 		}
 
 		// undefined
 		else {
-			printf("undefined config index\r\n");
+			printf("undefined config index\n");
 			break;
 		}
 
 		ubiclib_test_heaptest(&params);
 	}
 
-	printf("\r\n");
-	printf("end\r\n");
-	printf("\r\n");
+	printf("\n");
+	printf("end\n");
+	printf("\n");
 
 	return 0;
 }

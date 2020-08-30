@@ -43,29 +43,29 @@ int ubik_test_testall(void) {
 	unsigned int count;
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
-	printf("\r\n");
-	printf("<testset>\r\n");
-	printf("<name>ubik_test</name>\r\n");
-	printf("<description>Ubinos Kernel Test</description>\n\r");
-	printf("\r\n");
+	printf("\n");
+	printf("<testset>\n");
+	printf("<name>ubik_test</name>\n");
+	printf("<description>Ubinos Kernel Test</description>\n");
+	printf("\n");
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
 	ubik_collectgarbage();
 
 	r = heap_getallocatedsize(NULL, &size_old);
 	if (0 != r) {
-		printf("<message>\n\r");
-		printf("fail at heap_getallocatedsize\r\n");
-		printf("</message>\n\r");
+		printf("<message>\n");
+		printf("fail at heap_getallocatedsize\n");
+		printf("</message>\n");
 		r = -1;
 		goto end0;
 	}
 
 	r = heap_getallocatedcount(NULL, &count_old);
 	if (0 != r) {
-		printf("<message>\n\r");
-		printf("fail at heap_getallocatedcount\r\n");
-		printf("</message>\n\r");
+		printf("<message>\n");
+		printf("fail at heap_getallocatedcount\n");
+		printf("</message>\n");
 		r = -1;
 		goto end0;
 	}
@@ -73,7 +73,7 @@ int ubik_test_testall(void) {
 
 
 #if !( UBINOS__UBIK_TEST__EXCLUDE_MISCTESTSET == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_misctest01();
 	if (0 != r) {
@@ -81,7 +81,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_misctest02();
 	if (0 != r) {
@@ -93,7 +93,7 @@ int ubik_test_testall(void) {
 
 
 #if !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest01();
 	if (0 != r) {
@@ -101,7 +101,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest02();
 	if (0 != r) {
@@ -109,7 +109,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest03();
 	if (0 != r) {
@@ -119,7 +119,7 @@ int ubik_test_testall(void) {
 #endif /* !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET == 1) */
 
 #if !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET2 == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest04();
 	if (0 != r) {
@@ -127,7 +127,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest05();
 	if (0 != r) {
@@ -135,7 +135,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest06();
 	if (0 != r) {
@@ -147,7 +147,7 @@ int ubik_test_testall(void) {
 
 
 #if !(UBINOS__UBIK_TEST__EXCLUDE_MUTEXTESTSET == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_mutextest01();
 	if (0 != r) {
@@ -155,7 +155,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_mutextest02();
 	if (0 != r) {
@@ -163,7 +163,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_mutextest03();
 	if (0 != r) {
@@ -172,7 +172,7 @@ int ubik_test_testall(void) {
 	ubik_collectgarbage();
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_mutextest04();
 	if (0 != r) {
@@ -184,7 +184,7 @@ int ubik_test_testall(void) {
 
 
 #if !(UBINOS__UBIK_TEST__EXCLUDE_SIGNALTESTSET == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_signaltest01();
 	if (0 != r) {
@@ -192,7 +192,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_signaltest02();
 	if (0 != r) {
@@ -200,7 +200,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_signaltest03();
 	if (0 != r) {
@@ -209,7 +209,7 @@ int ubik_test_testall(void) {
 	ubik_collectgarbage();
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_signaltest04();
 	if (0 != r) {
@@ -221,7 +221,7 @@ int ubik_test_testall(void) {
 
 
 #if !(UBINOS__UBIK_TEST__EXCLUDE_CONDVTESTSET == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_condvtest01();
 	if (0 != r) {
@@ -229,7 +229,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_condvtest02();
 	if (0 != r) {
@@ -237,7 +237,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_condvtest03();
 	if (0 != r) {
@@ -246,7 +246,7 @@ int ubik_test_testall(void) {
 	ubik_collectgarbage();
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_condvtest04();
 	if (0 != r) {
@@ -258,7 +258,7 @@ int ubik_test_testall(void) {
 
 
 #if !(UBINOS__UBIK_TEST__EXCLUDE_SEMTESTSET == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_semtest01();
 	if (0 != r) {
@@ -266,7 +266,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_semtest02();
 	if (0 != r) {
@@ -274,7 +274,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_semtest03();
 	if (0 != r) {
@@ -283,7 +283,7 @@ int ubik_test_testall(void) {
 	ubik_collectgarbage();
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_semtest04();
 	if (0 != r) {
@@ -295,7 +295,7 @@ int ubik_test_testall(void) {
 
 
 #if !(UBINOS__UBIK_TEST__EXCLUDE_MSGQTESTSET == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_msgqtest01();
 	if (0 != r) {
@@ -303,7 +303,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_msgqtest02();
 	if (0 != r) {
@@ -311,7 +311,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_msgqtest03();
 	if (0 != r) {
@@ -320,7 +320,7 @@ int ubik_test_testall(void) {
 	ubik_collectgarbage();
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_msgqtest04();
 	if (0 != r) {
@@ -331,7 +331,7 @@ int ubik_test_testall(void) {
 #endif /* !(UBINOS__UBIK_TEST__EXCLUDE_MSGQTESTSET == 1) */
 
 #if (1 != UBINOS__UBIK_TEST__EXCLUDE_STIMERTESTSET)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_stimertest01();
 	if (0 != r) {
@@ -339,7 +339,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_stimertest02();
 	if (0 != r) {
@@ -348,7 +348,7 @@ int ubik_test_testall(void) {
 	ubik_collectgarbage();
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_stimertest03();
 	if (0 != r) {
@@ -357,7 +357,7 @@ int ubik_test_testall(void) {
 	ubik_collectgarbage();
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_stimertest04();
 	if (0 != r) {
@@ -370,7 +370,7 @@ int ubik_test_testall(void) {
 #if !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET3 == 1)
 	#if ( !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_MUTEXTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_SIGNALTESTSET == 1) && \
 		  !(UBINOS__UBIK_TEST__EXCLUDE_CONDVTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_SEMTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_MSGQTESTSET == 1))
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest07();
 	if (0 != r) {
@@ -380,7 +380,7 @@ int ubik_test_testall(void) {
 	#endif /* ( !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_MUTEXTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_SIGNALTESTSET == 1) &&
 			  !(UBINOS__UBIK_TEST__EXCLUDE_CONDVTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_SEMTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_MSGQTESTSET == 1) ) */
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest08();
 	if (0 != r) {
@@ -388,7 +388,7 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 	testcount++;
 	r = ubik_test_tasktest09();
 	if (0 != r) {
@@ -398,7 +398,7 @@ int ubik_test_testall(void) {
 #endif /* !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET3 == 1) */
 
 
-	printf("<!-- ====================================================================== -->\r\n");
+	printf("<!-- ====================================================================== -->\n");
 
 #if !( UBINOS__UBIK_TEST__EXCLUDE_MISCTESTSET == 1)
 end1:
@@ -410,15 +410,15 @@ end1:
 		r = -1;
 	}
 
-	printf("\r\n");
-	printf("<message>\n\r");
+	printf("\n");
+	printf("<message>\n");
 
-	printf("test: %d\r\n", testcount);
-	printf("pass: %d\r\n", testcount - failcount);
-	printf("fail: %d\r\n", failcount);
+	printf("test: %d\n", testcount);
+	printf("pass: %d\n", testcount - failcount);
+	printf("fail: %d\n", failcount);
 
-	printf("</message>\n\r");
-	printf("\r\n");
+	printf("</message>\n");
+	printf("\n");
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
 	if (0 == r) {
@@ -426,20 +426,20 @@ end1:
 
 		r2 = heap_getallocatedsize(NULL, &size);
 		if (0 != r2) {
-			printf("fail at heap_getallocatedsize\r\n");
+			printf("fail at heap_getallocatedsize\n");
 			r = -1;
 			goto end0;
 		}
 
 		r2 = heap_getallocatedcount(NULL, &count);
 		if (0 != r2) {
-			printf("fail at heap_getallocatedcount\r\n");
+			printf("fail at heap_getallocatedcount\n");
 			r = -1;
 			goto end0;
 		}
 
 		if (size_old != size || count_old != count) {
-			printf("memory leak was detected\r\n");
+			printf("memory leak was detected\n");
 			r = -1;
 			goto end0;
 		}
@@ -454,9 +454,9 @@ end0:
 	else {
 		printf("fail");
 	}
-	printf("</result>\r\n");
-	printf("</testset>\r\n");
-	printf("\r\n");
+	printf("</result>\n");
+	printf("</testset>\n");
+	printf("\n");
 
 	return r;
 }

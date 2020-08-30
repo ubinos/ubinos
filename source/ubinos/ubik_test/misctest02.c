@@ -22,14 +22,14 @@ int ubik_test_misctest02(void) {
 	unsigned int iloopcount;
 	unsigned int errorrate;
 
-	printf("\r\n");
-	printf("<test>\r\n");
-	printf("<name>ubik_test_misctest02</name>\r\n");
-	printf("<description>Test for accuracy of UBINOS__BSP__BUSYWAITCOUNT_PER_MS</description>\n\r");
+	printf("\n");
+	printf("<test>\n");
+	printf("<name>ubik_test_misctest02</name>\n");
+	printf("<description>Test for accuracy of UBINOS__BSP__BUSYWAITCOUNT_PER_MS</description>\n");
 
-	printf("<message>\n\r");
+	printf("<message>\n");
 
-	printf("it tasks %d ms\r\n", UBINOS__UBIK_TEST__BUSYWAITCOUNTTESTTIMEMS);
+	printf("it tasks %d ms\n", UBINOS__UBIK_TEST__BUSYWAITCOUNTTESTTIMEMS);
 
 	waitvalue = bsp_getbusywaitcountperms() * UBINOS__UBIK_TEST__BUSYWAITCOUNTTESTTIMEMS;
 	tickcount1 = ubik_gettickcount();
@@ -42,8 +42,8 @@ int ubik_test_misctest02(void) {
 	rloopcount = bsp_getbusywaitcountperms();
 	iloopcount = rloopcount * itick / rtick;
 
-	printf("current value is %d\r\n", rloopcount);
-	printf("recommended value is %d\r\n", iloopcount);
+	printf("current value is %d\n", rloopcount);
+	printf("recommended value is %d\n", iloopcount);
 
 	if (rtick >= itick) {
 		errorrate = (rtick - itick) * 100 / itick;
@@ -51,7 +51,7 @@ int ubik_test_misctest02(void) {
 	else {
 		errorrate = (itick - rtick) * 100 / itick;
 	}
-	printf("accuracy is %d percent\r\n", 100 - errorrate);
+	printf("accuracy is %d percent\n", 100 - errorrate);
 
 	if (errorrate <= 1) {
 		r = 0;
@@ -60,7 +60,7 @@ int ubik_test_misctest02(void) {
 		r = -1;
 	}
 
-	printf("</message>\n\r");
+	printf("</message>\n");
 
 	printf("<result>");
 	if (0 == r) {
@@ -69,9 +69,9 @@ int ubik_test_misctest02(void) {
 	else {
 		printf("fail");
 	}
-	printf("</result>\r\n");
-	printf("</test>\r\n");
-	printf("\r\n");
+	printf("</result>\n");
+	printf("</test>\n");
+	printf("\n");
 	return r;
 }
 

@@ -50,14 +50,14 @@ static int ubik_test_mutextest00_subtest1(void) {
 
 	r = task_create(&task_a[0], mutextest00_subtest1_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = task_create(&task_a[1], mutextest00_subtest1_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -67,12 +67,12 @@ static int ubik_test_mutextest00_subtest1(void) {
 end1:
 	r2 = task_join(task_a, NULL, 2);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\r\n", r2);
+		printf("fail at task_join(), err=%d\n", r2);
 		r = -1;
 	}
 
 end0:
-	printf("data (none mutual exclusive use) : %d\r\n", _g_data);
+	printf("data (none mutual exclusive use) : %d\n", _g_data);
 
 	return r;
 }
@@ -116,7 +116,7 @@ static int ubik_test_mutextest00_subtest2(void) {
 
 	r = mutex_create(&_g_mutex);
 	if (0 != r) {
-		printf("fail at mutex_create(), err=%d\r\n", r);
+		printf("fail at mutex_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
@@ -125,14 +125,14 @@ static int ubik_test_mutextest00_subtest2(void) {
 
 	r = task_create(&task_a[0], mutextest00_subtest2_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
 	r = task_create(&task_a[1], mutextest00_subtest2_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -142,19 +142,19 @@ static int ubik_test_mutextest00_subtest2(void) {
 end2:
 	r2 = task_join(task_a, NULL, 2);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\r\n", r2);
+		printf("fail at task_join(), err=%d\n", r2);
 		r = -1;
 	}
 
 end1:
 	r2 = mutex_delete(&_g_mutex);
 	if (0 != r2) {
-		printf("fail at mutex_delete(), err=%d\r\n", r2);
+		printf("fail at mutex_delete(), err=%d\n", r2);
 		r = -1;
 	}
 
 end0:
-	printf("data (mutual exclusive use)      : %d\r\n", _g_data);
+	printf("data (mutual exclusive use)      : %d\n", _g_data);
 
 	return r;
 }
@@ -164,14 +164,14 @@ int ubik_test_mutextest00(void) {
 
 	r = ubik_test_mutextest00_subtest1();
 	if (0 != r) {
-		printf("fail at ubik_test_mutextest00_subtest1(), err=%d\r\n", r);
+		printf("fail at ubik_test_mutextest00_subtest1(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = ubik_test_mutextest00_subtest2();
 	if (0 != r) {
-		printf("fail at ubik_test_mutextest00_subtest2(), err=%d\r\n", r);
+		printf("fail at ubik_test_mutextest00_subtest2(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}

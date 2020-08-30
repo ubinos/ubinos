@@ -37,7 +37,7 @@ static void intrtest00_taskfunc(void * arg) {
 	for (i=0; i<LOOPCOUNT; i++) {
 		sem_take(_g_sem);
 
-		printf("hello world!\n\r");
+		printf("hello world!\n");
 	}
 }
 
@@ -56,7 +56,7 @@ int ubik_test_intrtest00(void) {
 
 	r = task_create(&task, intrtest00_taskfunc, NULL, task_getpriority(NULL)-1, 0, "intrtest00 task");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -85,7 +85,7 @@ int ubik_test_intrtest00(void) {
 
 	r = task_join(&task, NULL, 1);
 	if (0 != r) {
-		printf("fail at task_join(), err=%d\r\n", r);
+		printf("fail at task_join(), err=%d\n", r);
 		r = -1;
 	}
 
@@ -102,7 +102,7 @@ int ubik_test_intrtest00(void) {
 end1:
 	r2 = sem_delete(&_g_sem);
 	if (0 != r2) {
-		printf("fail at sem_delete(), err=%d\r\n", r2);
+		printf("fail at sem_delete(), err=%d\n", r2);
 		r = -1;
 	}
 

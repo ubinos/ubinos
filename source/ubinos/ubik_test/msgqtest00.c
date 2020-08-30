@@ -28,7 +28,7 @@ static void msgqtest00_task1func(void * arg) {
 
 	for (i=0; i<TASKLOOPCOUNT; i++) {
 		bsp_busywait((unsigned int) rand() % TASKWORKINGTIMEMS * bsp_getbusywaitcountperms());
-		printf("task 1 produces one message\r\n");
+		printf("task 1 produces one message\n");
 
 		msgq_send(_g_msgq, buf);
 	}
@@ -39,10 +39,10 @@ static void msgqtest00_task2func(void * arg) {
 	unsigned char buf[MSGSIZE];
 
 	for (i=0; i<TASKLOOPCOUNT/2; i++) {
-		printf("task 2 waits message\r\n");
+		printf("task 2 waits message\n");
 		msgq_receive(_g_msgq, buf);
 
-		printf("task 2 consumes one message\r\n");
+		printf("task 2 consumes one message\n");
 		bsp_busywait((unsigned int) rand() % TASKWORKINGTIMEMS * bsp_getbusywaitcountperms());
 	}
 }
@@ -52,10 +52,10 @@ static void msgqtest00_task3func(void * arg) {
 	unsigned char buf[MSGSIZE];
 
 	for (i=0; i<TASKLOOPCOUNT/2; i++) {
-		printf("task 3 waits message\r\n");
+		printf("task 3 waits message\n");
 		msgq_receive(_g_msgq, buf);
 
-		printf("task 3 consumes one message\r\n");
+		printf("task 3 consumes one message\n");
 		bsp_busywait((unsigned int) rand() % TASKWORKINGTIMEMS * bsp_getbusywaitcountperms());
 	}
 }
@@ -67,21 +67,21 @@ int ubik_test_msgqtest00(void) {
 
 	r = msgq_create(&_g_msgq, MSGSIZE, MSGCOUNT);
 	if (0 != r) {
-		printf("fail at msgq_create(), err=%d\r\n", r);
+		printf("fail at msgq_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = task_create(&task_a[0], msgqtest00_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
 	r = task_create(&task_a[1], msgqtest00_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -90,7 +90,7 @@ int ubik_test_msgqtest00(void) {
 
 	r = task_create(&task_a[2], msgqtest00_task3func, NULL, task_getpriority(NULL)-1, 0, "task 3");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -100,14 +100,14 @@ int ubik_test_msgqtest00(void) {
 end2:
 	r2 = task_join(task_a, NULL, 3);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\r\n", r2);
+		printf("fail at task_join(), err=%d\n", r2);
 		r = -1;
 	}
 
 end1:
 	r2 = msgq_delete(&_g_msgq);
 	if (0 != r2) {
-		printf("fail at msgq_delete(), err=%d\r\n", r2);
+		printf("fail at msgq_delete(), err=%d\n", r2);
 		r = -1;
 	}
 

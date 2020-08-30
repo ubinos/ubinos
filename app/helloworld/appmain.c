@@ -17,15 +17,15 @@ int appmain(int argc, char * argv[]) {
 
     (void) r;
 
-    printf("\n\n\r\n");
-	printf("================================================================================\r\n");
-	printf("helloworld (build time: %s %s)\r\n", __TIME__, __DATE__);
-	printf("================================================================================\r\n");
-	printf("\r\n");
-    printf("\r\n");
+    printf("\n\n\n");
+	printf("================================================================================\n");
+	printf("helloworld (build time: %s %s)\n", __TIME__, __DATE__);
+	printf("================================================================================\n");
+	printf("\n");
+    printf("\n");
 
 	for (unsigned int i = 0; ; i++) {
-		printf("hello world ! (%u)\r\n", i);
+		printf("hello world ! (%u)\n", i);
 		bsp_busywaitms(1000);
 	}
 

@@ -22,36 +22,36 @@ int ubik_test_mutextest04(void) {
 	unsigned int size;
 	unsigned int count;
 
-	printf("\r\n");
-	printf("<test>\r\n");
-	printf("<name>ubik_test_mutextest04</name>\r\n");
-	printf("<description>Test for memory leak by mutex</description>\n\r");
+	printf("\n");
+	printf("<test>\n");
+	printf("<name>ubik_test_mutextest04</name>\n");
+	printf("<description>Test for memory leak by mutex</description>\n");
 
-	printf("<message>\n\r");
+	printf("<message>\n");
 
 	ubik_collectgarbage();
 
 	r = heap_getallocatedsize(NULL, &size_old);
 	if (0 != r) {
-		printf("fail at heap_getallocatedsize\r\n");
+		printf("fail at heap_getallocatedsize\n");
 		goto end0;
 	}
 
 	r = heap_getallocatedcount(NULL, &count_old);
 	if (0 != r) {
-		printf("fail at heap_getallocatedcount\r\n");
+		printf("fail at heap_getallocatedcount\n");
 		goto end0;
 	}
 
 	mutex_p = malloc(sizeof(mutex_pt) * UBINOS__UBIK_TEST__MEMLEAK_SIGOBJCOUNT);
 	if (NULL == mutex_p) {
-		printf("fail at malloc()\r\n");
+		printf("fail at malloc()\n");
 		goto end0;
 	}
 
 	r = 0;
 
-	printf("|----------|\r\n ");
+	printf("|----------|\n ");
 	for (i=0; i<UBINOS__UBIK_TEST__MEMLEAK_TESTCOUNT; i++) {
 		for (j=0; j<UBINOS__UBIK_TEST__MEMLEAK_SIGOBJCOUNT; j++) {
 			mutex_p[j] = NULL;
@@ -59,9 +59,9 @@ int ubik_test_mutextest04(void) {
 		for (j=0; j<UBINOS__UBIK_TEST__MEMLEAK_SIGOBJCOUNT; j++) {
 			r = mutex_create(&mutex_p[j]);
 			if (0 != r) {
-				printf("\r\n");
-				printf("test %d, mutex %d\r\n", i, j);
-				printf("fail at mutex_create(), err=%d\r\n", r);
+				printf("\n");
+				printf("test %d, mutex %d\n", i, j);
+				printf("fail at mutex_create(), err=%d\n", r);
 				r = -1;
 				break;
 			}
@@ -70,8 +70,8 @@ int ubik_test_mutextest04(void) {
 			if (NULL != mutex_p[j]) {
 				r2 = mutex_delete(&mutex_p[j]);
 				if (0 != r2) {
-					printf("\r\n");
-					printf("fail at mutex_delete(), err=%d\r\n", r2);
+					printf("\n");
+					printf("fail at mutex_delete(), err=%d\n", r2);
 					r = -1;
 					break;
 				}
@@ -85,8 +85,8 @@ int ubik_test_mutextest04(void) {
 		}
 	}
 	if (0 == r) {
-		printf("\r\n");
-		printf("pass %d tests creating and deleting %d mutex\r\n", i, j);
+		printf("\n");
+		printf("pass %d tests creating and deleting %d mutex\n", i, j);
 	}
 
 	free(mutex_p);
@@ -96,20 +96,20 @@ int ubik_test_mutextest04(void) {
 
 		r2 = heap_getallocatedsize(NULL, &size);
 		if (0 != r2) {
-			printf("fail at heap_getallocatedsize\r\n");
+			printf("fail at heap_getallocatedsize\n");
 			r = -1;
 			goto end0;
 		}
 
 		r2 = heap_getallocatedcount(NULL, &count);
 		if (0 != r2) {
-			printf("fail at heap_getallocatedcount\r\n");
+			printf("fail at heap_getallocatedcount\n");
 			r = -1;
 			goto end0;
 		}
 
 		if (size_old != size || count_old != count) {
-			printf("memory leak was detected\r\n");
+			printf("memory leak was detected\n");
 			r = -1;
 			goto end0;
 		}
@@ -123,7 +123,7 @@ end0:
 		r = 0;
 	}
 
-	printf("</message>\n\r");
+	printf("</message>\n");
 
 	printf("<result>");
 	if (0 == r) {
@@ -132,9 +132,9 @@ end0:
 	else {
 		printf("fail");
 	}
-	printf("</result>\r\n");
-	printf("</test>\r\n");
-	printf("\r\n");
+	printf("</result>\n");
+	printf("</test>\n");
+	printf("\n");
 	return r;
 }
 

@@ -58,7 +58,7 @@ void bsp_busywait(unsigned int count) {
 void bsp_abortsystem(void) {
     ARM_INTERRUPT_DISABLE();
 
-    dtty_puts("\r\n\r\nsystem is aborted\r\n\r\n", 80);
+    dtty_puts("\n\nsystem is aborted\n\n", 80);
 
     __asm__ __volatile__ (
             "1:                                                 \n\t"
@@ -76,7 +76,7 @@ void bsp_disableintr(void) {
 
 #define _exception_check_bsp_critcount() {                              \
     if (0 != _bsp_critcount) {                                          \
-        dtty_puts("\r\ninterrupt disable fail\r\n", 80);        \
+        dtty_puts("\ninterrupt disable fail\n", 80);        \
         bsp_abortsystem();                                              \
     }                                                                   \
 }
@@ -116,7 +116,7 @@ void bsp_exception_handler(unsigned int exceptiontype, unsigned int swino) {
     case EXCEPTION_TYPE_DABT:
     case EXCEPTION_TYPE_FIQ:
     default:
-        dtty_puts("\r\n\r\nunknown exception (", 80);
+        dtty_puts("\n\nunknown exception (", 80);
         switch (exceptiontype) {
         case EXCEPTION_TYPE_UND:
             dtty_puts("UND", 80);
@@ -140,7 +140,7 @@ void bsp_exception_handler(unsigned int exceptiontype, unsigned int swino) {
             dtty_putc((int) (exceptiontype + '0'));
             break;
         }
-        dtty_puts(")\r\n", 80);
+        dtty_puts(")\n", 80);
         bsp_abortsystem();
         break;
     }
@@ -149,7 +149,7 @@ void bsp_exception_handler(unsigned int exceptiontype, unsigned int swino) {
 }
 
 void bsp_spurious_exception_handler(void) {
-    dtty_puts("\r\n\r\nspurious interrupt\r\n", 80);
+    dtty_puts("\n\nspurious interrupt\n", 80);
     bsp_abortsystem();
 }
 

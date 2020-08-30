@@ -246,7 +246,7 @@ void _cfree_r(struct _reent * reent_ptr, void * ptr) {
 void * _memalign_r(struct _reent * reent_ptr, size_t align, size_t s) {
     // FIXME: not implemented.;
     dtty_puts(__func__, 80);
-    dtty_puts(" : fail (not implemented).\r\n", 80);
+    dtty_puts(" : fail (not implemented).\n", 80);
     bsp_abortsystem();
     return NULL;
 }
@@ -255,7 +255,7 @@ void * _valloc_r(struct _reent * reent_ptr, size_t s)
 {
     // FIXME: not implemented.;
     dtty_puts(__func__, 80);
-    dtty_puts(" : fail (not implemented).\r\n", 80);
+    dtty_puts(" : fail (not implemented).\n", 80);
     bsp_abortsystem();
     return NULL;
 }
@@ -264,7 +264,7 @@ void * _pvalloc_r(struct _reent * reent_ptr, size_t s)
 {
     // FIXME: not implemented.;
     dtty_puts(__func__, 80);
-    dtty_puts(" : fail (not implemented).\r\n", 80);
+    dtty_puts(" : fail (not implemented).\n", 80);
     bsp_abortsystem();
     return NULL;
 }
@@ -275,7 +275,7 @@ struct mallinfo _mallinfo_r(struct _reent * reent_ptr)
     struct mallinfo mi = {0,};
     // FIXME: not implemented.;
     dtty_puts(__func__, 80);
-    dtty_puts(" : fail (not implemented).\r\n", 80);
+    dtty_puts(" : fail (not implemented).\n", 80);
     bsp_abortsystem();
     return mi;
 }
@@ -284,7 +284,7 @@ void _malloc_stats_r(struct _reent * reent_ptr)
 {
     // FIXME: not implemented.;
     dtty_puts(__func__, 80);
-    dtty_puts(" : fail (not implemented).\r\n", 80);
+    dtty_puts(" : fail (not implemented).\n", 80);
     bsp_abortsystem();
 }
 
@@ -292,7 +292,7 @@ int _mallopt_r(struct _reent * reent_ptr, int parameter_number, int parameter_va
 {
     // FIXME: not implemented.;
     dtty_puts(__func__, 80);
-    dtty_puts(" : fail (not implemented).\r\n", 80);
+    dtty_puts(" : fail (not implemented).\n", 80);
     bsp_abortsystem();
     return 0;
 }

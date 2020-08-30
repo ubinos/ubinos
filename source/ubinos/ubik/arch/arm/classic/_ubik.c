@@ -25,7 +25,7 @@ void ubik_entercrit(void) {
 void ubik_exitcrit(void) {
 	if (0 == bsp_isintr()) {
 		if (0 == _bsp_critcount) {
-			dtty_puts("\r\nubik_exitcrit fail (_bsp_critcount is already 0)\r\n", 80);
+			dtty_puts("\nubik_exitcrit fail (_bsp_critcount is already 0)\n", 80);
 			bsp_abortsystem();
 		}
 		_bsp_critcount--;
@@ -64,7 +64,7 @@ void ubik_exitcrit(void) {
 		"stmfd		lr!, {r0}										\n\t"	\
 																			\
 		/* Save _bsp_critcount into task stack */							\
-		"ldr		r0, =_bsp_critcount							\n\t"	\
+		"ldr		r0, =_bsp_critcount								\n\t"	\
 		"ldr		r0, [r0]										\n\t"	\
 		"stmfd		lr!, {r0}										\n\t"	\
 																			\
@@ -86,7 +86,7 @@ void ubik_exitcrit(void) {
 																			\
 		/* Restore _bsp_critcount from task stack */						\
 		"ldmfd		lr!, {r1}										\n\t"	\
-		"ldr		r0, =_bsp_critcount							\n\t"	\
+		"ldr		r0, =_bsp_critcount								\n\t"	\
 		"str		r1, [r0]										\n\t"	\
 																			\
 		/* Restore spsr from task stack */									\
@@ -149,7 +149,7 @@ void __attribute__((naked)) ubik_swi_handler(void) {
 		"bicne		r0, r0, #0xffffff00								\n\t"	\
 		"ldreq		r0, [lr, #-4]									\n\t"	\
 		"biceq		r0, r0, #0xff000000								\n\t"	\
-		"str		r0, [sp, #4]									\n\r"	\
+		"str		r0, [sp, #4]									\n\t"	\
 		"ldmfd		sp!, {r0}										\n\t"	\
 	);
 

@@ -25,12 +25,12 @@ static void tasktest03_task1func(void * arg) {
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 1 suspends itself\r\n");
+	printf("task 1 suspends itself\n");
 	r = task_suspend(NULL);
 	if (0 != r) {
-		printf("task 1: fail at task_suspend(), err=%d\r\n", r);
+		printf("task 1: fail at task_suspend(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -40,10 +40,10 @@ static void tasktest03_task1func(void * arg) {
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
 end0:
-	printf("task 1 ends\r\n");
+	printf("task 1 ends\n");
 }
 
 int ubik_test_tasktest03(void) {
@@ -52,21 +52,21 @@ int ubik_test_tasktest03(void) {
 	unsigned int count1;
 	unsigned int sleepvalue = ubik_timemstotick(UBINOS__UBIK_TEST__TASKWAITTIMEMS) * UBINOS__UBIK_TEST__TASKLOOPCOUNT / 3;
 
-	printf("\r\n");
-	printf("<test>\r\n");
-	printf("<name>ubik_test_tasktest03</name>\r\n");
-	printf("<description>Test on suspend and resume function of task</description>\n\r");
+	printf("\n");
+	printf("<test>\n");
+	printf("<name>ubik_test_tasktest03</name>\n");
+	printf("<description>Test on suspend and resume function of task</description>\n");
 
-	printf("<message>\n\r");
+	printf("<message>\n");
 
 	_g_ubik_test_result = 0;
 
 	_g_ubik_test_count1 = 0;
 
-	printf("create task 1\r\n");
+	printf("create task 1\n");
 	r = task_create(&_g_ubik_test_task_a[0], tasktest03_task1func, NULL, task_getpriority(NULL)-1, 0, "tasktest03 task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
@@ -74,25 +74,25 @@ int ubik_test_tasktest03(void) {
 	task_sleep(sleepvalue);
 
 	count1 = _g_ubik_test_count1;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 01: ");
 	if (count1 == _g_ubik_test_count1) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end1;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue);
 
-	printf("\r\n");
-	printf("suspend task 1\r\n");
+	printf("\n");
+	printf("suspend task 1\n");
 	r = task_suspend(_g_ubik_test_task_a[0]);
 	if (0 != r) {
-		printf("fail at task_suspend(), err=%d\r\n", r);
+		printf("fail at task_suspend(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -100,22 +100,22 @@ int ubik_test_tasktest03(void) {
 	task_sleep(sleepvalue);
 
 	count1 = _g_ubik_test_count1;
-	printf("checking\r\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
 	printf("check point 02: ");
 	if (count1 != _g_ubik_test_count1) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end1;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue);
 
-	printf("resume task 1\r\n");
+	printf("resume task 1\n");
 	r = task_resume(_g_ubik_test_task_a[0]);
 	if (0 != r) {
-		printf("fail at task_resume(), err=%d\r\n", r);
+		printf("fail at task_resume(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -123,37 +123,37 @@ int ubik_test_tasktest03(void) {
 	task_sleep(sleepvalue);
 
 	count1 = _g_ubik_test_count1;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 03: ");
 	if (count1 == _g_ubik_test_count1) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end1;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
-	printf("checking\r\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
 	printf("check point 04: ");
 	if (count1 != _g_ubik_test_count1) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end1;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue);
 
-	printf("resume task 1\r\n");
+	printf("resume task 1\n");
 	r = task_resume(_g_ubik_test_task_a[0]);
 	if (0 != r) {
-		printf("fail at task_resume(), err=%d\r\n", r);
+		printf("fail at task_resume(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -161,24 +161,24 @@ int ubik_test_tasktest03(void) {
 	task_sleep(sleepvalue);
 
 	count1 = _g_ubik_test_count1;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 05: ");
 	if (count1 == _g_ubik_test_count1) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end1;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	r = 0;
 
 end1:
 	r2 = task_join(_g_ubik_test_task_a, NULL, 1);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\r\n", r2);
+		printf("fail at task_join(), err=%d\n", r2);
 		r = -1;
 	}
 
@@ -190,7 +190,7 @@ end0:
 		r = 0;
 	}
 
-	printf("</message>\n\r");
+	printf("</message>\n");
 
 	printf("<result>");
 	if (0 == r) {
@@ -199,9 +199,9 @@ end0:
 	else {
 		printf("fail");
 	}
-	printf("</result>\r\n");
-	printf("</test>\r\n");
-	printf("\r\n");
+	printf("</result>\n");
+	printf("</test>\n");
+	printf("\n");
 	return r;
 }
 

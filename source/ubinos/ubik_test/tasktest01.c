@@ -21,42 +21,42 @@ static void tasktest01_task1func(void * arg) {
 	unsigned int waitvalue = TASKWORKINGTIMEMS * bsp_getbusywaitcountperms();
 
 	if (TASKARG == arg) {
-		printf("task 1 is running\r\n");
+		printf("task 1 is running\n");
 
 		bsp_busywait(waitvalue);
 
 		_g_ubik_test_result = 0;
 	}
 	else {
-		printf("task 1 received wrong argument\r\n");
+		printf("task 1 received wrong argument\n");
 	}
 
-	printf("task 1 ends\r\n");
+	printf("task 1 ends\n");
 }
 
 int ubik_test_tasktest01(void) {
 	int r;
 
-	printf("\r\n");
-	printf("<test>\r\n");
-	printf("<name>ubik_test_tasktest01</name>\r\n");
-	printf("<description>Test on basic functions of task</description>\n\r");
+	printf("\n");
+	printf("<test>\n");
+	printf("<name>ubik_test_tasktest01</name>\n");
+	printf("<description>Test on basic functions of task</description>\n");
 
-	printf("<message>\n\r");
+	printf("<message>\n");
 
 	_g_ubik_test_result = -1;
 
-	printf("create task 1\r\n");
+	printf("create task 1\n");
 	r = task_create(&_g_ubik_test_task_a[0], tasktest01_task1func, TASKARG, task_getpriority(NULL)-1, 0, "tasktest01 task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = task_join(_g_ubik_test_task_a, NULL, 1);
 	if (0 != r) {
-		printf("fail at task_join(), err=%d\r\n", r);
+		printf("fail at task_join(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
@@ -71,7 +71,7 @@ end0:
 		r = 0;
 	}
 
-	printf("</message>\n\r");
+	printf("</message>\n");
 
 	printf("<result>");
 	if (0 == r) {
@@ -80,9 +80,9 @@ end0:
 	else {
 		printf("fail");
 	}
-	printf("</result>\r\n");
-	printf("</test>\r\n");
-	printf("\r\n");
+	printf("</result>\n");
+	printf("</test>\n");
+	printf("\n");
 	return r;
 }
 

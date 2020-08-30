@@ -118,33 +118,33 @@ void ubiclib_test_heaptest(void *arg) {
 	i = 0;
 	j = 0;
 
-//	printf( "  s-m: target size mean\r\n"
-//			"r-s-m: real size mean\r\n"
-//			"  b-c: block count mean when allocation fail\r\n"
-//			"  a-c: allocation count\r\n"
-//			" at-a: allocation execution time average\r\n"
-//			" at-d: allocation execution time standard deviation\r\n"
-//			" at-b: allocation execution time best\r\n"
-//			" at-w: allocation execution time worst\r\n"
-//			"  r-c: release count\r\n"
-//			" rt-a: release execution time average\r\n"
-//			" rt-d: release execution time standard deviation\r\n"
-//			" rt-b: release execution time best\r\n"
-//			" rt-w: release execution time worst\r\n"
-//			" tf-a: total fragmentation average\r\n"
-//			" tf-d: total fragmentation standard deviation\r\n"
-//			" tf-b: total fragmentation best\r\n"
-//			" tf-w: total fragmentation worst\r\n"
-//			" if-a: internal fragmentation average\r\n"
-//			" if-d: internal fragmentation standard deviation\r\n"
-//			" if-b: internal fragmentation best\r\n"
-//			" if-w: internal fragmentation worst\r\n"
-//			" ef-a: external fragmentation average\r\n"
-//			" ef-d: external fragmentation standard deviation\r\n"
-//			" ef-b: external fragmentation best\r\n"
-//			" ef-w: external fragmentation worst\r\n");
+//	printf( "  s-m: target size mean\n"
+//			"r-s-m: real size mean\n"
+//			"  b-c: block count mean when allocation fail\n"
+//			"  a-c: allocation count\n"
+//			" at-a: allocation execution time average\n"
+//			" at-d: allocation execution time standard deviation\n"
+//			" at-b: allocation execution time best\n"
+//			" at-w: allocation execution time worst\n"
+//			"  r-c: release count\n"
+//			" rt-a: release execution time average\n"
+//			" rt-d: release execution time standard deviation\n"
+//			" rt-b: release execution time best\n"
+//			" rt-w: release execution time worst\n"
+//			" tf-a: total fragmentation average\n"
+//			" tf-d: total fragmentation standard deviation\n"
+//			" tf-b: total fragmentation best\n"
+//			" tf-w: total fragmentation worst\n"
+//			" if-a: internal fragmentation average\n"
+//			" if-d: internal fragmentation standard deviation\n"
+//			" if-b: internal fragmentation best\n"
+//			" if-w: internal fragmentation worst\n"
+//			" ef-a: external fragmentation average\n"
+//			" ef-d: external fragmentation standard deviation\n"
+//			" ef-b: external fragmentation best\n"
+//			" ef-w: external fragmentation worst\n");
 
-	printf("      s-m,    r-s-m,      b-c,      a-c,     at-a,     at-d,     at-b,     at-w,      r-c,     rt-a,     rt-d,     rt-b,     rt-w,   tf-a,   tf-d,   tf-b,   tf-w,   if-a,   if-d,   if-b,   if-w,   ef-a,   ef-d,   ef-b,   ef-w\r\n");
+	printf("      s-m,    r-s-m,      b-c,      a-c,     at-a,     at-d,     at-b,     at-w,      r-c,     rt-a,     rt-d,     rt-b,     rt-w,   tf-a,   tf-d,   tf-b,   tf-w,   if-a,   if-d,   if-b,   if-w,   ef-a,   ef-d,   ef-b,   ef-w\n");
 
 
 	for (h = params->mean_min;; h += params->mean_step) {
@@ -376,7 +376,7 @@ void ubiclib_test_heaptest(void *arg) {
 					}
 					enof++;
 					//heap_getallocatedsize(heap, &sizea_temp);
-					//printf("==> heapsize = %d, sizea_temp = %d, free size = %d (%d %%)\r\n", heapsize, sizea_temp, heapsize - sizea_temp, 100 * (heapsize - sizea_temp) / heapsize);
+					//printf("==> heapsize = %d, sizea_temp = %d, free size = %d (%d %%)\n", heapsize, sizea_temp, heapsize - sizea_temp, 100 * (heapsize - sizea_temp) / heapsize);
 				}
 
 				heap_getallocatedsize(heap, &sizea_temp);
@@ -439,7 +439,7 @@ void ubiclib_test_heaptest(void *arg) {
 			}
 
 			//heap_getallocatedsize(heap, &sizea_temp);
-			//printf("\n==> heapsize = %d, sizea_temp = %d, free size = %d (%d %%)\r\n\n", heapsize, sizea_temp, heapsize - sizea_temp, 100 * (heapsize - sizea_temp) / heapsize);
+			//printf("\n==> heapsize = %d, sizea_temp = %d, free size = %d (%d %%)\n\n", heapsize, sizea_temp, heapsize - sizea_temp, 100 * (heapsize - sizea_temp) / heapsize);
 		}
 
 		for (blist_ci=0; blist_ci<params->lifetime_max; blist_ci++) {
@@ -606,7 +606,7 @@ void ubiclib_test_heaptest(void *arg) {
 				(unsigned int) (result_p[ii].efb * 100), ((unsigned int) (result_p[ii].efb * 10000)) % 100,
 				(unsigned int) (result_p[ii].efw * 100), ((unsigned int) (result_p[ii].efw * 10000)) % 100
 			);
-		printf("\r\n");
+		printf("\n");
 	}
 
 	average_etimea /= stepcount;
@@ -615,7 +615,7 @@ void ubiclib_test_heaptest(void *arg) {
 	average_fragi  /= stepcount;
 	average_frage  /= stepcount;
 
-	printf("  average,         ,         ,         , %8d,         ,         ,         ,         , %8d,         ,         ,         , %3d.%02d,       ,       ,       , %3d.%02d,       ,       ,       , %3d.%02d,       ,       ,       \r\n",
+	printf("  average,         ,         ,         , %8d,         ,         ,         ,         , %8d,         ,         ,         , %3d.%02d,       ,       ,       , %3d.%02d,       ,       ,       , %3d.%02d,       ,       ,       \n",
 			(unsigned int) (average_etimea/1000),
 			(unsigned int) (average_etimef/1000),
 			(unsigned int) (average_frag  *100), (unsigned int) (average_frag  *10000) % 100,

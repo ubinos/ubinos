@@ -33,14 +33,14 @@ int main(void) {
 
     r = bsp_comp_init();
     if (0 != r) {
-        dtty_puts("bsp_comp_init : fail\r\n", 80);
+        dtty_puts("bsp_comp_init : fail\n", 80);
         bsp_abortsystem();
     }
 
 #if (INCLUDE__UBINOS__UBICLIB == 1)
     r = ubiclib_comp_init();
     if (0 != r) {
-        dtty_puts("ubiclib_comp_init : fail\r\n", 80);
+        dtty_puts("ubiclib_comp_init : fail\n", 80);
         bsp_abortsystem();
     }
 
@@ -51,10 +51,10 @@ int main(void) {
     heapsize = ((unsigned int) &__heap_limit) - heapaddr;
     r = ubiclib_heap_comp_init(heapaddr, heapsize);
     if (HEAP_ERR__UNSUPPORTED == r) {
-        dtty_puts("heap_comp_init : unsupported\r\n", 80);
+        dtty_puts("heap_comp_init : unsupported\n", 80);
     }
     else if (0 != r) {
-        dtty_puts("heap_comp_init : fail\r\n", 80);
+        dtty_puts("heap_comp_init : fail\n", 80);
         bsp_abortsystem();
     }
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
@@ -63,7 +63,7 @@ int main(void) {
 #if !(UBINOS__UBICLIB__NOSTDLIB == 1)
     r = stdlib_port_comp_init();
     if (0 != r) {
-        dtty_puts("stdlib_port_comp_init : fail\r\n", 80);
+        dtty_puts("stdlib_port_comp_init : fail\n", 80);
         bsp_abortsystem();
     }
 #endif
@@ -71,7 +71,7 @@ int main(void) {
 #if (INCLUDE__UBINOS__UBIK == 1)
     r = ubik_comp_init(UBINOS__UBIK__IDLETASK_STACK_DEPTH);
     if (0 != r) {
-        dtty_puts("ubik_comp_init : fail\r\n", 80);
+        dtty_puts("ubik_comp_init : fail\n", 80);
         bsp_abortsystem();
     }
 #endif
@@ -79,17 +79,17 @@ int main(void) {
 #if (INCLUDE__UBINOS__UBICLIB == 1)
     r = ubiclib_comp_init_reent();
     if (0 != r) {
-        dtty_puts("ubiclib_comp_init_reent : fail\r\n", 80);
+        dtty_puts("ubiclib_comp_init_reent : fail\n", 80);
         bsp_abortsystem();
     }
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
     r = ubiclib_heap_comp_init_reent();
     if (HEAP_ERR__UNSUPPORTED == r) {
-        dtty_puts("heap_comp_init_reent : unsupported\r\n", 80);
+        dtty_puts("heap_comp_init_reent : unsupported\n", 80);
     }
     else if (0 != r) {
-        dtty_puts("heap_comp_init_reent : fail\r\n", 80);
+        dtty_puts("heap_comp_init_reent : fail\n", 80);
         bsp_abortsystem();
     }
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
@@ -98,7 +98,7 @@ int main(void) {
 #if !(UBINOS__UBICLIB__NOSTDLIB == 1)
     r = stdlib_port_comp_init_reent();
     if (0 != r) {
-        dtty_puts("stdlib_port_init_reent : fail\r\n", 80);
+        dtty_puts("stdlib_port_init_reent : fail\n", 80);
         bsp_abortsystem();
     }
 #endif

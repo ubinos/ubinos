@@ -16,10 +16,10 @@ static void rootfunc(void *arg);
 int appmain(int argc, char *argv[]) {
 	int r;
 
-	printf("\n\n\n\r");
-	printf("================================================================================\n\r");
-	printf("ubik_test (build time: %s %s)\n\r", __TIME__, __DATE__);
-	printf("================================================================================\n\r");
+	printf("\n\n\n");
+	printf("================================================================================\n");
+	printf("ubik_test (build time: %s %s)\n", __TIME__, __DATE__);
+	printf("================================================================================\n");
 
 	r = task_create(NULL, rootfunc, NULL, task_getmiddlepriority(), 192, "root");
 	if (0 != r) {
@@ -36,16 +36,16 @@ static void rootfunc(void *arg) {
 
 	//logm_setlevel(LOGM_CATEGORY__HEAP, LOGM_LEVEL__INFO);
 
-	printf("\n\r");
+	printf("\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
 	r = heap_printheapinfo(NULL);
 	if (0 == r) {
-		printf("\n\r");
-		printf("================================================================================\n\r");
-		printf("\n\r");
+		printf("\n");
+		printf("================================================================================\n");
+		printf("\n");
 	}
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
-	printf("\n\r");
+	printf("\n");
 
 	unsigned int errcount = 0;
 	unsigned int testcountmax = 1; //UINT_MAX;
@@ -55,20 +55,20 @@ static void rootfunc(void *arg) {
 		if (0 != r) {
 			errcount++;
 		}
-		printf("\r\n");
-		printf("<!-- testcount : %8d, errcount : %8d -->\r\n", i, errcount);
-		printf("\r\n");
+		printf("\n");
+		printf("<!-- testcount : %8d, errcount : %8d -->\n", i, errcount);
+		printf("\n");
 
 		task_sleep(5000);
 	}
 
-	printf("\n\r");
+	printf("\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
 	r = heap_printheapinfo(NULL);
 	if (0 == r) {
-		printf("\n\r");
-		printf("================================================================================\n\r");
-		printf("\n\r");
+		printf("\n");
+		printf("================================================================================\n");
+		printf("\n");
 	}
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 

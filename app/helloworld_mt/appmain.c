@@ -20,11 +20,11 @@ static void helloworld_mt_task2func(void * arg);
 int appmain(int argc, char * argv[]) {
 	int r;
 
-	printf("\n\n\n\r");
-	printf("================================================================================\n\r");
-	printf("helloworld_mt (multi-tasking) (build time: %s %s)\n\r", __TIME__, __DATE__);
-	printf("================================================================================\n\r");
-    printf("\n\r");
+	printf("\n\n\n");
+	printf("================================================================================\n");
+	printf("helloworld_mt (multi-tasking) (build time: %s %s)\n", __TIME__, __DATE__);
+	printf("================================================================================\n");
+    printf("\n");
 
     srand(time(NULL));
 
@@ -49,11 +49,11 @@ static void helloworld_mt_task1func(void * arg) {
 
 	(void) r;
 
-    printf("\n\r");
+    printf("\n");
 
 	for (unsigned int i = 0; ; i++) {
 	    delayms = (rand() % 10 + 1) * 200;
-		printf("1: hello world ! (%u) (delay = %4d ms)\n\r", i, delayms);
+		printf("1: hello world ! (%u) (delay = %4d ms)\n", i, delayms);
 		task_sleepms(delayms);
 	}
 }
@@ -64,11 +64,11 @@ static void helloworld_mt_task2func(void * arg) {
 
     (void) r;
 
-    printf("\n\r");
+    printf("\n");
 
     for (unsigned int i = 0; ; i++) {
         delayms = (rand() % 10 + 1) * 200;
-        printf("2: hello world ! (%u) (delay = %4d ms)\n\r", i, delayms);
+        printf("2: hello world ! (%u) (delay = %4d ms)\n", i, delayms);
         task_sleepms(delayms);
     }
 }

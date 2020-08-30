@@ -104,7 +104,7 @@ void bsp_ubik_task_schedule_irq(void) {
     extern void _ubik_task_schedule_irq();
     _ubik_task_schedule_irq();
 #else
-    dtty_puts("\r\n\r\bsp_ubik_task_schedule_irq\r\n\r\n", 80);
+    dtty_puts("\n\bsp_ubik_task_schedule_irq\n\n", 80);
     bsp_abortsystem();
 #endif
 }
@@ -114,7 +114,7 @@ void bsp_ubik_swisr(unsigned int swino) {
     extern void _ubik_swisr(unsigned int swino);
     _ubik_swisr(swino);
 #else
-    dtty_puts("\r\n\r\bsp_ubik_swisr\r\n\r\n", 80);
+    dtty_puts("\n\bsp_ubik_swisr\n\n", 80);
     bsp_abortsystem();
 #endif
 }

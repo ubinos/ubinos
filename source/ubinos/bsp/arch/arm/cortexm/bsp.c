@@ -54,7 +54,7 @@ void bsp_busywait(unsigned int count) {
 void bsp_abortsystem(void) {
     ARM_INTERRUPT_DISABLE();
 
-    dtty_puts("\r\n\r\nsystem is aborted\r\n\r\n", 80);
+    dtty_puts("\n\nsystem is aborted\n\n", 80);
 
     __asm__ __volatile__ (
             "1:                                                 \n\t"

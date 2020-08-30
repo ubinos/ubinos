@@ -19,11 +19,11 @@ static int mycmd(char *str, int len, void *arg);
 int appmain(int argc, char *argv[]) {
 	int r;
 
-	printf("\n\n\n\r");
-	printf("================================================================================\n\r");
-	printf("command line interface tester (build time: %s %s)\n\r", __TIME__, __DATE__);
-	printf("================================================================================\n\r");
-	printf("\n\r");
+	printf("\n\n\n");
+	printf("================================================================================\n");
+	printf("command line interface tester (build time: %s %s)\n", __TIME__, __DATE__);
+	printf("================================================================================\n");
+	printf("\n");
 
 	dtty_setecho(1);
 
@@ -75,12 +75,12 @@ static int clihookfunc(char *str, int len, void *arg) {
 }
 
 static void clihelphookfunc() {
-	printf("mc                      : my command\n\r");
+	printf("mc                      : my command\n");
 }
 
 static int mycmd(char *str, int len, void *arg) {
-	printf("\n\r");
-	printf("do my command\n\r");
+	printf("\n");
+	printf("do my command\n");
 
 	return 0;
 }

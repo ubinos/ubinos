@@ -101,7 +101,7 @@ void bsp_ubik_tick_handler(void) {
 				#if !(UBINOS__UBIK__EXCLUDE_HRTICK_TICKISR_DELAY_CHECK == 1)
 				hrtick	= _ubik_hrtick_htimer_p->TC_CV;
 				if (hrtick > (_ubik_hrtick_hrtickpertick * 2)) {
-					dtty_puts("bsp_ubik_tick_handler: interrupt was delayed\r\n", 80);
+					dtty_puts("bsp_ubik_tick_handler: interrupt was delayed\n", 80);
 					bsp_abortsystem();
 				}
 				#endif /* !(UBINOS__UBIK__EXCLUDE_HRTICK_TICKISR_DELAY_CHECK == 1) */

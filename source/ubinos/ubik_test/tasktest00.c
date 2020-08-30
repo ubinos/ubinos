@@ -18,7 +18,7 @@ static void tasktest00_taskfunc(void * arg) {
 	unsigned int i;
 
 	for (i=0; i<TASKLOOPCOUNT; i++) {
-		printf("hello world!\r\n");
+		printf("hello world!\n");
 
 		task_sleep(ubik_timemstotick(TASKLOOPINTERVALMS));
 	}
@@ -30,14 +30,14 @@ int ubik_test_tasktest00(void) {
 
 	r = task_create(&task, tasktest00_taskfunc, NULL, task_getpriority(NULL)-1, 0, "tasktest00 task");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = task_join(&task, NULL, 1);
 	if (0 != r) {
-		printf("fail at task_join(), err=%d\r\n", r);
+		printf("fail at task_join(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}

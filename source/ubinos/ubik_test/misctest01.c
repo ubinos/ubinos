@@ -14,35 +14,35 @@
 int ubik_test_misctest01(void) {
 	int r;
 
-	printf("\r\n");
-	printf("<test>\r\n");
-	printf("<name>ubik_test_misctest01</name>\r\n");
-	printf("<description>System information</description>\n\r");
+	printf("\n");
+	printf("<test>\n");
+	printf("<name>ubik_test_misctest01</name>\n");
+	printf("<description>System information</description>\n");
 
-	printf("<message>\n\r");
+	printf("<message>\n");
 
-	printf("\n\r");
-	printf("----------------------------------------------------------------------------------------------------\r\n");
+	printf("\n");
+	printf("----------------------------------------------------------------------------------------------------\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
 	r = heap_printheapinfo(NULL);
 	if (0 < r) {
-		printf("fail at heap_printheapinfo\r\n");
+		printf("fail at heap_printheapinfo\n");
 		r = -1;
 		goto end0;
 	}
-	printf("----------------------------------------------------------------------------------------------------\r\n");
-	printf("\r\n");
+	printf("----------------------------------------------------------------------------------------------------\n");
+	printf("\n");
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
 	r = ubik_printkernelinfo();
 	if (0 != r) {
-		printf("fail at ubik_printkernelinfo\r\n");
+		printf("fail at ubik_printkernelinfo\n");
 		r = -1;
 		goto end0;
 	}
 
 end0:
-	printf("</message>\n\r");
+	printf("</message>\n");
 
 	printf("<result>");
 	if (0 == r) {
@@ -51,9 +51,9 @@ end0:
 	else {
 		printf("fail");
 	}
-	printf("</result>\r\n");
-	printf("</test>\r\n");
-	printf("\r\n");
+	printf("</result>\n");
+	printf("</test>\n");
+	printf("\n");
 	return r;
 }
 

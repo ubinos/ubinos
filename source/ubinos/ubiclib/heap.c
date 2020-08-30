@@ -1499,83 +1499,83 @@ int heap_printheapinfo(heap_pt _heap) {
 		r = -1;
 		goto end0;
 	}
-	printf("heap size                    : 0x%08x (%8d bytes)\r\n", size, size);
+	printf("heap size                    : 0x%08x (%8d bytes)\n", size, size);
 
 	r = heap_getblockoverhead((heap_pt) heap, &boh);
 	if (0 != r) {
 		r = -1;
 		goto end0;
 	}
-	printf("block overhead               : 0x%08x (%8d bytes)\r\n", boh, boh);
+	printf("block overhead               : 0x%08x (%8d bytes)\n", boh, boh);
 
-	printf("\r\n");
+	printf("\n");
 
 	r = heap_getrequestedsize_ext((heap_pt) heap, &size, &nsize, &rsize);
 	if (0 != r) {
 		r = -1;
 		goto end0;
 	}
-	printf("requested size      (total  ): 0x%08x (%8d bytes)\r\n", size, size);
-	printf("                    (normal ): 0x%08x (%8d bytes)\r\n", nsize, nsize);
-	printf("                    (reverse): 0x%08x (%8d bytes)\r\n", rsize, rsize);
+	printf("requested size      (total  ): 0x%08x (%8d bytes)\n", size, size);
+	printf("                    (normal ): 0x%08x (%8d bytes)\n", nsize, nsize);
+	printf("                    (reverse): 0x%08x (%8d bytes)\n", rsize, rsize);
 
 	r = heap_getallocatedcount_ext((heap_pt) heap, &count, &ncount, &rcount);
 	if (0 != r) {
 		r = -1;
 		goto end0;
 	}
-	printf("allocated count     (total  ): 0x%08x (%8d      )\r\n", count, count);
-	printf("                    (normal ): 0x%08x (%8d      )\r\n", ncount, ncount);
-	printf("                    (reverse): 0x%08x (%8d      )\r\n", rcount, rcount);
+	printf("allocated count     (total  ): 0x%08x (%8d      )\n", count, count);
+	printf("                    (normal ): 0x%08x (%8d      )\n", ncount, ncount);
+	printf("                    (reverse): 0x%08x (%8d      )\n", rcount, rcount);
 
 	r = heap_getallocatedsize_ext((heap_pt) heap, &size, &nsize, &rsize);
 	if (0 != r) {
 		r = -1;
 		goto end0;
 	}
-	printf("allocated size      (total  ): 0x%08x (%8d bytes)\r\n", size, size);
-	printf("                    (normal ): 0x%08x (%8d bytes)\r\n", nsize, nsize);
-	printf("                    (reverse): 0x%08x (%8d bytes)\r\n", rsize, rsize);
+	printf("allocated size      (total  ): 0x%08x (%8d bytes)\n", size, size);
+	printf("                    (normal ): 0x%08x (%8d bytes)\n", nsize, nsize);
+	printf("                    (reverse): 0x%08x (%8d bytes)\n", rsize, rsize);
 
 	size = size + (count * boh);
-	printf("ram usage           (dynamic): 0x%08x (%8d bytes)\r\n", size, size);
+	printf("ram usage           (dynamic): 0x%08x (%8d bytes)\n", size, size);
 
-	printf("\r\n");
+	printf("\n");
 
 	r = heap_getrequestedsizemax_ext((heap_pt) heap, &size, &nsize, &rsize);
 	if (0 != r) {
 		r = -1;
 		goto end0;
 	}
-	printf("requested size max  (total  ): 0x%08x (%8d bytes)\r\n", size, size);
-	printf("                    (normal ): 0x%08x (%8d bytes)\r\n", nsize, nsize);
-	printf("                    (reverse): 0x%08x (%8d bytes)\r\n", rsize, rsize);
+	printf("requested size max  (total  ): 0x%08x (%8d bytes)\n", size, size);
+	printf("                    (normal ): 0x%08x (%8d bytes)\n", nsize, nsize);
+	printf("                    (reverse): 0x%08x (%8d bytes)\n", rsize, rsize);
 
 	r = heap_getallocatedcountmax_ext((heap_pt) heap, &count, &ncount, &rcount);
 	if (0 != r) {
 		r = -1;
 		goto end0;
 	}
-	printf("allocated count max (total  ): 0x%08x (%8d      )\r\n", count, count);
-	printf("                    (normal ): 0x%08x (%8d      )\r\n", ncount, ncount);
-	printf("                    (reverse): 0x%08x (%8d      )\r\n", rcount, rcount);
+	printf("allocated count max (total  ): 0x%08x (%8d      )\n", count, count);
+	printf("                    (normal ): 0x%08x (%8d      )\n", ncount, ncount);
+	printf("                    (reverse): 0x%08x (%8d      )\n", rcount, rcount);
 
 	r = heap_getallocatedsizemax_ext((heap_pt) heap, &size, &nsize, &rsize);
 	if (0 != r) {
 		r = -1;
 		goto end0;
 	}
-	printf("allocated size max  (total  ): 0x%08x (%8d bytes)\r\n", size, size);
-	printf("                    (normal ): 0x%08x (%8d bytes)\r\n", nsize, nsize);
-	printf("                    (reverse): 0x%08x (%8d bytes)\r\n", rsize, rsize);
+	printf("allocated size max  (total  ): 0x%08x (%8d bytes)\n", size, size);
+	printf("                    (normal ): 0x%08x (%8d bytes)\n", nsize, nsize);
+	printf("                    (reverse): 0x%08x (%8d bytes)\n", rsize, rsize);
 
 	size = size + (count * boh);
-	printf("ram usage max       (dynamic): 0x%08x (%8d bytes)\r\n", size, size);
+	printf("ram usage max       (dynamic): 0x%08x (%8d bytes)\n", size, size);
 
 	///////////////////////
 		/////////////////////
 	#define _print_block(heap, dir, block, log2m)																										\
-		printf("heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, <%4u>, (0x%08x, 0x%08x, 0x%08x, 0x%08x)\r\n", 		\
+		printf("heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, <%4u>, (0x%08x, 0x%08x, 0x%08x, 0x%08x)\n", 		\
 		        (unsigned int) heap, dir, (unsigned int) block, (unsigned int)_block_pt_to_ptr(block), (unsigned int)_block_pt_to_end_prt(block, log2m), (unsigned int)_tag_to_asize(block->tag, log2m),			\
 				_tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag)&0x3,																	\
 				_tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),										\
@@ -1592,20 +1592,20 @@ int heap_printheapinfo(heap_pt _heap) {
 		edlist_pt fbl;
 		unsigned int log2m/*, m, maskm, min*/;
 
-		printf("\r\n");
+		printf("\n");
 		region 	 = &heap->region[0];
 		log2m	 = region->log2m;
 
-		printf("---------\r\n");
-		printf("algorithm %d\r\n", region->algorithm);
-		printf("m %d\r\n", region->m);
-		printf("fbl count %d\r\n", region->fblcount);
-		printf("fbl offset %d\r\n", region->fbloffset);
-		printf("fbl size %d\r\n", sizeof(edlist_t) * region->fblcount);
-		printf("fbl bitmap bit size %d\r\n", region->fblbm->bitsize);
-		printf("fbl bitmap memory size %d bytes\r\n", bitmap_getmemsize(region->fblbm->bitsize));
-		printf("fbl bitmap buffer size %d bytes\r\n", region->fblbm->map_bytesize);
-		printf("---------\r\n");
+		printf("---------\n");
+		printf("algorithm %d\n", region->algorithm);
+		printf("m %d\n", region->m);
+		printf("fbl count %d\n", region->fblcount);
+		printf("fbl offset %d\n", region->fbloffset);
+		printf("fbl size %d\n", sizeof(edlist_t) * region->fblcount);
+		printf("fbl bitmap bit size %d\n", region->fblbm->bitsize);
+		printf("fbl bitmap memory size %d bytes\n", bitmap_getmemsize(region->fblbm->bitsize));
+		printf("fbl bitmap buffer size %d bytes\n", region->fblbm->map_bytesize);
+		printf("---------\n");
 
 		bx = _heap_blocklist_head(&(region->abl));
 		while(bx != NULL) {
@@ -1613,11 +1613,11 @@ int heap_printheapinfo(heap_pt _heap) {
 			bx = _heap_blocklist_next(bx);
 		}
 
-		printf("---------\r\n");
+		printf("---------\n");
 		for (i=0; i<region->fblcount; i++) {
 			fbl = &region->fbl_ap[i];
 			if (fbl->count != 0) {
-				printf("region 0 fbl %4d count: %4u\r\n", i, fbl->count);
+				printf("region 0 fbl %4d count: %4u\n", i, fbl->count);
 				bx = _heap_blocklist_head(fbl);
 				while(bx != NULL) {
 					_print_block(heap, 0, bx, log2m);
@@ -1625,7 +1625,7 @@ int heap_printheapinfo(heap_pt _heap) {
 				}
 			}
 		}
-		printf("---------\r\n");
+		printf("---------\n");
 
 		/////////////////////
 	///////////////////////

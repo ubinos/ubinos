@@ -51,7 +51,7 @@ static void tasktest07_task1func(void * arg) {
 
 	r = task_setmaxwaitsigobj(NULL, SIGOBJCOUNT);
 	if (0 != r) {
-		printf("task 1: fail at task_setmaxwaitsigobj(), err=%d\r\n", r);
+		printf("task 1: fail at task_setmaxwaitsigobj(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -61,27 +61,27 @@ static void tasktest07_task1func(void * arg) {
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 1 waits for multiple signals (without all option)\r\n");
+	printf("task 1 waits for multiple signals (without all option)\n");
 
 	r = mutex_lock(_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("task 1: fail at mutex_lock(), err=%d\r\n", r);
+		printf("task 1: fail at mutex_lock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = task_waitforsigobjs(sigobj_a, sigtype_a, param_a, SIGOBJCOUNT, 0);
 	if (0 != r) {
-		printf("task 1: fail at task_waitforsigobjs(), err=%d\r\n", r);
+		printf("task 1: fail at task_waitforsigobjs(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = mutex_unlock(_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("task 1: fail at mutex_unlock(), err=%d\r\n", r);
+		printf("task 1: fail at mutex_unlock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -94,20 +94,20 @@ static void tasktest07_task1func(void * arg) {
 		case 3:
 		case 5:
 			if (-1 != sigtype_a[i]) {
-				printf("task 1: sigtype_a[%d] value is wrong\r\n", i);
+				printf("task 1: sigtype_a[%d] value is wrong\n", i);
 				_g_ubik_test_result = -1;
 				goto end0;
 			}
 			break;
 		case 4:
 			if (0 != sigtype_a[i]) {
-				printf("task 1: sigtype_a[%d] value is wrong\r\n", i);
+				printf("task 1: sigtype_a[%d] value is wrong\n", i);
 				_g_ubik_test_result = -1;
 				goto end0;
 			}
 			for (j=0; j<UBINOS__UBIK_TEST__MSGQSIZE; j++) {
 				if (j != msg[j]) {
-					printf("task 1: received message is wrong\r\n");
+					printf("task 1: received message is wrong\n");
 					_g_ubik_test_result = -1;
 					goto end0;
 				}
@@ -121,27 +121,27 @@ static void tasktest07_task1func(void * arg) {
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 1 waits for multiple signals with all option\r\n");
+	printf("task 1 waits for multiple signals with all option\n");
 
 	r = mutex_lock(_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("task 1: fail at mutex_lock(), err=%d\r\n", r);
+		printf("task 1: fail at mutex_lock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = task_waitforsigobjs(sigobj_a, sigtype_a, param_a, SIGOBJCOUNT, TASK_WAITOPT__ALL);
 	if (0 != r) {
-		printf("task 1: fail at task_waitforsigobjs(), err=%d\r\n", r);
+		printf("task 1: fail at task_waitforsigobjs(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = mutex_unlock(_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("task 1: fail at mutex_unlock(), err=%d\r\n", r);
+		printf("task 1: fail at mutex_unlock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -153,20 +153,20 @@ static void tasktest07_task1func(void * arg) {
 		case 2:
 		case 3:
 			if (0 != sigtype_a[i]) {
-				printf("task 1: sigtype_a[%d] value is wrong\r\n", i);
+				printf("task 1: sigtype_a[%d] value is wrong\n", i);
 				_g_ubik_test_result = -1;
 				goto end0;
 			}
 			break;
 		case 4:
 			if (0 != sigtype_a[i]) {
-				printf("task 1: sigtype_a[%d] value is wrong\r\n", i);
+				printf("task 1: sigtype_a[%d] value is wrong\n", i);
 				_g_ubik_test_result = -1;
 				goto end0;
 			}
 			for (j=0; j<UBINOS__UBIK_TEST__MSGQSIZE; j++) {
 				if ((UBINOS__UBIK_TEST__MSGQSIZE - j) != msg[j]) {
-					printf("task 1: received message is wrong\r\n");
+					printf("task 1: received message is wrong\n");
 					_g_ubik_test_result = -1;
 					goto end0;
 				}
@@ -180,53 +180,53 @@ static void tasktest07_task1func(void * arg) {
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 1 unlocks mutex\r\n");
+	printf("task 1 unlocks mutex\n");
 	r = mutex_unlock(_g_ubik_test_mutex);
 	if (0 != r) {
-		printf("task 1: fail at mutex_unlock(), err=%d\r\n", r);
+		printf("task 1: fail at mutex_unlock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
-	printf("task 1 tries to sleep (for %d ms)\r\n", ubik_ticktotimems(waittick));
+	printf("task 1 tries to sleep (for %d ms)\n", ubik_ticktotimems(waittick));
 	task_sleep(waittick);
-	printf("\r\n");
-	printf("task 1 wakes up\r\n");
+	printf("\n");
+	printf("task 1 wakes up\n");
 
 	for (i=0; i<UBINOS__UBIK_TEST__TASKLOOPCOUNT * 1; i++) {
 		_g_ubik_test_count1++;
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 1 waits for multiple signals with all option and timeout (for %d ms)\r\n", ubik_ticktotimems(waittick * 2));
+	printf("task 1 waits for multiple signals with all option and timeout (for %d ms)\n", ubik_ticktotimems(waittick * 2));
 
 	r = mutex_lock(_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("task 1: fail at mutex_lock(), err=%d\r\n", r);
+		printf("task 1: fail at mutex_lock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = task_waitforsigobjs_timed(sigobj_a, sigtype_a, param_a, SIGOBJCOUNT, TASK_WAITOPT__ALL, waittick * 2);
 	if (UBIK_ERR__TIMEOUT != r) {
-		printf("task 1: fail at task_waitforsigobjs(), err=%d\r\n", r);
+		printf("task 1: fail at task_waitforsigobjs(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = mutex_unlock(_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("task 1: fail at mutex_unlock(), err=%d\r\n", r);
+		printf("task 1: fail at mutex_unlock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
-	printf("\r\n");
-	printf("task 1 wakes up\r\n");
+	printf("\n");
+	printf("task 1 wakes up\n");
 
 	for (i=0; i<SIGOBJCOUNT; i++) {
 		switch (i) {
@@ -235,14 +235,14 @@ static void tasktest07_task1func(void * arg) {
 		case 2:
 		case 4:
 			if (UBIK_ERR__TIMEOUT != sigtype_a[i]) {
-				printf("task 1: sigtype_a[%d] value is wrong\r\n", i);
+				printf("task 1: sigtype_a[%d] value is wrong\n", i);
 				_g_ubik_test_result = -1;
 				goto end0;
 			}
 			break;
 		case 3:
 			if (0 != sigtype_a[i]) {
-				printf("task 1: sigtype_a[%d] value is wrong\r\n", i);
+				printf("task 1: sigtype_a[%d] value is wrong\n", i);
 				_g_ubik_test_result = -1;
 				goto end0;
 			}
@@ -255,10 +255,10 @@ static void tasktest07_task1func(void * arg) {
 		printf("1");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
 end0:
-	printf("task 1 ends\r\n");
+	printf("task 1 ends\n");
 }
 
 static void tasktest07_task2func(void * arg) {
@@ -267,10 +267,10 @@ static void tasktest07_task2func(void * arg) {
 	unsigned int waitvalue = UBINOS__UBIK_TEST__TASKWAITTIMEMS * bsp_getbusywaitcountperms();
 	unsigned char msg[UBINOS__UBIK_TEST__MSGQSIZE];
 
-	printf("task 2 locks mutex\r\n");
+	printf("task 2 locks mutex\n");
 	r = mutex_lock(_g_ubik_test_mutex);
 	if (0 != r) {
-		printf("task 2: fail at mutex_lock(), err=%d\r\n", r);
+		printf("task 2: fail at mutex_lock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -280,15 +280,15 @@ static void tasktest07_task2func(void * arg) {
 		printf("2");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 2 sends one signal\r\n");
+	printf("task 2 sends one signal\n");
 	for (i=0; i<UBINOS__UBIK_TEST__MSGQSIZE; i++) {
 		msg[i] = i;
 	}
 	r = msgq_send(_g_ubik_test_msgq, msg);
 	if (0 != r) {
-		printf("task 2: fail at msgq_send(), err=%d\r\n", r);
+		printf("task 2: fail at msgq_send(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -298,15 +298,15 @@ static void tasktest07_task2func(void * arg) {
 		printf("2");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 2 sends one signal\r\n");
+	printf("task 2 sends one signal\n");
 	for (i=0; i<UBINOS__UBIK_TEST__MSGQSIZE; i++) {
 		msg[i] = UBINOS__UBIK_TEST__MSGQSIZE - i;
 	}
 	r = msgq_send(_g_ubik_test_msgq, msg);
 	if (0 != r) {
-		printf("task 2: fail at msgq_send(), err=%d\r\n", r);
+		printf("task 2: fail at msgq_send(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -316,56 +316,56 @@ static void tasktest07_task2func(void * arg) {
 		printf("2");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 2 sends all other signals\r\n");
+	printf("task 2 sends all other signals\n");
 
 	r = mutex_unlock(_g_ubik_test_mutex);
 	if (0 != r) {
-		printf("task 2: fail at mutex_unlock(), err=%d\r\n", r);
+		printf("task 2: fail at mutex_unlock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = signal_send(_g_ubik_test_signal, 0);
 	if (0 != r) {
-		printf("task 2: fail at signal_send(), err=%d\r\n", r);
+		printf("task 2: fail at signal_send(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = mutex_lock(_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("task 2: fail at mutex_lock(), err=%d\r\n", r);
+		printf("task 2: fail at mutex_lock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = condv_signal(_g_ubik_test_condv);
 	if (0 != r) {
-		printf("task 2: fail at condv_signal(), err=%d\r\n", r);
+		printf("task 2: fail at condv_signal(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = mutex_unlock(_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("task 2: fail at mutex_unlock(), err=%d\r\n", r);
+		printf("task 2: fail at mutex_unlock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 	r = sem_give(_g_ubik_test_sem);
 	if (0 != r) {
-		printf("task 2: fail at sem_give(), err=%d\r\n", r);
+		printf("task 2: fail at sem_give(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
-	printf("task 2 locks mutex\r\n");
+	printf("task 2 locks mutex\n");
 	r = mutex_lock(_g_ubik_test_mutex);
 	if (0 != r) {
-		printf("task 2: fail at mutex_lock(), err=%d\r\n", r);
+		printf("task 2: fail at mutex_lock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -375,12 +375,12 @@ static void tasktest07_task2func(void * arg) {
 		printf("2");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 2 sends one signal\r\n");
+	printf("task 2 sends one signal\n");
 	r = sem_give(_g_ubik_test_sem);
 	if (0 != r) {
-		printf("task 2: fail at sem_give(), err=%d\r\n", r);
+		printf("task 2: fail at sem_give(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
@@ -390,18 +390,18 @@ static void tasktest07_task2func(void * arg) {
 		printf("2");
 		bsp_busywait(waitvalue);
 	}
-	printf("\r\n");
+	printf("\n");
 
-	printf("task 2 unlocks mutex\r\n");
+	printf("task 2 unlocks mutex\n");
 	r = mutex_unlock(_g_ubik_test_mutex);
 	if (0 != r) {
-		printf("task 2: fail at mutex_unlock(), err=%d\r\n", r);
+		printf("task 2: fail at mutex_unlock(), err=%d\n", r);
 		_g_ubik_test_result = -1;
 		goto end0;
 	}
 
 end0:
-	printf("task 2 ends\r\n");
+	printf("task 2 ends\n");
 }
 
 int ubik_test_tasktest07(void) {
@@ -411,12 +411,12 @@ int ubik_test_tasktest07(void) {
 	unsigned int count2;
 	unsigned int sleepvalue = ubik_timemstotick(UBINOS__UBIK_TEST__TASKWAITTIMEMS) * UBINOS__UBIK_TEST__TASKLOOPCOUNT / 3;
 
-	printf("\r\n");
-	printf("<test>\r\n");
-	printf("<name>ubik_test_tasktest07</name>\r\n");
-	printf("<description>Test on wait for multiple signal objects function of task</description>\n\r");
+	printf("\n");
+	printf("<test>\n");
+	printf("<name>ubik_test_tasktest07</name>\n");
+	printf("<description>Test on wait for multiple signal objects function of task</description>\n");
 
-	printf("<message>\n\r");
+	printf("<message>\n");
 
 	_g_ubik_test_result = 0;
 
@@ -435,50 +435,50 @@ int ubik_test_tasktest07(void) {
 
 	r = mutex_create(&_g_ubik_test_mutex);
 	if (0 != r) {
-		printf("fail at mutex_create(), err=%d\r\n", r);
+		printf("fail at mutex_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = mutex_create(&_g_ubik_test_mutex2);
 	if (0 != r) {
-		printf("fail at mutex_create(), err=%d\r\n", r);
+		printf("fail at mutex_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = signal_create(&_g_ubik_test_signal);
 	if (0 != r) {
-		printf("fail at mutex_create(), err=%d\r\n", r);
+		printf("fail at mutex_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = condv_create(&_g_ubik_test_condv);
 	if (0 != r) {
-		printf("fail at mutex_create(), err=%d\r\n", r);
+		printf("fail at mutex_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = sem_create(&_g_ubik_test_sem);
 	if (0 != r) {
-		printf("fail at mutex_create(), err=%d\r\n", r);
+		printf("fail at mutex_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
 	r = msgq_create(&_g_ubik_test_msgq, UBINOS__UBIK_TEST__MSGQSIZE, UBINOS__UBIK_TEST__MSGQMAXCOUNT);
 	if (0 != r) {
-		printf("fail at mutex_create(), err=%d\r\n", r);
+		printf("fail at mutex_create(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
-	printf("create task 2\r\n");
+	printf("create task 2\n");
 	r = task_create(&_g_ubik_test_task_a[2-1], tasktest07_task2func, NULL, task_getpriority(NULL)-2, 256, "tasktest07 task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -487,25 +487,25 @@ int ubik_test_tasktest07(void) {
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 01: ");
 	if (count1 != _g_ubik_test_count1 || count2 == _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue);
 
-	printf("\r\n");
-	printf("create task 1\r\n");
+	printf("\n");
+	printf("create task 1\n");
 	r = task_create(&_g_ubik_test_task_a[1-1], tasktest07_task1func, NULL, task_getpriority(NULL)-1, 256, "tasktest07 task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\r\n", r);
+		printf("fail at task_create(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -514,200 +514,200 @@ int ubik_test_tasktest07(void) {
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 02: ");
 	if (count1 == _g_ubik_test_count1 || count2 != _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 03: ");
 	if (count1 != _g_ubik_test_count1 || count2 == _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 04: ");
 	if (count1 == _g_ubik_test_count1 || count2 != _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 05: ");
 	if (count1 != _g_ubik_test_count1 || count2 == _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 06: ");
 	if (count1 != _g_ubik_test_count1 || count2 == _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 07: ");
 	if (count1 == _g_ubik_test_count1 || count2 != _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 08: ");
 	if (count1 != _g_ubik_test_count1 || count2 == _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 09: ");
 	if (count1 == _g_ubik_test_count1 || count2 != _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 10: ");
 	if (count1 != _g_ubik_test_count1 || count2 == _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 11: ");
 	if (count1 != _g_ubik_test_count1 || count2 == _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 12: ");
 	if (count1 == _g_ubik_test_count1 || count2 != _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	task_sleep(sleepvalue * 2);
 
 	count1 = _g_ubik_test_count1;
 	count2 = _g_ubik_test_count2;
-	printf("\r\n");
-	printf("checking\r\n");
+	printf("\n");
+	printf("checking\n");
 	task_sleep(sleepvalue);
-	printf("\r\n");
+	printf("\n");
 	printf("check point 13: ");
 	if (count1 != _g_ubik_test_count1 || count2 == _g_ubik_test_count2) {
-		printf("fail\r\n");
+		printf("fail\n");
 		r = -1;
 		goto end2;
 	}
-	printf("pass\r\n");
+	printf("pass\n");
 
 	r = 0;
 
 end2:
 	r2 = task_join(_g_ubik_test_task_a, NULL, 2);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\r\n", r2);
+		printf("fail at task_join(), err=%d\n", r2);
 		r = -1;
 	}
 
@@ -715,42 +715,42 @@ end1:
 	if (NULL != _g_ubik_test_mutex) {
 		r2 = mutex_delete(&_g_ubik_test_mutex);
 		if (0 != r2) {
-			printf("fail at mutex_delete(), err=%d\r\n", r2);
+			printf("fail at mutex_delete(), err=%d\n", r2);
 			r = -1;
 		}
 	}
 	if (NULL != _g_ubik_test_mutex2) {
 		r2 = mutex_delete(&_g_ubik_test_mutex2);
 		if (0 != r2) {
-			printf("fail at mutex_delete(), err=%d\r\n", r2);
+			printf("fail at mutex_delete(), err=%d\n", r2);
 			r = -1;
 		}
 	}
 	if (NULL != _g_ubik_test_signal) {
 		r2 = signal_delete(&_g_ubik_test_signal);
 		if (0 != r2) {
-			printf("fail at signal_delete(), err=%d\r\n", r2);
+			printf("fail at signal_delete(), err=%d\n", r2);
 			r = -1;
 		}
 	}
 	if (NULL != _g_ubik_test_condv) {
 		r2 = condv_delete(&_g_ubik_test_condv);
 		if (0 != r2) {
-			printf("fail at condv_delete(), err=%d\r\n", r2);
+			printf("fail at condv_delete(), err=%d\n", r2);
 			r = -1;
 		}
 	}
 	if (NULL != _g_ubik_test_sem) {
 		r2 = sem_delete(&_g_ubik_test_sem);
 		if (0 != r2) {
-			printf("fail at sem_delete(), err=%d\r\n", r2);
+			printf("fail at sem_delete(), err=%d\n", r2);
 			r = -1;
 		}
 	}
 	if (NULL != _g_ubik_test_msgq) {
 		r2 = msgq_delete(&_g_ubik_test_msgq);
 		if (0 != r2) {
-			printf("fail at msgq_delete(), err=%d\r\n", r2);
+			printf("fail at msgq_delete(), err=%d\n", r2);
 			r = -1;
 		}
 	}
@@ -763,7 +763,7 @@ end0:
 		r = 0;
 	}
 
-	printf("</message>\n\r");
+	printf("</message>\n");
 
 	printf("<result>");
 	if (0 == r) {
@@ -772,9 +772,9 @@ end0:
 	else {
 		printf("fail");
 	}
-	printf("</result>\r\n");
-	printf("</test>\r\n");
-	printf("\r\n");
+	printf("</result>\n");
+	printf("</test>\n");
+	printf("\n");
 	return r;
 }
 
