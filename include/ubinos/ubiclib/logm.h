@@ -51,15 +51,50 @@ extern "C"
 /*! 힙 카테고리 */
 #define LOGM_CATEGORY__HEAP			11
 
-/*! 사용자0 카테고리 */
-#define LOGM_CATEGORY__USER00		12
-/*! 사용자1 카테고리 */
-#define LOGM_CATEGORY__USER01		13
-/*! 사용자2 카테고리 */
-#define LOGM_CATEGORY__USER02		14
+/*! 시스템 0 카테고리 */
+#define LOGM_CATEGORY__SYS00		12
+/*! 시스템 1 카테고리 */
+#define LOGM_CATEGORY__SYS01		13
+/*! 시스템 2 카테고리 */
+#define LOGM_CATEGORY__SYS02		14
+/*! 시스템 3 카테고리 */
+#define LOGM_CATEGORY__SYS03		15
+/*! 시스템 4 카테고리 */
+#define LOGM_CATEGORY__SYS04		16
+/*! 시스템 5 카테고리 */
+#define LOGM_CATEGORY__SYS05		17
+/*! 시스템 6 카테고리 */
+#define LOGM_CATEGORY__SYS06		18
+/*! 시스템 7 카테고리 */
+#define LOGM_CATEGORY__SYS07		19
+/*! 시스템 8 카테고리 */
+#define LOGM_CATEGORY__SYS08		20
+/*! 시스템 9 카테고리 */
+#define LOGM_CATEGORY__SYS09		21
+
+/*! 사용자 0 카테고리 */
+#define LOGM_CATEGORY__USER00		22
+/*! 사용자 1 카테고리 */
+#define LOGM_CATEGORY__USER01		23
+/*! 사용자 2 카테고리 */
+#define LOGM_CATEGORY__USER02		24
+/*! 사용자 3 카테고리 */
+#define LOGM_CATEGORY__USER03		25
+/*! 사용자 4 카테고리 */
+#define LOGM_CATEGORY__USER04		26
+/*! 사용자 5 카테고리 */
+#define LOGM_CATEGORY__USER05		27
+/*! 사용자 6 카테고리 */
+#define LOGM_CATEGORY__USER06		28
+/*! 사용자 7 카테고리 */
+#define LOGM_CATEGORY__USER07		29
+/*! 사용자 8 카테고리 */
+#define LOGM_CATEGORY__USER08		30
+/*! 사용자 9 카테고리 */
+#define LOGM_CATEGORY__USER09		31
 
 /*! 카테고리 끝 */
-#define LOGM_CATEGORY__END			15
+#define LOGM_CATEGORY__END			32
 
 
 /*! 어떤 메시지도 출력하지 않음 */
@@ -89,6 +124,18 @@ extern "C"
 /*! 테그 설정 */
 #define LOGM_TAG					NULL
 
+
+/*! 출력되는 테그 최소 길이 */
+#define LOGM_TAG_LENGTH				20
+
+/*! 출력되는 함수명의 최소 길이 */
+#define LOGM_FUNCTION_NAME_LENGTH	40
+
+/*! 출력되는 줄 번호의 최소 길이 */
+#define LOGM_LINE_NUMBER_LENGTH		6
+
+extern const char *_ubiclib_logm_categoryname[LOGM_CATEGORY__END];
+extern const char *_ubiclib_logm_levelname[LOGM_LEVEL__END];
 
 #if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
 

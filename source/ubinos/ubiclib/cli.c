@@ -274,23 +274,12 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 			int id;
 			int level;
 
-			printf("    input category id\n");
-			printf("        %4d : all    \n", -1);
-			printf("        %4d : none   \n", LOGM_CATEGORY__NONE);
-			printf("        %4d : ubinos \n", LOGM_CATEGORY__UBINOS);
-			printf("        %4d : bsp    \n", LOGM_CATEGORY__BSP);
-			printf("        %4d : ubik   \n", LOGM_CATEGORY__UBIK);
-			printf("        %4d : task   \n", LOGM_CATEGORY__TASK);
-			printf("        %4d : sem    \n", LOGM_CATEGORY__SEM);
-			printf("        %4d : msgq   \n", LOGM_CATEGORY__MSGQ);
-			printf("        %4d : condv  \n", LOGM_CATEGORY__CONDV);
-			printf("        %4d : signal \n", LOGM_CATEGORY__SIGNAL);
-			printf("        %4d : stimer \n", LOGM_CATEGORY__STIMER);
-			printf("        %4d : ubiclib\n", LOGM_CATEGORY__UBICLIB);
-			printf("        %4d : heap   \n", LOGM_CATEGORY__HEAP);
-			printf("        %4d : user00 \n", LOGM_CATEGORY__USER00);
-			printf("        %4d : user01 \n", LOGM_CATEGORY__USER01);
-			printf("        %4d : user02 \n", LOGM_CATEGORY__USER02);
+			printf("    input category id\n\n");
+
+			printf("        %4d : [ALL    ]\n", -1);
+			for (int i = 0; i < LOGM_CATEGORY__END; i++) {
+				printf("        %4d : %s\n", i, _ubiclib_logm_categoryname[i]);
+			}
 
 			tmplen = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
 			if (0 >= tmplen) {
@@ -300,15 +289,11 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 			printf("%s\n", _cli_cmd_buf);
 			id = atoi(_cli_cmd_buf);
 
-			printf("    input level\n");
-			printf("        %4d : none    \n", LOGM_LEVEL__NONE);
-			printf("        %4d : always  \n", LOGM_LEVEL__ALWAYS);
-			printf("        %4d : fatal   \n", LOGM_LEVEL__FATAL);
-			printf("        %4d : error   \n", LOGM_LEVEL__ERROR);
-			printf("        %4d : warning \n", LOGM_LEVEL__WARNING);
-			printf("        %4d : info    \n", LOGM_LEVEL__INFO);
-			printf("        %4d : debug   \n", LOGM_LEVEL__DEBUG);
-			printf("        %4d : verbose \n", LOGM_LEVEL__VERBOSE);
+			printf("    input level\n\n");
+
+			for (int i = 1; i < LOGM_LEVEL__END; i++) {
+				printf("        %4d : %s\n", i, _ubiclib_logm_levelname[i]);
+			}
 
 			tmplen = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
 			if (0 >= tmplen) {
