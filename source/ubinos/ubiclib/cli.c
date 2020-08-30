@@ -68,7 +68,7 @@ void cli_main(void *arg) {
 
 	printf("\n%s", _cli_prompt_buf);
 	fflush(stdout);
-	do {
+	for (;;) {
 		len = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
 		if (0 < len) {
 			printf("\n%s\n", _cli_cmd_buf);
@@ -93,7 +93,7 @@ void cli_main(void *arg) {
 
 		printf("\n%s", _cli_prompt_buf);
 		fflush(stdout);
-	} while (1);
+	}
 }
 
 static int cli_rootfunc(char *str, int len, void *arg) {
@@ -107,7 +107,6 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 	tmplen = len;
 
 	do {
-
 		cmd = "set ";
 		cmdlen = strlen(cmd);
 		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
@@ -123,7 +122,7 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
 		cmd = "mi";
 		cmdlen = strlen(cmd);
-		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
+		if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 			printf("\n");
 			heap_printheapinfo(NULL);
 
@@ -135,7 +134,7 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 #if ( (INCLUDE__UBINOS__UBIK == 1) && !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) )
 		cmd = "ki";
 		cmdlen = strlen(cmd);
-		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
+		if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 			printf("\n");
 			ubik_printkernelinfo();
 
@@ -147,8 +146,7 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
 		cmd = "heap ";
 		cmdlen = strlen(cmd);
-		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-		{
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 			tmpstr = &tmpstr[cmdlen];
 			tmplen -= cmdlen;
 
@@ -159,7 +157,8 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 		}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
 
-	} while(0);
+		break;
+	} while (1);
 
 	return r;
 }
@@ -205,19 +204,16 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 	tmpstr = str;
 	tmplen = len;
 
-	do
-	{
+	do {
 		cmd = "echo ";
 		cmdlen = strlen(cmd);
-		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-		{
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 			tmpstr = &tmpstr[cmdlen];
 			tmplen -= cmdlen;
 
 			cmd = "on";
 			cmdlen = strlen(cmd);
-			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-			{
+			if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 				r = dtty_setecho(1);
 				if (0 == r) {
 					printf("    success\n");
@@ -229,8 +225,7 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 
 			cmd = "off";
 			cmdlen = strlen(cmd);
-			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-			{
+			if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 				r = dtty_setecho(0);
 				if (0 == r) {
 					printf("    success\n");
@@ -243,15 +238,13 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 
 		cmd = "autocr ";
 		cmdlen = strlen(cmd);
-		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-		{
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 			tmpstr = &tmpstr[cmdlen];
 			tmplen -= cmdlen;
 
 			cmd = "on";
 			cmdlen = strlen(cmd);
-			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-			{
+			if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 				r = dtty_setautocr(1);
 				if (0 == r) {
 					printf("    success\n");
@@ -263,8 +256,7 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 
 			cmd = "off";
 			cmdlen = strlen(cmd);
-			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-			{
+			if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 				r = dtty_setautocr(0);
 				if (0 == r) {
 					printf("    success\n");
@@ -278,8 +270,7 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 #if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
 		cmd = "logm";
 		cmdlen = strlen(cmd);
-		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-		{
+		if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 			int id;
 			int level;
 
@@ -335,7 +326,9 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 			}
 		}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1) */
-	} while (0);
+
+		break;
+	} while (1);
 
 	return r;
 }
@@ -351,12 +344,10 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 	tmpstr = str;
 	tmplen = len;
 
-	do
-	{
+	do {
 		cmd = "param ";
 		cmdlen = strlen(cmd);
-		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-		{
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 			tmpstr = &tmpstr[cmdlen];
 			tmplen -= cmdlen;
 
@@ -371,8 +362,7 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP == 1)
 			cmd = "group ";
 			cmdlen = strlen(cmd);
-			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-			{
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 				tmpstr = &tmpstr[cmdlen];
 				tmplen -= cmdlen;
 
@@ -453,8 +443,7 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1)
 			cmd = "bestfit ";
 			cmdlen = strlen(cmd);
-			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
-			{
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 				region_m = 2;
 
 				fbl_count = 2;
@@ -512,14 +501,15 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 
 				r = 0;
 				break;
-			}
-			else {
+			} else {
 				printf(" not supported\n");
 				r = 0;
 				break;
 			}
 		}
-	} while (0);
+
+		break;
+	} while (1);
 
 	return r;
 }

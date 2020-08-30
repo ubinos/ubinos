@@ -64,7 +64,7 @@ static int clihookfunc(char *str, int len, void *arg) {
 
 	cmd = "mc";
 	cmdlen = strlen(cmd);
-	if (tmplen >= cmdlen && strncmp(tmpstr, cmd, tmplen) == 0) {
+	if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
 		tmpstr = &tmpstr[cmdlen];
 		tmplen -= cmdlen;
 
