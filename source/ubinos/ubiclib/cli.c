@@ -66,12 +66,12 @@ void cli_main(void *arg) {
 		strncpy(_cli_prompt_buf, CLI_PROMPT__DEFAULT, CLI_PROMPT_SIZE_MAX);
 	}
 
-	printf("\r\n%s", _cli_prompt_buf);
+	printf("\n%s", _cli_prompt_buf);
 	fflush(stdout);
 	do {
 		len = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
 		if (0 < len) {
-			printf("\r\n%s\r\n", _cli_cmd_buf);
+			printf("\n%s\n", _cli_cmd_buf);
 
 			r = cli_rootfunc(_cli_cmd_buf, len, arg);
 			if (0 != r) {
@@ -80,7 +80,7 @@ void cli_main(void *arg) {
 				}
 			}
 		} else {
-			printf("\r\n");
+			printf("\n");
 			r = -1;
 		}
 
@@ -91,7 +91,7 @@ void cli_main(void *arg) {
 			}
 		}
 
-		printf("\r\n%s", _cli_prompt_buf);
+		printf("\n%s", _cli_prompt_buf);
 		fflush(stdout);
 	} while (1);
 }
@@ -114,7 +114,7 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 			tmpstr = &tmpstr[cmdlen];
 			tmplen -= cmdlen;
 
-			printf("\r\n");
+			printf("\n");
 
 			r = cli_cmdfunc__set(tmpstr, tmplen, arg);
 			break;
@@ -124,7 +124,7 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 		cmd = "mi";
 		cmdlen = strlen(cmd);
 		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
-			printf("\r\n");
+			printf("\n");
 			heap_printheapinfo(NULL);
 
 			r = 0;
@@ -136,7 +136,7 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 		cmd = "ki";
 		cmdlen = strlen(cmd);
 		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
-			printf("\r\n");
+			printf("\n");
 			ubik_printkernelinfo();
 
 			r = 0;
@@ -152,7 +152,7 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 			tmpstr = &tmpstr[cmdlen];
 			tmplen -= cmdlen;
 
-			printf("\r\n");
+			printf("\n");
 
 			r = cli_cmdfunc__heap(tmpstr, tmplen, arg);
 			break;
@@ -165,31 +165,34 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 }
 
 static int cli_cmdfunc__help(char *str, int len, void *arg) {
-	printf("h                                   : help\r\n");
+	printf("\n");
+	printf("h                                   : help\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-	printf("mi                                  : memory information\r\n");
+	printf("mi                                  : memory information\n");
 #endif
 #if ( (INCLUDE__UBINOS__UBIK == 1) && !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1) )
-	printf("ki                                  : kernel information\r\n");
+	printf("ki                                  : kernel information\n");
 #endif
-	printf("set echo <on|off>                   : set echo on/off\r\n");
+	printf("set echo <on|off>                   : set echo on/off\n");
+	printf("set autocr <on|off>                 : set auto carriage return on/off\n");
 #if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
-	printf("set logm                            : set log message level\r\n");
+	printf("set logm                            : set log message level\n");
 #endif
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
-	printf("heap param <algorithm> <size> (m)   : calculate heap parameters\r\n");
-	printf("    algorithm: heap algorithm\r\n");
-	printf("        group    : group system\r\n");
-	printf("        pgroup   : pure group system (without tailing) \r\n");
-	printf("        bbuddy   : binary buddy system\r\n");
-	printf("        wbuddy   : weighted buddy system\r\n");
-	printf("        bestfit  : best fit\r\n");
-	printf("        firstfit : first fit\r\n");
-	printf("        nextfit  : next fit\r\n");
-	printf("    size: heap size \r\n");
-	printf("    m: M value for group system and pure group system\r\n");
-	return 0;
+	printf("heap param <algorithm> <size> (m)   : calculate heap parameters\n");
+	printf("    algorithm: heap algorithm\n");
+	printf("        group    : group system\n");
+	printf("        pgroup   : pure group system (without tailing) \n");
+	printf("        bbuddy   : binary buddy system\n");
+	printf("        wbuddy   : weighted buddy system\n");
+	printf("        bestfit  : best fit\n");
+	printf("        firstfit : first fit\n");
+	printf("        nextfit  : next fit\n");
+	printf("    size: heap size \n");
+	printf("    m: M value for group system and pure group system\n");
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
+	printf("\n");
+	return 0;
 }
 
 static int cli_cmdfunc__set(char *str, int len, void *arg) {
@@ -217,9 +220,9 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 			{
 				r = dtty_setecho(1);
 				if (0 == r) {
-					printf("    success\r\n");
+					printf("    success\n");
 				} else {
-					printf("    fail\r\n");
+					printf("    fail\n");
 				}
 				break;
 			}
@@ -230,9 +233,43 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 			{
 				r = dtty_setecho(0);
 				if (0 == r) {
-					printf("    success\r\n");
+					printf("    success\n");
 				} else {
-					printf("    fail\r\n");
+					printf("    fail\n");
+				}
+				break;
+			}
+		}
+
+		cmd = "autocr ";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+		{
+			tmpstr = &tmpstr[cmdlen];
+			tmplen -= cmdlen;
+
+			cmd = "on";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				r = dtty_setautocr(1);
+				if (0 == r) {
+					printf("    success\n");
+				} else {
+					printf("    fail\n");
+				}
+				break;
+			}
+
+			cmd = "off";
+			cmdlen = strlen(cmd);
+			if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+			{
+				r = dtty_setautocr(0);
+				if (0 == r) {
+					printf("    success\n");
+				} else {
+					printf("    fail\n");
 				}
 				break;
 			}
@@ -246,55 +283,55 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
 			int id;
 			int level;
 
-			printf("    input category id\r\n");
-			printf("        %4d : all    \r\n", -1);
-			printf("        %4d : none   \r\n", LOGM_CATEGORY__NONE);
-			printf("        %4d : ubinos \r\n", LOGM_CATEGORY__UBINOS);
-			printf("        %4d : bsp    \r\n", LOGM_CATEGORY__BSP);
-			printf("        %4d : ubik   \r\n", LOGM_CATEGORY__UBIK);
-			printf("        %4d : task   \r\n", LOGM_CATEGORY__TASK);
-			printf("        %4d : sem    \r\n", LOGM_CATEGORY__SEM);
-			printf("        %4d : msgq   \r\n", LOGM_CATEGORY__MSGQ);
-			printf("        %4d : condv  \r\n", LOGM_CATEGORY__CONDV);
-			printf("        %4d : signal \r\n", LOGM_CATEGORY__SIGNAL);
-			printf("        %4d : stimer \r\n", LOGM_CATEGORY__STIMER);
-			printf("        %4d : ubiclib\r\n", LOGM_CATEGORY__UBICLIB);
-			printf("        %4d : heap   \r\n", LOGM_CATEGORY__HEAP);
-			printf("        %4d : user00 \r\n", LOGM_CATEGORY__USER00);
-			printf("        %4d : user01 \r\n", LOGM_CATEGORY__USER01);
-			printf("        %4d : user02 \r\n", LOGM_CATEGORY__USER02);
+			printf("    input category id\n");
+			printf("        %4d : all    \n", -1);
+			printf("        %4d : none   \n", LOGM_CATEGORY__NONE);
+			printf("        %4d : ubinos \n", LOGM_CATEGORY__UBINOS);
+			printf("        %4d : bsp    \n", LOGM_CATEGORY__BSP);
+			printf("        %4d : ubik   \n", LOGM_CATEGORY__UBIK);
+			printf("        %4d : task   \n", LOGM_CATEGORY__TASK);
+			printf("        %4d : sem    \n", LOGM_CATEGORY__SEM);
+			printf("        %4d : msgq   \n", LOGM_CATEGORY__MSGQ);
+			printf("        %4d : condv  \n", LOGM_CATEGORY__CONDV);
+			printf("        %4d : signal \n", LOGM_CATEGORY__SIGNAL);
+			printf("        %4d : stimer \n", LOGM_CATEGORY__STIMER);
+			printf("        %4d : ubiclib\n", LOGM_CATEGORY__UBICLIB);
+			printf("        %4d : heap   \n", LOGM_CATEGORY__HEAP);
+			printf("        %4d : user00 \n", LOGM_CATEGORY__USER00);
+			printf("        %4d : user01 \n", LOGM_CATEGORY__USER01);
+			printf("        %4d : user02 \n", LOGM_CATEGORY__USER02);
 
 			tmplen = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
 			if (0 >= tmplen) {
 				r = -1;
 				break;
 			}
-			printf("%s\r\n", _cli_cmd_buf);
+			printf("%s\n", _cli_cmd_buf);
 			id = atoi(_cli_cmd_buf);
 
-			printf("    input level\r\n");
-			printf("        %4d : none    \r\n", LOGM_LEVEL__NONE);
-			printf("        %4d : always  \r\n", LOGM_LEVEL__ALWAYS);
-			printf("        %4d : fatal   \r\n", LOGM_LEVEL__FATAL);
-			printf("        %4d : error   \r\n", LOGM_LEVEL__ERROR);
-			printf("        %4d : warning \r\n", LOGM_LEVEL__WARNING);
-			printf("        %4d : info    \r\n", LOGM_LEVEL__INFO);
-			printf("        %4d : debug   \r\n", LOGM_LEVEL__DEBUG);
-			printf("        %4d : verbose \r\n", LOGM_LEVEL__VERBOSE);
+			printf("    input level\n");
+			printf("        %4d : none    \n", LOGM_LEVEL__NONE);
+			printf("        %4d : always  \n", LOGM_LEVEL__ALWAYS);
+			printf("        %4d : fatal   \n", LOGM_LEVEL__FATAL);
+			printf("        %4d : error   \n", LOGM_LEVEL__ERROR);
+			printf("        %4d : warning \n", LOGM_LEVEL__WARNING);
+			printf("        %4d : info    \n", LOGM_LEVEL__INFO);
+			printf("        %4d : debug   \n", LOGM_LEVEL__DEBUG);
+			printf("        %4d : verbose \n", LOGM_LEVEL__VERBOSE);
 
 			tmplen = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
 			if (0 >= tmplen) {
 				r = -1;
 				break;
 			}
-			printf("%s\r\n", _cli_cmd_buf);
+			printf("%s\n", _cli_cmd_buf);
 			level = atoi(_cli_cmd_buf);
 
 			r = logm_setlevel(id, level);
 			if (0 == r) {
-				printf("            success\r\n");
+				printf("            success\n");
 			} else {
-				printf("            fail\r\n");
+				printf("            fail\n");
 			}
 		}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1) */
@@ -347,8 +384,8 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 
 				r = 0;
 
-				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
-				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP\r\n");
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP\n");
 			}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP == 1) */
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1)
@@ -367,8 +404,8 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 
 				r = 0;
 
-				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
-				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP\r\n");
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP\n");
 			}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1) */
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1)
@@ -388,8 +425,8 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 
 				r = 0;
 
-				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
-				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__BBUDDY\r\n");
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__BBUDDY\n");
 			}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1) */
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1)
@@ -409,8 +446,8 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 
 				r = 0;
 
-				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
-				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY\r\n");
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY\n");
 			}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1) */
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1)
@@ -426,8 +463,8 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 
 				r = 0;
 
-				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
-				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT\r\n");
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT\n");
 			}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) */
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1)
@@ -443,8 +480,8 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 
 				r = 0;
 
-				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
-				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__FIRSTFIT\r\n");
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__FIRSTFIT\n");
 			}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) */
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1)
@@ -460,24 +497,24 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 
 				r = 0;
 
-				printf("    UBINOS__UBICLIB__HEAP_DIR...\r\n");
-				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__NEXTFIT\r\n");
+				printf("    UBINOS__UBICLIB__HEAP_DIR...\n");
+				printf("        algorithm                           (..._ALGORITHM)     : UBINOS__UBICLIB__HEAP_ALGORITHM__NEXTFIT\n");
 			}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */
 
 			if (r == 0) {
-				printf("        m value                             (..._M)             : %u\r\n", region_m);
-				printf("        fbl (free block list)\r\n");
-				printf("            fbl count minimum value         (..._FBLCOUNT)      : %u\r\n", fbl_count);
-				printf("            fbl memory size                                     : %u bytes\r\n", fbl_memsize);
-				printf("        fblbm (bitmap for indexing free block list)\r\n");
-				printf("            fblbm memory size minimum value (..._FBLBM_BUFSIZE) : %u\r\n", bitmap_memsize);
+				printf("        m value                             (..._M)             : %u\n", region_m);
+				printf("        fbl (free block list)\n");
+				printf("            fbl count minimum value         (..._FBLCOUNT)      : %u\n", fbl_count);
+				printf("            fbl memory size                                     : %u bytes\n", fbl_memsize);
+				printf("        fblbm (bitmap for indexing free block list)\n");
+				printf("            fblbm memory size minimum value (..._FBLBM_BUFSIZE) : %u\n", bitmap_memsize);
 
 				r = 0;
 				break;
 			}
 			else {
-				printf(" not supported\r\n");
+				printf(" not supported\n");
 				r = 0;
 				break;
 			}

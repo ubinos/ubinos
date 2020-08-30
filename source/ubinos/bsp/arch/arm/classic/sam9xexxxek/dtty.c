@@ -16,9 +16,11 @@
 
 extern int _g_bsp_dtty_init;
 extern int _g_bsp_dtty_echo;
+extern int _g_bsp_dtty_autocr;
 
 int dtty_init(void) {
-	_g_bsp_dtty_echo = 0;
+	_g_bsp_dtty_echo = 1;
+	_g_bsp_dtty_autocr = 1;
 
 	/* Reset and disable receiver */
 	AT91C_BASE_DBGU->DBGU_CR = AT91C_US_RSTRX | AT91C_US_RSTTX;
@@ -118,13 +120,22 @@ int dtty_putc(int ch) {
 		dtty_init();
 	}
 
+	if (0 != _g_bsp_dtty_autocr && '\n' == ch) {
+	    for (;;)
+	    {
+	        if (AT91C_BASE_DBGU->DBGU_CSR & AT91C_US_TXRDY) {
+	            break;
+	        }
+	    }
+	    AT91C_BASE_DBGU->DBGU_THR = ('\r' & 0xFF);
+	}
+
     for (;;)
     {
         if (AT91C_BASE_DBGU->DBGU_CSR & AT91C_US_TXRDY) {
             break;
         }
     }
-
     AT91C_BASE_DBGU->DBGU_THR = (ch & 0xFF);
 
     return 0;

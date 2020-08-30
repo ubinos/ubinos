@@ -16,6 +16,7 @@
 
 extern int _g_bsp_dtty_init;
 extern int _g_bsp_dtty_echo;
+extern int _g_bsp_dtty_autocr;
 
 #define GPIO_CFG(pin_number, pin_dir, pin_input, pin_pull, pin_drive, pin_sense) {     \
     NRF_GPIO->PIN_CNF[pin_number] =   ((uint32_t)pin_dir   << GPIO_PIN_CNF_DIR_Pos  )  \
@@ -60,7 +61,8 @@ extern int _g_bsp_dtty_echo;
 }
 
 int dtty_init(void) {
-    _g_bsp_dtty_echo = 0;
+    _g_bsp_dtty_echo = 1;
+	_g_bsp_dtty_autocr = 1;
 
     NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
 
@@ -175,10 +177,18 @@ int dtty_putc(int ch) {
 		dtty_init();
 	}
 
+	if (0 != _g_bsp_dtty_autocr && '\n' == ch) {
+	    NRF_UART0->EVENTS_TXDRDY = 0x0UL;
+	    NRF_UART0->TXD = (0x000000ff & '\r');
+	    for (;;) {
+	        if (NRF_UART0->EVENTS_TXDRDY) {
+	            break;
+	        }
+	    }
+	}
+
     NRF_UART0->EVENTS_TXDRDY = 0x0UL;
-
     NRF_UART0->TXD = (0x000000ff & ch);
-
     for (;;) {
         if (NRF_UART0->EVENTS_TXDRDY) {
             break;

@@ -60,6 +60,7 @@
 
 extern int _g_bsp_dtty_init;
 extern int _g_bsp_dtty_echo;
+extern int _g_bsp_dtty_autocr;
 
 static void Configure_USART(void) {
 
@@ -118,7 +119,8 @@ static void Configure_USART(void) {
 }
 
 int dtty_init(void) {
-	_g_bsp_dtty_echo = 0;
+	_g_bsp_dtty_echo = 1;
+	_g_bsp_dtty_autocr = 1;
 
 	Configure_USART();
 
@@ -195,12 +197,20 @@ int dtty_putc(int ch) {
 		dtty_init();
 	}
 
+	if (0 != _g_bsp_dtty_autocr && '\n' == ch) {
+		for (;;) {
+			if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE)) {
+				break;
+			}
+		}
+		LL_USART_TransmitData8(USARTx_INSTANCE, '\r');
+	}
+
 	for (;;) {
 		if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE)) {
 			break;
 		}
 	}
-
 	LL_USART_TransmitData8(USARTx_INSTANCE, ch);
 
 	return 0;

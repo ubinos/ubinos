@@ -13,6 +13,7 @@
 
 int _g_bsp_dtty_init = 0;
 int _g_bsp_dtty_echo = 0;
+int _g_bsp_dtty_autocr = 0; // auto carriage return
 
 #if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__ARM926EJ_S)
 #pragma GCC push_options
@@ -75,6 +76,12 @@ int dtty_setecho(int echo) {
     return 0;
 }
 
+int dtty_setautocr(int autocr) {
+    _g_bsp_dtty_autocr = autocr;
+
+    return 0;
+}
+
 #else /* (UBINOS__BSP__USE_DTTY == ...) */
 
 int dtty_puts(const char * str, int max) {
@@ -90,6 +97,10 @@ int dtty_gets(char * str, int max) {
 }
 
 int dtty_setecho(int echo) {
+    return 0;
+}
+
+int dtty_setautocr(int autocr) {
     return 0;
 }
 

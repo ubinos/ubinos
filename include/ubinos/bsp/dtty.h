@@ -153,6 +153,21 @@ int dtty_gets(char * str, int max);
  */
 int dtty_setecho(int echo);
 
+/*!
+ * 디버깅 터미널 자동 캐리지 리턴 설정 함수
+ *
+ * 디버깅 터미널에 "\n" 출력시 그 앞에 "\r"을 자동 출력하는 기능 활성화 여부를 설정한다.
+ *
+ * @param	autocr	0: auto carriage return off<br>
+ * 					1: auto carriage return on<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ */
+int dtty_setautocr(int autocr);
+
 #ifdef	__cplusplus
 }
 #endif

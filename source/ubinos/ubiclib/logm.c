@@ -16,7 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NEWLINE "\r\n"
+#define NEWLINE "\n"
 
 volatile int _ubiclib_logm_level[LOGM_CATEGORY__END] = {
 		LOGM_LEVEL, // NONE
