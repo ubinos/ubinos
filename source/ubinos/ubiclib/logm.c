@@ -154,6 +154,23 @@ int logm_printfln(int category, int level, const char *tag, const char *func, in
 		return 0;
 	}
 
+#if (INCLUDE__UBINOS__UBIK == 1)
+	tickcount_t tc;
+	if (_bsp_kernel_active) {
+		tc = ubik_gettickcount();
+		itoa(tc.low, buf, 10);
+		len = strlen(buf);
+		n += dtty_puts("[", 128);
+		if (len < LOGM_TICK_COUNT_LENGTH) {
+			for (i = 0; i < (LOGM_TICK_COUNT_LENGTH - len); i++) {
+				n += dtty_puts(" ", 128);
+			}
+		}
+		n += dtty_puts(buf, 128);
+		n += dtty_puts("] ", 128);
+	}
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
 	n += dtty_puts(_ubiclib_logm_levelname[level], 128);
 
 	n += dtty_puts(_ubiclib_logm_categoryname[category], 128);
@@ -214,6 +231,23 @@ int logm_println(int category, int level, const char *tag, const char *func, int
 	if (_ubiclib_logm_level[category] < level) {
 		return 0;
 	}
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+	tickcount_t tc;
+	if (_bsp_kernel_active) {
+		tc = ubik_gettickcount();
+		itoa(tc.low, buf, 10);
+		len = strlen(buf);
+		n += dtty_puts("[", 128);
+		if (len < LOGM_TICK_COUNT_LENGTH) {
+			for (i = 0; i < (LOGM_TICK_COUNT_LENGTH - len); i++) {
+				n += dtty_puts(" ", 128);
+			}
+		}
+		n += dtty_puts(buf, 128);
+		n += dtty_puts("] ", 128);
+	}
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
 	n += dtty_puts(_ubiclib_logm_levelname[level], 128);
 

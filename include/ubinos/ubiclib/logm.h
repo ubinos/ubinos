@@ -125,6 +125,9 @@ extern "C"
 #define LOGM_TAG					NULL
 
 
+/*! 출력되는 틱 카운트 최소 길이 */
+#define LOGM_TICK_COUNT_LENGTH		10
+
 /*! 출력되는 테그 최소 길이 */
 #define LOGM_TAG_LENGTH				20
 
