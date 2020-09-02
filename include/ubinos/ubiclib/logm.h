@@ -98,30 +98,28 @@ extern "C"
 
 
 /*! 어떤 메시지도 출력하지 않음 */
-#define LOGM_LEVEL__NONE			0
-/*! 항상 기록되어야 하는 메시지까지만 출력함 */
-#define LOGM_LEVEL__ALWAYS			1
+#define LOGM_LEVEL__SILENT			0
 /*! 심각한 수준의 문제에 관한 메시지까지만 출력함 */
-#define LOGM_LEVEL__FATAL			2
+#define LOGM_LEVEL__FATAL			1
 /*! 일반적인 문제에 관한 메시지까지만 출력함 */
-#define LOGM_LEVEL__ERROR			3
+#define LOGM_LEVEL__ERROR			2
 /*! 경고 메시지까지만 출력함 */
-#define LOGM_LEVEL__WARNING			4
+#define LOGM_LEVEL__WARNING			3
 /*! 동작 상태 정보까지만 출력함 */
-#define LOGM_LEVEL__INFO			5
+#define LOGM_LEVEL__INFO			4
 /*! 디버깅시 필요한 정보까지 모두 출력함 */
-#define LOGM_LEVEL__DEBUG			6
+#define LOGM_LEVEL__DEBUG			5
 /*! 기타 상세 정보까지 모두 출력함 */
-#define LOGM_LEVEL__VERBOSE			7
+#define LOGM_LEVEL__VERBOSE			6
 /*! 레벨 끝 */
-#define LOGM_LEVEL__END				8
+#define LOGM_LEVEL__END				7
 
 
-/*! 카테고리 설정 */
+/*! 카테고리 기본 값 */
 #define LOGM_CATEGORY				LOGM_CATEGORY__NONE
-/*! 레벨 설정 */
+/*! 레벨 기본 값 */
 #define LOGM_LEVEL					LOGM_LEVEL__WARNING
-/*! 테그 설정 */
+/*! 테그 기본 값 */
 #define LOGM_TAG					NULL
 
 
@@ -137,8 +135,6 @@ extern "C"
 /*! 출력되는 줄 번호의 최소 길이 */
 #define LOGM_LINE_NUMBER_LENGTH		6
 
-extern const char *_ubiclib_logm_categoryname[LOGM_CATEGORY__END];
-extern const char *_ubiclib_logm_levelname[LOGM_LEVEL__END];
 
 #if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
 
@@ -214,11 +210,8 @@ int logm_println(int category, int level, const char * tag, const char * func, i
 int logm_printfln(int category, int level, const char * tag, const char * func, int line, const char * format, ...);
 
 
-/*! 메시지를 기록하는 매크로 (LOGM_LEVEL 설정 수준) */
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL로 정의된 기본 수준) */
 #define logm (msg) logm_println(LOGM_CATEGORY, LOGM_LEVEL,          LOGM_TAG, __FUNCTION__, __LINE__, msg)
-
-/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ALWAYS 수준) */
-#define logma(msg) logm_println(LOGM_CATEGORY, LOGM_LEVEL__ALWAYS,  LOGM_TAG, __FUNCTION__, __LINE__, msg)
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__FATAL 수준) */
 #define logmt(msg) logm_println(LOGM_CATEGORY, LOGM_LEVEL__FATAL,   LOGM_TAG, __FUNCTION__, __LINE__, msg)
@@ -239,11 +232,8 @@ int logm_printfln(int category, int level, const char * tag, const char * func, 
 #define logmv(msg) logm_println(LOGM_CATEGORY, LOGM_LEVEL__VERBOSE, LOGM_TAG, __FUNCTION__, __LINE__, msg)
 
 
-/*! 메시지를 기록하는 매크로 (LOGM_LEVEL 설정 수준) */
+/*! 메시지를 기록하는 매크로 (LOGM_LEVEL로 정의된 기본 수준) */
 #define logmf (format, args...) logm_printfln(LOGM_CATEGORY, LOGM_LEVEL,            LOGM_TAG, __FUNCTION__, __LINE__, format, ## args)
-
-/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ALWAYS 수준) */
-#define logmfa(format, args...) logm_printfln(LOGM_CATEGORY, LOGM_LEVEL__ALWAYS,    LOGM_TAG, __FUNCTION__, __LINE__, format, ## args)
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__FATAL 수준) */
 #define logmft(format, args...) logm_printfln(LOGM_CATEGORY, LOGM_LEVEL__FATAL,     LOGM_TAG, __FUNCTION__, __LINE__, format, ## args)
@@ -279,7 +269,7 @@ int logm_printfln(int category, int level, const char * tag, const char * func, 
  * 			 -1: 오류<br>
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
-#define logm_setlevel(category, level) ((void) (LOGM_LEVEL__NONE))
+#define logm_setlevel(category, level) ((void) (LOGM_LEVEL__SILENT))
 
 /*!
  * 설정되어 있는 기록할 메시지 수준을 돌려주는 함수
@@ -291,14 +281,11 @@ int logm_printfln(int category, int level, const char * tag, const char * func, 
  * 			 -1: 오류<br>
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
-#define logm_getlevel(category) ((void) (LOGM_LEVEL__NONE))
+#define logm_getlevel(category) ((void) (LOGM_LEVEL__SILENT))
 
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL 설정 수준) */
 #define logm (msg)
-
-/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ALWAYS 수준) */
-#define logma(msg)
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__FATAL 수준) */
 #define logmt(msg)
@@ -321,9 +308,6 @@ int logm_printfln(int category, int level, const char * tag, const char * func, 
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL 설정 수준) */
 #define logmf (format, args...)
-
-/*! 메시지를 기록하는 매크로 (LOGM_LEVEL__ALWAYS 수준) */
-#define logmfa(format, args...)
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL__FATAL 수준) */
 #define logmft(format, args...)

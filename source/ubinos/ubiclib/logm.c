@@ -98,8 +98,7 @@ const char *_ubiclib_logm_categoryname[LOGM_CATEGORY__END] = {
 };
 
 const char *_ubiclib_logm_levelname[LOGM_LEVEL__END] = {
-		"[NONE   ] ",
-		"[ALWAYS ] ",
+		"[SILENT ] ",
 		"[FATAL  ] ",
 		"[ERROR  ] ",
 		"[WARNING] ",

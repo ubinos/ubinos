@@ -25,8 +25,6 @@ int appmain(int argc, char *argv[]) {
 	printf("================================================================================\n");
 	printf("\n");
 
-	dtty_setecho(1);
-
 	r = cli_sethookfunc(clihookfunc, NULL);
 	if (0 != r) {
 		logme("fail at cli_sethookfunc");
@@ -75,12 +73,12 @@ static int clihookfunc(char *str, int len, void *arg) {
 }
 
 static void clihelphookfunc() {
-	printf("mc                      : my command\n");
+	printf("mc                                      : my command\n");
 }
 
 static int mycmd(char *str, int len, void *arg) {
 	printf("\n");
-	printf("do my command\n");
+	printf("done\n");
 
 	return 0;
 }
