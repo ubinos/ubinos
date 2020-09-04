@@ -100,7 +100,7 @@ set_cache_default(UBINOS__BSP__CLOCK_FREQ_SLOW                                  
 set_cache_default(UBINOS__BSP__BUSYWAITCOUNT_PER_MS                             0       STRING "Busy wait count per millisecond")
 
 set_cache_default(UBINOS__BSP__USE_DTTY                                         TRUE    BOOL "Use dtty (debug tty)")
-set_cache_default(UBINOS__BSP__DTTY_TYPE                                        "UART"  STRING "dtty type [UART | EXTERNAL]")
+set_cache_default(UBINOS__BSP__DTTY_TYPE                                        "UART"  STRING "dtty type [UART | UART_ASYNC | EXTERNAL]")
 
 set_cache_default(UBINOS__BSP__USE_EXTSRAM                                      FALSE   BOOL "Use external SRAM")
 set_cache_default(UBINOS__BSP__USE_EXTSDRAM                                     FALSE   BOOL "Use external SDRAM")

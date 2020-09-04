@@ -116,7 +116,8 @@
 #cmakedefine01 UBINOS__BSP__USE_DTTY
 
 #define UBINOS__BSP__DTTY_TYPE__UART                      1
-#define UBINOS__BSP__DTTY_TYPE__EXTERNAL                  2
+#define UBINOS__BSP__DTTY_TYPE__UART_ASYNC                2
+#define UBINOS__BSP__DTTY_TYPE__EXTERNAL                  3
 #define UBINOS__BSP__DTTY_TYPE                            UBINOS__BSP__DTTY_TYPE__@UBINOS__BSP__DTTY_TYPE@
 
 #define UBINOS__BSP__CLOCK_FREQ_MAIN                      @UBINOS__BSP__CLOCK_FREQ_MAIN@

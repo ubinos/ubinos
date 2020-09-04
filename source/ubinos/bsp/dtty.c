@@ -15,6 +15,10 @@ int _g_bsp_dtty_init = 0;
 int _g_bsp_dtty_echo = 0;
 int _g_bsp_dtty_autocr = 0; // auto carriage return
 
+#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
+int _g_bsp_dtty_async_init = 0;
+#endif
+
 #if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__ARM926EJ_S)
 #pragma GCC push_options
 #pragma GCC target ("arm")
