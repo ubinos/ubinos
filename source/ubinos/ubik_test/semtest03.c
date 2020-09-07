@@ -130,9 +130,9 @@ int ubik_test_semtest03(void) {
 	}
 
 	printf("Task 3 begins\n");
-	r = task_create(&_g_ubik_test_task_a[3-1], semtest03_task3func, NULL, task_getpriority(NULL)-3, 0, "semtest03 task 3");
+	r = task_create_noautodel(&_g_ubik_test_task_a[3-1], semtest03_task3func, NULL, task_getpriority(NULL)-3, 0, "semtest03 task 3");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -166,9 +166,9 @@ int ubik_test_semtest03(void) {
 
 	printf("\n");
 	printf("Task 1 begins\n");
-	r = task_create(&_g_ubik_test_task_a[1-1], semtest03_task1func, NULL, task_getpriority(NULL)-1, 0, "semtest03 task 1");
+	r = task_create_noautodel(&_g_ubik_test_task_a[1-1], semtest03_task1func, NULL, task_getpriority(NULL)-1, 0, "semtest03 task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -218,9 +218,9 @@ int ubik_test_semtest03(void) {
 
 	printf("\n");
 	printf("Task 2 begins\n");
-	r = task_create(&_g_ubik_test_task_a[2-1], semtest03_task2func, NULL, task_getpriority(NULL)-2, 0, "semtest03 task 2");
+	r = task_create_noautodel(&_g_ubik_test_task_a[2-1], semtest03_task2func, NULL, task_getpriority(NULL)-2, 0, "semtest03 task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -298,9 +298,9 @@ int ubik_test_semtest03(void) {
 	r = 0;
 
 end2:
-	r2 = task_join(_g_ubik_test_task_a, NULL, 3);
+	r2 = task_join_and_delete(_g_ubik_test_task_a, NULL, 3);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\n", r2);
+		printf("fail at task_join_and_delete(), err=%d\n", r2);
 		r = -1;
 	}
 

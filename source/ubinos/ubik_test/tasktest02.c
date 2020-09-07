@@ -66,9 +66,9 @@ int ubik_test_tasktest02(void) {
 	_g_ubik_test_count1 = 0;
 
 	printf("create task 1\n");
-	r = task_create(&_g_ubik_test_task_a[0], tasktest02_task1func, NULL, task_getpriority(NULL)-1, 0, "tasktest02 task 1");
+	r = task_create_noautodel(&_g_ubik_test_task_a[0], tasktest02_task1func, NULL, task_getpriority(NULL)-1, 0, "tasktest02 task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
@@ -152,9 +152,9 @@ int ubik_test_tasktest02(void) {
 	r = 0;
 
 end1:
-	r2 = task_join(_g_ubik_test_task_a, NULL, 1);
+	r2 = task_join_and_delete(_g_ubik_test_task_a, NULL, 1);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\n", r2);
+		printf("fail at task_join_and_delete(), err=%d\n", r2);
 		r = -1;
 	}
 

@@ -39,6 +39,7 @@ int task_comp_init(unsigned int idle_stackdepth) {
 
 	edlist_init(&_task_list_suspended);
 	edlist_init(&_task_list_terminated);
+	edlist_init(&_task_list_terminated_noautodel);
 
 	_task_cur = NULL;
 	r = task_create(NULL, &_task_idlefunc, NULL, TASK_PRIORITY__IDLE, idle_stackdepth, "idle");
@@ -57,6 +58,13 @@ int task_create(task_pt * task_p, taskfunc_ft func, void * arg, int priority, un
 			task_p, func, arg, priority, stackdepth, name);
 
 	return task_create_ext(task_p, func, arg, priority, stackdepth, name, 0, 0);
+}
+
+int task_create_noautodel(task_pt * task_p, taskfunc_ft func, void * arg, int priority, unsigned int stackdepth, const char * name) {
+	logmfd("task_p 0x%x, func 0x%x, arg 0x%x, priority %d, stackdepth %d, name %s",
+			task_p, func, arg, priority, stackdepth, name);
+
+	return task_create_ext(task_p, func, arg, priority, stackdepth, name, 0, TASK_OPT__NOAUTODEL);
 }
 
 int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority, unsigned int stackdepth, const char * name, unsigned int tag, unsigned int option) {
@@ -147,6 +155,10 @@ int task_create_ext(task_pt * task_p, taskfunc_ft func, void * arg, int priority
 	task->priority_ori 	= priority;
 	task->priority 		= priority;
 
+	if ((option & TASK_OPT__NOAUTODEL) != 0) {
+		task->noautodel = 1;
+	}
+
 	if (NULL != name) {
 		strncpy(task->name, name, UBINOS__UBIK__TASK_NAME_SIZE_MAX);
 	}
@@ -197,6 +209,7 @@ int task_delete(task_pt * task_p) {
 	unsigned int needunlock = 0;
 	#endif
 	_task_pt task;
+	int noautodel = 0;
 	#if !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1)
 	signal_pt monitor;
 	#endif /* !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1) */
@@ -329,44 +342,63 @@ int task_delete(task_pt * task_p) {
 
 		ubik_entercrit();
 
-		if (0 == task->valid || OBJTYPE__UBIK_TASK != task->type) {
+		if (task->noautodel) {
+			noautodel = 1;
+		}
+
+		if (OBJTYPE__UBIK_TASK != task->type) {
 			logme("parameter 1 is wrong");
 			r = -2;
 			goto end1;
 		}
 
-		if (0 != task->osigobjlist.count) {
-			logme("task is holding objects");
-			r = -1;
-			goto end1;
-		}
+		if (task->valid) {
+			if (0 != task->osigobjlist.count) {
+				logme("task is holding objects");
+				r = -1;
+				goto end1;
+			}
 
-		#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
-		_kernel_monitor_tasklist_remove(task);
-		#endif
+			#if !(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING == 1)
+			_kernel_monitor_tasklist_remove(task);
+			#endif
 
-		task->valid = 0;
+			task->valid = 0;
 
-		#if !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1)
-		monitor = task->monitor;
-		if (0 == _ubik_tasklockcount) {
-			_ubik_tasklockcount++;
-			_sigobj_broadcast((_sigobj_pt) monitor, SIGOBJ_SIGTYPE__TERMINATED);
-			_ubik_tasklockcount--;
+			#if !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1)
+			monitor = task->monitor;
+			if (0 == _ubik_tasklockcount) {
+				_ubik_tasklockcount++;
+				_sigobj_broadcast((_sigobj_pt) monitor, SIGOBJ_SIGTYPE__TERMINATED);
+				_ubik_tasklockcount--;
+			}
+			else {
+				_sigobj_broadcast((_sigobj_pt) monitor, SIGOBJ_SIGTYPE__TERMINATED);
+			}
+			#endif /* !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1) */
+
+			*task_p = NULL;
+
+			_task_sigobj_removewtask(task);
+
+			task->state = TASK_STATE__TERMINATED;
+			_task_changelist(task);
 		}
 		else {
-			_sigobj_broadcast((_sigobj_pt) monitor, SIGOBJ_SIGTYPE__TERMINATED);
+			if (!noautodel) {
+				logme("parameter 1 is wrong");
+				r = -2;
+				goto end1;
+			}
 		}
-		#endif /* !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1) */
 
-		*task_p = NULL;
+		if (noautodel) {
+			_tasklist_remove(task);
 
-		_task_sigobj_removewtask(task);
-
-		task->state = TASK_STATE__TERMINATED;
-		_task_changelist(task);
-
-		_task_schedule();
+			if (_task_prev == task) {
+				_task_prev = NULL;
+			}
+		}
 	}
 
 	r = 0;
@@ -385,7 +417,22 @@ end1:
 	}
 	#endif
 
-	_task_collectgarbage();
+	if (noautodel) {
+		#if !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1)
+		if (NULL != task->monitor) {
+			signal_delete(&task->monitor);
+		}
+		#endif /* !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1) */
+
+		if (&task->wtask != task->wtask_p && NULL != task->wtask_p) {
+			free(task->wtask_p);
+		}
+		free(task->stack);
+		free(task);
+	}
+	else {
+		_task_collectgarbage();
+	}
 
 end0:
 	return r;
@@ -1220,6 +1267,30 @@ int task_waitforsigobjs_timedms(void ** _sigobj_p, int * sigtype_p, void ** para
 }
 
 #if !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1)
+int task_join_and_delete(task_pt * task_p, int * result_p, int count) {
+	int r = 0;
+
+	do {
+		r = task_join(task_p, result_p, count);
+		if (r != 0) {
+			logmfe("fail at task_join(), err=%d", r);
+			break;
+		}
+
+		for (int i = 0; i < count; i++) {
+			r = task_delete(&task_p[i]);
+			if (r != 0) {
+				logmfe("fail at task_delete(0x%x), err=%d", task_p[i], r);
+				break;
+			}
+		}
+
+		break;
+	} while (1);
+
+	return r;
+}
+
 int task_join(task_pt * task_p, int * result_p, int count) {
 	int r;
 	int r2;
@@ -1448,6 +1519,7 @@ void _task_init(_task_pt task) {
 	task->timed					= 0;
 	task->sysflag01				= 0;
 	task->waitall				= 0;
+	task->noautodel		= 0;
 	task->reserved3				= 0;
 
 	task->priority				= 0;
@@ -1504,8 +1576,7 @@ void _task_idlefunc(void * arg) {
 void _task_rootfunc(void * arg) {
 	(*_task_cur->func)(arg);
 	task_delete(NULL);
-	task_suspend(NULL);
-	for (;;);
+	bsp_abortsystem(); // unreachable control flow
 }
 
 void _task_changelist(_task_pt task) {
@@ -1544,7 +1615,12 @@ void _task_changelist(_task_pt task) {
 				logme("idle task is terminated");
 				bsp_abortsystem();
 			}
-			tasklist = &_task_list_terminated;
+			if (task->noautodel == 1) {
+				tasklist = &_task_list_terminated_noautodel;
+			}
+			else {
+				tasklist = &_task_list_terminated;
+			}
 
 			break;
 		default:

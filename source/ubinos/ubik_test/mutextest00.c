@@ -48,16 +48,16 @@ static int ubik_test_mutextest00_subtest1(void) {
 
 	_g_data 	= 0;
 
-	r = task_create(&task_a[0], mutextest00_subtest1_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
+	r = task_create_noautodel(&task_a[0], mutextest00_subtest1_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end0;
 	}
 
-	r = task_create(&task_a[1], mutextest00_subtest1_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
+	r = task_create_noautodel(&task_a[1], mutextest00_subtest1_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -65,9 +65,9 @@ static int ubik_test_mutextest00_subtest1(void) {
 	r = 0;
 
 end1:
-	r2 = task_join(task_a, NULL, 2);
+	r2 = task_join_and_delete(task_a, NULL, 2);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\n", r2);
+		printf("fail at task_join_and_delete(), err=%d\n", r2);
 		r = -1;
 	}
 
@@ -123,16 +123,16 @@ static int ubik_test_mutextest00_subtest2(void) {
 
 	_g_data = 0;
 
-	r = task_create(&task_a[0], mutextest00_subtest2_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
+	r = task_create_noautodel(&task_a[0], mutextest00_subtest2_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
-	r = task_create(&task_a[1], mutextest00_subtest2_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
+	r = task_create_noautodel(&task_a[1], mutextest00_subtest2_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -140,9 +140,9 @@ static int ubik_test_mutextest00_subtest2(void) {
 	r = 0;
 
 end2:
-	r2 = task_join(task_a, NULL, 2);
+	r2 = task_join_and_delete(task_a, NULL, 2);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\n", r2);
+		printf("fail at task_join_and_delete(), err=%d\n", r2);
 		r = -1;
 	}
 

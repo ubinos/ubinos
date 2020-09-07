@@ -166,9 +166,9 @@ int ubik_test_stimertest01(void) {
 	}
 
 	printf("create task 2\n");
-	r = task_create(&_g_ubik_test_task_a[2-1], stimertest01_task2func, NULL, task_getpriority(NULL)-2, 0, "stimertest01 task 2");
+	r = task_create_noautodel(&_g_ubik_test_task_a[2-1], stimertest01_task2func, NULL, task_getpriority(NULL)-2, 0, "stimertest01 task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -193,9 +193,9 @@ int ubik_test_stimertest01(void) {
 
 	printf("\n");
 	printf("create task 1\n");
-	r = task_create(&_g_ubik_test_task_a[1-1], stimertest01_task1func, NULL, task_getpriority(NULL)-1, 0, "stimertest01 task 1");
+	r = task_create_noautodel(&_g_ubik_test_task_a[1-1], stimertest01_task1func, NULL, task_getpriority(NULL)-1, 0, "stimertest01 task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end3;
 	}
@@ -363,9 +363,9 @@ int ubik_test_stimertest01(void) {
 	r = 0;
 
 end3:
-	r2 = task_join(_g_ubik_test_task_a, NULL, 2);
+	r2 = task_join_and_delete(_g_ubik_test_task_a, NULL, 2);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\n", r2);
+		printf("fail at task_join_and_delete(), err=%d\n", r2);
 		r = -1;
 	}
 

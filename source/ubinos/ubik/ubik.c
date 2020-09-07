@@ -69,7 +69,8 @@ volatile edlist_pt		_task_list_blocked_timed_next 				= NULL;		/* next timed blo
 volatile unsigned int 	_task_list_ready_index 						= 0;		/* current ready task list index */
 volatile edlist_pt		_task_list_ready_cur 						= NULL;		/* current ready task list pointer */
 		 edlist_t		_task_list_suspended						= {0,};		/* suspended task list */
-		 edlist_t		_task_list_terminated						= {0,};		/* terminated task list */
+		 edlist_t		_task_list_terminated						= {0,};		/* list of terminated task (these tasks are deleted by idle task automotically) */
+		 edlist_t		_task_list_terminated_noautodel			= {0,};		/* list of terminated task that should be deleted by user (a task to join must be this type) */
 volatile _task_pt 		_task_cur 									= NULL;		/* current running task pointer */
 volatile _task_pt 		_task_prev									= NULL;		/* previous ran task pointer */
 

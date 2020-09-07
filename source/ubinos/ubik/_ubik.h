@@ -168,22 +168,23 @@ typedef	struct __task_t {
 		int						sigtype;
 		unsigned char *			msg;
 		mutex_pt				mutex;
-	} 					wtask;
+	} 					wtask;				/* 시그널 객체에 기다리는 태스크로 등록하기 위한 링크 */
 
-	struct __wtask_t *	wtask_p;
+	struct __wtask_t *	wtask_p;			/* 시그널 객체에 기다리는 태스크로 등록하기 위한 링크 배열 포인터 */
 	int					wtask_max;			/* 이 태스크가 기다를 수 있는 시그널 객체 수 최대값 */
 	int					wtask_count; 		/* 이 태스크가 기다리는 시그널 객체 수 (기다릴 수 없는 상태의 객체 수 포함) */
 	int					wtask_waitcount;	/* 이 태스크가 실제로 기다리는 시그널 객체 수 (기다릴 수 없는 상태의 객체 수 제외) */
 	int					wtask_recvcount;	/* 이 태스크가 시그널을 받은 객체 수 */
 
-	edlist_t			osigobjlist;
+	edlist_t			osigobjlist;		/* 이 태스크가 소유한 시그널 객체 목록 */
 
 	unsigned int		state					:  2;
 	unsigned int		suspended				:  1;
 	unsigned int		timed					:  1;
 	unsigned int		sysflag01				:  1;
 	unsigned int		waitall					:  1;
-	unsigned int		reserved3				: 10;
+	unsigned int		noautodel				:  1;
+	unsigned int		reserved3				:  9;
 
 	unsigned int		priority				:  8;
 	unsigned int		priority_ori			:  8;
@@ -455,7 +456,8 @@ extern 			edlist_t		_task_list_ready_a[UBINOS__UBIK__TASK_PRIORITY_MAX+1];	/* re
 extern volatile unsigned int 	_task_list_ready_index;						/* current ready task list index */
 extern volatile edlist_pt		_task_list_ready_cur;						/* current ready task list pointer */
 extern 			edlist_t		_task_list_suspended;						/* suspended task list */
-extern 			edlist_t		_task_list_terminated;						/* terminated task list */
+extern 			edlist_t		_task_list_terminated;						/* list of terminated task (these tasks are deleted by idle task automotically) */
+extern 			edlist_t		_task_list_terminated_noautodel;			/* list of terminated task that should be deleted by user (a task to join must be this type) */
 extern volatile _task_pt 		_task_cur;									/* current running task pointer */
 extern volatile _task_pt 		_task_prev;									/* previous ran task pointer */
 

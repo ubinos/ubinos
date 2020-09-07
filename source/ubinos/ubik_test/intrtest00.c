@@ -54,9 +54,9 @@ int ubik_test_intrtest00(void) {
 		goto end0;
 	}
 
-	r = task_create(&task, intrtest00_taskfunc, NULL, task_getpriority(NULL)-1, 0, "intrtest00 task");
+	r = task_create_noautodel(&task, intrtest00_taskfunc, NULL, task_getpriority(NULL)-1, 0, "intrtest00 task");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
@@ -83,9 +83,9 @@ int ubik_test_intrtest00(void) {
 	/* Start hardware timer */
 	AT91C_BASE_TC0->TC_CCR = AT91C_TC_SWTRG;
 
-	r = task_join(&task, NULL, 1);
+	r = task_join_and_delete(&task, NULL, 1);
 	if (0 != r) {
-		printf("fail at task_join(), err=%d\n", r);
+		printf("fail at task_join_and_delete(), err=%d\n", r);
 		r = -1;
 	}
 

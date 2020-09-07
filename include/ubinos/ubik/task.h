@@ -331,6 +331,9 @@ extern "C"
 /*! 기다리는 방법 선택 사항: 기다리는 신호 객체들 모두로부터 신호를 받을 때까지 기다림 (모두 기다리기 선택 사항) */
 #define	TASK_WAITOPT__ALL				0x40
 
+/*! 태스크 선택 사항: 사용자가 명시적으로 task_delete 함수를 호출할 때까지 태스트 정보 메모리를 유지함 (이 선택 사항을 선택하지 않을 경우 태스크 수행이 끝나면 태스크 정보 메모리가 자동으로 할당 해제된다.) */
+#define	TASK_OPT__NOAUTODEL				0x40
+
 /*! 태스크 함수 포인터 형 정의 */
 typedef void (*taskfunc_ft)(void *);
 
@@ -382,6 +385,46 @@ typedef _task_tip_t * task_pt;
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
 int task_create(task_pt * task_p, taskfunc_ft func, void * arg, int priority,
+		unsigned int stackdepth, const char * name);
+
+/*!
+ * 자동 삭제 안 되는 태스크를 생성하는 함수
+ *
+ * task_join 함수를 사용할 경우 반드시 이 함수로 태스크를 생성해야함.
+ *
+ * @param	task_p		생성한 태스크의 주소를 저장할 포인터의 주소<br>
+ * 						NULL: 생성한 태스크의 주소를 저장하지 않음<br>
+ * 						<br>
+ *
+ * @param	func		태스크가 실행할 함수 포인터<br>
+ * 						<br>
+ *
+ * @param	arg			태스크가 실행할 함수로 전달할 매개변수<br>
+ * 						<br>
+ *
+ * @param	priority	우선순위<br>
+ * 						<br>
+ * 						큰 숫자가 높은 우선순위<br>
+ * 						최고 우선순위는 task_gethighestpriority 함수가 돌려 주는 값<br>
+ * 						중간 우선순위는 task_getmiddlepriority 함수가 돌려주는 값<br>
+ * 						최저 우선순위는 task_getlowestpriority 함수가 돌려주는 값<br>
+ * 						<br>
+ *
+ * @param	stackdepth	스택 깊이(스택 영역 크기는 stackdepth * INT_SIZE 바이트가 됨)<br>
+ * 						0: 기본  스택 깊이 값(task_getdefaultstackdepth 함수가 돌려주는 값)<br>
+ * 						1 ~ 최저 스택 깊이 값: 최저 스택 깊이 값(task_getminstackdepth 함수가 돌려주는 값)<br>
+ * 						<br>
+ *
+ * @param	name		태스크 이름<br>
+ * 						NULL: 태스크 이름을 지정하지 않음<br>
+ * 						<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ */
+int task_create_noautodel(task_pt * task_p, taskfunc_ft func, void * arg, int priority,
 		unsigned int stackdepth, const char * name);
 
 /*!
@@ -731,6 +774,7 @@ int task_waitforsigobjs_timedms(void ** sigobj_p, int * sigtype_p,
  * 대상 태스크들이 종료되기를 기다리는 함수
  *
  * @param	task_p		대상 태스크 포인터 배열<br>
+ * 						대상 테스크는 task_create_noautodel 함수로 생성한 수동 삭제 태스크여야 함<br>
  * 						<br>
  *
  * @param	result_p	결과값을 저장할  배열<br>
@@ -753,9 +797,36 @@ int task_waitforsigobjs_timedms(void ** sigobj_p, int * sigtype_p,
 int task_join(task_pt * task_p, int * result_p, int count);
 
 /*!
+ * 대상 태스크들이 종료되기를 기다린 후 삭제하는 함수
+ *
+ * @param	task_p		대상 태스크 포인터 배열<br>
+ * 						대상 테스크는 task_create_noautodel 함수로 생성한 수동 삭제 태스크여야 함<br>
+ * 						<br>
+ *
+ * @param	result_p	결과값을 저장할  배열<br>
+ * 						NULL: 결과값을 저장하지 않음<br>
+ * 						<br>
+ * 						결과값<br>
+ * 						0: 정상 종료<br>
+ * 						UBIK_ERR__DEADLOCK		: 데드락 발생 가능성이 있음<br>
+ * 						<br>
+ *
+ * @param	count		배열 길이  (UBINOS__UBIK__TASK_MAXWAITSIGOBJ_MAX 보다 작거나 같아야 함)<br>
+ * 						<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ * 			UBIK_ERR__DEADLOCK		: 데드락 발생 가능성이 있음<br>
+ */
+int task_join_and_delete(task_pt * task_p, int * result_p, int count);
+
+/*!
  * 제한 시간 동안 대상 태스크들이 종료되기를 기다리는 함수
  *
  * @param	task_p		대상 태스크 포인터 배열<br>
+ * 						대상 테스크는 task_create_noautodel 함수로 생성한 수동 삭제 태스크여야 함<br>
  * 						<br>
  *
  * @param	result_p	결과값을 저장할  배열<br>
@@ -787,6 +858,7 @@ int task_join_timed(task_pt * task_p, int * result_p, int count,
  * 제한 시간 동안 대상 태스크들이 종료되기를 기다리는 함수 (천분의 일초 단위)
  *
  * @param	task_p		대상 태스크 포인터 배열<br>
+ * 						대상 테스크는 task_create_noautodel 함수로 생성한 수동 삭제 태스크여야 함<br>
  * 						<br>
  *
  * @param	result_p	결과값을 저장할  배열<br>

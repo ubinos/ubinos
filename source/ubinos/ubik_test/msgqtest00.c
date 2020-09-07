@@ -72,25 +72,25 @@ int ubik_test_msgqtest00(void) {
 		goto end0;
 	}
 
-	r = task_create(&task_a[0], msgqtest00_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
+	r = task_create_noautodel(&task_a[0], msgqtest00_task1func, NULL, task_getpriority(NULL)-1, 0, "task 1");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end1;
 	}
 
-	r = task_create(&task_a[1], msgqtest00_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
+	r = task_create_noautodel(&task_a[1], msgqtest00_task2func, NULL, task_getpriority(NULL)-1, 0, "task 2");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
 
 	task_sleep(10);
 
-	r = task_create(&task_a[2], msgqtest00_task3func, NULL, task_getpriority(NULL)-1, 0, "task 3");
+	r = task_create_noautodel(&task_a[2], msgqtest00_task3func, NULL, task_getpriority(NULL)-1, 0, "task 3");
 	if (0 != r) {
-		printf("fail at task_create(), err=%d\n", r);
+		printf("fail at task_create_noautodel(), err=%d\n", r);
 		r = -1;
 		goto end2;
 	}
@@ -98,9 +98,9 @@ int ubik_test_msgqtest00(void) {
 	r = 0;
 
 end2:
-	r2 = task_join(task_a, NULL, 3);
+	r2 = task_join_and_delete(task_a, NULL, 3);
 	if (0 != r2) {
-		printf("fail at task_join(), err=%d\n", r2);
+		printf("fail at task_join_and_delete(), err=%d\n", r2);
 		r = -1;
 	}
 
