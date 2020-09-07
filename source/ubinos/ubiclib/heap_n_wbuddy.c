@@ -262,6 +262,25 @@ _heap_block_pt _heap_n_wbuddy_expand(_heap_pt heap, unsigned int asize) {
 		goto end0;
 	}
 
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
+	if (heap->enable_dmpm) {
+		_heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK == 1)
+		unsigned int * last_addr = (unsigned int * ) (heap->region[0].end - INT_SIZE);
+		*last_addr = HEAP_BOUNDARY_PATTERN;
+		if (*last_addr != HEAP_BOUNDARY_PATTERN) {
+			logme("memory is not ready");
+			bsp_abortsystem();
+		}
+		*last_addr = 0x0;
+		if (*last_addr != 0x0) {
+			logme("memory is not ready");
+			bsp_abortsystem();
+		}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK == 1) */
+	}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
+
 	_wbuddy_asize_to_kw(region->size, region->k, region->w);
 
 	_wbuddy_kw_refine(b1k, b1b);

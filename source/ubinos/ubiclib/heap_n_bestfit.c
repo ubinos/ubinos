@@ -124,6 +124,25 @@ _heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize) {
 		goto end0;
 	}
 
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
+	if (heap->enable_dmpm) {
+		_heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK == 1)
+		unsigned int * last_addr = (unsigned int * ) (heap->region[0].end - INT_SIZE);
+		*last_addr = HEAP_BOUNDARY_PATTERN;
+		if (*last_addr != HEAP_BOUNDARY_PATTERN) {
+			logme("memory is not ready");
+			bsp_abortsystem();
+		}
+		*last_addr = 0x0;
+		if (*last_addr != 0x0) {
+			logme("memory is not ready");
+			bsp_abortsystem();
+		}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK == 1) */
+	}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
+
 	b1		 = (_heap_block_pt) addr;
 	tag		 = _asize_to_tag_l(asize, 1, _UBINOS__UBICLIB__HEAP_DIR);
 	_block_set_tag(b1, tag, 0);
@@ -195,6 +214,12 @@ int _heap_n_bestfit_reduce(_heap_pt heap) {
 		b1 = _heap_n_bestfit_expand(heap, size_min - size);
 		_heap_n_bestfit_combine_block(heap, b1, 1);
 	}
+
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
+	if (heap->enable_dmpm) {
+		_heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+	}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 
 	r = 0;
 

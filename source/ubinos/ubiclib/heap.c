@@ -33,6 +33,7 @@ unsigned char	__ubiclib_defaultheap_fblbm1_buf[UBINOS__UBICLIB__HEAP_DIR1_FBLBM_
 
 int ubiclib_heap_comp_init(unsigned int addr, unsigned int size) {
 	int r;
+	int enable_dmpm = 0;
 
 	if (HEAP_BLOCK_ASIZE_MIN <= HEAP_BLOCK_OVERHEAD) {
 		logme("HEAP_BLOCK_ASIZE_MIN should be larger than HEAP_BLOCK_OVERHEAD");
@@ -55,7 +56,11 @@ int ubiclib_heap_comp_init(unsigned int addr, unsigned int size) {
 		return -1;
 	}
 
-	r = _heap_init(	&__ubiclib_defaultheap, addr, size,
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
+	enable_dmpm = 1;
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
+
+	r = _heap_init(	&__ubiclib_defaultheap, addr, size, enable_dmpm,
 			UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM, UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE, UBINOS__UBICLIB__HEAP_DIR0_M,
 			UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT, &__ubiclib_defaultheap_fbl0_a[0], &__ubiclib_defaultheap_fblbm0,
 			UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM, UBINOS__UBICLIB__HEAP_DIR1_LOCKTYPE, UBINOS__UBICLIB__HEAP_DIR1_M,
@@ -124,7 +129,7 @@ void * mallocr(size_t size) {
 
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
-int _heap_init(	_heap_pt heap, unsigned int addr, unsigned int size,
+int _heap_init(	_heap_pt heap, unsigned int addr, unsigned int size, int enable_dmpm,
 				int algorithm0, int locktype0, unsigned int m0,
 				unsigned int fblcount0, edlist_pt fbl0_p, bitmap_pt fblbm0,
 				int algorithm1, int locktype1, unsigned int m1,
@@ -191,6 +196,8 @@ int _heap_init(	_heap_pt heap, unsigned int addr, unsigned int size,
 	heap->acount_max				= 0;
 	heap->asize_max					= 0;
 	heap->rsize_max					= 0;
+
+	heap->enable_dmpm				= enable_dmpm;
 
 	switch (algorithm0) {
 
@@ -325,6 +332,12 @@ int _heap_init(	_heap_pt heap, unsigned int addr, unsigned int size,
 		goto end0;
 
 	}
+
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
+	if (heap->enable_dmpm) {
+		_heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+	}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 
 	heap->valid						= 1;
 
@@ -556,7 +569,7 @@ int heap_create_ext(heap_pt * heap_p, unsigned int addr, unsigned int size,
 		return -1;
 	}
 
-	r = _heap_init(	heap, addr, size,
+	r = _heap_init(	heap, addr, size, 0,
 					algorithm0, locktype0, m0, fblcount0, fbl0_p, fblbm0,
 					algorithm1, locktype1, m1, fblcount1, fbl1_p, fblbm1	);
 	if (0 != r) {
@@ -1572,6 +1585,15 @@ int heap_printheapinfo(heap_pt _heap) {
 	size = size + (count * boh);
 	printf("ram usage max       (dynamic): 0x%08x (%8d bytes)\n", size, size);
 
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
+	if (heap->enable_dmpm == 1) {
+		printf("\n");
+		printf("power :");
+		_heap_print_power_info();
+		printf("\n");
+	}
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
+
 	///////////////////////
 		/////////////////////
 	#define _print_block(heap, dir, block, log2m)																										\
@@ -1586,6 +1608,7 @@ int heap_printheapinfo(heap_pt _heap) {
 				((unsigned int) _block_pt_to_end_prt(block, log2m) - (unsigned int) heap->region[0].addr) % (0x1 << (_tag_to_g_k(block->tag) + 2))  \
 		)
 
+	for (int dir = 0; dir < 2; dir++) {
 		unsigned int i;
 		_heap_region_pt region;
 		_heap_block_pt bx = 0;
@@ -1593,10 +1616,11 @@ int heap_printheapinfo(heap_pt _heap) {
 		unsigned int log2m/*, m, maskm, min*/;
 
 		printf("\n");
-		region 	 = &heap->region[0];
+		region 	 = &heap->region[dir];
 		log2m	 = region->log2m;
 
 		printf("---------\n");
+		printf("dir %d\n", region->dir);
 		printf("algorithm %d\n", region->algorithm);
 		printf("m %d\n", region->m);
 		printf("fbl count %d\n", region->fblcount);
@@ -1605,6 +1629,13 @@ int heap_printheapinfo(heap_pt _heap) {
 		printf("fbl bitmap bit size %d\n", region->fblbm->bitsize);
 		printf("fbl bitmap memory size %d bytes\n", bitmap_getmemsize(region->fblbm->bitsize));
 		printf("fbl bitmap buffer size %d bytes\n", region->fblbm->map_bytesize);
+		printf("fbl count %d\n", region->fblcount);
+		printf("---------\n");
+		printf("size_min 0x%08x (%10u)\n", region->size_min, region->size_min);
+		printf("size     0x%08x (%10u)\n", region->size, region->size);
+		printf("addr     0x%08x (%10u)\n", region->addr, region->addr);
+		printf("end      0x%08x (%10u)\n", region->end, region->end);
+		printf("limit    0x%08x (%10u)\n", region->limit, region->limit);
 		printf("---------\n");
 
 		bx = _heap_blocklist_head(&(region->abl));
@@ -1626,7 +1657,7 @@ int heap_printheapinfo(heap_pt _heap) {
 			}
 		}
 		printf("---------\n");
-
+	}
 		/////////////////////
 	///////////////////////
 

@@ -399,7 +399,7 @@ typedef struct {
 	edlist_pt			fbl_ap; // free block list pointer array
 	bitmap_pt			fblbm; // free block list index empty bitmap pointer
 
-	unsigned int		dregs_size;
+	unsigned int		dregs_size; //total size of blocks that cannot be used because they are smaller than the minimum allocation size
 
 	edlist_t			abl;
 
@@ -428,6 +428,7 @@ typedef struct __heap_t {
 	unsigned int		asize_max;
 	unsigned int		rsize_max;
 
+	unsigned char		enable_dmpm; // enable dynamic memory power management
 	_heap_region_t		region[2]; // heap region array, 0: normal direction, 1: reverse direction
 
 	void * (* allocate_block_afp[2]) (struct __heap_t *, unsigned int); // allocate block function pointer array, 0: normal direction, 1: reverse direction
@@ -656,7 +657,7 @@ typedef _heap_t * _heap_pt;
 #define _region_get_fb_getcurnext(region, index)	_heap_blocklist_getcurnext(&((region)->fbl_ap[(index)]))
 
 
-int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size,
+int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_dmpm,
 				   int algorithm0, int locktype0, unsigned int m0,
 				   unsigned int fblcount0, edlist_pt fbl0_p, bitmap_pt fblbm0,
 				   int algorithm1, int locktype1, unsigned int m1,
@@ -665,6 +666,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size,
 void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size);
 int _heap_release_block(_heap_pt heap, void * ptr);
 
+int _heap_power_off_unused_area(unsigned int nomal_resign_end, unsigned int reverse_resign_addr);
+int _heap_print_power_info(void);
 
 extern _heap_pt _ubiclib_heap;
 
