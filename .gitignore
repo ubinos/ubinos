@@ -1,6 +1,7 @@
 /output/
 
 /make/custom.mk
+/make/custom.py
 
 /include/*_config.h
 
