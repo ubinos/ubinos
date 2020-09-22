@@ -29,9 +29,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <malloc.h>
+#include <assert.h>
 #include <sys/errno.h>
+#include <sys/time.h>
 
 #include "../../_heap.h"
+
+#undef errno
+extern int errno;
 
 struct __lock {
     bsp_mutex_pt lock;
@@ -47,6 +52,9 @@ struct __lock __lock___tz_mutex = {0};
 struct __lock __lock___dd_hash_mutex = {0};
 struct __lock __lock___arc4random_mutex = {0};
 
+struct timeval __timeval_offset_plus;
+struct timeval __timeval_offset_minus;
+
 int stdlib_port_comp_init(void) {
     struct _reent * ptr = _REENT;
 
@@ -59,6 +67,11 @@ int stdlib_port_comp_init(void) {
     ptr->_stdin->_flags  |= __SNBF;
     ptr->_stdout->_flags |= __SNBF;
     ptr->_stderr->_flags |= __SNBF;
+
+    __timeval_offset_plus.tv_sec = 0;
+    __timeval_offset_plus.tv_usec = 0;
+    __timeval_offset_minus.tv_sec = 0;
+    __timeval_offset_minus.tv_usec = 0;
 
 	return 0;
 }
@@ -297,6 +310,89 @@ int _mallopt_r(struct _reent * reent_ptr, int parameter_number, int parameter_va
     return 0;
 }
 
+static void _ubik_tick_to_timeval(tickcount_t tick, struct timeval  *ptimeval) {
+    unsigned long long timems;
+
+    assert(ptimeval);
+
+    timems = (unsigned long long) tick.high * UBINOS__UBIK__TICK_COUNT_MAX + tick.low;
+    timems = timems * 1000 / UBINOS__UBIK__TICK_PER_SEC;
+
+    ptimeval->tv_sec = (time_t) (timems / 1000);
+    ptimeval->tv_usec = (suseconds_t) ((timems % 1000) * 1000);
+}
+
+int _gettimeofday (struct timeval  *ptimeval, void *ptimezone)
+{
+    int ret = -1;
+    assert(ptimeval);
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+    if (_bsp_kernel_active) {
+        _ubik_tick_to_timeval(ubik_gettickcount(), ptimeval);
+
+        ptimeval->tv_sec += __timeval_offset_plus.tv_sec;
+        ptimeval->tv_sec -= __timeval_offset_minus.tv_sec;
+
+        ptimeval->tv_usec += __timeval_offset_plus.tv_usec;
+        if (ptimeval->tv_usec < __timeval_offset_minus.tv_usec) {
+            ptimeval->tv_sec--;
+            ptimeval->tv_usec += 1000000;
+        }
+        ptimeval->tv_usec -= __timeval_offset_minus.tv_usec;
+
+        ret = 0;
+    }
+    else {
+        errno = ENOSYS;
+    }
+#else
+    errno = ENOSYS;
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
+    return ret;
+}
+
+int settimeofday (const struct timeval *ptimeval, const struct timezone *ptimezone) {
+    int ret = -1;
+    assert(ptimeval);
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+    struct timeval timeval;
+
+    if (_bsp_kernel_active) {
+        _ubik_tick_to_timeval(ubik_gettickcount(), &timeval);
+
+        if (ptimeval->tv_sec > timeval.tv_sec) {
+            __timeval_offset_plus.tv_sec = ptimeval->tv_sec - timeval.tv_sec;
+            __timeval_offset_minus.tv_sec = 0;
+        }
+        else {
+            __timeval_offset_plus.tv_sec = 0;
+            __timeval_offset_minus.tv_sec = timeval.tv_sec - ptimeval->tv_sec;
+        }
+
+        if (ptimeval->tv_usec > timeval.tv_usec) {
+            __timeval_offset_plus.tv_usec = ptimeval->tv_usec - timeval.tv_usec;
+            __timeval_offset_minus.tv_usec = 0;
+        }
+        else {
+            __timeval_offset_plus.tv_usec = 0;
+            __timeval_offset_minus.tv_usec = timeval.tv_usec - ptimeval->tv_usec;
+        }
+
+        ret = 0;
+    }
+    else {
+        errno = ENOSYS;
+    }
+#else
+    errno = ENOSYS;
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
+    return ret;
+}
+
 #else /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
 void * _sbrk (int incr)
@@ -327,7 +423,7 @@ void * _sbrk (int incr)
 
 int __attribute__((weak)) _write(int file, const char * p_char, int len)
 {
-	return dtty_putn(p_char, len);
+    return dtty_putn(p_char, len);
 }
 
 int __attribute__((weak)) _read(int file, char * p_char, int len)
@@ -336,7 +432,7 @@ int __attribute__((weak)) _read(int file, char * p_char, int len)
 
     for (i = 0; i < len; i++)
     {
-    	dtty_getc(&((char *)p_char)[i]);
+        dtty_getc(&((char *)p_char)[i]);
     }
 
     return i;

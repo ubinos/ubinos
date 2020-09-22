@@ -246,7 +246,7 @@ unsigned int ubik_timemstotick(unsigned int timems) {
 #elif   (0 == UBINOS__UBIK__TICK_PER_SEC%10)
     timems = timems * (UBINOS__UBIK__TICK_PER_SEC   / 10) /  100;
 #else
-    timems = timems * (UBINOS__UBIK__TICK_PER_SEC       ) / 1000;
+    timems = (unsigned int) ((unsigned long long) timems * UBINOS__UBIK__TICK_PER_SEC / 1000);
 #endif
 
     if (0 == timems) {
@@ -261,14 +261,14 @@ unsigned int ubik_ticktotimems(unsigned int tick) {
         return 0;
     }
 
-#if     (0 == UBINOS__UBIK__TICK_PER_SEC%1000)
+#if     (0 == UBINOS__UBIK__TICK_PER_SEC % 1000)
     tick = tick        / (UBINOS__UBIK__TICK_PER_SEC / 1000);
-#elif   (0 == UBINOS__UBIK__TICK_PER_SEC%100)
+#elif   (0 == UBINOS__UBIK__TICK_PER_SEC % 100)
     tick = tick * 10   / (UBINOS__UBIK__TICK_PER_SEC  / 100);
-#elif   (0 == UBINOS__UBIK__TICK_PER_SEC%10)
+#elif   (0 == UBINOS__UBIK__TICK_PER_SEC % 10)
     tick = tick * 100  / (UBINOS__UBIK__TICK_PER_SEC   / 10);
 #else
-    tick = tick * 1000 / (UBINOS__UBIK__TICK_PER_SEC       );
+    tick = (unsigned int) ((unsigned long long) tick * 1000 / UBINOS__UBIK__TICK_PER_SEC);
 #endif
 
     if (0 == tick) {
