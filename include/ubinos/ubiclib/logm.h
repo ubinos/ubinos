@@ -281,7 +281,7 @@ int logm_printfln(int category, int level, const char * tag, const char * func, 
  * 			 -1: 오류<br>
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
-#define logm_getlevel(category) ((void) (LOGM_LEVEL__SILENT))
+#define logm_getlevel(category) (LOGM_LEVEL__SILENT)
 
 
 /*! 메시지를 기록하는 매크로 (LOGM_LEVEL 설정 수준) */

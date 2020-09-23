@@ -343,6 +343,11 @@ static int cli_cmdfunc__show(char *str, int len, void *arg) {
 	char *cmd = NULL;
 	int cmdlen;
 
+	(void) tmpstr;
+	(void) tmplen;
+	(void) cmd;
+	(void) cmdlen;
+
 	tmpstr = str;
 	tmplen = len;
 
