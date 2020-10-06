@@ -50,9 +50,9 @@ set(INCLUDE__UBINOS__BSP                                                        
 set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
 set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M7 | CORTEX_M4 | CORTEX_M3]")
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
-set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG | STM32L475VG | STM32F769NI]")
+set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG | STM32L475VG | STM32F769NI | STM32F429NI]")
 
-set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | STM3221GEVAL | NUCLEOF207ZG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO]")
+set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | STM3221GEVAL | NUCLEOF207ZG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32429IEVAL]")
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | FLASH_EXTSRAM | FLASH_EXTSDRAM | EXTFLASH_EXTSDRAM]")
 
@@ -184,6 +184,13 @@ set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  
 set_cache_default(UBINOS__BSP__STM32_STM32F7XX                                  TRUE    BOOL "STM32F7XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32F769                                  TRUE    BOOL "STM32F769 family CPU Model")
 
+    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F429NI")
+
+set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
+
+set_cache_default(UBINOS__BSP__STM32_STM32F4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32F429                                  TRUE    BOOL "STM32F429 family CPU Model")
+
     else()
 
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
@@ -223,6 +230,12 @@ set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      S
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1]")
 
 set_cache_default(UBINOS__BSP__STM32_ENABLE_ETHERNET                            FALSE    BOOL "")
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32429IEVAL")
+
+set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               FALSE   BOOL "")
+
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1]")
 
     else()
 
@@ -426,6 +439,21 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             
         endif()
 
+    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F429NI")
+
+            set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F429xx")
+
+        if(UBINOS__BSP__USE_SOFTFLOAT)
+        
+            set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
+        
+        else()
+            
+            set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
+            set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv4-sp-d16")
+            
+        endif()
+
     else()
     
        message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
@@ -481,6 +509,10 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO")
 
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F769I_DISCO")
+    
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32429IEVAL")
+
+        set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM324x9I_EVAL")
     
     else()
     
