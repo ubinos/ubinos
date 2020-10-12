@@ -47,7 +47,7 @@ extern int _g_bsp_dtty_autocr;
 
 static void Configure_USART(void) {
 
-	/* Enable the peripheral clock of GPIO Port */
+	/* (1) Enable the peripheral clock of GPIO Port */
 
 	/* Configure Tx Pin as : Alternate function, High Speed, Push pull, Pull up */
 	USARTx_TX_GPIO_CLK_ENABLE();
@@ -125,14 +125,14 @@ int dtty_geterror(void) {
 }
 
 int dtty_getc(char *ch_p) {
+	if (!_g_bsp_dtty_init) {
+		dtty_init();
+	}
+
 	unsigned int i;
 
 	if (NULL == ch_p) {
 		return -2;
-	}
-
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
 	}
 
 #if (INCLUDE__UBINOS__UBIK == 1)
@@ -147,14 +147,14 @@ int dtty_getc(char *ch_p) {
 			}
 		}
 	}
-    else {
-    	for (i=0; ; i++)
-    	{
-    		if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-    			break;
-    		}
-    	}
-    }
+	else {
+		for (i=0; ; i++)
+		{
+			if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
+				break;
+			}
+		}
+	}
 #else
 	for (i=0; ; i++)
 	{

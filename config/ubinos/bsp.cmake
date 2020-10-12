@@ -167,8 +167,8 @@ set_cache_default(UBINOS__BSP__NRF52_MBR_PRESENT                                
 
 set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
 
-set_cache_default(UBINOS__BSP__STM32_STM32F2X7                                  TRUE    BOOL "STM32F2X7 family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32F2XX                                  TRUE    BOOL "STM32F2XX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32F2X7                                  TRUE    BOOL "STM32F2X7 family CPU Model")
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32L475VG")
 
