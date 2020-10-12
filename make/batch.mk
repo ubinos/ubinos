@@ -1228,6 +1228,18 @@
 	make -f makefile.mk $@ CONFIG_NAME=ubik_tester_stm32429ieval
 	@echo ""
 	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : command line interface tester application"
+	@echo "Target board    : stm32429ieval"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=cli_tester_stm32429ieval
+	@echo ""
+	@echo ""
 
 
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
