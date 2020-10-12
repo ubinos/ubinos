@@ -443,6 +443,10 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
             set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F429xx")
 
+            if(NOT UBINOS__BSP__STM32_HSE_VALUE STREQUAL "")
+                set(_tmp_all_flags "${_tmp_all_flags} -DHSE_VALUE=${UBINOS__BSP__STM32_HSE_VALUE}")
+            endif()
+
         if(UBINOS__BSP__USE_SOFTFLOAT)
         
             set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")

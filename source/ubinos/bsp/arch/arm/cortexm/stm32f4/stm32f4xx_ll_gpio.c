@@ -16,6 +16,12 @@
   *
   ******************************************************************************
   */
+
+#include <ubinos/bsp/arch.h>
+
+#if (INCLUDE__UBINOS__BSP == 1)
+#if (UBINOS__BSP__STM32_STM32F4XX == 1)
+
 #if defined(USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
@@ -301,5 +307,8 @@ void LL_GPIO_StructInit(LL_GPIO_InitTypeDef *GPIO_InitStruct)
   */
 
 #endif /* USE_FULL_LL_DRIVER */
+
+#endif /* (UBINOS__BSP__STM32_STM32F4XX == 1) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

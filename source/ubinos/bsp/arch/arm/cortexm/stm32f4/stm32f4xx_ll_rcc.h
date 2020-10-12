@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
+#include "ubinos/bsp/arch/arm/cortexm/stm32f4/stm32f4xx.h"
 
 /** @addtogroup STM32F4xx_LL_Driver
   * @{
@@ -4311,6 +4311,11 @@ __STATIC_INLINE void LL_RCC_PLL_ConfigDomain_SYS(uint32_t Source, uint32_t PLLM,
 #if defined(RCC_PLLR_SYSCLK_SUPPORT)
   MODIFY_REG(RCC->PLLCFGR, RCC_PLLCFGR_PLLR, PLLP_R);
 #endif /* RCC_PLLR_SYSCLK_SUPPORT */
+}
+
+__STATIC_INLINE void LL_RCC_PLL_ConfigDomain_PLLQ(uint32_t PLLP_Q)
+{
+  MODIFY_REG(RCC->PLLCFGR, RCC_PLLCFGR_PLLQ, PLLP_Q);
 }
 
 /**

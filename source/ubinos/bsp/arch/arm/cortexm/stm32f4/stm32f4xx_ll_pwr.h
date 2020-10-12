@@ -26,7 +26,7 @@ extern "C" {
 #endif
 
 /* Includes ------------------------------------------------------------------*/
-#include "stm32f4xx.h"
+#include "ubinos/bsp/arch/arm/cortexm/stm32f4/stm32f4xx.h"
 
 /** @addtogroup STM32F4xx_LL_Driver
   * @{
