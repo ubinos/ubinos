@@ -218,6 +218,8 @@ set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            
 
 set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               FALSE   BOOL "")
 
+set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      STRING "Value of the External oscillator in Hz [25000000U | 8000000U]")
+
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1]")
 
 set_cache_default(UBINOS__BSP__STM32_ENABLE_ETHERNET                            FALSE    BOOL "")
@@ -408,6 +410,10 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F769NI")
 
             set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F769xx")
+
+            if(NOT UBINOS__BSP__STM32_HSE_VALUE STREQUAL "")
+                set(_tmp_all_flags "${_tmp_all_flags} -DHSE_VALUE=${UBINOS__BSP__STM32_HSE_VALUE}")
+            endif()
 
         if(UBINOS__BSP__USE_SOFTFLOAT)
         
