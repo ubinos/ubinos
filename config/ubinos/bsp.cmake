@@ -140,11 +140,15 @@ set_cache_default(UBINOS__BSP__CORTEX_MX                                        
 
         if(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA")
 
+set_cache_default(UBINOS__BSP__NRF52_NRF52XXX                                   TRUE    BOOL "")
+
 set_cache_default(UBINOS__BSP__NRF52_NRF52                                      TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_NRF52832_XXAA                              TRUE    BOOL "")
 set_cache_default(UBINOS__BSP__NRF52_NRF52_PAN_74                               TRUE    BOOL "")
 
         elseif(UBINOS__BSP__CPU_MODEL STREQUAL "NRF52840XXAA")
+
+set_cache_default(UBINOS__BSP__NRF52_NRF52XXX                                   TRUE    BOOL "")
 
 set_cache_default(UBINOS__BSP__NRF52_NRF52840_XXAA                              TRUE    BOOL "")
 

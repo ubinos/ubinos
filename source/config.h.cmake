@@ -48,6 +48,8 @@
 #define UBINOS__BSP__CPU_MODEL__STM32F769NI               0x00010711
 #define UBINOS__BSP__CPU_MODEL                            UBINOS__BSP__CPU_MODEL__@UBINOS__BSP__CPU_MODEL@
 
+#cmakedefine01 UBINOS__BSP__NRF52_NRF52XXX
+
 #cmakedefine01 UBINOS__BSP__STM32_STM32XXXX
 
 #cmakedefine01 UBINOS__BSP__STM32_STM32F2XX
