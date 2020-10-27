@@ -19,6 +19,7 @@ set_cache_default(UBINOS__UBICLIB__EXCLUDE_CLI                                  
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_LIST                                 FALSE   BOOL "Exclude linked list functions")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_DLIST                                FALSE   BOOL "Exclude double linked list functions")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_CIRBUF                               FALSE   BOOL "Exclude circular buffer functions")
+set_cache_default(UBINOS__UBICLIB__EXCLUDE_CBUF                                 FALSE   BOOL "Exclude simple circular buffer functions")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_BITMAP                               FALSE   BOOL "Exclude multi-level bitmap functions")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_MATH_EXT                             FALSE   BOOL "Exclude math extention functions")
 

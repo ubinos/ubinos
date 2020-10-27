@@ -96,5 +96,9 @@ typedef ubiclib_test_heaptest_result_t * ubiclib_test_heaptest_result_pt;
 
 void ubiclib_test_heaptest(void *arg);
 
+ubi_err_t ubiclib_test_test_all(void);
+
+ubi_err_t ubik_test_cbuf_test_00(void);
+
 #endif /* UBICLIB_TEST_H_ */
 

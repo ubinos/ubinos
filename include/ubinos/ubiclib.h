@@ -159,6 +159,7 @@ unsigned int uiones(register unsigned int x);
 #include <ubinos/ubiclib/logm.h>
 #include <ubinos/ubiclib/bitmap.h>
 #include <ubinos/ubiclib/cirbuf.h>
+#include <ubinos/ubiclib/cbuf.h>
 #include <ubinos/ubiclib/dlist.h>
 #include <ubinos/ubiclib/edlist.h>
 #include <ubinos/ubiclib/heap.h>
