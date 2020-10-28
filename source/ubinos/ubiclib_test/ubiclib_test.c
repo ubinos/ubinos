@@ -13,7 +13,7 @@
 
 ubi_err_t ubiclib_test_test_all()
 {
-    ubi_err_t uerr;
+    ubi_err_t ubi_err;
     int r;
     int test_count = 0;
     int fail_count = 0;
@@ -41,7 +41,7 @@ ubi_err_t ubiclib_test_test_all()
             printf("<message>\n");
             printf("fail at heap_getallocatedsize\n");
             printf("</message>\n");
-            uerr = UBI_ERR_HEAP;
+            ubi_err = UBI_ERR_HEAP;
             break;
         }
 
@@ -51,7 +51,7 @@ ubi_err_t ubiclib_test_test_all()
             printf("<message>\n");
             printf("fail at heap_getallocatedcount\n");
             printf("</message>\n");
-            uerr = UBI_ERR_HEAP;
+            ubi_err = UBI_ERR_HEAP;
             break;
         }
 #endif /* !(UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
@@ -59,8 +59,8 @@ ubi_err_t ubiclib_test_test_all()
 #if !(UBINOS__UBICLIB__EXCLUDE_CBUF_TEST == 1)
         printf("<!-- ====================================================================== -->\n");
         test_count++;
-        uerr = ubik_test_cbuf_test_00();
-        if (uerr != UBI_ERR_OK)
+        ubi_err = ubik_test_cbuf_test_00();
+        if (ubi_err != UBI_ERR_OK)
         {
             fail_count++;
         }
@@ -89,7 +89,7 @@ ubi_err_t ubiclib_test_test_all()
             printf("<message>\n");
             printf("fail at heap_getallocatedsize\n");
             printf("</message>\n");
-            uerr = UBI_ERR_HEAP;
+            ubi_err = UBI_ERR_HEAP;
             break;
         }
 
@@ -99,7 +99,7 @@ ubi_err_t ubiclib_test_test_all()
             printf("<message>\n");
             printf("fail at heap_getallocatedcount\n");
             printf("</message>\n");
-            uerr = UBI_ERR_HEAP;
+            ubi_err = UBI_ERR_HEAP;
             break;
         }
 
@@ -108,23 +108,23 @@ ubi_err_t ubiclib_test_test_all()
             printf("<message>\n");
             printf("memory leak was detected\n");
             printf("</message>\n");
-            uerr = UBI_ERR_HEAP;
+            ubi_err = UBI_ERR_HEAP;
             break;
         }
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
         if (0 == fail_count)
         {
-            uerr = UBI_ERR_OK;
+            ubi_err = UBI_ERR_OK;
         }
         else
         {
-            uerr = UBI_ERR_INTERNAL;
+            ubi_err = UBI_ERR_INTERNAL;
         }
     } while (0);
 
     printf("<result>");
-    if (uerr == UBI_ERR_OK)
+    if (ubi_err == UBI_ERR_OK)
     {
         printf("pass");
     }
@@ -136,7 +136,7 @@ ubi_err_t ubiclib_test_test_all()
     printf("</testset>\n");
     printf("\n");
 
-    return uerr;
+    return ubi_err;
 }
 
 #endif /* !(UBINOS__UBICLIB_TEST__EXCLUDE_CBUF_TEST == 1) */
