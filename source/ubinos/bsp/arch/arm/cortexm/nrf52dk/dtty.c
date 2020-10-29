@@ -10,17 +10,13 @@
 #if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE)
 
 #if (UBINOS__BSP__USE_DTTY == 1)
-#if ((UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) || (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC))
+#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART)
 
 #define SLEEP_TIMEMS	1
 
 extern int _g_bsp_dtty_init;
 extern int _g_bsp_dtty_echo;
 extern int _g_bsp_dtty_autocr;
-
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-extern int _g_bsp_dtty_async_init;
-#endif
 
 #define GPIO_CFG(pin_number, pin_dir, pin_input, pin_pull, pin_drive, pin_sense) {     \
     NRF_GPIO->PIN_CNF[pin_number] =   ((uint32_t)pin_dir   << GPIO_PIN_CNF_DIR_Pos  )  \
@@ -108,23 +104,8 @@ int dtty_enable(void)
     {
         dtty_init();
     }
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-    if (!_g_bsp_dtty_async_init)
-    {
-        dtty_async_init();
-    }
-
-    if (!_g_bsp_dtty_async_init)
-    {
-#endif
     NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Enabled << UART_ENABLE_ENABLE_Pos);
     r = 0;
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	}
-	else {
-		r = dtty_async_enable();
-	}
-#endif
 
     return r;
 }
@@ -137,23 +118,8 @@ int dtty_disable(void)
     {
         dtty_init();
     }
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-    if (!_g_bsp_dtty_async_init)
-    {
-        dtty_async_init();
-    }
-
-    if (!_g_bsp_dtty_async_init)
-    {
-#endif
     NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
     r = 0;
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-    }
-    else {
-        r = dtty_async_disable();
-    }
-#endif
 
     return r;
 }
@@ -166,20 +132,7 @@ int dtty_geterror(void)
     {
         dtty_init();
     }
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	if (!_g_bsp_dtty_async_init) {
-		dtty_async_init();
-	}
-
-	if (!_g_bsp_dtty_async_init) {
-#endif
     r = NRF_UART0->EVENTS_ERROR;
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	}
-	else {
-		r = dtty_async_geterror();
-	}
-#endif
 
     return r;
 }
@@ -198,13 +151,6 @@ int dtty_getc(char *ch_p)
     {
         dtty_init();
     }
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	if (!_g_bsp_dtty_async_init) {
-		dtty_async_init();
-	}
-
-	if (!_g_bsp_dtty_async_init) {
-#endif
 #if (INCLUDE__UBINOS__UBIK == 1)
     if (_bsp_kernel_active)
     {
@@ -245,12 +191,6 @@ int dtty_getc(char *ch_p)
     NRF_UART0->EVENTS_RXDRDY = 0x0UL;
 
     r = 0;
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	}
-	else {
-		r = dtty_async_getc(ch_p);
-	}
-#endif
 
     if (0 != _g_bsp_dtty_echo)
     {
@@ -268,13 +208,6 @@ int dtty_putc(int ch)
     {
         dtty_init();
     }
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	if (!_g_bsp_dtty_async_init) {
-		dtty_async_init();
-	}
-
-	if (!_g_bsp_dtty_async_init) {
-#endif
     if (0 != _g_bsp_dtty_autocr && '\n' == ch)
     {
         NRF_UART0->EVENTS_TXDRDY = 0x0UL;
@@ -299,12 +232,6 @@ int dtty_putc(int ch)
     }
 
     r = 0;
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	}
-	else {
-		r = dtty_async_putc(ch);
-	}
-#endif
 
     return r;
 }
@@ -340,13 +267,6 @@ int dtty_kbhit(void)
     {
         dtty_init();
     }
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	if (!_g_bsp_dtty_async_init) {
-		dtty_async_init();
-	}
-
-	if (!_g_bsp_dtty_async_init) {
-#endif
     if (NRF_UART0->EVENTS_RXDRDY)
     {
         r = 1;
@@ -355,17 +275,11 @@ int dtty_kbhit(void)
     {
         r = 0;
     }
-#if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	}
-	else {
-		r = dtty_async_kbhit();
-	}
-#endif
 
     return r;
 }
 
-#endif /* ((UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) || (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)) */
+#endif /* (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) */
 #endif /* (UBINOS__BSP__USE_DTTY == 1) */
 
 #endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE) */
