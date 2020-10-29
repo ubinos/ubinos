@@ -12,11 +12,27 @@
 #include <stdlib.h>
 #include <string.h>
 
+static void rootfunc(void *arg);
 static void clihelphookfunc();
 static int clihookfunc(char *str, int len, void *arg);
 static int mycmd(char *str, int len, void *arg);
 
 int appmain(int argc, char *argv[])
+{
+    int r;
+
+    r = task_create(NULL, rootfunc, NULL, task_getmiddlepriority(), 0, "root");
+    if (0 != r)
+    {
+        logme("fail at task_create");
+    }
+
+    ubik_comp_start();
+
+    return 0;
+}
+
+static void rootfunc(void *arg)
 {
     int r;
 
@@ -49,10 +65,6 @@ int appmain(int argc, char *argv[])
     {
         logme("fail at task_create");
     }
-
-    ubik_comp_start();
-
-    return 0;
 }
 
 static int clihookfunc(char *str, int len, void *arg)
