@@ -64,7 +64,8 @@ extern int _g_bsp_dtty_async_init;
         GPIO_PIN_CNF_SENSE_Disabled);             \
 }
 
-int dtty_init(void) {
+int dtty_init(void)
+{
     NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
 
     /* Disable receiver & transmitter interrupts */
@@ -92,28 +93,32 @@ int dtty_init(void) {
     NRF_UART0->TASKS_STARTRX = 1;
 
     _g_bsp_dtty_echo = 1;
-	_g_bsp_dtty_autocr = 1;
+    _g_bsp_dtty_autocr = 1;
 
-	_g_bsp_dtty_init = 1;
+    _g_bsp_dtty_init = 1;
 
-	return 0;
+    return 0;
 }
 
-int dtty_enable(void) {
-	int r;
+int dtty_enable(void)
+{
+    int r;
 
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	if (!_g_bsp_dtty_async_init) {
-		dtty_async_init();
-	}
+    if (!_g_bsp_dtty_async_init)
+    {
+        dtty_async_init();
+    }
 
-	if (!_g_bsp_dtty_async_init) {
+    if (!_g_bsp_dtty_async_init)
+    {
 #endif
-		NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Enabled << UART_ENABLE_ENABLE_Pos);
-		r = 0;
+    NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Enabled << UART_ENABLE_ENABLE_Pos);
+    r = 0;
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	}
 	else {
@@ -124,37 +129,43 @@ int dtty_enable(void) {
     return r;
 }
 
-int dtty_disable(void) {
-	int r;
+int dtty_disable(void)
+{
+    int r;
 
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	if (!_g_bsp_dtty_async_init) {
-		dtty_async_init();
-	}
+    if (!_g_bsp_dtty_async_init)
+    {
+        dtty_async_init();
+    }
 
-	if (!_g_bsp_dtty_async_init) {
+    if (!_g_bsp_dtty_async_init)
+    {
 #endif
-		NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
-		r = 0;
+    NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
+    r = 0;
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
-	}
-	else {
-		r = dtty_async_disable();
-	}
+    }
+    else {
+        r = dtty_async_disable();
+    }
 #endif
 
     return r;
 }
 
-int dtty_geterror(void) {
-	int r;
+int dtty_geterror(void)
+{
+    int r;
 
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	if (!_g_bsp_dtty_async_init) {
 		dtty_async_init();
@@ -162,7 +173,7 @@ int dtty_geterror(void) {
 
 	if (!_g_bsp_dtty_async_init) {
 #endif
-		r =  NRF_UART0->EVENTS_ERROR;
+    r = NRF_UART0->EVENTS_ERROR;
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	}
 	else {
@@ -170,20 +181,23 @@ int dtty_geterror(void) {
 	}
 #endif
 
-	return r;
+    return r;
 }
 
-int dtty_getc(char * ch_p) {
+int dtty_getc(char *ch_p)
+{
     unsigned int i;
     int r;
 
-    if (NULL == ch_p) {
+    if (NULL == ch_p)
+    {
         return -2;
     }
 
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	if (!_g_bsp_dtty_async_init) {
 		dtty_async_init();
@@ -192,25 +206,31 @@ int dtty_getc(char * ch_p) {
 	if (!_g_bsp_dtty_async_init) {
 #endif
 #if (INCLUDE__UBINOS__UBIK == 1)
-		if (_bsp_kernel_active) {
-			for (i = 0;; i++) {
-				if (NRF_UART0->EVENTS_RXDRDY) {
-					break;
-				}
-				if (255 <= i) {
-					bsp_task_sleepms(SLEEP_TIMEMS);
-					i = 0;
-				}
-			}
-		}
-		else {
-			for (i=0;; i++)
-			{
-				if(NRF_UART0->EVENTS_RXDRDY) {
-					break;
-				}
-			}
-		}
+    if (_bsp_kernel_active)
+    {
+        for (i = 0;; i++)
+        {
+            if (NRF_UART0->EVENTS_RXDRDY)
+            {
+                break;
+            }
+            if (255 <= i)
+            {
+                bsp_task_sleepms(SLEEP_TIMEMS);
+                i = 0;
+            }
+        }
+    }
+    else
+    {
+        for (i = 0;; i++)
+        {
+            if (NRF_UART0->EVENTS_RXDRDY)
+            {
+                break;
+            }
+        }
+    }
 #else
 		for (i=0;; i++)
 		{
@@ -220,11 +240,11 @@ int dtty_getc(char * ch_p) {
 		}
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
-		*ch_p = (char) (0x000000ff & (NRF_UART0->RXD));
+    *ch_p = (char) (0x000000ff & (NRF_UART0->RXD));
 
-		NRF_UART0->EVENTS_RXDRDY = 0x0UL;
+    NRF_UART0->EVENTS_RXDRDY = 0x0UL;
 
-		r = 0;
+    r = 0;
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	}
 	else {
@@ -232,19 +252,22 @@ int dtty_getc(char * ch_p) {
 	}
 #endif
 
-    if (0 != _g_bsp_dtty_echo) {
+    if (0 != _g_bsp_dtty_echo)
+    {
         dtty_putc(*ch_p);
     }
 
     return r;
 }
 
-int dtty_putc(int ch) {
-	int r;
+int dtty_putc(int ch)
+{
+    int r;
 
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	if (!_g_bsp_dtty_async_init) {
 		dtty_async_init();
@@ -252,25 +275,30 @@ int dtty_putc(int ch) {
 
 	if (!_g_bsp_dtty_async_init) {
 #endif
-		if (0 != _g_bsp_dtty_autocr && '\n' == ch) {
-			NRF_UART0->EVENTS_TXDRDY = 0x0UL;
-			NRF_UART0->TXD = (0x000000ff & '\r');
-			for (;;) {
-				if (NRF_UART0->EVENTS_TXDRDY) {
-					break;
-				}
-			}
-		}
+    if (0 != _g_bsp_dtty_autocr && '\n' == ch)
+    {
+        NRF_UART0->EVENTS_TXDRDY = 0x0UL;
+        NRF_UART0->TXD = (0x000000ff & '\r');
+        for (;;)
+        {
+            if (NRF_UART0->EVENTS_TXDRDY)
+            {
+                break;
+            }
+        }
+    }
 
-		NRF_UART0->EVENTS_TXDRDY = 0x0UL;
-		NRF_UART0->TXD = (0x000000ff & ch);
-		for (;;) {
-			if (NRF_UART0->EVENTS_TXDRDY) {
-				break;
-			}
-		}
+    NRF_UART0->EVENTS_TXDRDY = 0x0UL;
+    NRF_UART0->TXD = (0x000000ff & ch);
+    for (;;)
+    {
+        if (NRF_UART0->EVENTS_TXDRDY)
+        {
+            break;
+        }
+    }
 
-		r = 0;
+    r = 0;
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	}
 	else {
@@ -278,21 +306,25 @@ int dtty_putc(int ch) {
 	}
 #endif
 
-	return r;
+    return r;
 }
 
-int dtty_putn(const char * str, int len) {
+int dtty_putn(const char *str, int len)
+{
     int i = 0;
 
-    if (NULL == str) {
+    if (NULL == str)
+    {
         return -2;
     }
 
-    if (0 > len) {
+    if (0 > len)
+    {
         return -3;
     }
 
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < len; i++)
+    {
         dtty_putc(*str);
         str++;
     }
@@ -300,12 +332,14 @@ int dtty_putn(const char * str, int len) {
     return i;
 }
 
-int dtty_kbhit(void) {
-	int r;
+int dtty_kbhit(void)
+{
+    int r;
 
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	if (!_g_bsp_dtty_async_init) {
 		dtty_async_init();
@@ -313,11 +347,14 @@ int dtty_kbhit(void) {
 
 	if (!_g_bsp_dtty_async_init) {
 #endif
-		if (NRF_UART0->EVENTS_RXDRDY) {
-			r = 1;
-		} else {
-			r = 0;
-		}
+    if (NRF_UART0->EVENTS_RXDRDY)
+    {
+        r = 1;
+    }
+    else
+    {
+        r = 0;
+    }
 #if (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)
 	}
 	else {
@@ -325,7 +362,7 @@ int dtty_kbhit(void) {
 	}
 #endif
 
-	return r;
+    return r;
 }
 
 #endif /* ((UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) || (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART_ASYNC)) */
