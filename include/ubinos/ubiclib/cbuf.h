@@ -74,37 +74,37 @@ ubi_err_t cbuf_create(cbuf_pt * cbuf_p, uint32_t size);
 ubi_err_t cbuf_delete(cbuf_pt * cbuf_p);
 
 /*!
- * 단순환형버퍼에 데이터를 쓰는 함수
+ * 단순환형버퍼에 자료를 쓰는 함수
  *
  * @param   cbuf        대상 단순환형버퍼 포인터
  *
- * @param   buf         쓸 데이터가 저장되어 있는 버퍼
+ * @param   buf         쓸 자료가 저장되어 있는 버퍼
  *
- * @param   len         쓸 데이터 길이
+ * @param   len         쓸 자료 길이
  *
- * @param   written_p   쓴 데이터 길이를 저장할 변수의 주소 (NULL이면 무시)
+ * @param   written_p   쓴 자료 길이를 저장할 변수의 주소 (NULL이면 무시)
  *
  * @return  오류 번호
  */
 ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t * buf, uint32_t len, uint32_t * written_p);
 
 /*!
- * 단순환형버퍼에서 데이터를 읽는 함수
+ * 단순환형버퍼에서 자료를 읽는 함수
  *
  * @param   cbuf        대상 단순환형버퍼 포인터
  *
- * @param   buf         읽은 데이터를 저장할 버퍼
+ * @param   buf         읽은 자료를 저장할 버퍼
  *
- * @param   size        읽을 데이터 크기
+ * @param   size        읽을 자료 크기
  *
- * @param   read_p      읽은 데이터 크기를 저장할 변수의 주소 (NULL이면 무시)
+ * @param   read_p      읽은 자료 크기를 저장할 변수의 주소 (NULL이면 무시)
  *
  * @return  오류 번호
  */
 ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p);
 
 /*!
- * 단순환형버퍼의 데이터를 모두 지우는 함수
+ * 단순환형버퍼의 자료를 모두 지우는 함수
  *
  * @param   cbuf        대상 단순환형버퍼 포인터
  *
@@ -113,13 +113,22 @@ ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p
 ubi_err_t cbuf_clear(cbuf_pt cbuf);
 
 /*!
- * 단순환형버퍼의 사용된 길이를 돌려주는 함수
+ * 단순환형버퍼에 들어있는 자료의 길이를 돌려주는 함수
  *
  * @param   cbuf        대상 단순환형버퍼 포인터
  *
  * @return  사용된 길이
  */
 uint32_t cbuf_get_len(cbuf_pt cbuf);
+
+/*!
+ * 단순환형버퍼가 가득 차있는지 여부를 돌려주는 함수
+ *
+ * @param   cbuf        대상 단순환형버퍼 포인터
+ *
+ * @return  가득 차있는지 여부
+ */
+uint8_t cbuf_is_full(cbuf_pt cbuf);
 
 /*!
  * 단순환형버퍼의 머리 부분 주소를 돌려주는 함수
@@ -131,13 +140,31 @@ uint32_t cbuf_get_len(cbuf_pt cbuf);
 uint8_t * cbuf_get_head_addr(cbuf_pt cbuf);
 
 /*!
- * 단순환형버퍼의 머리 부분 연속된 영역 길이를 돌려주는 함수
+ * 단순환형버퍼의 꼬리 부분 주소를 돌려주는 함수
  *
  * @param   cbuf        대상 단순환형버퍼 포인터
  *
- * @return  머리 부분 연속된 영역 길이
+ * @return  꼬리 부분 주소
+ */
+uint8_t * cbuf_get_tail_addr(cbuf_pt cbuf);
+
+/*!
+ * 단순환형버퍼에 들어있는 자료 중 연속된 영역의 길이를 돌려주는 함수
+ *
+ * @param   cbuf        대상 단순환형버퍼 포인터
+ *
+ * @return  자료 중 연속된 영역의 길이
  */
 uint32_t cbuf_get_contig_len(cbuf_pt cbuf);
+
+/*!
+ * 단순환형버퍼에 빈 공간 중 연속된 영역의 길이를 돌려주는 함수
+ *
+ * @param   cbuf        대상 단순환형버퍼 포인터
+ *
+ * @return  빈 공간 중 연속된 영역의 길이
+ */
+uint32_t cbuf_get_contig_empty_len(cbuf_pt cbuf);
 
 #ifdef __cplusplus
 }

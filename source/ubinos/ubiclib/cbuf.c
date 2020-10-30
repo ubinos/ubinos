@@ -64,7 +64,6 @@ ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t *buf, uint32_t len, uint32_t *w
     uint32_t offset1, offset2;
     uint32_t len1, len2;
     assert(cbuf != NULL);
-    assert(buf != NULL);
 
     head = cbuf->head;
     tail = cbuf->tail;
@@ -107,13 +106,16 @@ ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t *buf, uint32_t len, uint32_t *w
         len1 = min(size1, len);
         len2 = min(size2, len - len1);
 
-        if (len1 > 0)
+        if (buf)
         {
-            memcpy(&cbuf->buf[offset1], &buf[0], len1);
-        }
-        if (len2 > 0)
-        {
-            memcpy(&cbuf->buf[offset2], &buf[len1], len2);
+            if (len1 > 0)
+            {
+                memcpy(&cbuf->buf[offset1], &buf[0], len1);
+            }
+            if (len2 > 0)
+            {
+                memcpy(&cbuf->buf[offset2], &buf[len1], len2);
+            }
         }
 
         cbuf->tail = (cbuf->tail + len1 + len2) % size;
@@ -239,11 +241,34 @@ uint32_t cbuf_get_len(cbuf_pt cbuf)
     return len;
 }
 
+uint8_t cbuf_is_full(cbuf_pt cbuf) {
+    uint8_t is_full;
+    assert(cbuf != NULL);
+
+    if (cbuf_get_len(cbuf) == (cbuf->size - 1))
+    {
+        is_full = 1;
+    }
+    else
+    {
+        is_full = 0;
+    }
+
+    return is_full;
+}
+
 uint8_t* cbuf_get_head_addr(cbuf_pt cbuf)
 {
     assert(cbuf != NULL);
 
     return &cbuf->buf[cbuf->head];
+}
+
+uint8_t * cbuf_get_tail_addr(cbuf_pt cbuf)
+{
+    assert(cbuf != NULL);
+
+    return &cbuf->buf[cbuf->tail];
 }
 
 uint32_t cbuf_get_contig_len(cbuf_pt cbuf)
@@ -263,6 +288,35 @@ uint32_t cbuf_get_contig_len(cbuf_pt cbuf)
     else
     {
         contiglen = size - head;
+    }
+
+    return contiglen;
+}
+
+uint32_t cbuf_get_contig_empty_len(cbuf_pt cbuf)
+{
+    uint32_t head, tail, size;
+    uint32_t contiglen;
+    assert(cbuf != NULL);
+
+    head = cbuf->head;
+    tail = cbuf->tail;
+    size = cbuf->size;
+
+    if (head <= tail)
+    {
+        if (head == 0)
+        {
+            contiglen = size - tail - 1;
+        }
+        else
+        {
+            contiglen = size - tail;
+        }
+    }
+    else
+    {
+        contiglen = head - tail - 1;
     }
 
     return contiglen;
