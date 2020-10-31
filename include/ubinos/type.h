@@ -22,27 +22,6 @@ extern "C"
 
 #include <ubinos_config.h>
 
-/*! ubinos error code  */
-typedef enum {
-	UBI_ERR_OK = 0, /*!< No error */
-	UBI_ERR_INTERNAL, /*!< Internal error */
-	UBI_ERR_UNKNOWN, /*!< Unknown error */
-	UBI_ERR_TIMEOUT, /*!< Timeout */
-	UBI_ERR_BUSY, /*!< Busy */
-	UBI_ERR_NO_MEM, /*!< No memory */
-	UBI_ERR_BUF_FULL, /*!< Buffer full */
-	UBI_ERR_BUF_EMPTY, /*!< Buffer empty */
-	UBI_ERR_NOT_FOUND, /*!< Not found */
-	UBI_ERR_NOT_SUPPORTED, /*!< Not supported */
-	UBI_ERR_INVALID_PARAM, /*!< Invalid parameter */
-	UBI_ERR_INVALID_DATA, /*!< Invalid data */
-	UBI_ERR_INVALID_LENGTH, /*!< Invalid length */
-	UBI_ERR_INVALID_ADDR, /*!< Invalid address */
-	UBI_ERR_INVALID_STATE, /*!< Invalid state */
-	UBI_ERR_NULL, /*!< Null pointer */
-	UBI_ERR_HEAP, /*!< Heap error */
-} ubi_err_t;
-
 #if (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__ARM)
 
 #ifndef __ASSEMBLY__
@@ -138,7 +117,30 @@ typedef __SIZE_TYPE__ size_t;
 
 #ifndef __ASSEMBLY__
 
+#include <stdint.h>
+
 #include <ubinos/objtype.h>
+
+/*! ubinos error code  */
+typedef enum {
+    UBI_ERR_OK = 0, /*!< No error */
+    UBI_ERR_INTERNAL, /*!< Internal error */
+    UBI_ERR_UNKNOWN, /*!< Unknown error */
+    UBI_ERR_TIMEOUT, /*!< Timeout */
+    UBI_ERR_BUSY, /*!< Busy */
+    UBI_ERR_NO_MEM, /*!< No memory */
+    UBI_ERR_BUF_FULL, /*!< Buffer full */
+    UBI_ERR_BUF_EMPTY, /*!< Buffer empty */
+    UBI_ERR_NOT_FOUND, /*!< Not found */
+    UBI_ERR_NOT_SUPPORTED, /*!< Not supported */
+    UBI_ERR_INVALID_PARAM, /*!< Invalid parameter */
+    UBI_ERR_INVALID_DATA, /*!< Invalid data */
+    UBI_ERR_INVALID_LENGTH, /*!< Invalid length */
+    UBI_ERR_INVALID_ADDR, /*!< Invalid address */
+    UBI_ERR_INVALID_STATE, /*!< Invalid state */
+    UBI_ERR_NULL, /*!< Null pointer */
+    UBI_ERR_HEAP, /*!< Heap error */
+} ubi_err_t;
 
 #endif /* __ASSEMBLY__ */
 
