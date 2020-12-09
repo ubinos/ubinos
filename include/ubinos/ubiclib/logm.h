@@ -46,55 +46,68 @@ extern "C"
 /*! 세마포어 타이머 카테고리 */
 #define LOGM_CATEGORY__STIMER		9
 
-/*! 유비 C 라이브러리 카테고리 */
+/*! 유비노스 C 라이브러리 카테고리 */
 #define LOGM_CATEGORY__UBICLIB		10
 /*! 힙 카테고리 */
 #define LOGM_CATEGORY__HEAP			11
 
+/*! 유비노스 디바이스 드라이버 카테고리 */
+#define LOGM_CATEGORY__UBIDRV		12
+/*! 비휘발성 메모리 카테고리 */
+#define LOGM_CATEGORY__NVMEM		13
+
+/*! 확장을 위한 예약 카테고리 */
+#define LOGM_CATEGORY__RESOLVED04	14
+#define LOGM_CATEGORY__RESOLVED05	15
+#define LOGM_CATEGORY__RESOLVED06	16
+#define LOGM_CATEGORY__RESOLVED07	17
+#define LOGM_CATEGORY__RESOLVED08	18
+#define LOGM_CATEGORY__RESOLVED09	19
+
 /*! 시스템 0 카테고리 */
-#define LOGM_CATEGORY__SYS00		12
+#define LOGM_CATEGORY__SYS00		20
 /*! 시스템 1 카테고리 */
-#define LOGM_CATEGORY__SYS01		13
+#define LOGM_CATEGORY__SYS01		21
 /*! 시스템 2 카테고리 */
-#define LOGM_CATEGORY__SYS02		14
+#define LOGM_CATEGORY__SYS02		22
 /*! 시스템 3 카테고리 */
-#define LOGM_CATEGORY__SYS03		15
+#define LOGM_CATEGORY__SYS03		23
 /*! 시스템 4 카테고리 */
-#define LOGM_CATEGORY__SYS04		16
+#define LOGM_CATEGORY__SYS04		24
 /*! 시스템 5 카테고리 */
-#define LOGM_CATEGORY__SYS05		17
+#define LOGM_CATEGORY__SYS05		25
 /*! 시스템 6 카테고리 */
-#define LOGM_CATEGORY__SYS06		18
+#define LOGM_CATEGORY__SYS06		26
 /*! 시스템 7 카테고리 */
-#define LOGM_CATEGORY__SYS07		19
+#define LOGM_CATEGORY__SYS07		27
 /*! 시스템 8 카테고리 */
-#define LOGM_CATEGORY__SYS08		20
+#define LOGM_CATEGORY__SYS08		28
 /*! 시스템 9 카테고리 */
-#define LOGM_CATEGORY__SYS09		21
+#define LOGM_CATEGORY__SYS09		29
 
 /*! 사용자 0 카테고리 */
-#define LOGM_CATEGORY__USER00		22
+#define LOGM_CATEGORY__USER00		30
 /*! 사용자 1 카테고리 */
-#define LOGM_CATEGORY__USER01		23
+#define LOGM_CATEGORY__USER01		31
 /*! 사용자 2 카테고리 */
-#define LOGM_CATEGORY__USER02		24
+#define LOGM_CATEGORY__USER02		32
 /*! 사용자 3 카테고리 */
-#define LOGM_CATEGORY__USER03		25
+#define LOGM_CATEGORY__USER03		33
 /*! 사용자 4 카테고리 */
-#define LOGM_CATEGORY__USER04		26
+#define LOGM_CATEGORY__USER04		34
 /*! 사용자 5 카테고리 */
-#define LOGM_CATEGORY__USER05		27
+#define LOGM_CATEGORY__USER05		35
 /*! 사용자 6 카테고리 */
-#define LOGM_CATEGORY__USER06		28
+#define LOGM_CATEGORY__USER06		36
 /*! 사용자 7 카테고리 */
-#define LOGM_CATEGORY__USER07		29
+#define LOGM_CATEGORY__USER07		37
 /*! 사용자 8 카테고리 */
-#define LOGM_CATEGORY__USER08		30
+#define LOGM_CATEGORY__USER08		38
 /*! 사용자 9 카테고리 */
-#define LOGM_CATEGORY__USER09		31
+#define LOGM_CATEGORY__USER09		39
 
 /*! 카테고리 끝 */
-#define LOGM_CATEGORY__END			32
+#define LOGM_CATEGORY__END			40
 
 
 /*! 어떤 메시지도 출력하지 않음 */

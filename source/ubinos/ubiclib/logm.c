@@ -35,27 +35,37 @@ volatile int _ubiclib_logm_level[LOGM_CATEGORY__END] = {
 		LOGM_LEVEL, // 10 UBICLIB
 		LOGM_LEVEL, // 11 HEAP
 
-		LOGM_LEVEL, // 12 SYS00
-		LOGM_LEVEL, // 13 SYS01
-		LOGM_LEVEL, // 14 SYS02
-		LOGM_LEVEL, // 15 SYS03
-		LOGM_LEVEL, // 16 SYS04
-		LOGM_LEVEL, // 17 SYS05
-		LOGM_LEVEL, // 18 SYS06
-		LOGM_LEVEL, // 19 SYS07
-		LOGM_LEVEL, // 20 SYS08
-		LOGM_LEVEL, // 21 SYS09
+        LOGM_LEVEL, // 12 UBIDRV
+        LOGM_LEVEL, // 13 NVMEM
 
-		LOGM_LEVEL, // 22 USER00
-		LOGM_LEVEL, // 23 USER01
-		LOGM_LEVEL, // 24 USER02
-		LOGM_LEVEL, // 25 USER03
-		LOGM_LEVEL, // 26 USER04
-		LOGM_LEVEL, // 27 USER05
-		LOGM_LEVEL, // 28 USER06
-		LOGM_LEVEL, // 29 USER07
-		LOGM_LEVEL, // 30 USER08
-		LOGM_LEVEL, // 31 USER09
+        LOGM_LEVEL, // 14 RESOLVED04
+        LOGM_LEVEL, // 15 RESOLVED05
+        LOGM_LEVEL, // 16 RESOLVED06
+        LOGM_LEVEL, // 17 RESOLVED07
+        LOGM_LEVEL, // 18 RESOLVED08
+        LOGM_LEVEL, // 19 RESOLVED09
+
+		LOGM_LEVEL, // 20 SYS00
+		LOGM_LEVEL, // 21 SYS01
+		LOGM_LEVEL, // 22 SYS02
+		LOGM_LEVEL, // 23 SYS03
+		LOGM_LEVEL, // 24 SYS04
+		LOGM_LEVEL, // 25 SYS05
+		LOGM_LEVEL, // 26 SYS06
+		LOGM_LEVEL, // 27 SYS07
+		LOGM_LEVEL, // 28 SYS08
+		LOGM_LEVEL, // 29 SYS09
+
+		LOGM_LEVEL, // 30 USER00
+		LOGM_LEVEL, // 31 USER01
+		LOGM_LEVEL, // 32 USER02
+		LOGM_LEVEL, // 33 USER03
+		LOGM_LEVEL, // 34 USER04
+		LOGM_LEVEL, // 35 USER05
+		LOGM_LEVEL, // 36 USER06
+		LOGM_LEVEL, // 37 USER07
+		LOGM_LEVEL, // 38 USER08
+		LOGM_LEVEL, // 39 USER09
 };
 
 const char *_ubiclib_logm_categoryname[LOGM_CATEGORY__END] = {
@@ -74,27 +84,37 @@ const char *_ubiclib_logm_categoryname[LOGM_CATEGORY__END] = {
 		"[UBICLIB] ", // 10 UBICLIB
 		"[HEAP   ] ", // 11 HEAP
 
-		"[SYS00  ] ", // 12 SYS00
-		"[SYS01  ] ", // 13 SYS01
-		"[SYS02  ] ", // 14 SYS02
-		"[SYS03  ] ", // 15 SYS03
-		"[SYS04  ] ", // 16 SYS04
-		"[SYS05  ] ", // 17 SYS05
-		"[SYS06  ] ", // 18 SYS06
-		"[SYS07  ] ", // 19 SYS07
-		"[SYS08  ] ", // 20 SYS08
-		"[SYS09  ] ", // 21 SYS09
+        "[UBIDRV ] ", // 12 UBIDRV
+        "[NVMEM  ] ", // 13 NVMEM
 
-		"[USER00 ] ", // 22 USER00
-		"[USER01 ] ", // 23 USER01
-		"[USER02 ] ", // 24 USER02
-		"[USER03 ] ", // 25 USER03
-		"[USER04 ] ", // 26 USER04
-		"[USER05 ] ", // 27 USER05
-		"[USER06 ] ", // 28 USER06
-		"[USER07 ] ", // 29 USER07
-		"[USER08 ] ", // 30 USER08
-		"[USER09 ] ", // 31 USER09
+        "[RESOL04] ", // 14 RESOLVED04
+        "[RESOL05] ", // 15 RESOLVED05
+        "[RESOL06] ", // 16 RESOLVED06
+        "[RESOL07] ", // 17 RESOLVED07
+        "[RESOL08] ", // 18 RESOLVED08
+        "[RESOL09] ", // 19 RESOLVED09
+
+		"[SYS00  ] ", // 20 SYS00
+		"[SYS01  ] ", // 21 SYS01
+		"[SYS02  ] ", // 22 SYS02
+		"[SYS03  ] ", // 23 SYS03
+		"[SYS04  ] ", // 24 SYS04
+		"[SYS05  ] ", // 25 SYS05
+		"[SYS06  ] ", // 26 SYS06
+		"[SYS07  ] ", // 27 SYS07
+		"[SYS08  ] ", // 28 SYS08
+		"[SYS09  ] ", // 29 SYS09
+
+		"[USER00 ] ", // 30 USER00
+		"[USER01 ] ", // 31 USER01
+		"[USER02 ] ", // 32 USER02
+		"[USER03 ] ", // 33 USER03
+		"[USER04 ] ", // 34 USER04
+		"[USER05 ] ", // 35 USER05
+		"[USER06 ] ", // 36 USER06
+		"[USER07 ] ", // 37 USER07
+		"[USER08 ] ", // 38 USER08
+		"[USER09 ] ", // 39 USER09
 };
 
 const char *_ubiclib_logm_levelname[LOGM_LEVEL__END] = {

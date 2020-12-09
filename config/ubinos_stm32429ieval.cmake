@@ -13,4 +13,5 @@ include(${PROJECT_UBINOS_DIR}/config/ubinos/bsp/arch/arm/cortexm/stm32429ieval/s
 include(${PROJECT_UBINOS_DIR}/config/ubinos/bsp.cmake)
 include(${PROJECT_UBINOS_DIR}/config/ubinos/ubiclib.cmake)
 include(${PROJECT_UBINOS_DIR}/config/ubinos/ubik.cmake)
+include(${PROJECT_UBINOS_DIR}/config/ubinos/ubidrv.cmake)
 

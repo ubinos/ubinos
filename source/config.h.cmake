@@ -462,6 +462,18 @@
 ////////
 
 
+#cmakedefine01 INCLUDE__UBINOS__UBIDRV
+
+#if (INCLUDE__UBINOS__UBIDRV == 1)
+
+#cmakedefine01 UBINOS__UBIDRV__INCLUDE_NVMEM
+
+#endif /* (INCLUDE__UBINOS__UBIDRV == 1) */
+
+
+////////
+
+
 #cmakedefine01 INCLUDE__APP
 
 #if (INCLUDE__APP == 1)
