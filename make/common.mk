@@ -107,14 +107,13 @@ _CMAKE_OPTION          += -D PROJECT_LIBRARY_DIR="$(_LIBRARY_DIR)"
 define begin_message
 	@echo ""
 	@echo "###############################################################################"
-	@echo ""
-	@echo "[$@ - $(_CONFIG_NAME)]"
-	@echo "-------------------------------------------------------------------------------"
+	@echo "# [Begin $@ - $(_CONFIG_NAME)]"
 	@echo ""
 endef
 
 define end_message
 	@echo ""
+	@echo "# [End   $@ - $(_CONFIG_NAME)]"
 	@echo "###############################################################################"
 endef
 
