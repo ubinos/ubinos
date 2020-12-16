@@ -30,7 +30,7 @@
   * @param  None
   * @retval None
   */
-void SystemClock_Config(void)
+__WEAK void SystemClock_Config(void)
 {
   /* MSI configuration and activation */
   LL_FLASH_SetLatency(LL_FLASH_LATENCY_4);
