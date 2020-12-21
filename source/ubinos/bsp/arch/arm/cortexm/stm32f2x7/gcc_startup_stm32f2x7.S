@@ -70,7 +70,11 @@ __isr_vector:
     .long   bsp_ubik_irq_handler        /* DebugMon_Handler */
     .long   0                           /* Reserved */
     .long   bsp_ubik_psv_handler        /* PendSV_Handler */
+    #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+    .long   SysTick_Handler
+    #else
     .long   bsp_ubik_tick_handler       /* SysTick_Handler */
+    #endif
 #else
     .long   NMI_Handler
     .long   HardFault_Handler
