@@ -29,6 +29,7 @@
 
 #if (INCLUDE__UBINOS__BSP == 1)
 #if (UBINOS__BSP__STM32_STM32F2X7 == 1)
+#if !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1)
 
   .syntax unified
   .cpu cortex-m3
@@ -604,6 +605,7 @@ Default_Handler:
    .weak      HASH_RNG_IRQHandler
    .thumb_set HASH_RNG_IRQHandler,Default_Handler
 
+#endif /* !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1) */
 #endif /* (UBINOS__BSP__STM32_STM32F2X7 == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

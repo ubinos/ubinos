@@ -12,10 +12,6 @@
 
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
 
-#if !(INCLUDE__STM32CUBEF2 == 1)
-	#error "Project stm32cubef2 is necessary to use RTC tick"
-#endif
-
 #include <ubinos/bsp_ubik.h>
 
 #include <assert.h>

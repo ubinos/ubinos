@@ -13,6 +13,8 @@ set_cache_default(UBINOS__UBICLIB__USE_MALLOC_RETARGETING                       
 
 set_cache_default(UBINOS__UBICLIB__USE_STDIO_RETARGETING                        TRUE    BOOL "Use stdio retargeting")
 
+set_cache_default(UBINOS__UBICLIB__EXCLUDE_ARCH_INIT                            FALSE   BOOL "Exclude ubiclib architecture initialization code")
+
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_LOGM                                 FALSE   BOOL "Exclude log message functions")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_CLI                                  TRUE    BOOL "Exclude command line interface functions")
 

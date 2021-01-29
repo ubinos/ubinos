@@ -113,6 +113,8 @@ set_cache_default(UBINOS__BSP__EXTNORFLASH_ADDR                                 
 set_cache_default(UBINOS__BSP__STACK_SIZE                                       0       STRING "Stack size (ARM cortexm: Master stack size, ARM classic: total stack size of ISR handlers)")
 set_cache_default(UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN                      0       STRING "Stack overflow check margin")
 
+set_cache_default(UBINOS__BSP__EXCLUDE_ARCH_INIT                                FALSE   BOOL "Exclude bsp architecture initialization code")
+
 
 if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 

@@ -8,6 +8,7 @@
 
 #if (INCLUDE__UBINOS__BSP == 1)
 #if (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__ARM)
+#if !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1)
 
 #if (INCLUDE__UBINOS__UBICLIB == 1)
 #include <ubinos/ubiclib.h>
@@ -111,6 +112,7 @@ int main(void) {
     return 0;
 }
 
+#endif /* !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1) */
 #endif /* (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__ARM) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

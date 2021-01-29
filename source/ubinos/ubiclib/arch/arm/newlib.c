@@ -9,6 +9,7 @@
 #if (INCLUDE__UBINOS__UBICLIB == 1)
 #if (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__ARM)
 #if !(UBINOS__UBICLIB__NOSTDLIB == 1)
+#if !(UBINOS__UBICLIB__EXCLUDE_ARCH_INIT == 1)
 
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
@@ -440,6 +441,7 @@ int __attribute__((weak)) _read(int file, char * p_char, int len)
 
 #endif /* (UBINOS__UBICLIB__USE_STDIO_RETARGETING == 1) */
 
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_ARCH_INIT == 1) */
 #endif /* !(UBINOS__UBICLIB__NOSTDLIB == 1) */
 #endif /* (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__ARM) */
 #endif /* (INCLUDE__UBINOS__UBICLIB == 1) */

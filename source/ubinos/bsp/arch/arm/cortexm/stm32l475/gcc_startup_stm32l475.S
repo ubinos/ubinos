@@ -30,6 +30,7 @@
 
 #if (INCLUDE__UBINOS__BSP == 1)
 #if (UBINOS__BSP__STM32_STM32L475 == 1)
+#if !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1)
 
 	.syntax unified
 	.cpu cortex-m4
@@ -571,6 +572,7 @@ Default_Handler:
 	.weak	FPU_IRQHandler
 	.thumb_set FPU_IRQHandler,Default_Handler
 
+#endif /* !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1) */
 #endif /* (UBINOS__BSP__STM32_STM32L475 == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

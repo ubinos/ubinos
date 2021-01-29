@@ -481,7 +481,7 @@ void task_comp_start(void) {
         "msr        control, r3                                     \n\t"
         "isb                                                        \n\t"
         /* Reset msp */
-        "ldr        r3, =__stack_top__                              \n\t"
+        "ldr        r3, =__stack                                    \n\t"
         "msr        msp, r3                                         \n\t"
 
         /* Pop r0~r3, r12, lr, xpsr */

@@ -49,6 +49,7 @@
 
 #if (INCLUDE__UBINOS__BSP == 1)
 #if (UBINOS__BSP__STM32_STM32F2X7 == 1)
+#if !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1)
 
 #include "../stm32f2/stm32f2xx_ll_system.h"
 
@@ -372,6 +373,7 @@ __WEAK void SystemInit2(void)
 	SystemCoreClockUpdate();
 }
 
+#endif /* !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1) */
 #endif /* (UBINOS__BSP__STM32_STM32F2X7 == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 
