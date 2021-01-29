@@ -75,7 +75,7 @@ int bsp_getstacksize(int type, unsigned int * stacksize_p) {
         return -3;
     }
 
-    *stacksize_p = __STACK_SIZE;
+    *stacksize_p = UBINOS__BSP__STACK_SIZE;
 
     return 0;
 }
