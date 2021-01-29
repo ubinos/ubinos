@@ -6,6 +6,7 @@
 
 #include <ubinos/ubik_test.h>
 
+#if (INCLUDE__UBINOS__UBICLIB_TEST == 1)
 #if !(UBINOS__UBIK_TEST__EXCLUDE_CBUF_TEST == 1)
 
 #include <stdio.h>
@@ -232,4 +233,5 @@ ubi_err_t ubik_test_cbuf_test_00()
 }
 
 #endif /* !(UBINOS__UBIK_TEST__EXCLUDE_CBUF_TEST == 1) */
+#endif /* (INCLUDE__UBINOS__UBICLIB_TEST == 1) */
 

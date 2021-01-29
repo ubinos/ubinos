@@ -6,6 +6,7 @@
 
 #include <ubinos/ubiclib_test.h>
 
+#if (INCLUDE__UBINOS__UBICLIB_TEST == 1)
 #if !(UBINOS__UBICLIB_TEST__EXCLUDE_HEAPTEST == 1)
 
 double ubiclib_test_heaptest_nrx2_a[] = {
@@ -13,5 +14,5 @@ double ubiclib_test_heaptest_nrx2_a[] = {
 };
 
 #endif /* !(UBINOS__UBICLIB_TEST__EXCLUDE_HEAPTEST == 1) */
-
+#endif /* (INCLUDE__UBINOS__UBICLIB_TEST == 1) */
 

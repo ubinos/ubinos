@@ -1,6 +1,7 @@
 #include <ubinos/ubiclib_test.h>
 #include <ubinos/ubiclib/heap.h>
 
+#if (INCLUDE__UBINOS__UBICLIB_TEST == 1)
 #if !(UBINOS__UBICLIB_TEST__EXCLUDE_HEAPTEST == 1)
 
 #include <assert.h>
@@ -628,5 +629,5 @@ void ubiclib_test_heaptest(void *arg) {
 }
 
 #endif /* !(UBINOS__UBICLIB_TEST__EXCLUDE_HEAPTEST == 1) */
-
+#endif /* (INCLUDE__UBINOS__UBICLIB_TEST == 1) */
 

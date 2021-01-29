@@ -6,6 +6,7 @@
 
 #include <ubinos/ubiclib_test.h>
 
+#if (INCLUDE__UBINOS__UBICLIB_TEST == 1)
 #if !(UBINOS__UBICLIB_TEST__EXCLUDE_CBUF_TEST == 1)
 
 #include <stdio.h>
@@ -140,4 +141,5 @@ ubi_err_t ubiclib_test_test_all()
 }
 
 #endif /* !(UBINOS__UBICLIB_TEST__EXCLUDE_CBUF_TEST == 1) */
+#endif /* (INCLUDE__UBINOS__UBICLIB_TEST == 1) */
 

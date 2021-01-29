@@ -6,6 +6,7 @@
 
 #include <ubinos/ubik_test.h>
 
+#if (INCLUDE__UBINOS__UBIK_TEST == 1)
 #if (1 != UBINOS__UBIK_TEST__EXCLUDE_STIMERTESTSET)
 
 #include <stdio.h>
@@ -407,3 +408,5 @@ end0:
 }
 
 #endif /* (1 != UBINOS__UBIK_TEST__EXCLUDE_STIMERTESTSET) */
+#endif /* (INCLUDE__UBINOS__UBIK_TEST == 1) */
+

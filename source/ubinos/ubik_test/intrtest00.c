@@ -8,6 +8,8 @@
 
 #if defined(DOXYGEN_BUILD)
 
+#if (INCLUDE__UBINOS__UBIK_TEST == 1)
+
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -111,4 +113,4 @@ end0:
 }
 
 #endif /* defined(DOXYGEN_BUILD) */
-
+#endif /* (INCLUDE__UBINOS__UBIK_TEST == 1) */

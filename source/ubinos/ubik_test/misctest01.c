@@ -6,6 +6,7 @@
 
 #include <ubinos/ubik_test.h>
 
+#if (INCLUDE__UBINOS__UBIK_TEST == 1)
 #if !( UBINOS__UBIK_TEST__EXCLUDE_MISCTESTSET == 1)
 
 #include <stdio.h>
@@ -58,3 +59,4 @@ end0:
 }
 
 #endif /* !( UBINOS__UBIK_TEST__EXCLUDE_MISCTESTSET == 1) */
+#endif /* (INCLUDE__UBINOS__UBIK_TEST == 1) */
