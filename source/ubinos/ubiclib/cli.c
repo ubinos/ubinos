@@ -82,10 +82,10 @@ void cli_main(void *arg) {
 		if (0 < len) {
 			printf("\n%s\n", _cli_cmd_buf);
 
-			r = cli_rootfunc(_cli_cmd_buf, len, arg);
+			r = cli_rootfunc(_cli_cmd_buf, len, NULL);
 			if (0 != r) {
 				if (NULL != _cli_hookfunc) {
-					r = _cli_hookfunc(_cli_cmd_buf, len, arg);
+					r = _cli_hookfunc(_cli_cmd_buf, len, _cli_hookarg);
 				}
 			}
 		} else {
@@ -94,7 +94,7 @@ void cli_main(void *arg) {
 		}
 
 		if (0 != r) {
-			cli_cmdfunc__help(_cli_cmd_buf, len, arg);
+			cli_cmdfunc__help(_cli_cmd_buf, len, NULL);
 			if (NULL != _cli_helphookfunc) {
 				_cli_helphookfunc();
 			}
