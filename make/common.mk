@@ -159,6 +159,8 @@ common-help:
 	@echo "make all                     (config and build)"
 	@echo ""
 	@echo "make config                  (configure)"
+	@echo "make configd                 (cleand and config)"
+	@echo ""
 	@echo "make build                   (build)"
 	@echo ""
 	@echo "make clean                   (clean)"
@@ -188,6 +190,8 @@ common-config:
 	$(_PRECMD) && mkdir -p "$(_OUTPUT_DIR)"
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake $(_CMAKE_OPTION) "$(_SOURCE_DIR)"
 	$(call end_message)
+
+common-configd: cleand config
 
 common-menuconfig:
 	$(call begin_message)
