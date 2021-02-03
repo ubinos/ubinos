@@ -605,22 +605,24 @@ macro(project_begin)
 endmacro(project_begin)
 
 macro(project_add_library name)
-    configure_file(
-        ${PROJECT_LIBRARY_DIR}/${name}/source/config.h.cmake
-        ${PROJECT_BINARY_DIR}/___${name}_config.h
-    )
-    file(READ   ${PROJECT_BINARY_DIR}/___${name}_config.h _tmp_fdata)
-    file(REMOVE ${PROJECT_BINARY_DIR}/___${name}_config.h)
-    file(APPEND ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h ${_tmp_fdata})
-
-    file(WRITE ${PROJECT_LIBRARY_DIR}/${name}/include/${name}_config.h "#include \"${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h\"\n")
-    include_directories(${PROJECT_LIBRARY_DIR}/${name}/include)
-
-    set(PROJECT_SOURCES)
-    include(${PROJECT_LIBRARY_DIR}/${name}/source/sources.cmake)
-    if(PROJECT_SOURCES)
-        add_library(${name} STATIC ${PROJECT_SOURCES})
-        set(PROJECT_LIBRARIES ${name} ${PROJECT_LIBRARIES})
+    if(EXISTS "${PROJECT_LIBRARY_DIR}/${name}/source/config.h.cmake")
+        configure_file(
+            ${PROJECT_LIBRARY_DIR}/${name}/source/config.h.cmake
+            ${PROJECT_BINARY_DIR}/___${name}_config.h
+        )
+        file(READ   ${PROJECT_BINARY_DIR}/___${name}_config.h _tmp_fdata)
+        file(REMOVE ${PROJECT_BINARY_DIR}/___${name}_config.h)
+        file(APPEND ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h ${_tmp_fdata})
+    
+        file(WRITE ${PROJECT_LIBRARY_DIR}/${name}/include/${name}_config.h "#include \"${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h\"\n")
+        include_directories(${PROJECT_LIBRARY_DIR}/${name}/include)
+    
+        set(PROJECT_SOURCES)
+        include(${PROJECT_LIBRARY_DIR}/${name}/source/sources.cmake)
+        if(PROJECT_SOURCES)
+            add_library(${name} STATIC ${PROJECT_SOURCES})
+            set(PROJECT_LIBRARIES ${name} ${PROJECT_LIBRARIES})
+        endif()
     endif()
 endmacro(project_add_library)
 
