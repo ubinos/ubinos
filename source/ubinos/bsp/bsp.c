@@ -12,6 +12,7 @@ char * _ubinos_version = UBINOS__VERSION;
 
 volatile unsigned int _bsp_kernel_active = 0;
 volatile unsigned int _bsp_critcount = 0;
+volatile unsigned int _bsp_aborted = 0;
 
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

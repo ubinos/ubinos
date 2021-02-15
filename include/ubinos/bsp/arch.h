@@ -45,6 +45,7 @@ extern "C"
 
 extern volatile unsigned int _bsp_kernel_active; /* variable representing whether kernel is active or not */
 extern volatile unsigned int _bsp_critcount; /* critical section nesting count */
+extern volatile unsigned int _bsp_aborted;  /* variable representing whether aborted or not */
 
 #endif /* __ASSEMBLY__ */
 

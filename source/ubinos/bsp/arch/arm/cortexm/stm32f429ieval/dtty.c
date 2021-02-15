@@ -171,8 +171,6 @@ int dtty_getc(char *ch_p) {
 	}
 
 	return 0;
-
-	return 0;
 }
 
 int dtty_putc(int ch) {
@@ -228,6 +226,11 @@ int dtty_kbhit(void) {
 	} else {
 		return 0;
 	}
+}
+
+int dtty_flush(void)
+{
+    return 0;
 }
 
 #endif /* (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) */

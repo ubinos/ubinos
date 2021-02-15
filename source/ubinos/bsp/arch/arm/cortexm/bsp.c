@@ -20,6 +20,7 @@ int bsp_comp_init(void) {
 
     _bsp_kernel_active = 0;
     _bsp_critcount = 0;
+    _bsp_aborted = 0;
 
     r = dtty_init();
     if (0 != r) {
@@ -52,9 +53,13 @@ void bsp_busywait(unsigned int count) {
 }
 
 void bsp_abortsystem(void) {
-    ARM_INTERRUPT_DISABLE();
+    if (!_bsp_aborted)
+    {
+        _bsp_aborted = 1;
 
-    dtty_puts("\n\nsystem is aborted\n\n", 80);
+        ARM_INTERRUPT_DISABLE();
+        dtty_puts("\n\nsystem is aborted\n\n", 80);
+    }
 
     __asm__ __volatile__ (
             "1:                                                 \n\t"

@@ -157,6 +157,11 @@ int dtty_kbhit(void)
     return 0;
 }
 
+int dtty_flush(void)
+{
+    return 0;
+}
+
 #endif /* (UBINOS__BSP__USE_DTTY == ...) */
 
 #endif /* (INCLUDE__UBINOS__BSP == 1) */

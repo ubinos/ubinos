@@ -168,6 +168,17 @@ int dtty_setecho(int echo);
  */
 int dtty_setautocr(int autocr);
 
+/*!
+ * 디버깅 터미널 출력 버퍼에 저장된 내용을 모두 출력하는 함수
+ *
+ * @param   ch      출력할 문자
+ *
+ * @return   0: 성공<br>
+ *          <br>
+ *          -1: 오류
+ */
+int dtty_flush(void);
+
 #ifdef	__cplusplus
 }
 #endif

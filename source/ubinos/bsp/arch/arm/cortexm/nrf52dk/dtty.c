@@ -279,6 +279,11 @@ int dtty_kbhit(void)
     return r;
 }
 
+int dtty_flush(void)
+{
+    return 0;
+}
+
 #endif /* (UBINOS__BSP__DTTY_TYPE == UBINOS__BSP__DTTY_TYPE__UART) */
 #endif /* (UBINOS__BSP__USE_DTTY == 1) */
 

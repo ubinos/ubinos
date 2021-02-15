@@ -11,26 +11,27 @@
 
 #include <stdio.h>
 
-#if 	(0x50 > UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN)
-	#error "UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN should be equal or larger than 0x50."
+#if     (0x50 > UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN)
+    #error "UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN should be equal or larger than 0x50."
 #endif
 
 volatile unsigned int _bsp_intrcount = 0;
 
 int bsp_comp_init(void) {
-	int r = 0;
+    int r = 0;
 
-	_bsp_kernel_active	= 0;
-	_bsp_critcount		= 0;
+    _bsp_kernel_active  = 0;
+    _bsp_critcount      = 0;
+    _bsp_aborted        = 0;
 
     _bsp_intrcount      = 0;
 
-	r = dtty_init();
-	if (0 != r) {
-		return -1;
-	}
+    r = dtty_init();
+    if (0 != r) {
+        return -1;
+    }
 
-	return 0;
+    return 0;
 }
 
 int bsp_isintr(void) {
@@ -164,11 +165,11 @@ int bsp_getstacksize(int type, unsigned int * stacksize_p) {
 }
 
 int bsp_getmaxstackusage(int type, unsigned int * maxstackusage_p) {
-	if (NULL != maxstackusage_p) {
-		*maxstackusage_p = 0;
-	}
+    if (NULL != maxstackusage_p) {
+        *maxstackusage_p = 0;
+    }
 
-	return -1;
+    return -1;
 }
 
 unsigned int bsp_getbusywaitcountperms(void) {
