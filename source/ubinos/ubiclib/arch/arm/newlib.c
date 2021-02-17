@@ -396,23 +396,24 @@ int settimeofday (const struct timeval *ptimeval, const struct timezone *ptimezo
 
 #else /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
+char * __heap_end = 0;
+
 void * _sbrk (int incr)
 {
    extern char   end;           /* Set by linker.  */
    extern char   __stack_limit; /* Set by linker.  */
-   static char * heap_end = 0;
    char *        prev_heap_end;
 
-   if (heap_end == 0) {
-       heap_end = &end;
+   if (__heap_end == 0) {
+       __heap_end = &end;
    }
 
-   if ((heap_end + incr) > &__stack_limit) {
+   if ((__heap_end + incr) > &__stack_limit) {
        prev_heap_end = (char *) ENOMEM;
    }
    else {
-       prev_heap_end = heap_end;
-       heap_end += incr;
+       prev_heap_end = __heap_end;
+       __heap_end += incr;
    }
 
    return (void *) prev_heap_end;
