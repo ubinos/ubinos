@@ -272,8 +272,29 @@ common-attach:
 
 ###############################################################################
 
+common-zbatch-all:
+	make -f batch.mk all
+ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+	make -f batch_external_build.mk config
+endif
+
+common-zbatch-rebuild:
+	make -f batch.mk rebuild
+ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+	make -f batch_external_build.mk clean config
+endif
+
+common-zbatch-rebuildd:
+	make -f batch.mk rebuildd
+ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+	make -f batch_external_build.mk cleand config
+endif
+
 common-zbatch-%:
 	make -f batch.mk $*
+ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+	make -f batch_external_build.mk $*
+endif
 
 ###############################################################################
 
