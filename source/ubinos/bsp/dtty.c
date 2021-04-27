@@ -88,6 +88,11 @@ int dtty_setecho(int echo)
     return 0;
 }
 
+int dtty_getecho()
+{
+    return _g_bsp_dtty_echo;
+}
+
 int dtty_setautocr(int autocr)
 {
     _g_bsp_dtty_autocr = autocr;
