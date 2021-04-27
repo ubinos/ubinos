@@ -797,32 +797,6 @@ int task_waitforsigobjs_timedms(void ** sigobj_p, int * sigtype_p,
 int task_join(task_pt * task_p, int * result_p, int count);
 
 /*!
- * 대상 태스크들이 종료되기를 기다린 후 삭제하는 함수
- *
- * @param	task_p		대상 태스크 포인터 배열<br>
- * 						대상 테스크는 task_create_noautodel 함수로 생성한 수동 삭제 태스크여야 함<br>
- * 						<br>
- *
- * @param	result_p	결과값을 저장할  배열<br>
- * 						NULL: 결과값을 저장하지 않음<br>
- * 						<br>
- * 						결과값<br>
- * 						0: 정상 종료<br>
- * 						UBIK_ERR__DEADLOCK		: 데드락 발생 가능성이 있음<br>
- * 						<br>
- *
- * @param	count		배열 길이  (UBINOS__UBIK__TASK_MAXWAITSIGOBJ_MAX 보다 작거나 같아야 함)<br>
- * 						<br>
- *
- * @return	  0: 성공<br>
- * 			<br>
- * 			 -1: 오류<br>
- * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
- * 			UBIK_ERR__DEADLOCK		: 데드락 발생 가능성이 있음<br>
- */
-int task_join_and_delete(task_pt * task_p, int * result_p, int count);
-
-/*!
  * 제한 시간 동안 대상 태스크들이 종료되기를 기다리는 함수
  *
  * @param	task_p		대상 태스크 포인터 배열<br>
@@ -885,6 +859,90 @@ int task_join_timed(task_pt * task_p, int * result_p, int count,
  */
 int task_join_timedms(task_pt * task_p, int * result_p, int count,
 		unsigned int timems);
+
+/*!
+ * 대상 태스크들이 종료되기를 기다린 후 삭제하는 함수
+ *
+ * @param   task_p      대상 태스크 포인터 배열<br>
+ *                      대상 테스크는 task_create_noautodel 함수로 생성한 수동 삭제 태스크여야 함<br>
+ *                      <br>
+ *
+ * @param   result_p    결과값을 저장할  배열<br>
+ *                      NULL: 결과값을 저장하지 않음<br>
+ *                      <br>
+ *                      결과값<br>
+ *                      0: 정상 종료<br>
+ *                      UBIK_ERR__DEADLOCK      : 데드락 발생 가능성이 있음<br>
+ *                      <br>
+ *
+ * @param   count       배열 길이  (UBINOS__UBIK__TASK_MAXWAITSIGOBJ_MAX 보다 작거나 같아야 함)<br>
+ *                      <br>
+ *
+ * @return    0: 성공<br>
+ *          <br>
+ *           -1: 오류<br>
+ *           -n: n-1 번째 매개변수가 잘못되었음<br>
+ *          UBIK_ERR__DEADLOCK      : 데드락 발생 가능성이 있음<br>
+ */
+int task_join_and_delete(task_pt * task_p, int * result_p, int count);
+
+/*!
+ * 제한 시간 동안 대상 태스크들이 종료되기를 기다린 후 삭제하는 함수
+ *
+ * @param   task_p      대상 태스크 포인터 배열<br>
+ *                      대상 테스크는 task_create_noautodel 함수로 생성한 수동 삭제 태스크여야 함<br>
+ *                      <br>
+ *
+ * @param   result_p    결과값을 저장할  배열<br>
+ *                      NULL: 결과값을 저장하지 않음<br>
+ *                      <br>
+ *                      결과값<br>
+ *                      0: 정상 종료<br>
+ *                      UBIK_ERR__DEADLOCK      : 데드락 발생 가능성이 있음<br>
+ *                      <br>
+ *
+ * @param   count       배열 길이  (UBINOS__UBIK__TASK_MAXWAITSIGOBJ_MAX 보다 작거나 같아야 함)<br>
+ *                      <br>
+ *
+ * @param   tick        제한 시간 (시스템 틱tick 수)<br>
+ *                      <br>
+ *
+ * @return    0: 성공<br>
+ *          <br>
+ *           -1: 오류<br>
+ *           -n: n-1 번째 매개변수가 잘못되었음<br>
+ *          UBIK_ERR__DEADLOCK      : 데드락 발생 가능성이 있음<br>
+ */
+int task_join_and_delete_timed(task_pt * task_p, int * result_p, int count, unsigned int tick);
+
+/*!
+ * 제한 시간 동안 대상 태스크들이 종료되기를 기다린 후 삭제하는 함수 (천분의 일초 단위)
+ *
+ * @param   task_p      대상 태스크 포인터 배열<br>
+ *                      대상 테스크는 task_create_noautodel 함수로 생성한 수동 삭제 태스크여야 함<br>
+ *                      <br>
+ *
+ * @param   result_p    결과값을 저장할  배열<br>
+ *                      NULL: 결과값을 저장하지 않음<br>
+ *                      <br>
+ *                      결과값<br>
+ *                      0: 정상 종료<br>
+ *                      UBIK_ERR__DEADLOCK      : 데드락 발생 가능성이 있음<br>
+ *                      <br>
+ *
+ * @param   count       배열 길이  (UBINOS__UBIK__TASK_MAXWAITSIGOBJ_MAX 보다 작거나 같아야 함)<br>
+ *                      <br>
+ *
+ * @param   timems      제한 시간 (천분의 일초)<br>
+ *                      <br>
+ *
+ * @return    0: 성공<br>
+ *          <br>
+ *           -1: 오류<br>
+ *           -n: n-1 번째 매개변수가 잘못되었음<br>
+ *          UBIK_ERR__DEADLOCK      : 데드락 발생 가능성이 있음<br>
+ */
+int task_join_and_delete_timedms(task_pt * task_p, int * result_p, int count, unsigned int timems);
 
 /*!
  * 현재 태스크 포인터를 돌려주는 함수

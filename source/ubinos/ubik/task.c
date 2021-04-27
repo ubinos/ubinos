@@ -1267,30 +1267,6 @@ int task_waitforsigobjs_timedms(void ** _sigobj_p, int * sigtype_p, void ** para
 }
 
 #if !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1)
-int task_join_and_delete(task_pt * task_p, int * result_p, int count) {
-	int r = 0;
-
-	do {
-		r = task_join(task_p, result_p, count);
-		if (r != 0) {
-			logmfe("fail at task_join(), err=%d", r);
-			break;
-		}
-
-		for (int i = 0; i < count; i++) {
-			r = task_delete(&task_p[i]);
-			if (r != 0) {
-				logmfe("fail at task_delete(0x%x), err=%d", task_p[i], r);
-				break;
-			}
-		}
-
-		break;
-	} while (1);
-
-	return r;
-}
-
 int task_join(task_pt * task_p, int * result_p, int count) {
 	int r;
 	int r2;
@@ -1447,6 +1423,64 @@ int task_join_timedms(task_pt * task_p, int * result_p, int count, unsigned int 
 	logmfv("task_p 0x%x, result_p 0x%x, count %d timems %d", task_p, result_p, count, timems);
 
 	return task_join_timed(task_p, result_p, count, ubik_timemstotick(timems));
+}
+
+int task_join_and_delete(task_pt * task_p, int * result_p, int count) {
+    int r = 0;
+
+    do {
+        r = task_join(task_p, result_p, count);
+        if (r != 0) {
+            logmfe("fail at task_join(), err=%d", r);
+            break;
+        }
+
+        for (int i = 0; i < count; i++) {
+            r = task_delete(&task_p[i]);
+            if (r != 0) {
+                logmfe("fail at task_delete(0x%x), err=%d", task_p[i], r);
+                break;
+            }
+        }
+
+        break;
+    } while (1);
+
+    return r;
+}
+
+int task_join_and_delete_timed(task_pt * task_p, int * result_p, int count, unsigned int tick) {
+    int r;
+
+    logmfv("task_p 0x%x, result_p 0x%x, count %d tick %d", task_p, result_p, count, tick);
+
+    if (0 == _bsp_kernel_active) {
+        logme("ubik is not active");
+        r = -1;
+        goto end0;
+    }
+
+    if (0 != bsp_isintr()) {
+        logme("in interrupt");
+        r = -1;
+        goto end0;
+    }
+
+    _task_cur->timed        = 1;
+    _task_cur->waittick     = tick;
+
+    r = task_join_and_delete(task_p, result_p, count);
+
+    _task_cur->timed        = 0;
+
+end0:
+    return r;
+}
+
+int task_join_and_delete_timedms(task_pt * task_p, int * result_p, int count, unsigned int timems) {
+    logmfv("task_p 0x%x, result_p 0x%x, count %d timems %d", task_p, result_p, count, timems);
+
+    return task_join_and_delete_timed(task_p, result_p, count, ubik_timemstotick(timems));
 }
 #endif /* !(UBINOS__UBIK__EXCLUDE_TASK_MONITORING == 1) */
 
