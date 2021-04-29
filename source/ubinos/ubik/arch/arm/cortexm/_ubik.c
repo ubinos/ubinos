@@ -431,19 +431,30 @@ void bsp_ubik_irq_handler(void) {
 
 
 void task_comp_start(void) {
-	/* Enable interrupt */
+    unsigned long control;
+
+    /* Disable interrupt */
     __disable_irq();
     __set_BASEPRI(0);
 
     // Make sure in thread (not in ISR).
     assert((__get_IPSR() & IPSR_ISR_Msk) == 0);
+
+#if (__FPU_USED == 1)
+    // Clear FPCA
+    control = __get_CONTROL();
+    control &= ~CONTROL_FPCA_Msk;
+    __set_CONTROL(control);
+#endif
+
+    control = __get_CONTROL();
     // Make sure in privledged.
-    assert((__get_CONTROL() & CONTROL_nPRIV_Msk) == 0);
+    assert((control & CONTROL_nPRIV_Msk) == 0);
     // Make sure using MSP stack.
-    assert((__get_CONTROL() & CONTROL_SPSEL_Msk) == 0);
+    assert((control & CONTROL_SPSEL_Msk) == 0);
 #if (__FPU_USED == 1)
     // Make sure FP extension is not active.
-    assert((__get_CONTROL() & CONTROL_FPCA_Msk) == 0);
+    assert((control & CONTROL_FPCA_Msk) == 0);
 #endif
     // Make sure that interrupt is disabled.
     assert(__get_PRIMASK() == 1);
