@@ -13,21 +13,5 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
-int ubiclib_comp_init(void) {
-	int r = 0;
-
-	r = ubiclib_port_comp_init();
-
-	return r;
-}
-
-int ubiclib_comp_init_reent(void) {
-	int r = 0;
-
-	r = ubiclib_port_comp_init_reent();
-
-	return r;
-}
-
 #endif /* (INCLUDE__UBINOS__UBICLIB == 1) */
 

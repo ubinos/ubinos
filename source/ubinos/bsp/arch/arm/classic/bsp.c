@@ -17,23 +17,6 @@
 
 volatile unsigned int _bsp_intrcount = 0;
 
-int bsp_comp_init(void) {
-    int r = 0;
-
-    _bsp_kernel_active  = 0;
-    _bsp_critcount      = 0;
-    _bsp_aborted        = 0;
-
-    _bsp_intrcount      = 0;
-
-    r = dtty_init();
-    if (0 != r) {
-        return -1;
-    }
-
-    return 0;
-}
-
 int bsp_isintr(void) {
     if (0 == _bsp_intrcount) {
         return 0;

@@ -47,17 +47,6 @@ extern "C"
 int appmain(int argc, char * argv[]);
 
 /*!
- * BSP 컴포넌트를 초기화하는 함수
- *
- * 이 함수는 시스템 시작시 main 함수에서 자동적으로 호출됩니다.
- *
- * @return	  0: 성공<br>
- * 			<br>
- * 			 -1: 오류<br>
- */
-int bsp_comp_init(void);
-
-/*!
  * 인터럽트 서비스 루틴을 수행 중인지 여부를 알려주는 함수
  *
  * @return	1: 인터럽트 서비스 루틴을 수행 중임<br>

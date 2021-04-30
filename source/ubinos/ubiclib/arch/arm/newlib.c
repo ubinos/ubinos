@@ -207,18 +207,32 @@ void * _sbrk (int incr)
 
 void * _malloc_r(struct _reent * reent_ptr, size_t size)
 {
+    if (_ubiclib_heap == NULL)
+    {
+        ubiclib_heap_comp_init();
+    }
     return _heap_allocate_block(_ubiclib_heap, 0, SIZETOUINT(size));
 }
 
 void _free_r(struct _reent * reent_ptr, void * ptr)
 {
+    if (_ubiclib_heap == NULL)
+    {
+        ubiclib_heap_comp_init();
+    }
     _heap_release_block(_ubiclib_heap, ptr);
 }
 
 size_t _malloc_usable_size_r(struct _reent * reent_ptr, void * ptr)
 {
     unsigned int size;
+
+    if (_ubiclib_heap == NULL)
+    {
+        ubiclib_heap_comp_init();
+    }
     heap_getblocksize(NULL, ptr, &size);
+
     return size;
 }
 

@@ -49,17 +49,12 @@ typedef _heap_tip_t * heap_pt;
  * 
  * 이 함수는 시스템 시작시  bsp 컴포넌트의 main 함수에서 자동적으로 호출됩니다.<br>
  *
- * @param	addr				기본 힙으로 사용할 메모리의  주소<br>
- *
- * @param	size				기본 힙으로 사용할 메모리의  크기<br>
- *
  * @return	  0: 성공<br>
  * 			<br>
  * 			 -1: 오류<br>
- * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  * 			HEAP_ERR__UNSUPPORTED: 지원하지 않음<br>
  */
-int ubiclib_heap_comp_init(unsigned int addr, unsigned int size);
+int ubiclib_heap_comp_init(void);
 
 /*!
  * 힙 컴포넌트를 재진입(reenterance)이 가능하도록 초기화하는 함수<br>

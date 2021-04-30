@@ -20,37 +20,13 @@
 extern void SystemInit2(void);
 
 int main(void) {
-    unsigned char * buf_p;
-    unsigned int heapaddr;
-    unsigned int heapsize;
     int r = 0;
-
-    (void) buf_p;
-    (void) heapaddr;
-    (void) heapsize;
-    (void) r;
 
     SystemInit2();
 
-    r = bsp_comp_init();
-    if (0 != r) {
-        dtty_puts("bsp_comp_init : fail\n", 80);
-        bsp_abortsystem();
-    }
-
 #if (INCLUDE__UBINOS__UBICLIB == 1)
-    r = ubiclib_comp_init();
-    if (0 != r) {
-        dtty_puts("ubiclib_comp_init : fail\n", 80);
-        bsp_abortsystem();
-    }
-
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
-    extern char   __heap_base;  /* Set by linker.  */
-    extern char   __heap_limit; /* Set by linker.  */
-    heapaddr = (unsigned int) &__heap_base;
-    heapsize = ((unsigned int) &__heap_limit) - heapaddr;
-    r = ubiclib_heap_comp_init(heapaddr, heapsize);
+    r = ubiclib_heap_comp_init();
     if (HEAP_ERR__UNSUPPORTED == r) {
         dtty_puts("heap_comp_init : unsupported\n", 80);
     }
@@ -78,12 +54,6 @@ int main(void) {
 #endif
 
 #if (INCLUDE__UBINOS__UBICLIB == 1)
-    r = ubiclib_comp_init_reent();
-    if (0 != r) {
-        dtty_puts("ubiclib_comp_init_reent : fail\n", 80);
-        bsp_abortsystem();
-    }
-
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
     r = ubiclib_heap_comp_init_reent();
     if (HEAP_ERR__UNSUPPORTED == r) {

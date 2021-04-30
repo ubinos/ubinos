@@ -15,21 +15,6 @@
 #error "UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN should be equal or larger than 0x50."
 #endif
 
-int bsp_comp_init(void) {
-    int r = 0;
-
-    _bsp_kernel_active = 0;
-    _bsp_critcount = 0;
-    _bsp_aborted = 0;
-
-    r = dtty_init();
-    if (0 != r) {
-        return -1;
-    }
-
-    return 0;
-}
-
 int bsp_isintr(void) {
     if ((__get_IPSR() & IPSR_ISR_Msk) != 0) {
         return 1;

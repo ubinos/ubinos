@@ -12,14 +12,6 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
-int ubiclib_port_comp_init(void) {
-	return 0;
-}
-
-int ubiclib_port_comp_init_reent(void) {
-	return 0;
-}
-
 #endif /* (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__ARM) */
 #endif /* (INCLUDE__UBINOS__UBICLIB == 1) */
 

@@ -31,9 +31,19 @@ edlist_t		__ubiclib_defaultheap_fbl1_a[UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT];
 bitmap_t		__ubiclib_defaultheap_fblbm1;
 unsigned char	__ubiclib_defaultheap_fblbm1_buf[UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE];
 
-int ubiclib_heap_comp_init(unsigned int addr, unsigned int size) {
+int ubiclib_heap_comp_init(void) {
 	int r;
 	int enable_dmpm = 0;
+
+    extern char   __heap_base;  /* Set by linker.  */
+    extern char   __heap_limit; /* Set by linker.  */
+    unsigned int addr = (unsigned int) &__heap_base;
+    unsigned int size = ((unsigned int) &__heap_limit) - addr;
+
+    if (_ubiclib_heap != NULL) {
+        logmw("already initialized");
+        return 0;
+    }
 
 	if (HEAP_BLOCK_ASIZE_MIN <= HEAP_BLOCK_OVERHEAD) {
 		logme("HEAP_BLOCK_ASIZE_MIN should be larger than HEAP_BLOCK_OVERHEAD");
@@ -42,7 +52,7 @@ int ubiclib_heap_comp_init(unsigned int addr, unsigned int size) {
 
 	if (0 >= size) {
 		logme("size is 0");
-		return -3;
+		return -1;
 	}
 
 	r = bitmap_init(&__ubiclib_defaultheap_fblbm0, UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT, __ubiclib_defaultheap_fblbm0_buf, UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE);
