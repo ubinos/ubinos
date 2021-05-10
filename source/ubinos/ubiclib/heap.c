@@ -1681,7 +1681,7 @@ end0:
 
 #else /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
 
-int ubiclib_heap_comp_init(unsigned int addr, unsigned int size) {
+int ubiclib_heap_comp_init(void) {
 	return HEAP_ERR__UNSUPPORTED;
 }
 
