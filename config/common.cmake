@@ -52,7 +52,8 @@ macro(___project_config_end)
     "\n"
     "\n")
 
-    file(WRITE ${PROJECT_BASE_DIR}/include/${PROJECT_NAME}_config.h "#include \"${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h\"\n")
+    file(RELATIVE_PATH __tmp_path ${PROJECT_BASE_DIR}/include ${PROJECT_BINARY_DIR})
+    file(WRITE ${PROJECT_BASE_DIR}/include/${PROJECT_NAME}_config.h "#include \"${__tmp_path}/${PROJECT_NAME}_config.h\"\n")
     include_directories(${PROJECT_BASE_DIR}/include)
 
 	set(_tmp_include_flags)
@@ -613,8 +614,9 @@ macro(project_add_library name)
         file(READ   ${PROJECT_BINARY_DIR}/___${name}_config.h _tmp_fdata)
         file(REMOVE ${PROJECT_BINARY_DIR}/___${name}_config.h)
         file(APPEND ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h ${_tmp_fdata})
-    
-        file(WRITE ${PROJECT_LIBRARY_DIR}/${name}/include/${name}_config.h "#include \"${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h\"\n")
+
+        file(RELATIVE_PATH __tmp_path ${PROJECT_LIBRARY_DIR}/${name}/include ${PROJECT_BINARY_DIR})
+        file(WRITE ${PROJECT_LIBRARY_DIR}/${name}/include/${name}_config.h "#include \"${__tmp_path}/${PROJECT_NAME}_config.h\"\n")
         include_directories(${PROJECT_LIBRARY_DIR}/${name}/include)
     
         set(PROJECT_SOURCES)
