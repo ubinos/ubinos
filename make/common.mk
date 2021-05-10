@@ -156,6 +156,9 @@ common-help:
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
+	@echo "make env                     (install development environment)"
+	@echo "make cleanenv                (remove development environment)"
+	@echo ""
 	@echo "make all                     (config and build)"
 	@echo ""
 	@echo "make config                  (configure)"
@@ -181,6 +184,18 @@ common-help:
 	@echo "make doc                     (build document)"
 	@echo ""
 	@echo "make zbatch-<make target>    (do <make target> with all <config name> listed in batch.mk)"
+	$(call end_message)
+
+###############################################################################
+
+common-env:
+	$(call begin_message)
+	@echo "Nothing to do"
+	$(call end_message)
+
+common-cleanenv:
+	$(call begin_message)
+	@echo "Nothing to do"
 	$(call end_message)
 
 ###############################################################################
