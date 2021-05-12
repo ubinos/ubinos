@@ -74,6 +74,6 @@ static void helloworld_mt_task2func(void * arg) {
 }
 
 
-#endif /* (INCLUDE__APP__HELLOWORLD_MT == 1) */
+#endif /* (INCLUDE__APP__helloworld_mt == 1) */
 
 

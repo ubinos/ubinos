@@ -191,12 +191,10 @@ common-help:
 
 common-env:
 	$(call begin_message)
-	@echo "Nothing to do"
 	$(call end_message)
 
 common-cleanenv:
 	$(call begin_message)
-	@echo "Nothing to do"
 	$(call end_message)
 
 ###############################################################################

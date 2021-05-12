@@ -7,7 +7,7 @@
 #ifndef UBICLIB_CLI_H_
 #define UBICLIB_CLI_H_
 
-#ifdef	__cplusplu
+#ifdef	__cplusplus
 extern "C" {
 #endif
 

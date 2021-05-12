@@ -33,6 +33,6 @@ int appmain(int argc, char * argv[]) {
 }
 
 
-#endif /* (INCLUDE__APP__HELLOWORLD == 1) */
+#endif /* (INCLUDE__APP__helloworld == 1) */
 
 

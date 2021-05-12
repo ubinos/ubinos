@@ -12,8 +12,8 @@
 #if (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1)
 
 int intr_connectisr(int no, isr_ft isr, int priority, unsigned int option) {
-    void ** isr_vector_ptr = 0;
-    extern unsigned int relocated_isr_vector_start       __asm__ ("__relocated_isr_vector_start__");
+    extern char __relocated_isr_vector_start__;
+    unsigned int isr_vector_addr = (unsigned int) &__relocated_isr_vector_start__;
 
     if (NVIC_IRQN_START > no || NVIC_IRQN_END < no) {
         return -2;
@@ -32,8 +32,8 @@ int intr_connectisr(int no, isr_ft isr, int priority, unsigned int option) {
     NVIC_SetPriority(no, priority);
 
     /* Register the interrupt handler on the interrupt handler table */
-    isr_vector_ptr = (void **) &relocated_isr_vector_start;
-    isr_vector_ptr[16 + no] = isr;
+    isr_vector_addr += ((16 + no) * sizeof(isr_ft));
+    *((isr_ft *) isr_vector_addr) = isr;
 
     return 0;
 }

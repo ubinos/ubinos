@@ -432,6 +432,7 @@ void bsp_ubik_irq_handler(void) {
 
 void task_comp_start(void) {
     unsigned long control;
+    (void) control;
 
     /* Disable interrupt */
     __disable_irq();
