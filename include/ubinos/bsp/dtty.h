@@ -63,7 +63,7 @@ int dtty_disable(void);
 int dtty_geterror(void);
 
 /*!
- * 디버깅 터미널에서 문자를 입력받는 함수
+ * 디버깅 터미널에서 문자를 입력받는 함수 (입력이 들어올 때까지 기다림)
  *
  * @param	ch_p	입력받은 문자를 저장할 변수의 주소
  *
@@ -73,6 +73,18 @@ int dtty_geterror(void);
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
 int dtty_getc(char * ch_p);
+
+/*!
+ * 디버깅 터미널에서 문자를 입력받는 함수 (입력이 없으면 -1을 돌려줌)
+ *
+ * @param   ch_p    입력받은 문자를 저장할 변수의 주소
+ *
+ * @return    0: 성공<br>
+ *          <br>
+ *           -1: 오류<br>
+ *           -n: n-1 번째 매개변수가 잘못되었음<br>
+ */
+int dtty_getc_unblocked(char * ch_p);
 
 /*!
  * 디버깅 터미널에 문자를 출력하는 함수

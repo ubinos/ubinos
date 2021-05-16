@@ -60,6 +60,8 @@ extern int _g_bsp_dtty_autocr;
         GPIO_PIN_CNF_SENSE_Disabled);             \
 }
 
+static int _dtty_getc_advan(char *ch_p, int blocked);
+
 int dtty_init(void)
 {
     NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
@@ -137,10 +139,10 @@ int dtty_geterror(void)
     return r;
 }
 
-int dtty_getc(char *ch_p)
+static int _dtty_getc_advan(char *ch_p, int blocked)
 {
     unsigned int i;
-    int r;
+    int r = 0;
 
     if (NULL == ch_p)
     {
@@ -160,6 +162,11 @@ int dtty_getc(char *ch_p)
             {
                 break;
             }
+            if (blocked != 1)
+            {
+                r = -1;
+                break;
+            }
             if (255 <= i)
             {
                 bsp_task_sleepms(SLEEP_TIMEMS);
@@ -175,6 +182,11 @@ int dtty_getc(char *ch_p)
             {
                 break;
             }
+            if (blocked != 1)
+            {
+                r = -1;
+                break;
+            }
         }
     }
 #else
@@ -183,21 +195,37 @@ int dtty_getc(char *ch_p)
 			if(NRF_UART0->EVENTS_RXDRDY) {
 				break;
 			}
+            if (blocked != 1)
+            {
+                r = -1;
+                break;
+            }
 		}
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
-    *ch_p = (char) (0x000000ff & (NRF_UART0->RXD));
+	if (r == 0)
+	{
+        *ch_p = (char) (0x000000ff & (NRF_UART0->RXD));
 
-    NRF_UART0->EVENTS_RXDRDY = 0x0UL;
+        NRF_UART0->EVENTS_RXDRDY = 0x0UL;
 
-    r = 0;
-
-    if (0 != _g_bsp_dtty_echo)
-    {
-        dtty_putc(*ch_p);
-    }
+        if (0 != _g_bsp_dtty_echo)
+        {
+            dtty_putc(*ch_p);
+        }
+	}
 
     return r;
+}
+
+int dtty_getc(char *ch_p)
+{
+    return _dtty_getc_advan(ch_p, 1);
+}
+
+int dtty_getc_unblocked(char *ch_p)
+{
+    return _dtty_getc_advan(ch_p, 0);
 }
 
 int dtty_putc(int ch)
