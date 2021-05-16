@@ -572,9 +572,9 @@ set(_tmp_all_flags "${_tmp_all_flags} -Wall -Werror -fmessage-length=0")
 
 set(_tmp_all_flags "${_tmp_all_flags} -D_GNU_SOURCE")
 
-set(CMAKE_ASM_FLAGS "${_tmp_all_flags} ${CMAKE_ASM_FLAGS} -x assembler-with-cpp -D__ASSEMBLY__")
-set(CMAKE_C_FLAGS   "${_tmp_all_flags} ${CMAKE_C_FLAGS} -std=c99")
-set(CMAKE_CXX_FLAGS "${_tmp_all_flags} ${CMAKE_CXX_FLAGS} -std=gnu++98 -fno-exceptions -fno-rtti -Wno-c++14-compat")
+set(CMAKE_ASM_FLAGS "${_tmp_all_flags} ${CMAKE_ASM_FLAGS}")
+set(CMAKE_C_FLAGS   "${_tmp_all_flags} ${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${_tmp_all_flags} ${CMAKE_CXX_FLAGS}")
 
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
 set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T\"${PROJECT_BINARY_DIR}/linkscript.ld\"")
