@@ -190,21 +190,22 @@ static int _dtty_getc_advan(char *ch_p, int blocked)
         }
     }
 #else
-		for (i=0;; i++)
-		{
-			if(NRF_UART0->EVENTS_RXDRDY) {
-				break;
-			}
-            if (blocked != 1)
-            {
-                r = -1;
-                break;
-            }
-		}
+    for (i=0;; i++)
+    {
+        if(NRF_UART0->EVENTS_RXDRDY)
+        {
+            break;
+        }
+        if (blocked != 1)
+        {
+            r = -1;
+            break;
+        }
+    }
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
-	if (r == 0)
-	{
+    if (r == 0)
+    {
         *ch_p = (char) (0x000000ff & (NRF_UART0->RXD));
 
         NRF_UART0->EVENTS_RXDRDY = 0x0UL;
@@ -213,7 +214,7 @@ static int _dtty_getc_advan(char *ch_p, int blocked)
         {
             dtty_putc(*ch_p);
         }
-	}
+    }
 
     return r;
 }
