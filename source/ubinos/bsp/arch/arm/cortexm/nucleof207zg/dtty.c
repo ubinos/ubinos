@@ -45,170 +45,197 @@ extern int _g_bsp_dtty_init;
 extern int _g_bsp_dtty_echo;
 extern int _g_bsp_dtty_autocr;
 
-static void Configure_USART(void) {
+static void Configure_USART(void)
+{
 
-	/* Enable the peripheral clock of GPIO Port */
+    /* Enable the peripheral clock of GPIO Port */
 
-	/* Configure Tx Pin as : Alternate function, High Speed, Push pull, Pull up */
-	USARTx_TX_GPIO_CLK_ENABLE();
-	LL_GPIO_SetPinMode(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_MODE_ALTERNATE);
-	USARTx_SET_TX_GPIO_AF();
-	LL_GPIO_SetPinSpeed(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_SPEED_FREQ_HIGH);
-	LL_GPIO_SetPinOutputType(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_OUTPUT_PUSHPULL);
-	LL_GPIO_SetPinPull(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_PULL_UP);
+    /* Configure Tx Pin as : Alternate function, High Speed, Push pull, Pull up */
+    USARTx_TX_GPIO_CLK_ENABLE();
+    LL_GPIO_SetPinMode(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_MODE_ALTERNATE);
+    USARTx_SET_TX_GPIO_AF();
+    LL_GPIO_SetPinSpeed(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_SPEED_FREQ_HIGH);
+    LL_GPIO_SetPinOutputType(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_PULL_UP);
 
-	/* Configure Rx Pin as : Alternate function, High Speed, Push pull, Pull up */
-	USARTx_RX_GPIO_CLK_ENABLE();
-	LL_GPIO_SetPinMode(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_MODE_ALTERNATE);
-	USARTx_SET_RX_GPIO_AF();
-	LL_GPIO_SetPinSpeed(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_SPEED_FREQ_HIGH);
-	LL_GPIO_SetPinOutputType(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_OUTPUT_PUSHPULL);
-	LL_GPIO_SetPinPull(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_PULL_UP);
+    /* Configure Rx Pin as : Alternate function, High Speed, Push pull, Pull up */
+    USARTx_RX_GPIO_CLK_ENABLE();
+    LL_GPIO_SetPinMode(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_MODE_ALTERNATE);
+    USARTx_SET_RX_GPIO_AF();
+    LL_GPIO_SetPinSpeed(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_SPEED_FREQ_HIGH);
+    LL_GPIO_SetPinOutputType(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_OUTPUT_PUSHPULL);
+    LL_GPIO_SetPinPull(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_PULL_UP);
 
-	/* (2) Enable USART peripheral clock and clock source ***********************/
-	USARTx_CLK_ENABLE();
+    /* (2) Enable USART peripheral clock and clock source ***********************/
+    USARTx_CLK_ENABLE();
 
-	/* (3) Configure USART functional parameters ********************************/
+    /* (3) Configure USART functional parameters ********************************/
 
-	/* Disable USART prior modifying configuration registers */
-	/* Note: Commented as corresponding to Reset value */
-	LL_USART_Disable(USARTx_INSTANCE);
+    /* Disable USART prior modifying configuration registers */
+    /* Note: Commented as corresponding to Reset value */
+    LL_USART_Disable(USARTx_INSTANCE);
 
-	/* TX/RX direction */
-	LL_USART_SetTransferDirection(USARTx_INSTANCE, LL_USART_DIRECTION_TX_RX);
+    /* TX/RX direction */
+    LL_USART_SetTransferDirection(USARTx_INSTANCE, LL_USART_DIRECTION_TX_RX);
 
-	/* 8 data bit, 1 start bit, 1 stop bit, no parity */
-	LL_USART_ConfigCharacter(USARTx_INSTANCE, LL_USART_DATAWIDTH_8B, LL_USART_PARITY_NONE, LL_USART_STOPBITS_1);
+    /* 8 data bit, 1 start bit, 1 stop bit, no parity */
+    LL_USART_ConfigCharacter(USARTx_INSTANCE, LL_USART_DATAWIDTH_8B, LL_USART_PARITY_NONE, LL_USART_STOPBITS_1);
 
-	/* No Hardware Flow control */
-	/* Reset value is LL_USART_HWCONTROL_NONE */
-	LL_USART_SetHWFlowCtrl(USARTx_INSTANCE, LL_USART_HWCONTROL_NONE);
+    /* No Hardware Flow control */
+    /* Reset value is LL_USART_HWCONTROL_NONE */
+    LL_USART_SetHWFlowCtrl(USARTx_INSTANCE, LL_USART_HWCONTROL_NONE);
 
-	/* Oversampling by 16 */
-	/* Reset value is LL_USART_OVERSAMPLING_16 */
-	LL_USART_SetOverSampling(USARTx_INSTANCE, LL_USART_OVERSAMPLING_16);
+    /* Oversampling by 16 */
+    /* Reset value is LL_USART_OVERSAMPLING_16 */
+    LL_USART_SetOverSampling(USARTx_INSTANCE, LL_USART_OVERSAMPLING_16);
 
-	/* Set Baudrate to 115200 using APB frequency set to 120000000/APB_Div Hz */
-	/* Frequency available for USART peripheral can also be calculated through LL RCC macro */
-	/* Ex :
-	 Periphclk = LL_RCC_GetUSARTClockFreq(Instance); or LL_RCC_GetUARTClockFreq(Instance); depending on USART/UART instance
+    /* Set Baudrate to 115200 using APB frequency set to 120000000/APB_Div Hz */
+    /* Frequency available for USART peripheral can also be calculated through LL RCC macro */
+    /* Ex :
+     Periphclk = LL_RCC_GetUSARTClockFreq(Instance); or LL_RCC_GetUARTClockFreq(Instance); depending on USART/UART instance
 
-	 In this example, Peripheral Clock is expected to be equal to 120000000/APB_Div Hz => equal to SystemCoreClock/APB_Div
-	 */
-	LL_USART_SetBaudRate(USARTx_INSTANCE, SystemCoreClock / APB_Div, LL_USART_OVERSAMPLING_16, 115200);
+     In this example, Peripheral Clock is expected to be equal to 120000000/APB_Div Hz => equal to SystemCoreClock/APB_Div
+     */
+    LL_USART_SetBaudRate(USARTx_INSTANCE, SystemCoreClock / APB_Div, LL_USART_OVERSAMPLING_16, 115200);
 
-	/* (4) Enable USART *********************************************************/
-	LL_USART_Enable(USARTx_INSTANCE);
+    /* (4) Enable USART *********************************************************/
+    LL_USART_Enable(USARTx_INSTANCE);
 }
 
-int dtty_init(void) {
-	_g_bsp_dtty_echo = 1;
-	_g_bsp_dtty_autocr = 1;
+int dtty_init(void)
+{
+    _g_bsp_dtty_echo = 1;
+    _g_bsp_dtty_autocr = 1;
 
-	Configure_USART();
+    Configure_USART();
 
-	_g_bsp_dtty_init = 1;
+    _g_bsp_dtty_init = 1;
 
-	return 0;
+    return 0;
 }
 
-int dtty_enable(void) {
-	return 0;
+int dtty_enable(void)
+{
+    return 0;
 }
 
-int dtty_disable(void) {
-	return 0;
+int dtty_disable(void)
+{
+    return 0;
 }
 
-int dtty_geterror(void) {
-	return 0;
+int dtty_geterror(void)
+{
+    return 0;
 }
 
-int dtty_getc(char *ch_p) {
-	unsigned int i;
+int dtty_getc(char *ch_p)
+{
+    unsigned int i;
 
-	if (NULL == ch_p) {
-		return -2;
-	}
-
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
-
-#if (INCLUDE__UBINOS__UBIK == 1)
-	if (_bsp_kernel_active) {
-		for (i = 0;; i++) {
-			if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-				break;
-			}
-			if (255 <= i) {
-				bsp_task_sleepms(SLEEP_TIMEMS);
-				i = 0;
-			}
-		}
-	}
-    else {
-    	for (i=0; ; i++)
-    	{
-    		if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-    			break;
-    		}
-    	}
-    }
-#else
-	for (i=0; ; i++)
-	{
-		if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-			break;
-		}
-	}
-#endif /* (INCLUDE__UBINOS__UBIK == 1) */
-
-	*ch_p = (char) LL_USART_ReceiveData8(USARTx_INSTANCE);
-
-	if (0 != _g_bsp_dtty_echo) {
-		dtty_putc(*ch_p);
-	}
-
-	return 0;
-}
-
-int dtty_putc(int ch) {
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
-
-	if (0 != _g_bsp_dtty_autocr && '\n' == ch) {
-		for (;;) {
-			if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE)) {
-				break;
-			}
-		}
-		LL_USART_TransmitData8(USARTx_INSTANCE, '\r');
-	}
-
-	for (;;) {
-		if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE)) {
-			break;
-		}
-	}
-	LL_USART_TransmitData8(USARTx_INSTANCE, ch);
-
-	return 0;
-}
-
-int dtty_putn(const char * str, int len) {
-    int i = 0;
-
-    if (NULL == str) {
+    if (NULL == ch_p)
+    {
         return -2;
     }
 
-    if (0 > len) {
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+    if (_bsp_kernel_active)
+    {
+        for (i = 0;; i++)
+        {
+            if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE))
+            {
+                break;
+            }
+            if (255 <= i)
+            {
+                bsp_task_sleepms(SLEEP_TIMEMS);
+                i = 0;
+            }
+        }
+    }
+    else
+    {
+        for (i = 0;; i++)
+        {
+            if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE))
+            {
+                break;
+            }
+        }
+    }
+#else
+    for (i = 0;; i++)
+    {
+        if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE))
+        {
+            break;
+        }
+    }
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
+    *ch_p = (char) LL_USART_ReceiveData8(USARTx_INSTANCE);
+
+    if (0 != _g_bsp_dtty_echo)
+    {
+        dtty_putc(*ch_p);
+    }
+
+    return 0;
+}
+
+int dtty_putc(int ch)
+{
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
+
+    if (0 != _g_bsp_dtty_autocr && '\n' == ch)
+    {
+        for (;;)
+        {
+            if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE))
+            {
+                break;
+            }
+        }
+        LL_USART_TransmitData8(USARTx_INSTANCE, '\r');
+    }
+
+    for (;;)
+    {
+        if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE))
+        {
+            break;
+        }
+    }
+    LL_USART_TransmitData8(USARTx_INSTANCE, ch);
+
+    return 0;
+}
+
+int dtty_putn(const char *str, int len)
+{
+    int i = 0;
+
+    if (NULL == str)
+    {
+        return -2;
+    }
+
+    if (0 > len)
+    {
         return -3;
     }
 
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < len; i++)
+    {
         dtty_putc(*str);
         str++;
     }
@@ -216,16 +243,21 @@ int dtty_putn(const char * str, int len) {
     return i;
 }
 
-int dtty_kbhit(void) {
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+int dtty_kbhit(void)
+{
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
 
-	if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-		return 1;
-	} else {
-		return 0;
-	}
+    if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE))
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 int dtty_flush(void)
