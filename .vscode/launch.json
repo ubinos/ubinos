@@ -20,8 +20,4 @@
             "miDebuggerServerAddress": "localhost:2331",
         }
     ],
-    "compounds": [{
-        "name": "target arm",
-        "configurations": ["ARM GDBS Local Launch"]
-    }]
 }
