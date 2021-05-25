@@ -5,10 +5,10 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "ARM GDBS Local Launch",
+            "name": "ARM Target",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/output/helloworld_mt_nrf52840dk/app.elf",
+            "program": "${workspaceFolder}/output/Default/app.elf",
             "args": [],
             "stopAtEntry": true,
             "cwd": "${fileDirname}",

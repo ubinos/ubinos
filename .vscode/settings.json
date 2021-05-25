@@ -3,12 +3,7 @@
     "editor.renderWhitespace": "all",
     "terminal.integrated.tabs.enabled": true,
     "C_Cpp.loggingLevel": "Debug",
-    "C_Cpp.default.compileCommands": "${workspaceFolder}/output/helloworld_mt_nrf52840dk/compile_commands.json",
-    "C_Cpp.default.compilerPath": "arm-none-eabi-gcc",
-    "cmake.configureOnOpen": false,
-    "cmake.loggingLevel": "debug",
-    "cmake.generator": "Unix Makefiles",
-    "cmake.configureSettings": {
+    "cmake.environment": {
         "CMAKE_SYSTEM_NAME": "Generic",
         "CMAKE_C_COMPILER_FORCED": "TRUE",
         "CMAKE_CXX_COMPILER_FORCED": "TRUE",
@@ -16,11 +11,20 @@
         "PROJECT_CONFIG_DIR": "${workspaceFolder}/app",
         "PROJECT_CONFIG_NAME": "helloworld_mt_nrf52840dk",
     },
+    "cmake.configureOnOpen": false,
+    "cmake.loggingLevel": "debug",
+    "cmake.generator": "Unix Makefiles",
+    "cmake.configureSettings": {
+        "CMAKE_SYSTEM_NAME": "${env:CMAKE_SYSTEM_NAME}",
+        "CMAKE_C_COMPILER_FORCED": "${env:CMAKE_C_COMPILER_FORCED}",
+        "CMAKE_CXX_COMPILER_FORCED": "${env:CMAKE_CXX_COMPILER_FORCED}",
+        "PROJECT_LIBRARY_DIR": "${env:PROJECT_LIBRARY_DIR}",
+        "PROJECT_CONFIG_DIR": "${env:PROJECT_CONFIG_DIR}",
+        "PROJECT_CONFIG_NAME": "${env:PROJECT_CONFIG_NAME}",
+    },
     "cmake.sourceDirectory": "${workspaceFolder}/source",
-    "cmake.buildDirectory": "${workspaceFolder}/output/helloworld_mt_nrf52840dk",
-    "cmake.exportCompileCommandsFile": true,
+    "cmake.buildDirectory": "${workspaceFolder}/output/${env:PROJECT_CONFIG_NAME}",
     "files.associations": {
-        "ubinos.h": "c",
-        "ubinos_config.h": "c"
+        "ubinos.h": "c"
     }
 }

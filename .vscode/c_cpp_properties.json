@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "ARM Target",
+            "compileCommands": "${workspaceFolder}/output/Default/compile_commands.json",
+            "compilerPath": "arm-none-eabi-gcc",
+        }
+    ],
+    "version": 4
+}

@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2019 Sung Ho Park and CSOS
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -61,17 +61,17 @@ macro(___project_config_end)
     foreach(_dir ${_tmp_include_dirs})
         set(_tmp_include_flags "${_tmp_include_flags} -I${_dir}")
     endforeach()
-    
+
 	set(_tmp_def_flags)
     get_property(_tmp_defs DIRECTORY PROPERTY COMPILE_DEFINITIONS)
     foreach(_def ${_tmp_defs})
         set(_tmp_def_flags "${_tmp_def_flags} -D${_def}")
     endforeach()
-    
+
     file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_asm.txt "${CMAKE_ASM_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
     file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_c.txt "${CMAKE_C_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
     file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
-    
+
     file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/../Default)
     file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_asm.txt "${CMAKE_ASM_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
     file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_c.txt "${CMAKE_C_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
@@ -222,7 +222,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD}
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb)
     endif()
-    
+
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RESET} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
@@ -238,7 +238,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__GDBSCRIPT_FILE_RUN}
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb)
     endif()
-    
+
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_DEBUG} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
@@ -246,7 +246,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__GDBSCRIPT_FILE_DEBUG}
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb)
     endif()
-    
+
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_ATTACH} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
@@ -254,7 +254,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__GDBSCRIPT_FILE_ATTACH}
                         ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb)
     endif()
-    
+
     if(NOT ${UBINOS__BSP__FLASH_WRITER_FILE} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
@@ -283,7 +283,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__SYS_INIT_FILE}
                         ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf)
     endif()
-    
+
     if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_LOAD} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
@@ -291,7 +291,7 @@ macro(___project_add_app)
                         ${UBINOS__BSP__T32SCRIPT_FILE_LOAD}
                         ${CMAKE_CURRENT_BINARY_DIR}/t32_load.cmm)
     endif()
-    
+
     if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_RESET} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
@@ -302,7 +302,7 @@ macro(___project_add_app)
 
     add_executable(${PROJECT_EXE_NAME} ${PROJECT_APP_SOURCES})
     target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
-    
+
     add_custom_target(reset
         COMMAND  ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_reset.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
@@ -335,12 +335,30 @@ macro(___project_add_app)
     )
 
     add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_OBJCOPY} -O binary ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.bin)
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -O binary ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.bin
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -O ihex   ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.hex
+    )
     add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_OBJCOPY} -O ihex   ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.hex)
-    
+            COMMAND ${CMAKE_COMMAND} -E copy   compile_commands.json ../Default/
+    )
+    add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.elf ../Default/
+    )
+    add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.bin ../Default/
+    )
+    add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.hex ../Default/
+    )
+
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
@@ -580,7 +598,7 @@ macro(project_begin)
             set_cache(PROJECT_LIBRARY_DIR "${PROJECT_BASE_DIR}/library" PATH)
         endif()
     endif()
-    
+
     string(STRIP "${PROJECT_UBINOS_DIR}" _tmp_str)
     if("${_tmp_str}"  STREQUAL "")
         if(PROJECT_NAME STREQUAL "ubinos")
@@ -589,7 +607,7 @@ macro(project_begin)
             set(PROJECT_UBINOS_DIR "${PROJECT_LIBRARY_DIR}/ubinos")
         endif()
     endif()
-    
+
     string(STRIP "${PROJECT_TOOLBOX}" _tmp_str)
     if("${_tmp_str}"  STREQUAL "")
         set(PROJECT_TOOLBOX "${PROJECT_UBINOS_DIR}/make/toolbox.py")
@@ -601,14 +619,15 @@ macro(project_begin)
     set_cache_default(PROJECT_LIBRARY_DIR                                       ""      PATH "Library directory")
 
     include("${PROJECT_CONFIG_DIR}/${PROJECT_CONFIG_NAME}.cmake")
-    
+
     ___project_config_begin()
 endmacro(project_begin)
 
 macro(project_add_library name)
-    if(EXISTS "${PROJECT_LIBRARY_DIR}/${name}/source/config.h.cmake")
+    set(_tmp_fname "${PROJECT_LIBRARY_DIR}/${name}/source/config.h.cmake")
+    if(EXISTS "${_tmp_fname}")
         configure_file(
-            ${PROJECT_LIBRARY_DIR}/${name}/source/config.h.cmake
+            ${_tmp_fname}
             ${PROJECT_BINARY_DIR}/___${name}_config.h
         )
         file(READ   ${PROJECT_BINARY_DIR}/___${name}_config.h _tmp_fdata)
@@ -618,9 +637,11 @@ macro(project_add_library name)
         file(RELATIVE_PATH __tmp_path ${PROJECT_LIBRARY_DIR}/${name}/include ${PROJECT_BINARY_DIR})
         file(WRITE ${PROJECT_LIBRARY_DIR}/${name}/include/${name}_config.h "#include \"${__tmp_path}/${PROJECT_NAME}_config.h\"\n")
         include_directories(${PROJECT_LIBRARY_DIR}/${name}/include)
-    
+    endif()
+    set(_tmp_fname "${PROJECT_LIBRARY_DIR}/${name}/source/sources.cmake")
+    if(EXISTS "${_tmp_fname}")
         set(PROJECT_SOURCES)
-        include(${PROJECT_LIBRARY_DIR}/${name}/source/sources.cmake)
+        include(${_tmp_fname})
         if(PROJECT_SOURCES)
             add_library(${name} STATIC ${PROJECT_SOURCES})
             set(PROJECT_LIBRARIES ${name} ${PROJECT_LIBRARIES})
@@ -643,12 +664,12 @@ macro(project_end)
     if(INCLUDE__APP)
         ___project_add_app()
     endif()
-    
+
     if(NOT ${UBINOS__BSP__DOXYGEN_FILE} STREQUAL "")
         file(COPY ${UBINOS__BSP__DOXYGEN_FILE}
             DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif()
-    
+
     ___project_config_end()
 
     ___project_show()
