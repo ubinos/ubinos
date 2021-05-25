@@ -20,6 +20,7 @@ extern "C" {
 #endif
 
 #include <ubinos/bsp.h>
+#include <ubinos/bsp/arch.h>
 #include <ubinos/bsp_ubik.h>
 #include <ubinos/ubik.h>
 #include <ubinos/ubiclib.h>

@@ -23,28 +23,7 @@ extern "C"
 #include <ubinos_config.h>
 #include <ubinos/type.h>
 
-#ifdef __cplusplus
-
 #if (INCLUDE__ARDUINOCORE_MBED != 1)
-}
-/*! min 매크로 */
-  template<class T, class L>
-  auto min(const T& a, const L& b) -> decltype((b < a) ? b : a)
-  {
-    return (b < a) ? b : a;
-  }
-
-/*! max 매크로 */
-  template<class T, class L>
-  auto max(const T& a, const L& b) -> decltype((b < a) ? b : a)
-  {
-    return (a < b) ? b : a;
-  }
-extern "C"
-{
-#endif /* (INCLUDE__ARDUINOCORE_MBED != 1) */
-
-#else
 
 #ifndef min
 /*! min 매크로 */
@@ -61,7 +40,7 @@ extern "C"
      _a > _b ? _a : _b; })
 #endif
 
-#endif
+#endif /* (INCLUDE__ARDUINOCORE_MBED != 1) */
 
 /*!
  * 부호 없는 정수 지수승 연산을 수행하는 함수

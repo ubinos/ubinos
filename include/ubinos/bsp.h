@@ -227,7 +227,6 @@ unsigned int bsp_timemstobwc(unsigned int timems);
  */
 unsigned int bsp_bwctotimems(unsigned int count);
 
-#include <ubinos/bsp/arch.h>
 #include <ubinos/bsp/dtty.h>
 #include <ubinos/bsp/intr.h>
 

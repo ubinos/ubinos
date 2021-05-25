@@ -153,6 +153,7 @@ static int _dtty_getc_advan(char *ch_p, int blocked)
     {
         dtty_init();
     }
+
 #if (INCLUDE__UBINOS__UBIK == 1)
     if (_bsp_kernel_active)
     {

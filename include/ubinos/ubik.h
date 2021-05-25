@@ -135,6 +135,17 @@ unsigned int ubik_timemstotick(unsigned int timems);
 unsigned int ubik_ticktotimems(unsigned int tick);
 
 /*!
+ * 시스템 tick 수를 시간(천분의 일초)으로 환산하는 함수
+ *
+ * @param   tc    시스템 tick 수<br>
+ *          <br>
+ *
+ * @return  시간(천분의 일초)<br>
+ *          시간(천분의 일초)으로 환산했을 때 0이지만 tick이 0이 아니면 1<br>
+ */
+unsigned long ubik_tickcouttotimems(tickcount_t tc);
+
+/*!
  * 틱 후크 함수를 등록하는 함수
  *
  * 틱 후크 함수는 시스템 틱 인터럽트가 발생할 때마다 자동적으로 호출된다.

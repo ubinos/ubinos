@@ -14,6 +14,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBIK
@@ -276,6 +277,15 @@ unsigned int ubik_ticktotimems(unsigned int tick) {
     }
 
     return tick;
+}
+
+unsigned long ubik_tickcouttotimems(tickcount_t tc) {
+    uint64_t ms;
+
+    ms = (((uint64_t) tc.high) << (sizeof(tc.low) * 8)) + tc.low;
+    ms = ms * 1000 / UBINOS__UBIK__TICK_PER_SEC;
+
+    return (unsigned long) ms;
 }
 
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)

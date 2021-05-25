@@ -21,6 +21,7 @@ extern "C" {
 
 #include <ubinos/bsp.h>
 #include <ubinos/bsp_ubik.h>
+#include <ubinos/bsp/arch.h>
 
 #ifndef __ASSEMBLY__
 
