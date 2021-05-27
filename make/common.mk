@@ -157,8 +157,7 @@ common-help:
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
-	@echo "make env                     (install development environment)"
-	@echo "make cleanenv                (remove development environment)"
+	@echo "make help                    (show help)"
 	@echo ""
 	@echo "make all                     (config and build)"
 	@echo ""
@@ -179,25 +178,26 @@ common-help:
 	@echo "make debug                   (run execution binary file and attach GDB CLI)"
 	@echo "make attach                  (attach GDB CLI)"
 	@echo ""
-	@echo "make menuconfig              (open config TUI using ccmake)"
+	@echo "-------------------------------------------------------------------------------"
+	@echo ""
+	@echo "make env                     (install development environment)"
+	@echo "make cleanenv                (remove development environment)"
+	@echo ""
 	@echo "make xconfig                 (open config GUI using cmake-gui)"
+	@echo "make menuconfig              (open config TUI using ccmake)"
 	@echo ""
 	@echo "make doc                     (build document)"
+	@echo ""
+	@echo "make test                    (run test)"
+	@echo ""
+	@echo "-------------------------------------------------------------------------------"
 	@echo ""
 	@echo "make zbatch-<make target>    (do <make target> with all <config name> listed in batch.mk)"
 	$(call end_message)
 
 ###############################################################################
 
-common-env:
-	$(call begin_message)
-	$(call end_message)
-
-common-cleanenv:
-	$(call begin_message)
-	$(call end_message)
-
-###############################################################################
+common-all: config build
 
 common-config:
 	$(call begin_message)
@@ -207,16 +207,6 @@ common-config:
 	$(call end_message)
 
 common-configd: cleand config
-
-common-menuconfig:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && ccmake .
-	$(call end_message)
-
-common-xconfig:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake-gui .
-	$(call end_message)
 
 common-build:
 	$(call begin_message)
@@ -237,20 +227,9 @@ ifeq ("$(shell "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
 endif
 	$(call end_message)
 
-common-doc:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && doxygen
-	$(call end_message)
-
-###############################################################################
-
-common-all: config build
-
 common-rebuild: clean all
 
 common-rebuildd: cleand all
-
-###############################################################################
 
 common-load:
 	$(call begin_message)
@@ -265,14 +244,14 @@ common-load:
 	@echo ""
 	$(call end_message)
 
-common-reset:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make reset
-	$(call end_message)
-
 common-run:
 	$(call begin_message)
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make run
+	$(call end_message)
+
+common-reset:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make reset
 	$(call end_message)
 
 common-debug:
@@ -283,6 +262,35 @@ common-debug:
 common-attach:
 	$(call begin_message)
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make attach
+	$(call end_message)
+
+###############################################################################
+
+common-env:
+	$(call begin_message)
+	$(call end_message)
+
+common-cleanenv:
+	$(call begin_message)
+	$(call end_message)
+
+common-xconfig:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake-gui .
+	$(call end_message)
+
+common-menuconfig:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && ccmake .
+	$(call end_message)
+
+common-doc:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && doxygen
+	$(call end_message)
+
+common-test:
+	$(call begin_message)
 	$(call end_message)
 
 ###############################################################################
@@ -304,6 +312,46 @@ common-zbatch-rebuildd:
 ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk cleand config
 endif
+
+common-zbatch-load:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-run:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-reset:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-debug:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-attach:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-env:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-cleanenv:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-xconfig:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-menuconfig:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-test:
+	$(call begin_message)
+	$(call end_message)
 
 common-zbatch-%:
 	make -f batch.mk $*
