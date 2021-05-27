@@ -582,7 +582,7 @@ macro(project_begin)
 
     string(STRIP "${PROJECT_CONFIG_NAME}" _tmp_str)
     if("${_tmp_str}"  STREQUAL "")
-        set_cache(PROJECT_CONFIG_NAME "default" STRING)
+        set_cache(PROJECT_CONFIG_NAME "none" PATH)
     endif()
 
     string(STRIP "${PROJECT_CONFIG_DIR}" _tmp_str)

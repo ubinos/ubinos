@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2019 Sung Ho Park and CSOS
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -203,6 +203,7 @@ common-config:
 	$(call begin_message)
 	$(_PRECMD) && mkdir -p "$(_OUTPUT_DIR)"
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake $(_CMAKE_OPTION) "$(_SOURCE_DIR)"
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cp compile_commands.json "$(_OUTPUT_DIR)/../Default/"
 	$(call end_message)
 
 common-configd: cleand config
