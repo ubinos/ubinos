@@ -9,6 +9,7 @@
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
 
+#include <ubinos/bsp/arch.h>
 
 #include <assert.h>
 #include <stdlib.h>

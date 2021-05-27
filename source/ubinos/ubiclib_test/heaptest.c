@@ -1,3 +1,4 @@
+#include <ubinos/bsp/arch.h>
 #include <ubinos/ubiclib_test.h>
 #include <ubinos/ubiclib/heap.h>
 
