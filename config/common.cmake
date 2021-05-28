@@ -73,9 +73,9 @@ macro(___project_config_end)
     file(WRITE ${PROJECT_BINARY_DIR}/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
 
     file(MAKE_DIRECTORY ${PROJECT_BINARY_DIR}/../Default)
-    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_asm.txt "${CMAKE_ASM_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
-    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_c.txt "${CMAKE_C_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
-    file(WRITE ${PROJECT_BINARY_DIR}/../Default/compile_flags_cxx.txt "${CMAKE_CXX_FLAGS} ${_tmp_def_flags} ${_tmp_include_flags}")
+    file(COPY ${PROJECT_BINARY_DIR}/compile_flags_asm.txt DESTINATION ${PROJECT_BINARY_DIR}/../Default/)
+    file(COPY ${PROJECT_BINARY_DIR}/compile_flags_c.txt DESTINATION ${PROJECT_BINARY_DIR}/../Default/)
+    file(COPY ${PROJECT_BINARY_DIR}/compile_flags_cxx.txt DESTINATION ${PROJECT_BINARY_DIR}/../Default/)
 endmacro(___project_config_end)
 
 macro(___project_add_app)
@@ -343,6 +343,10 @@ macro(___project_add_app)
         COMMAND ${CMAKE_OBJCOPY} -O ihex   ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.hex
     )
     add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -d -l ${PROJECT_EXE_NAME}.elf > ${PROJECT_EXE_NAME}.s
+    )
+    add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy   compile_commands.json ../Default/
     )
@@ -357,6 +361,10 @@ macro(___project_add_app)
     add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.hex ../Default/
+    )
+    add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.s ../Default/
     )
 
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
