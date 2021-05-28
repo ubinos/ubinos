@@ -19,15 +19,15 @@ macro(set_cache_default name value type helpstr)
 endmacro(set_cache_default)
 
 macro(___project_config_begin)
-    file(WRITE ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h
-    "#ifndef ${PROJECT_NAME_UPPER}_CONFIG_H_\n"
-    "#define ${PROJECT_NAME_UPPER}_CONFIG_H_\n"
-    "\n"
-    "#ifdef  __cplusplus\n"
-    "extern \"C\" {\n"
-    "#endif\n"
-    "\n"
-    "\n")
+    file(WRITE ${PROJECT_BINARY_DIR}/ubinos_config.h
+        "#ifndef UBINOS_CONFIG_H_\n"
+        "#define UBINOS_CONFIG_H_\n"
+        "\n"
+        "#ifdef  __cplusplus\n"
+        "extern \"C\" {\n"
+        "#endif\n"
+        "\n"
+        "\n")
 endmacro(___project_config_begin)
 
 macro(___project_config_end)
@@ -37,23 +37,21 @@ macro(___project_config_end)
     endif()
     configure_file(
         ${_tmp_fname}
-        ${PROJECT_BINARY_DIR}/___${PROJECT_NAME}_config.h
+        ${PROJECT_BINARY_DIR}/___ubinos_config.h
     )
-    file(READ ${PROJECT_BINARY_DIR}/___${PROJECT_NAME}_config.h _tmp_fdata)
-    file(REMOVE ${PROJECT_BINARY_DIR}/___${PROJECT_NAME}_config.h)
-    file(APPEND ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h ${_tmp_fdata})
+    file(READ ${PROJECT_BINARY_DIR}/___ubinos_config.h _tmp_fdata)
+    file(REMOVE ${PROJECT_BINARY_DIR}/___ubinos_config.h)
+    file(APPEND ${PROJECT_BINARY_DIR}/ubinos_config.h ${_tmp_fdata})
+    file(APPEND ${PROJECT_BINARY_DIR}/ubinos_config.h
+        "#ifdef  __cplusplus\n"
+        "}\n"
+        "#endif\n"
+        "\n"
+        "#endif /* UBINOS_CONFIG_H_ */\n"
+        "\n"
+        "\n")
+    include_directories(${PROJECT_BINARY_DIR})
 
-    file(APPEND ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h
-    "#ifdef  __cplusplus\n"
-    "}\n"
-    "#endif\n"
-    "\n"
-    "#endif /* ${PROJECT_NAME_UPPER}_CONFIG_H_ */\n"
-    "\n"
-    "\n")
-
-    file(RELATIVE_PATH __tmp_path ${PROJECT_BASE_DIR}/include ${PROJECT_BINARY_DIR})
-    file(WRITE ${PROJECT_BASE_DIR}/include/${PROJECT_NAME}_config.h "#include \"${__tmp_path}/${PROJECT_NAME}_config.h\"\n")
     include_directories(${PROJECT_BASE_DIR}/include)
 
 	set(_tmp_include_flags)
@@ -636,16 +634,15 @@ macro(project_add_library name)
     if(EXISTS "${_tmp_fname}")
         configure_file(
             ${_tmp_fname}
-            ${PROJECT_BINARY_DIR}/___${name}_config.h
+            ${PROJECT_BINARY_DIR}/___ubinos_config.h
         )
-        file(READ   ${PROJECT_BINARY_DIR}/___${name}_config.h _tmp_fdata)
-        file(REMOVE ${PROJECT_BINARY_DIR}/___${name}_config.h)
-        file(APPEND ${PROJECT_BINARY_DIR}/${PROJECT_NAME}_config.h ${_tmp_fdata})
-
-        file(RELATIVE_PATH __tmp_path ${PROJECT_LIBRARY_DIR}/${name}/include ${PROJECT_BINARY_DIR})
-        file(WRITE ${PROJECT_LIBRARY_DIR}/${name}/include/${name}_config.h "#include \"${__tmp_path}/${PROJECT_NAME}_config.h\"\n")
-        include_directories(${PROJECT_LIBRARY_DIR}/${name}/include)
+        file(READ ${PROJECT_BINARY_DIR}/___ubinos_config.h _tmp_fdata)
+        file(REMOVE ${PROJECT_BINARY_DIR}/___ubinos_config.h)
+        file(APPEND ${PROJECT_BINARY_DIR}/ubinos_config.h ${_tmp_fdata})
     endif()
+
+    include_directories(${PROJECT_LIBRARY_DIR}/${name}/include)
+
     set(_tmp_fname "${PROJECT_LIBRARY_DIR}/${name}/source/sources.cmake")
     if(EXISTS "${_tmp_fname}")
         set(PROJECT_SOURCES)
