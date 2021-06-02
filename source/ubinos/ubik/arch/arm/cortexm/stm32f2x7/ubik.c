@@ -19,17 +19,17 @@
 #include "stm32f2xx_hal.h"
 
 #if (UBINOS__UBIK__TICK_RTC_NO == 5)
-#define TIMx                    TIM5
-#define TIMx_CLK_ENABLE()       __HAL_RCC_TIM5_CLK_ENABLE()
-#define TIMx_IRQn               TIM5_IRQn
-#define TIMx_IRQHandler         TIM5_IRQHandler
-#define TIMx_CH1_PULSE          1 // It must be 1
-#define TIMx_CH2_PULSE          10
+#define UBIK_TICK_TIM                    TIM5
+#define UBIK_TICK_TIM_CLK_ENABLE()       __HAL_RCC_TIM5_CLK_ENABLE()
+#define UBIK_TICK_TIM_IRQn               TIM5_IRQn
+#define UBIK_TICK_TIM_IRQHandler         TIM5_IRQHandler
+#define UBIK_TICK_TIM_CH1_PULSE          1 // It must be 1
+#define UBIK_TICK_TIM_CH2_PULSE          10
 #else
 	#error "Unsupported UBINOS__UBIK__TICK_RTC_NO"
 #endif
 
-TIM_HandleTypeDef TimHandle;
+TIM_HandleTypeDef _ubik_tick_tim_handler;
 
 int _ubik_inittick(void)
 {
@@ -47,38 +47,36 @@ int _ubik_inittick(void)
     _ubik_tickrtccount_init = 0;
 #endif
 
-    HAL_Init();
-
-    TIMx_CLK_ENABLE();
+    UBIK_TICK_TIM_CLK_ENABLE();
 
     uwPrescalerValue = (uint32_t) (((SystemCoreClock / 2) / (UBINOS__UBIK__TICK_PER_SEC)) - 1);
 
-    TimHandle.Instance = TIMx;
+    _ubik_tick_tim_handler.Instance = UBIK_TICK_TIM;
 
-    TimHandle.Init.Period = UBINOS__UBIK__TICK_RTC_COUNT_MAX;
-    TimHandle.Init.Prescaler = uwPrescalerValue;
-    TimHandle.Init.ClockDivision = 0;
-    TimHandle.Init.CounterMode = TIM_COUNTERMODE_UP;
-    TimHandle.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
-    if (HAL_TIM_OC_Init(&TimHandle) != HAL_OK)
+    _ubik_tick_tim_handler.Init.Period = UBINOS__UBIK__TICK_RTC_COUNT_MAX;
+    _ubik_tick_tim_handler.Init.Prescaler = uwPrescalerValue;
+    _ubik_tick_tim_handler.Init.ClockDivision = 0;
+    _ubik_tick_tim_handler.Init.CounterMode = TIM_COUNTERMODE_UP;
+    _ubik_tick_tim_handler.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
+    if (HAL_TIM_OC_Init(&_ubik_tick_tim_handler) != HAL_OK)
     {
         return -1;
     }
 
     // Tick interrupt
     sConfig.OCMode = TIM_OCMODE_TIMING;
-    sConfig.Pulse = TIMx_CH1_PULSE;
+    sConfig.Pulse = UBIK_TICK_TIM_CH1_PULSE;
     sConfig.OCPolarity = TIM_OCPOLARITY_LOW;
-    if (HAL_TIM_OC_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_1) != HAL_OK)
+    if (HAL_TIM_OC_ConfigChannel(&_ubik_tick_tim_handler, &sConfig, TIM_CHANNEL_1) != HAL_OK)
     {
         return -1;
     }
 
     // For solving the problem of missing the next tick interrupt due to delay in tick hander
     sConfig.OCMode = TIM_OCMODE_TIMING;
-    sConfig.Pulse = TIMx_CH2_PULSE;
+    sConfig.Pulse = UBIK_TICK_TIM_CH2_PULSE;
     sConfig.OCPolarity = TIM_OCPOLARITY_LOW;
-    if (HAL_TIM_OC_ConfigChannel(&TimHandle, &sConfig, TIM_CHANNEL_2) != HAL_OK)
+    if (HAL_TIM_OC_ConfigChannel(&_ubik_tick_tim_handler, &sConfig, TIM_CHANNEL_2) != HAL_OK)
     {
         return -1;
     }
@@ -91,14 +89,14 @@ int _ubik_inittick(void)
     NVIC_SetPriority(SVCall_IRQn, NVIC_PRIO_SVC);
     NVIC_SetPriority(PendSV_IRQn, NVIC_PRIO_PENDSV);
 
-    NVIC_SetPriority(TIMx_IRQn, NVIC_PRIO_SYSTICK);
-    NVIC_EnableIRQ(TIMx_IRQn);
+    NVIC_SetPriority(UBIK_TICK_TIM_IRQn, NVIC_PRIO_SYSTICK);
+    NVIC_EnableIRQ(UBIK_TICK_TIM_IRQn);
 
-    if (HAL_TIM_OC_Start_IT(&TimHandle, TIM_CHANNEL_1) != HAL_OK)
+    if (HAL_TIM_OC_Start_IT(&_ubik_tick_tim_handler, TIM_CHANNEL_1) != HAL_OK)
     {
         return -1;
     }
-    if (HAL_TIM_OC_Start_IT(&TimHandle, TIM_CHANNEL_2) != HAL_OK)
+    if (HAL_TIM_OC_Start_IT(&_ubik_tick_tim_handler, TIM_CHANNEL_2) != HAL_OK)
     {
         return -1;
     }
@@ -106,7 +104,7 @@ int _ubik_inittick(void)
     return 0;
 }
 
-void TIMx_IRQHandler(void)
+void UBIK_TICK_TIM_IRQHandler(void)
 {
     uint32_t uhCount = 0;
     uint32_t uhNextCh1 = 0;
@@ -114,24 +112,24 @@ void TIMx_IRQHandler(void)
 
     bsp_ubik_tick_handler();
 
-    uhCount = __HAL_TIM_GET_COUNTER(&TimHandle);
+    uhCount = __HAL_TIM_GET_COUNTER(&_ubik_tick_tim_handler);
 
-    uhNextCh1 = (uhCount + TIMx_CH1_PULSE) % UBINOS__UBIK__TICK_RTC_COUNT_MAX;
-    uhNextCh2 = (uhCount + TIMx_CH2_PULSE) % UBINOS__UBIK__TICK_RTC_COUNT_MAX;
+    uhNextCh1 = (uhCount + UBIK_TICK_TIM_CH1_PULSE) % UBINOS__UBIK__TICK_RTC_COUNT_MAX;
+    uhNextCh2 = (uhCount + UBIK_TICK_TIM_CH2_PULSE) % UBINOS__UBIK__TICK_RTC_COUNT_MAX;
 
-    __HAL_TIM_SET_COMPARE(&TimHandle, TIM_CHANNEL_1, (uhNextCh1));
-    __HAL_TIM_SET_COMPARE(&TimHandle, TIM_CHANNEL_2, (uhNextCh2));
+    __HAL_TIM_SET_COMPARE(&_ubik_tick_tim_handler, TIM_CHANNEL_1, (uhNextCh1));
+    __HAL_TIM_SET_COMPARE(&_ubik_tick_tim_handler, TIM_CHANNEL_2, (uhNextCh2));
 }
 
 void _ubik_tick_rtcisr_clear(void)
 {
-    __HAL_TIM_CLEAR_IT(&TimHandle, TIM_IT_CC1);
-    __HAL_TIM_CLEAR_IT(&TimHandle, TIM_IT_CC2);
+    __HAL_TIM_CLEAR_IT(&_ubik_tick_tim_handler, TIM_IT_CC1);
+    __HAL_TIM_CLEAR_IT(&_ubik_tick_tim_handler, TIM_IT_CC2);
 }
 
 unsigned int _ubik_tick_rtccount_get(void)
 {
-    return __HAL_TIM_GET_COUNTER(&TimHandle);
+    return __HAL_TIM_GET_COUNTER(&_ubik_tick_tim_handler);
 }
 
 #if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)

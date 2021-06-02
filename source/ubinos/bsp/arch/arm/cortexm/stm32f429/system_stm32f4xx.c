@@ -748,6 +748,14 @@ __WEAK void SystemInit2(void)
 	SystemClock_Config();
 
 	SystemCoreClockUpdate();
+
+#if (STM32CUBEF2__USE_HAL_DRIVER == 1)
+	/* Use systick as time base source and configure 1ms tick (default clock after Reset is HSI) */
+	HAL_InitTick(TICK_INT_PRIORITY);
+
+	/* Init the low level hardware */
+	HAL_MspInit();
+#endif /* (STM32CUBEF2__USE_HAL_DRIVER == 1) */
 }
 
 #endif /* (UBINOS__BSP__STM32_STM32F4XX == 1) */
