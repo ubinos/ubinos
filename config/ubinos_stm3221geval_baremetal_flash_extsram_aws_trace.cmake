@@ -1,8 +1,10 @@
 #
 # Copyright (c) 2019 Sung Ho Park and CSOS
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
+
+# {ubinos_config_type: [buildable, cmake, lib]}
 
 set_cache(UBINOS__BSP__LINK_MEMMAP_RAM2_ORIGIN 0x64000000 STRING)
 set_cache(UBINOS__BSP__LINK_MEMMAP_RAM2_LENGTH 0x00080000 STRING)

@@ -2,6 +2,7 @@
 
 /make/custom.mk
 /make/custom.py
+/make/Makefile.bak
 
 /include/*_config.h
 
@@ -10,3 +11,5 @@
 /.pydevproject
 /.settings/
 /.externalToolBuilders/
+
+*.pyc

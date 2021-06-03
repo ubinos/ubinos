@@ -181,6 +181,17 @@
             "presentation": {
                 "focus": true,
             }
+        },
+        {
+            "label": "make xsel",
+            "type": "shell",
+            "command": "make",
+            "args": ["xsel"],
+            "options": {
+                "cwd": "${workspaceFolder}/make"
+            },
+            "group": "build",
+            "problemMatcher": [],
         }
     ]
 }

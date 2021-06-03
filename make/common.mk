@@ -293,6 +293,11 @@ common-test:
 	$(call begin_message)
 	$(call end_message)
 
+common-xsel:
+	$(call begin_message)
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python "$(_UBINOS_DIR)/make/confsel.py" .. library
+	$(call end_message)
+
 ###############################################################################
 
 common-zbatch-all:
