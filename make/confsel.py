@@ -80,7 +80,7 @@ class confsel(tk.Tk):
                     file = open(join(conf_dir, conf_fname))
                     if (self.keyword in file.read()):
                         conf_name = splitext(conf_fname)[0]
-                        self.conf_list.append({"index": index, "prj": prj["name"], "dir": conf_dir, "name": conf_name})
+                        self.conf_list.append({"index": index, "prj": prj["name"], "name": conf_name, "dir": conf_dir})
                         index += 1
                     file.close()
         self.conf_len = index
