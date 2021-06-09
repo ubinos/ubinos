@@ -261,25 +261,20 @@ macro(___project_add_app)
                         ${CMAKE_CURRENT_BINARY_DIR}/flash_writer.elf)
     endif()
 
-    if(NOT ${UBINOS__BSP__OPENOCD_CONFIG_FILE} STREQUAL "")
-        add_custom_command(
-                TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy
-                        ${UBINOS__BSP__OPENOCD_CONFIG_FILE}
-                        ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg)
-        add_custom_command(
-                TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy
-                        ${UBINOS__BSP__OPENOCD_CONFIG_FILE}
-                        ${CMAKE_CURRENT_BINARY_DIR}/../Default/openocd.cfg)
-    endif()
-
     if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
         add_custom_command(
                 TARGET ${PROJECT_NAME} PRE_BUILD
                 COMMAND ${CMAKE_COMMAND} -E copy
                         ${UBINOS__BSP__SYS_INIT_FILE}
                         ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf)
+    endif()
+
+    if(NOT ${UBINOS__BSP__OPENOCD_CONFIG_FILE} STREQUAL "")
+        add_custom_command(
+                TARGET ${PROJECT_NAME} PRE_BUILD
+                COMMAND ${CMAKE_COMMAND} -E copy
+                        ${UBINOS__BSP__OPENOCD_CONFIG_FILE}
+                        ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg)
     endif()
 
     if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_LOAD} STREQUAL "")
@@ -296,6 +291,14 @@ macro(___project_add_app)
                 COMMAND ${CMAKE_COMMAND} -E copy
                         ${UBINOS__BSP__T32SCRIPT_FILE_RESET}
                         ${CMAKE_CURRENT_BINARY_DIR}/t32_reset.cmm)
+    endif()
+
+    if(NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
+    add_custom_command(
+            TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                    ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE}
+                    ${CMAKE_CURRENT_BINARY_DIR}/nrf52_softdevice.hex)
     endif()
 
     add_executable(${PROJECT_EXE_NAME} ${PROJECT_APP_SOURCES})
@@ -334,124 +337,198 @@ macro(___project_add_app)
 
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -O binary ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.bin
+        COMMAND ${CMAKE_OBJCOPY} -O binary
+                ${PROJECT_EXE_NAME}.elf
+                ${PROJECT_EXE_NAME}.bin
     )
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -O ihex   ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.hex
+        COMMAND ${CMAKE_OBJCOPY} -O ihex
+            ${PROJECT_EXE_NAME}.elf
+            ${PROJECT_EXE_NAME}.hex
     )
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJDUMP} -d -l ${PROJECT_EXE_NAME}.elf > ${PROJECT_EXE_NAME}.s
-    )
-    add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy   compile_commands.json ../Default/
-    )
-    add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.elf ../Default/
-    )
-    add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.bin ../Default/
-    )
-    add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.hex ../Default/
-    )
-    add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy   ${PROJECT_EXE_NAME}.s ../Default/
+            COMMAND ${CMAKE_OBJDUMP} -d -l ${PROJECT_EXE_NAME}.elf > ${PROJECT_EXE_NAME}.s
     )
 
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_gdbscript
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                        ${PROJECT_EXE_NAME}.bin)
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_gdbscript
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${PROJECT_EXE_NAME}.bin
+        )
     endif()
 
     if(NOT ${UBINOS__BSP__GDBSERVER_HOST} STREQUAL "")
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+        )
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+        )
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+        )
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+        )
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-                        "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+        )
     endif()
 
     if(NOT ${UBINOS__BSP__GDBSERVER_PORT} STREQUAL "")
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+        )
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+        )
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+        )
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+        )
         add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-                        ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-                        ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}")
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+        )
     endif()
 
-    if(NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
+    if(NOT ${UBINOS__BSP__FLASH_WRITER_FILE} STREQUAL "")
         add_custom_command(
-                TARGET ${PROJECT_NAME} PRE_BUILD
-                COMMAND ${CMAKE_COMMAND} -E copy
-                        ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE}
-                        ${CMAKE_CURRENT_BINARY_DIR}/nrf52_softdevice.hex)
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/flash_writer.elf
+                ../Default/
+        )
+    endif()
+
+    if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf
+                ../Default/
+        )
+    endif()
+
+    if(NOT ${UBINOS__BSP__OPENOCD_CONFIG_FILE} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
+                ../Default/
+        )
+    endif()
+
+    if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf
+                ../Default/
+        )
+    endif()
+
+    if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_LOAD} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/t32_load.cmm
+                ../Default/
+        )
+    endif()
+
+    if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_RESET} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_CURRENT_BINARY_DIR}/t32_reset.cmm
+                ../Default/
+        )
     endif()
 
     add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-                    ${PROJECT_EXE_NAME}.map)
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}.elf
+            ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}.bin
+            ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}.hex
+            ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}.s
+            ../Default/
+    )
+
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+            compile_commands.json
+            ../Default/
+    )
+
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+    )
 endmacro(___project_add_app)
 
 macro(___project_show)
@@ -620,9 +697,9 @@ macro(project_begin)
     endif()
     set(PROJECT_TOOLBOX_RUN_CMD python ${PROJECT_TOOLBOX})
 
-    set_cache_default(PROJECT_CONFIG_NAME                                       ""      STRING "Config name")
-    set_cache_default(PROJECT_CONFIG_DIR                                        ""      PATH "Config directory")
-    set_cache_default(PROJECT_LIBRARY_DIR                                       ""      PATH "Library directory")
+    set_cache_default(PROJECT_CONFIG_NAME "" STRING "Config name")
+    set_cache_default(PROJECT_CONFIG_DIR "" PATH "Config directory")
+    set_cache_default(PROJECT_LIBRARY_DIR "" PATH "Library directory")
 
     include("${PROJECT_CONFIG_DIR}/${PROJECT_CONFIG_NAME}.cmake")
 
