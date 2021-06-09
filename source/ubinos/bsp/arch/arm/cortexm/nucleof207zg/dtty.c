@@ -48,7 +48,7 @@ extern int _g_bsp_dtty_autocr;
 static void Configure_USART(void)
 {
 
-    /* Enable the peripheral clock of GPIO Port */
+    /* (1) Enable the peripheral clock of GPIO Port */
 
     /* Configure Tx Pin as : Alternate function, High Speed, Push pull, Pull up */
     USARTx_TX_GPIO_CLK_ENABLE();

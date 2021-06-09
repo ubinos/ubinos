@@ -62,7 +62,8 @@ extern int _g_bsp_dtty_init;
 extern int _g_bsp_dtty_echo;
 extern int _g_bsp_dtty_autocr;
 
-static void Configure_USART(void) {
+static void Configure_USART(void)
+{
 
 	/* (1) Enable the peripheral clock of GPIO Port */
 
@@ -118,7 +119,10 @@ static void Configure_USART(void) {
 	LL_USART_Enable(USARTx_INSTANCE);
 }
 
-int dtty_init(void) {
+static int _dtty_getc_advan(char *ch_p, int blocked);
+
+int dtty_init(void)
+{
 	_g_bsp_dtty_echo = 1;
 	_g_bsp_dtty_autocr = 1;
 
@@ -129,103 +133,157 @@ int dtty_init(void) {
 	return 0;
 }
 
-int dtty_enable(void) {
+int dtty_enable(void)
+{
 	return 0;
 }
 
-int dtty_disable(void) {
+int dtty_disable(void)
+{
 	return 0;
 }
 
-int dtty_geterror(void) {
+int dtty_geterror(void)
+{
 	return 0;
 }
 
-int dtty_getc(char *ch_p) {
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+static int _dtty_getc_advan(char *ch_p, int blocked)
+{
+    unsigned int i;
+    int r = 0;
 
-	unsigned int i;
-
-	if (NULL == ch_p) {
-		return -2;
-	}
-
-#if (INCLUDE__UBINOS__UBIK == 1)
-	if (_bsp_kernel_active) {
-		for (i = 0;; i++) {
-			if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-				break;
-			}
-			if (255 <= i) {
-				bsp_task_sleepms(SLEEP_TIMEMS);
-				i = 0;
-			}
-		}
-	}
-	else {
-		for (i=0; ; i++)
-		{
-			if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-				break;
-			}
-		}
-	}
-#else
-	for (i=0; ; i++)
-	{
-		if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-			break;
-		}
-	}
-#endif /* (INCLUDE__UBINOS__UBIK == 1) */
-
-	*ch_p = (char) LL_USART_ReceiveData8(USARTx_INSTANCE);
-
-	if (0 != _g_bsp_dtty_echo) {
-		dtty_putc(*ch_p);
-	}
-
-	return 0;
-}
-
-int dtty_putc(int ch) {
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
-
-	if (0 != _g_bsp_dtty_autocr && '\n' == ch) {
-		for (;;) {
-			if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE)) {
-				break;
-			}
-		}
-		LL_USART_TransmitData8(USARTx_INSTANCE, '\r');
-	}
-
-	for (;;) {
-		if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE)) {
-			break;
-		}
-	}
-	LL_USART_TransmitData8(USARTx_INSTANCE, ch);
-
-	return 0;
-}
-
-int dtty_putn(const char * str, int len) {
-    int i = 0;
-
-    if (NULL == str) {
+    if (NULL == ch_p)
+    {
         return -2;
     }
 
-    if (0 > len) {
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+    if (_bsp_kernel_active)
+    {
+        for (i = 0;; i++)
+        {
+            if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE))
+            {
+                break;
+            }
+            if (blocked != 1)
+            {
+                r = -1;
+                break;
+            }
+            if (255 <= i)
+            {
+                bsp_task_sleepms(SLEEP_TIMEMS);
+                i = 0;
+            }
+        }
+    }
+    else
+    {
+        for (i = 0;; i++)
+        {
+            if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE))
+            {
+                break;
+            }
+            if (blocked != 1)
+            {
+                r = -1;
+                break;
+            }
+        }
+    }
+#else
+    for (i = 0;; i++)
+    {
+        if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE))
+        {
+            break;
+        }
+        if (blocked != 1)
+        {
+            r = -1;
+            break;
+        }
+    }
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
+    if (r == 0)
+    {
+        *ch_p = (char) LL_USART_ReceiveData8(USARTx_INSTANCE);
+
+        if (0 != _g_bsp_dtty_echo)
+        {
+            dtty_putc(*ch_p);
+        }
+    }
+
+    return r;
+}
+
+int dtty_getc(char *ch_p)
+{
+    return _dtty_getc_advan(ch_p, 1);
+}
+
+int dtty_getc_unblocked(char *ch_p)
+{
+    return _dtty_getc_advan(ch_p, 0);
+}
+
+int dtty_putc(int ch)
+{
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
+
+    if (0 != _g_bsp_dtty_autocr && '\n' == ch)
+    {
+        for (;;)
+        {
+            if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE))
+            {
+                break;
+            }
+        }
+        LL_USART_TransmitData8(USARTx_INSTANCE, '\r');
+    }
+
+    for (;;)
+    {
+        if (LL_USART_IsActiveFlag_TXE(USARTx_INSTANCE))
+        {
+            break;
+        }
+    }
+    LL_USART_TransmitData8(USARTx_INSTANCE, ch);
+
+    return 0;
+}
+
+int dtty_putn(const char *str, int len)
+{
+    int i = 0;
+
+    if (NULL == str)
+    {
+        return -2;
+    }
+
+    if (0 > len)
+    {
         return -3;
     }
 
-    for (i = 0; i < len; i++) {
+    for (i = 0; i < len; i++)
+    {
         dtty_putc(*str);
         str++;
     }
@@ -233,16 +291,21 @@ int dtty_putn(const char * str, int len) {
     return i;
 }
 
-int dtty_kbhit(void) {
-	if (!_g_bsp_dtty_init) {
-		dtty_init();
-	}
+int dtty_kbhit(void)
+{
+    if (!_g_bsp_dtty_init)
+    {
+        dtty_init();
+    }
 
-	if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE)) {
-		return 1;
-	} else {
-		return 0;
-	}
+    if (LL_USART_IsActiveFlag_RXNE(USARTx_INSTANCE))
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 int dtty_flush(void)
