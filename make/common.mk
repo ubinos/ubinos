@@ -172,6 +172,8 @@ common-help:
 	@echo "make rebuild                 (clean and all)"
 	@echo "make rebuildd                (cleand and all)"
 	@echo ""
+	@echo "make dsvr                    (run debug server)"
+	@echo ""
 	@echo "make load                    (load execution binary file into target)"
 	@echo "make run                     (run execution binary file on target)"
 	@echo "make reset                   (reset target)"
@@ -230,6 +232,11 @@ endif
 common-rebuild: clean all
 
 common-rebuildd: cleand all
+
+common-dsvr:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make dsvr
+	$(call end_message)
 
 common-load:
 	$(call begin_message)

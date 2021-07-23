@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2019 Sung Ho Park and CSOS
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -121,18 +121,18 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 set_cache_default(UBINOS__BSP__USE_RELOCATED_ISR_VECTOR                         TRUE    BOOL "Use relocated ISR vector")
 
     if(UBINOS__BSP__CPU_TYPE STREQUAL "ARM926EJ_S")
-    
+
 set_cache_default(UBINOS__BSP__CPU_ARMTHUMBSTATE                                "ARM"   STRING "CPU default ARM/THUMB state [ARM | THUMB]")
 set_cache_default(UBINOS__BSP__INCLUDE_INTERRUPT_DISABLE_ENABLE_RETRY           TRUE    BOOL "Include interrupt disable enable retry")
 
     elseif((UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M7") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3"))
 
 set_cache_default(UBINOS__BSP__CORTEX_MX                                        TRUE    BOOL "ARM Cortex-M family CPU Type")
-    
+
     else()
-    
+
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_TYPE")
-        
+
     endif()
 
 
@@ -280,6 +280,10 @@ set_cache_default(UBINOS__BSP__GDBSERVER_PORT                                   
 
 set_cache_default(UBINOS__BSP__DOXYGEN_FILE                                     "${PROJECT_UBINOS_DIR}/resource/ubinos/doc/Doxyfile" PATH "Doxygen file")
 
+set_cache_default(UBINOS__BSP__DEBUG_SERVER_TYPE "NONE" STRING "Debug server type [NONE | GDBSERVER | JLINK | OPENOCD]")
+set_cache_default(UBINOS__BSP__DEBUG_SERVER_COMMAND "" STRING "Debug server command")
+set_cache_default(UBINOS__BSP__DEBUG_SERVER_SERIAL "" STRING "Debug server serial number")
+
 ########
 
 
@@ -288,115 +292,115 @@ set(_tmp_all_flags "")
 if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
     if(UBINOS__BSP__CPU_TYPE STREQUAL "ARM926EJ_S")
-    
+
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=arm926ej-s")
-        
+
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M7")
-    
+
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m7")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
-        
+
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4")
-    
+
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m4")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
-        
+
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3")
-    
+
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m3")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
         set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=soft")
-    
+
     else()
-    
+
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_TYPE")
-        
+
     endif()
 
 
     if(UBINOS__BSP__CPU_ENDIAN STREQUAL "LITTLE")
-    
+
         set(_tmp_all_flags "${_tmp_all_flags} -mlittle-endian")
-        
+
     elseif(UBINOS__BSP__CPU_ENDIAN STREQUAL "BIG")
-    
+
         set(_tmp_all_flags "${_tmp_all_flags} -mbig-endian")
-        
+
     else()
-    
+
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_ENDIAN")
-        
+
     endif()
-    
+
     if(UBINOS__BSP__CPU_MODEL STREQUAL "SAM9XE512")
-    
+
         if(UBINOS__BSP__CPU_ARMTHUMBSTATE STREQUAL "ARM")
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -marm")
-            
+
         elseif(UBINOS__BSP__CPU_ARMTHUMBSTATE STREQUAL "THUMB")
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -mthumb -mthumb-interwork")
-            
+
         else()
-        
+
             message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_ARMTHUMBSTATE")
-            
+
         endif()
-        
+
         set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
         set(_tmp_all_flags "${_tmp_all_flags} -fomit-frame-pointer")
-        
+
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "NRF52832XXAA") OR (UBINOS__BSP__CPU_MODEL STREQUAL "NRF52840XXAA"))
-    
+
         if(UBINOS__BSP__USE_SOFTFLOAT)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
-        
+
         else()
-            
+
             set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
             set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv4-sp-d16")
             set(_tmp_all_flags "${_tmp_all_flags} -DFLOAT_ABI_HARD")
-            
+
         endif()
-        
+
         if(UBINOS__BSP__NRF52_NRF52)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DNRF52")
-            
+
         endif()
-        
+
         if(UBINOS__BSP__NRF52_NRF52832_XXAA)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DNRF52832_XXAA")
-            
+
         endif()
-        
+
         if(UBINOS__BSP__NRF52_NRF52_PAN_74)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DNRF52_PAN_74")
-            
+
         endif()
-        
+
         if(UBINOS__BSP__NRF52_NRF52840_XXAA)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DNRF52840_XXAA")
-            
-        endif()        
-        
+
+        endif()
+
         if(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DSOFTDEVICE_PRESENT")
-            
+
         endif()
 
         if(UBINOS__BSP__NRF52_MBR_PRESENT)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DMBR_PRESENT")
-            
+
         endif()
-        
+
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG")
 
             set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F217xx")
@@ -418,14 +422,14 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             set(_tmp_all_flags "${_tmp_all_flags} -DSTM32L475xx")
 
         if(UBINOS__BSP__USE_SOFTFLOAT)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
-        
+
         else()
-            
+
             set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
             set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv4-sp-d16")
-            
+
         endif()
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F769NI")
@@ -437,14 +441,14 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             endif()
 
         if(UBINOS__BSP__USE_SOFTFLOAT)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
-        
+
         else()
-            
+
             set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
             set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv5-d16")
-            
+
         endif()
 
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F429NI") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F429ZI"))
@@ -456,53 +460,53 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
             endif()
 
         if(UBINOS__BSP__USE_SOFTFLOAT)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -msoft-float")
-        
+
         else()
-            
+
             set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=hard")
             set(_tmp_all_flags "${_tmp_all_flags} -mfpu=fpv4-sp-d16")
-            
+
         endif()
 
     else()
-    
+
        message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
-       
+
     endif()
 
 
     if(UBINOS__BSP__BOARD_MODEL STREQUAL "SAM9XE512EK")
-    
+
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52DK") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52840DK") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NRF52840DONGLE"))
-    
+
         if(UBINOS__BSP__NRF52_CONFIG_GPIO_AS_PINRESET)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DCONFIG_GPIO_AS_PINRESET")
-            
+
         endif()
-        
+
         if(UBINOS__BSP__NRF52_ENABLE_SWO)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DENABLE_SWO")
-            
+
         endif()
 
         if(UBINOS__BSP__NRF52_ENABLE_TRACE)
-        
+
             set(_tmp_all_flags "${_tmp_all_flags} -DENABLE_TRACE")
-            
+
         endif()
-        
+
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM3221GEVAL")
 
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM322xG_EVAL")
-        
+
         if(UBINOS__BSP__USE_EXTSRAM)
-        
+
         	set(_tmp_all_flags "${_tmp_all_flags} -DDATA_IN_ExtSRAM")
-        
+
         endif(UBINOS__BSP__USE_EXTSRAM)
 
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOF207ZG")
@@ -514,32 +518,32 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32L475E_IOT01")
 
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL")
-    
+
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F769I_EVAL")
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_IOEXPANDER")
-    
+
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO")
 
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F769I_DISCO")
-    
+
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32429IEVAL")
 
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM324x9I_EVAL")
-    
+
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F429IDISCO")
 
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F429I_DISCO")
-    
+
     else()
-    
+
         message(FATAL_ERROR "Unsupported UBINOS__BSP__BOARD_MODEL")
-        
+
     endif()
-    
+
 	if(UBINOS__BSP__STM32_ENABLE_TRACE)
-	
+
 		set(_tmp_all_flags "${_tmp_all_flags} -DSTM32_ENABLE_TRACE")
-	
+
 	endif()
 
     set(_tmp_all_flags "${_tmp_all_flags} -D__STACK_SIZE=${UBINOS__BSP__STACK_SIZE}")
@@ -560,7 +564,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 else()
 
     message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_ARCH")
-    
+
 endif()
 
 if(INCLUDE__UBINOS__BSP)

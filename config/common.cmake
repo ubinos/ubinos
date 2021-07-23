@@ -334,6 +334,33 @@ macro(___project_add_app)
     add_executable(${PROJECT_EXE_NAME} ${PROJECT_APP_SOURCES})
     target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
 
+    if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "OPENOCD")
+        if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
+            add_custom_target(dsvr
+                COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
+                ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
+                "-c" "\"hla_serial" "${UBINOS__BSP__DEBUG_SERVER_SERIAL}\""
+                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+        else()
+            add_custom_target(dsvr
+                COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
+                ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
+                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+        endif()
+    else()
+        add_custom_target(dsvr
+            COMMAND  "echo" "not supported"
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+    endif()
     add_custom_target(reset
         COMMAND  ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_reset.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
