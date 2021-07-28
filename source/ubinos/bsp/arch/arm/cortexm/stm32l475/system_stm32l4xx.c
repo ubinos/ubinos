@@ -92,7 +92,7 @@
 #include <ubinos/bsp/arch.h>
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__STM32_STM32L475 == 1)
+#if ((UBINOS__BSP__STM32_STM32L475 == 1) || (UBINOS__BSP__STM32_STM32L476 == 1))
 
 #include "../stm32l4/stm32l4xx_ll_system.h"
 
@@ -364,7 +364,7 @@ __WEAK void SystemInit2(void)
 #endif /* (STM32CUBEF2__USE_HAL_DRIVER == 1) */
 }
 
-#endif /* (UBINOS__BSP__STM32_STM32L475 == 1) */
+#endif /* ((UBINOS__BSP__STM32_STM32L475 == 1) || (UBINOS__BSP__STM32_STM32L476 == 1)) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /**

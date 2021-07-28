@@ -2,12 +2,12 @@
   ******************************************************************************
   * @file      startup_stm32l475xx.s
   * @author    MCD Application Team
-  * @brief     STM32L475xx devices vector table for GCC toolchain.
+  * @brief     STM32L475xx and STM32L476xx devices vector table for GCC toolchain.
   *            This module performs:
   *                - Set the initial SP
   *                - Set the initial PC == Reset_Handler,
   *                - Set the vector table entries with the exceptions ISR address,
-  *                - Configure the clock system  
+  *                - Configure the clock system
   *                - Branches to main in the C library (which eventually
   *                  calls main()).
   *            After Reset the Cortex-M4 processor is in Thread mode,
@@ -29,7 +29,7 @@
 #include <ubinos_config.h>
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__STM32_STM32L475 == 1)
+#if ((UBINOS__BSP__STM32_STM32L475 == 1) || (UBINOS__BSP__STM32_STM32L476 == 1))
 #if !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1)
 
 	.syntax unified
@@ -172,7 +172,11 @@ __isr_vector:
 	.word	SAI2_IRQHandler
 	.word	SWPMI1_IRQHandler
 	.word	TSC_IRQHandler
+#if (UBINOS__BSP__STM32_STM32L476 == 1)
+	.word	LCD_IRQHandler
+#else
 	.word 0
+#endif
 	.word 0
 	.word	RNG_IRQHandler
 	.word	FPU_IRQHandler
@@ -517,63 +521,68 @@ Default_Handler:
 
 	.weak	DFSDM1_FLT0_IRQHandler
 	.thumb_set DFSDM1_FLT0_IRQHandler,Default_Handler
-	
+
 	.weak	DFSDM1_FLT1_IRQHandler
 	.thumb_set DFSDM1_FLT1_IRQHandler,Default_Handler
-	
+
 	.weak	DFSDM1_FLT2_IRQHandler
 	.thumb_set DFSDM1_FLT2_IRQHandler,Default_Handler
-	
+
 	.weak	COMP_IRQHandler
 	.thumb_set COMP_IRQHandler,Default_Handler
-	
+
 	.weak	LPTIM1_IRQHandler
 	.thumb_set LPTIM1_IRQHandler,Default_Handler
-	
+
 	.weak	LPTIM2_IRQHandler
 	.thumb_set LPTIM2_IRQHandler,Default_Handler
-	
+
 	.weak	OTG_FS_IRQHandler
 	.thumb_set OTG_FS_IRQHandler,Default_Handler
-	
+
 	.weak	DMA2_Channel6_IRQHandler
-	.thumb_set DMA2_Channel6_IRQHandler,Default_Handler	
-	
+	.thumb_set DMA2_Channel6_IRQHandler,Default_Handler
+
 	.weak	DMA2_Channel7_IRQHandler
-	.thumb_set DMA2_Channel7_IRQHandler,Default_Handler	
-	
+	.thumb_set DMA2_Channel7_IRQHandler,Default_Handler
+
 	.weak	LPUART1_IRQHandler
 	.thumb_set LPUART1_IRQHandler,Default_Handler
-	
+
 	.weak	QUADSPI_IRQHandler
 	.thumb_set QUADSPI_IRQHandler,Default_Handler
-	
+
 	.weak	I2C3_EV_IRQHandler
 	.thumb_set I2C3_EV_IRQHandler,Default_Handler
-	
+
 	.weak	I2C3_ER_IRQHandler
 	.thumb_set I2C3_ER_IRQHandler,Default_Handler
-	
+
 	.weak	SAI1_IRQHandler
 	.thumb_set SAI1_IRQHandler,Default_Handler
-	
+
 	.weak	SAI2_IRQHandler
 	.thumb_set SAI2_IRQHandler,Default_Handler
-	
+
 	.weak	SWPMI1_IRQHandler
 	.thumb_set SWPMI1_IRQHandler,Default_Handler
-	
+
 	.weak	TSC_IRQHandler
 	.thumb_set TSC_IRQHandler,Default_Handler
-	
+
+#if (UBINOS__BSP__STM32_STM32L476 == 1)
+	.weak	LCD_IRQHandler
+	.thumb_set LCD_IRQHandler,Default_Handler
+#endif
+
 	.weak	RNG_IRQHandler
 	.thumb_set RNG_IRQHandler,Default_Handler
-	
+
 	.weak	FPU_IRQHandler
 	.thumb_set FPU_IRQHandler,Default_Handler
 
 #endif /* !(UBINOS__BSP__EXCLUDE_ARCH_INIT == 1) */
-#endif /* (UBINOS__BSP__STM32_STM32L475 == 1) */
+#endif /* ((UBINOS__BSP__STM32_STM32L475 == 1) || (UBINOS__BSP__STM32_STM32L476 == 1)) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

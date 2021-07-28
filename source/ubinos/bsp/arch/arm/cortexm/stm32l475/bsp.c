@@ -7,7 +7,7 @@
 #include "../_bsp.h"
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__STM32_STM32L475 == 1)
+#if ((UBINOS__BSP__STM32_STM32L475 == 1) || (UBINOS__BSP__STM32_STM32L476 == 1))
 
 int bsp_getcpuclockfreq(unsigned int * freq_p) {
     if (NULL == freq_p) {
@@ -43,6 +43,6 @@ int bsp_getcpuid(unsigned char * buf, int max) {
     return 4;
 }
 
-#endif /* (UBINOS__BSP__STM32_STM32L475 == 1) */
+#endif /* ((UBINOS__BSP__STM32_STM32L475 == 1) || (UBINOS__BSP__STM32_STM32L476 == 1)) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 
