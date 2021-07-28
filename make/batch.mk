@@ -1176,6 +1176,18 @@
 	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_stm32l476geval_baremetal
 	@echo ""
 	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : ubinos library"
+	@echo "Target board    : stm32l476geval"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash_aws"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_stm32l476geval
+	@echo ""
+	@echo ""
 
 
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
@@ -1188,6 +1200,18 @@
 	@echo ""
 	@echo ""
 	make -f makefile.mk $@ CONFIG_NAME=helloworld_stm32l476geval_baremetal
+	@echo ""
+	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : helloworld multi-tasking application"
+	@echo "Target board    : stm32l476geval"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=helloworld_mt_stm32l476geval
 	@echo ""
 	@echo ""
 
