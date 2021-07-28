@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2019 Sung Ho Park and CSOS
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -39,6 +39,9 @@ set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubin
 
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm32f769ieval/t32_flash_load.cmm" PATH)
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/stm32f769ieval/t32_flash_reset.cmm" PATH)
+
+set_cache(UBINOS__BSP__DEBUG_SERVER_TYPE "OPENOCD" STRING)
+set_cache(UBINOS__BSP__DEBUG_SERVER_COMMAND "openocd" STRING)
 
 # maximum size = 512 KiB
 set_cache(UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM "GROUP" STRING)
