@@ -14,4 +14,3 @@ include(${PROJECT_UBINOS_DIR}/config/ubinos/bsp/arch/arm/cortexm/stm32l476geval/
 include(${PROJECT_UBINOS_DIR}/config/ubinos/bsp.cmake)
 include(${PROJECT_UBINOS_DIR}/config/ubinos/ubiclib.cmake)
 
-
