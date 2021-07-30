@@ -50,7 +50,7 @@ set(INCLUDE__UBINOS__BSP                                                        
 set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
 set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M7 | CORTEX_M4 | CORTEX_M3]")
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
-set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG  | STM32L476ZG | STM32L476RG| STM32L475VG | STM32F769NI | STM32F429NI | STM32F429ZI]")
+set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG  | STM32L476ZG | STM32L476RG | STM32L475VG | STM32F769NI | STM32F429NI | STM32F429ZI]")
 
 set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | STM3221GEVAL | NUCLEOF207ZG | STM32L476GEVAL | NUCLEOL476RG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32429IEVAL | STM32F429IDISCO]")
 
