@@ -1257,6 +1257,20 @@
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 	@echo ""
 	@echo ""
+	@echo "Config          : helloworld application"
+	@echo "Target board    : nucleol476rg"
+	@echo "OS Kernel       : none"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=helloworld_nucleol476rg_baremetal
+	@echo ""
+	@echo ""
+
+
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
 	@echo "Config          : ubinos library"
 	@echo "Target board    : stm32f769idisco"
 	@echo "OS Kernel       : none"
