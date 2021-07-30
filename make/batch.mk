@@ -1106,7 +1106,7 @@
 	@echo "Config          : ubinos library"
 	@echo "Target board    : stm32l475eiot01"
 	@echo "OS Kernel       : ubik"
-	@echo "Link memory map : flash_aws"
+	@echo "Link memory map : flash"
 	@echo ""
 	@echo ""
 	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_stm32l475eiot01
@@ -1182,7 +1182,7 @@
 	@echo "Config          : ubinos library"
 	@echo "Target board    : stm32l476geval"
 	@echo "OS Kernel       : ubik"
-	@echo "Link memory map : flash_aws"
+	@echo "Link memory map : flash"
 	@echo ""
 	@echo ""
 	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_stm32l476geval
@@ -1252,6 +1252,18 @@
 	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_nucleol476rg_baremetal
 	@echo ""
 	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : ubinos library"
+	@echo "Target board    : nucleol476rg"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_nucleol476rg
+	@echo ""
+	@echo ""
 
 
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
@@ -1264,6 +1276,18 @@
 	@echo ""
 	@echo ""
 	make -f makefile.mk $@ CONFIG_NAME=helloworld_nucleol476rg_baremetal
+	@echo ""
+	@echo ""
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : helloworld multi-tasking application"
+	@echo "Target board    : nucleol476rg"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=helloworld_mt_nucleol476rg
 	@echo ""
 	@echo ""
 
