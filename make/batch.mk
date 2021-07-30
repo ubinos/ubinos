@@ -1244,6 +1244,20 @@
 	@echo ""
 	@echo ""
 	@echo "Config          : ubinos library"
+	@echo "Target board    : nucleol476rg"
+	@echo "OS Kernel       : none"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_nucleol476rg_baremetal
+	@echo ""
+	@echo ""
+
+
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : ubinos library"
 	@echo "Target board    : stm32f769idisco"
 	@echo "OS Kernel       : none"
 	@echo "Link memory map : sram"

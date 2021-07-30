@@ -7,7 +7,7 @@
 #include "../_bsp.h"
 
 #if (INCLUDE__UBINOS__BSP == 1)
-#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32L475EIOT01)
+#if ((UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32L475EIOT01) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NUCLEOL476RG))
 
 #include "../stm32l4/stm32l4xx_ll_system.h"
 #include "../stm32l4/stm32l4xx_ll_rcc.h"
@@ -72,6 +72,6 @@ __WEAK void SystemClock_Config(void)
 __WEAK void MPU_Config(void) {
 }
 
-#endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32L475EIOT01) */
+#endif /* ((UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32L475EIOT01) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NUCLEOL476RG)) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

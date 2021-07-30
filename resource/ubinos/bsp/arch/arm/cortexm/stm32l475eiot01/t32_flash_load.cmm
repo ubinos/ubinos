@@ -1,6 +1,6 @@
 ;
 ; Copyright (c) 2020 Sung Ho Park
-; 
+;
 ; SPDX-License-Identifier: Apache-2.0
 ;
 
@@ -17,7 +17,7 @@ SYStem.CPU STM32L475VG
 SYStem.CONFIG.DEBUGPORTTYPE SWD
 IF hardware.COMBIPROBE()||hardware.UTRACE()
 (
-  SYStem.CONFIG.CONNECTOR MIPI34
+  SYStem.CONFIG.CONNECTOR MIPI20T
 )
 SYStem.Option DUALPORT ON
 SYStem.MemAccess DAP

@@ -22,7 +22,7 @@ extern "C" {
 #include <ubinos_config.h>
 #include <ubinos/bsp/intr.h>
 
-#if (UBINOS__BSP__STM32_STM32L476 == 1)
+#if ((UBINOS__BSP__STM32_STM32L476 == 1) || (UBINOS__BSP__STM32_STM32L475 == 1))
 #include "stm32l4/stm32l4xx.h"
 #else
 #error "Unsupported UBINOS__BSP__CPU_MODEL"

@@ -50,9 +50,9 @@ set(INCLUDE__UBINOS__BSP                                                        
 set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
 set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M7 | CORTEX_M4 | CORTEX_M3]")
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
-set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG | STM32L475VG | STM32L476ZG | STM32F769NI | STM32F429NI | STM32F429ZI]")
+set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG  | STM32L476ZG | STM32L476RG| STM32L475VG | STM32F769NI | STM32F429NI | STM32F429ZI]")
 
-set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | STM3221GEVAL | NUCLEOF207ZG | STM32L476GEVAL | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32429IEVAL | STM32F429IDISCO]")
+set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | STM3221GEVAL | NUCLEOF207ZG | STM32L476GEVAL | NUCLEOL476RG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32429IEVAL | STM32F429IDISCO]")
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | FLASH_EXTSRAM | FLASH_EXTSDRAM | EXTFLASH_EXTSDRAM]")
 
@@ -176,19 +176,19 @@ set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  
 set_cache_default(UBINOS__BSP__STM32_STM32F2XX                                  TRUE    BOOL "STM32F2XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32F2X7                                  TRUE    BOOL "STM32F2X7 family CPU Model")
 
+    elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476ZG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476RG"))
+
+set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
+
+set_cache_default(UBINOS__BSP__STM32_STM32L4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32L476                                  TRUE    BOOL "STM32L476 family CPU Model")
+
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32L475VG")
 
 set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
 
 set_cache_default(UBINOS__BSP__STM32_STM32L4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32L475                                  TRUE    BOOL "STM32L475 family CPU Model")
-
-    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476ZG")
-
-set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
-
-set_cache_default(UBINOS__BSP__STM32_STM32L4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
-set_cache_default(UBINOS__BSP__STM32_STM32L476                                  TRUE    BOOL "STM32L476 family CPU Model")
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F769NI")
 
@@ -228,11 +228,11 @@ set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      S
 
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"            STRING "[3 | 6]")
 
-    elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L476GEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L475EIOT01"))
+    elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L476GEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOL476RG") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L475EIOT01"))
 
 set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               FALSE   BOOL "")
 
-set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1]")
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1 | 2]")
 
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F769IDISCO"))
 
@@ -439,7 +439,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
         endif()
 
-    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476ZG")
+    elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476ZG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476RG"))
 
             set(_tmp_all_flags "${_tmp_all_flags} -DSTM32L476xx")
 
@@ -539,6 +539,10 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32L476G_EVAL_REVB")
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_IOEXPANDER")
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOL476RG")
+
+        set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32L4XX_NUCLEO")
 
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L475EIOT01")
 

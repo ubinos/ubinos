@@ -13,7 +13,7 @@ print "begin"
 
 RESet
 SYStem.RESet
-SYStem.CPU STM32L475VG
+SYStem.CPU STM32L476RG
 SYStem.CONFIG.DEBUGPORTTYPE SWD
 IF hardware.COMBIPROBE()||hardware.UTRACE()
 (
