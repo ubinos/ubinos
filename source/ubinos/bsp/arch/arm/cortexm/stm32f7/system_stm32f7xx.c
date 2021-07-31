@@ -670,13 +670,17 @@ __WEAK void SystemInit2(void)
 
 	SystemCoreClockUpdate();
 
-#if (STM32CUBEF2__USE_HAL_DRIVER == 1)
+#if (STM32CUBEF7__USE_HAL_DRIVER == 1)
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
 	/* Use systick as time base source and configure 1ms tick (default clock after Reset is HSI) */
 	HAL_InitTick(TICK_INT_PRIORITY);
 
 	/* Init the low level hardware */
 	HAL_MspInit();
-#endif /* (STM32CUBEF2__USE_HAL_DRIVER == 1) */
+#else
+#error "To use HAL_DRIVER, UBINOS__UBIK__TICK_TYPE should be RTC"
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
+#endif /* (STM32CUBEF7__USE_HAL_DRIVER == 1) */
 }
 
 #endif /* (UBINOS__BSP__STM32_STM32F7XX == 1) */

@@ -75,7 +75,11 @@ __isr_vector:
 	.word   bsp_ubik_irq_handler        /* DebugMon_Handler */
 	.word   0                           /* Reserved */
 	.word   bsp_ubik_psv_handler        /* PendSV_Handler */
+#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
+	.word   SysTick_Handler             /* SysTick_Handler */
+#else
 	.word   bsp_ubik_tick_handler       /* SysTick_Handler */
+#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 #else
 	.word   NMI_Handler
 	.word   HardFault_Handler
