@@ -31,7 +31,7 @@
 #define USARTx_RX_GPIO_PORT           GPIOB
 #define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_0_7(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_AF_7)
 
-#define APB_Div 1
+#define APB_Div 2
 
 #elif (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 2)
 
