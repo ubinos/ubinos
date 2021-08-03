@@ -66,6 +66,7 @@ if(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
 
 set_cache_default(UBINOS__UBIK__TICK_RTC_NO                                     2           STRING "RTC Number for tick [0 | 1 | 2]")
 set_cache_default(UBINOS__UBIK__TICK_RTC_COUNT_MAX                              0xFFFFFFL   STRING "Maximum RTC count for tick")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK                   1           STRING "RTC Tick per kernel tick")
 
 set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK                                  TRUE        BOOL "Enable RTC check")
 set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK_TYPE                             "CORRECT"   STRING "RTC check type [CORRECT | ABORT]")
@@ -73,14 +74,15 @@ set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK_TYPE                             
 set_cache_default(UBINOS__UBIK__TICK_RTC_SLEEP_IDLE                             TRUE        BOOL "Enable to sleep when idle")
 set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE                          TRUE        BOOL "Enable to ignore tick when idle")
 
-set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN    10          STRING "Minimum tick count to ignore while idle")
-set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX    0xFFFFF0L   STRING "Maximum tick count to ignore while idle. It must be less than UBINOS__UBIK__TICK_RTC_COUNT_MAX")
-set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN 0           STRING "Margin of tick count to ignore while idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN    10          STRING "Minimum rtc tick count to ignore while idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX    0xFFFFF0L   STRING "Maximum rtc tick count to ignore while idle. It must be less than UBINOS__UBIK__TICK_RTC_COUNT_MAX")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN 0           STRING "Margin of rtc tick count to ignore while idle")
 
-	elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F207ZG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476ZG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476RG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32L475VG") )
+	elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F207ZG"))
 
 set_cache_default(UBINOS__UBIK__TICK_RTC_NO                                     5           STRING "RTC Number for tick [5]")
 set_cache_default(UBINOS__UBIK__TICK_RTC_COUNT_MAX                              0xFFFFFFFFL STRING "Maximum RTC count for tick")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK                   2           STRING "RTC Tick per kernel tick")
 
 set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK                                  TRUE        BOOL "Enable RTC check")
 set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK_TYPE                             "CORRECT"   STRING "RTC check type [CORRECT | ABORT]")
@@ -88,9 +90,25 @@ set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK_TYPE                             
 set_cache_default(UBINOS__UBIK__TICK_RTC_SLEEP_IDLE                             FALSE       BOOL "Enable to sleep when idle")
 set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE                          FALSE       BOOL "Enable to ignore tick when idle")
 
-set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN    10          STRING "Minimum tick count to ignore while idle")
-set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX    0xFFFFFFF0L STRING "Maximum tick count to ignore while idle. It must be less than UBINOS__UBIK__TICK_RTC_COUNT_MAX")
-set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN 0           STRING "Margin of tick count to ignore while idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN    20          STRING "Minimum rtc tick count to ignore while idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX    0xFFFFFFF0L STRING "Maximum rtc tick count to ignore while idle. It must be less than UBINOS__UBIK__TICK_RTC_COUNT_MAX")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN 0           STRING "Margin of rtc tick count to ignore while idle")
+
+	elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476ZG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32L476RG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32L475VG"))
+
+set_cache_default(UBINOS__UBIK__TICK_RTC_NO                                     5           STRING "RTC Number for tick [5]")
+set_cache_default(UBINOS__UBIK__TICK_RTC_COUNT_MAX                              0xFFFFFFFFL STRING "Maximum RTC count for tick")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK                   2           STRING "RTC Tick per kernel tick")
+
+set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK                                  TRUE        BOOL "Enable RTC check")
+set_cache_default(UBINOS__UBIK__TICK_RTC_CHECK_TYPE                             "CORRECT"   STRING "RTC check type [CORRECT | ABORT]")
+
+set_cache_default(UBINOS__UBIK__TICK_RTC_SLEEP_IDLE                             FALSE       BOOL "Enable to sleep when idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE                          FALSE       BOOL "Enable to ignore tick when idle")
+
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN    20          STRING "Minimum rtc tick count to ignore while idle")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX    0xFFFFFFF0L STRING "Maximum rtc tick count to ignore while idle. It must be less than UBINOS__UBIK__TICK_RTC_COUNT_MAX")
+set_cache_default(UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN 0           STRING "Margin of rtc tick count to ignore while idle")
 
 	else()
 		message(FATAL_ERROR "This CPU model does not support RTC tick")

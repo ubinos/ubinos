@@ -20,13 +20,23 @@
 
 #include "stm32f2xx_hal.h"
 
-#define SYS_CLOCK_DIV 2
+#define UBIK_TICK__TIM_PRESCALER_VALUE ((SystemCoreClock / 2) / (UBINOS__UBIK__TICK_PER_SEC) / (UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK) - 1)
+// SystemCoreClock = 120 Mhz
+// TIM Clock = 120 Mhz / 2
+// UBINOS__UBIK__TICK_PER_SEC = 1000
+// UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK = 2
+// UBIK_TICK__TIM_PRESCALER_VALUE = 60 MHz / 1000 / 2 - 1 = 29999 = 0x752F
 
 #elif ((UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32L476ZG) || (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32L476RG) || (UBINOS__BSP__CPU_MODEL == UBINOS__BSP__CPU_MODEL__STM32L475VG))
 
 #include "stm32l4xx_hal.h"
 
-#define SYS_CLOCK_DIV 1
+#define UBIK_TICK__TIM_PRESCALER_VALUE ((SystemCoreClock / 1) / (UBINOS__UBIK__TICK_PER_SEC) / (UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK) - 1)
+// SystemCoreClock = 80 Mhz
+// TIM Clock = 80 Mhz / 1
+// UBINOS__UBIK__TICK_PER_SEC = 1000
+// UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK = 2
+// UBIK_TICK__TIM_PRESCALER_VALUE = 80 MHz / 1000 / 2 - 1 = 39999 = 0x9C3F
 
 #else
 
@@ -39,8 +49,8 @@
 #define UBIK_TICK_TIM_CLK_ENABLE()       __HAL_RCC_TIM5_CLK_ENABLE()
 #define UBIK_TICK_TIM_IRQn               TIM5_IRQn
 #define UBIK_TICK_TIM_IRQHandler         TIM5_IRQHandler
-#define UBIK_TICK_TIM_CH1_PULSE          1 // It must be 1
-#define UBIK_TICK_TIM_CH2_PULSE          10
+#define UBIK_TICK_TIM_CH1_PULSE          UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK
+#define UBIK_TICK_TIM_CH2_PULSE          (UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK * 10)
 #else
 	#error "Unsupported UBINOS__UBIK__TICK_RTC_NO"
 #endif
@@ -65,7 +75,7 @@ int _ubik_inittick(void)
 
     UBIK_TICK_TIM_CLK_ENABLE();
 
-    uwPrescalerValue = (uint32_t) (((SystemCoreClock / SYS_CLOCK_DIV) / (UBINOS__UBIK__TICK_PER_SEC)) - 1);
+    uwPrescalerValue = (uint32_t) UBIK_TICK__TIM_PRESCALER_VALUE;
 
     _ubik_tick_tim_handler.Instance = UBIK_TICK_TIM;
 
@@ -150,6 +160,8 @@ unsigned int _ubik_tick_rtccount_get(void)
 
 #if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)
 
+#error "Not yet supported"
+
 void _ubik_idle_cpu_wakeup(void) {
 #if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE == 1)
 	if (nrf_rtc_int_is_enabled(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK)) {
@@ -204,6 +216,7 @@ void _ubik_idle_cpu_sleep(void) {
 	_task_pt task = NULL;
 	unsigned int next_wakeuptick = UBINOS__UBIK__TICK_COUNT_MAX;
 	unsigned int ignore_tick_count = 0;
+	unsigned int ignore_rtctick_count = 0;
 	unsigned int next_wakeuprtctick = UBINOS__UBIK__TICK_RTC_COUNT_MAX;
 
 	if (_ubik_tickrtccount_init && !nrf_rtc_int_is_enabled(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK)) {
@@ -224,16 +237,17 @@ void _ubik_idle_cpu_sleep(void) {
 #endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
 
 		ignore_tick_count = next_wakeuptick - _ubik_tickcount;
-		ignore_tick_count = min(ignore_tick_count, UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX);
+		ignore_tick_count = min(ignore_tick_count, (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX / UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK));
+		ignore_rtctick_count = ignore_tick_count * UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK;
 
-		if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN <= ignore_tick_count) {
-			ignore_tick_count -= UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN;
+		if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN <= ignore_rtctick_count) {
+			ignore_rtctick_count -= UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN;
 
-			if ((UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) >= ignore_tick_count) {
-				next_wakeuprtctick = _ubik_tickrtccount + ignore_tick_count;
+			if ((UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) >= ignore_rtctick_count) {
+				next_wakeuprtctick = _ubik_tickrtccount + ignore_rtctick_count;
 			}
 			else {
-				next_wakeuprtctick = ignore_tick_count - (UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) - 1;
+				next_wakeuprtctick = ignore_rtctick_count - (UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) - 1;
 			}
 
 			nrf_rtc_int_disable(_TICK_RTC, NRF_RTC_INT_TICK_MASK);

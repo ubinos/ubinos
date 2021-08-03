@@ -152,6 +152,7 @@ void _ubik_idle_cpu_sleep(void) {
 	_task_pt task = NULL;
 	unsigned int next_wakeuptick = UBINOS__UBIK__TICK_COUNT_MAX;
 	unsigned int ignore_tick_count = 0;
+	unsigned int ignore_rtctick_count = 0;
 	unsigned int next_wakeuprtctick = UBINOS__UBIK__TICK_RTC_COUNT_MAX;
 
 	if (_ubik_tickrtccount_init && !nrf_rtc_int_is_enabled(_TICK_RTC, NRF_RTC_INT_COMPARE0_MASK)) {
@@ -172,16 +173,17 @@ void _ubik_idle_cpu_sleep(void) {
 #endif /* !(UBINOS__UBIK__EXCLUDE_STIMER == 1) */
 
 		ignore_tick_count = next_wakeuptick - _ubik_tickcount;
-		ignore_tick_count = min(ignore_tick_count, UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX);
+		ignore_tick_count = min(ignore_tick_count, (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MAX / UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK));
+		ignore_rtctick_count = ignore_tick_count * UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK;
 
-		if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN <= ignore_tick_count) {
-			ignore_tick_count -= UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN;
+		if (UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MIN <= ignore_rtctick_count) {
+			ignore_rtctick_count -= UBINOS__UBIK__TICK_RTC_TICKLESS_IDLE_IGNORE_TICK_COUNT_MARGIN;
 
-			if ((UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) >= ignore_tick_count) {
-				next_wakeuprtctick = _ubik_tickrtccount + ignore_tick_count;
+			if ((UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) >= ignore_rtctick_count) {
+				next_wakeuprtctick = _ubik_tickrtccount + ignore_rtctick_count;
 			}
 			else {
-				next_wakeuprtctick = ignore_tick_count - (UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) - 1;
+				next_wakeuprtctick = ignore_rtctick_count - (UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) - 1;
 			}
 
 			nrf_rtc_int_disable(_TICK_RTC, NRF_RTC_INT_TICK_MASK);

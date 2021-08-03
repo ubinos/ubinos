@@ -187,7 +187,7 @@ void bsp_ubik_tick_handler(void) {
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
 	#if (UBINOS__UBIK__TICK_RTC_CHECK == 1)
 	unsigned int tickrtccount;
-	unsigned int tickrtccount_diff;
+	unsigned int tickcount_diff;
 	#endif /* (UBINOS__UBIK__TICK_RTC_CHECK == 1) */
 #else
     unsigned int    status = 0;
@@ -219,14 +219,14 @@ void bsp_ubik_tick_handler(void) {
 
 		if (_ubik_tickrtccount_init) {
 			if (_ubik_tickrtccount <= tickrtccount) {
-				tickrtccount_diff = tickrtccount - _ubik_tickrtccount;
+				tickcount_diff = (tickrtccount - _ubik_tickrtccount) / UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK;
 			}
 			else {
-				tickrtccount_diff = tickrtccount + (UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) + 1;
+				tickcount_diff = (tickrtccount + (UBINOS__UBIK__TICK_RTC_COUNT_MAX - _ubik_tickrtccount) + 1) / UBINOS__UBIK__TICK_RTC_TICK_PER_KERNEL_TICK;
 			}
 		}
 		else {
-			tickrtccount_diff = 1;
+			tickcount_diff = 1;
 			_ubik_tickrtccount_init = 1;
 		}
 
@@ -235,30 +235,30 @@ void bsp_ubik_tick_handler(void) {
 		////////
 		#if (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__CORRECT)
 
-		while(tickrtccount_diff > 0) {
+		while(tickcount_diff > 0) {
 
 			////////////////
 
 			ARM_INTERRUPT_DISABLE();
 
 			if (_ubik_tickcount == UBINOS__UBIK__TICK_COUNT_MAX) {
-				tickrtccount_diff -= 1;
+				tickcount_diff -= 1;
 				_ubik_tickcount = 0;
 			}
 			else {
-				if ((_ubik_tickcount + tickrtccount_diff) < _ubik_tickcount) {
-					tickrtccount_diff -= (UBINOS__UBIK__TICK_COUNT_MAX - _ubik_tickcount);
+				if ((_ubik_tickcount + tickcount_diff) < _ubik_tickcount) {
+					tickcount_diff -= (UBINOS__UBIK__TICK_COUNT_MAX - _ubik_tickcount);
 					_ubik_tickcount = UBINOS__UBIK__TICK_COUNT_MAX;
 				}
 				else {
-					_ubik_tickcount += tickrtccount_diff;
-					tickrtccount_diff = 0;
+					_ubik_tickcount += tickcount_diff;
+					tickcount_diff = 0;
 				}
 			}
 
 		#elif (UBINOS__UBIK__TICK_RTC_CHECK_TYPE == UBINOS__UBIK__TICK_RTC_CHECK_TYPE__ABORT)
 
-		if (tickrtccount_diff != 1) {
+		if (tickcount_diff != 1) {
 			dtty_puts("\nrtc tick check fail\n", 80);
 			bsp_abortsystem();
 		}
