@@ -12,45 +12,47 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int ubik_test_misctest02(void) {
+int ubik_test_misctest03(void) {
 	int r;
 	tickcount_t tickcount1;
 	tickcount_t tickcount2;
+	tickcount_t tickcount_busywait;
+	tickcount_t tickcount_task_sleepms;
 	unsigned int waitvalue;
-	unsigned int rtick;
-	unsigned int itick;
-	unsigned int rloopcount;
-	unsigned int iloopcount;
 	unsigned int errorrate;
 
 	printf("\n");
 	printf("<test>\n");
-	printf("<name>ubik_test_misctest02</name>\n");
-	printf("<description>Test for accuracy of UBINOS__BSP__BUSYWAITCOUNT_PER_MS</description>\n");
+	printf("<name>ubik_test_misctest03</name>\n");
+	printf("<description>Test for accuracy of task_sleepms</description>\n");
 
 	printf("<message>\n");
 
+	printf("bsp_busywait\n");
 	printf("it tasks %d ms\n", UBINOS__UBIK_TEST__BUSYWAITCOUNTTESTTIMEMS);
 
 	waitvalue = bsp_getbusywaitcountperms() * UBINOS__UBIK_TEST__BUSYWAITCOUNTTESTTIMEMS;
 	tickcount1 = ubik_gettickcount();
 	bsp_busywait(waitvalue);
 	tickcount2 = ubik_gettickcount();
-	tickcount1 = ubik_gettickdiff(tickcount1, tickcount2);
+	tickcount_busywait = ubik_gettickdiff(tickcount1, tickcount2);
 
-	rtick = tickcount1.low;
-	itick = ubik_gettickpersec() * UBINOS__UBIK_TEST__BUSYWAITCOUNTTESTTIMEMS / 1000;
-	rloopcount = bsp_getbusywaitcountperms();
-	iloopcount = rloopcount * itick / rtick;
+	printf("task_sleepms\n");
+	printf("it tasks %d ms\n", UBINOS__UBIK_TEST__BUSYWAITCOUNTTESTTIMEMS);
 
-	printf("current value is %d\n", rloopcount);
-	printf("recommended value is %d\n", iloopcount);
+	tickcount1 = ubik_gettickcount();
+	task_sleepms(UBINOS__UBIK_TEST__BUSYWAITCOUNTTESTTIMEMS);
+	tickcount2 = ubik_gettickcount();
+	tickcount_task_sleepms = ubik_gettickdiff(tickcount1, tickcount2);
 
-	if (rtick >= itick) {
-		errorrate = (rtick - itick) * 100 / itick;
+	printf("bsp_busywait tick coutn is %d\n", tickcount_busywait.low);
+	printf("task_sleepms tick count is %d\n", tickcount_task_sleepms.low);
+
+	if (tickcount_busywait.low >= tickcount_task_sleepms.low) {
+		errorrate = (tickcount_busywait.low - tickcount_task_sleepms.low) * 100 / tickcount_busywait.low;
 	}
 	else {
-		errorrate = (itick - rtick) * 100 / itick;
+		errorrate = (tickcount_task_sleepms.low - tickcount_busywait.low) * 100 / tickcount_busywait.low;
 	}
 	printf("accuracy is %d percent\n", 100 - errorrate);
 

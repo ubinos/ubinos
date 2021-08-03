@@ -89,6 +89,15 @@ int ubik_test_testall(void) {
 		goto end1;
 	}
 	ubik_collectgarbage();
+
+	printf("<!-- ====================================================================== -->\n");
+	testcount++;
+	r = ubik_test_misctest03();
+	if (0 != r) {
+		failcount++;
+		goto end1;
+	}
+	ubik_collectgarbage();
 #endif /* !( UBINOS__UBIK_TEST__EXCLUDE_MISCTESTSET == 1) */
 
 

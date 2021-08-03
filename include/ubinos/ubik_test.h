@@ -48,6 +48,7 @@ int ubik_test_testall(void); //!< Test all tests
 
 int ubik_test_misctest01(void); //!< This function prints system information
 int ubik_test_misctest02(void); //!< Test for accuracy of UBINOS__BSP__BUSYWAITCOUNT_PER_MS
+int ubik_test_misctest03(void); //!< Test for accuracy of task_sleepms
 
 int ubik_test_tasktest00(void); //!< Simple task example
 int ubik_test_tasktest01(void); //!< Test on basic functions of task
