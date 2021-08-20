@@ -118,29 +118,57 @@ typedef __SIZE_TYPE__ size_t;
 #ifndef __ASSEMBLY__
 
 #include <stdint.h>
+#include <assert.h>
 
 #include <ubinos/objtype.h>
 
 /*! ubinos error code  */
 typedef enum {
-    UBI_ERR_OK = 0, /*!< No error */
-    UBI_ERR_INTERNAL, /*!< Internal error */
-    UBI_ERR_UNKNOWN, /*!< Unknown error */
-    UBI_ERR_TIMEOUT, /*!< Timeout */
-    UBI_ERR_BUSY, /*!< Busy */
-    UBI_ERR_NO_MEM, /*!< No memory */
-    UBI_ERR_BUF_FULL, /*!< Buffer full */
-    UBI_ERR_BUF_EMPTY, /*!< Buffer empty */
-    UBI_ERR_NOT_FOUND, /*!< Not found */
-    UBI_ERR_NOT_SUPPORTED, /*!< Not supported */
-    UBI_ERR_INVALID_PARAM, /*!< Invalid parameter */
-    UBI_ERR_INVALID_DATA, /*!< Invalid data */
-    UBI_ERR_INVALID_LENGTH, /*!< Invalid length */
-    UBI_ERR_INVALID_ADDR, /*!< Invalid address */
-    UBI_ERR_INVALID_STATE, /*!< Invalid state */
-    UBI_ERR_NULL, /*!< Null pointer */
-    UBI_ERR_HEAP, /*!< Heap error */
+    UBI_ERR_OK                  =   0, /*!< No error */
+    UBI_ERR_ERROR               =   1, /*!< Error */
+
+    UBI_ERR_UNKNOWN             =   2, /*!< Unknown error */
+    UBI_ERR_TIMEOUT             =   3, /*!< Timeout */
+    UBI_ERR_NULL                =   4, /*!< Null pointer */
+    UBI_ERR_BUSY                =   5, /*!< Busy */
+    UBI_ERR_NO_MEM              =   6, /*!< No memory */
+    UBI_ERR_BUF_FULL            =   7, /*!< Buffer full */
+    UBI_ERR_BUF_EMPTY           =   8, /*!< Buffer empty */
+    UBI_ERR_NOT_FOUND           =   9, /*!< Not found */
+    UBI_ERR_NOT_SUPPORTED       =  10, /*!< Not supported */
+    UBI_ERR_INVALID_PARAM       =  11, /*!< Invalid parameter */
+    UBI_ERR_INVALID_DATA        =  12, /*!< Invalid data */
+    UBI_ERR_INVALID_LENGTH      =  13, /*!< Invalid length */
+    UBI_ERR_INVALID_ADDR        =  14, /*!< Invalid address */
+    UBI_ERR_INVALID_STATE       =  15, /*!< Invalid state */
+    UBI_ERR_CANCEL              =  16, /*!< Canceled (normal) */
+    UBI_ERR_INIT                =  17, /*!< Initialization error  */
+    UBI_ERR_RESET               =  18, /*!< Reset error  */
+    UBI_ERR_IO                  =  19, /*!< IO error  */
+    UBI_ERR_TX                  =  20, /*!< TX error  */
+    UBI_ERR_RX                  =  21, /*!< RX error  */
+    UBI_ERR_PACKET              =  22, /*!< Packet error  */
+
+    UBI_ERR_HEAP                = 100, /*!< Heap error */
+    UBI_ERR_BUS                 = 101, /*!< Bus error */
+    UBI_ERR_CANCEL_2            = 102, /*!< Canceled (type 2) */
+
+    UBI_ERR_BUS_INIT            = 200, /*!< Bus initialization error  */
+    UBI_ERR_BUS_RESET           = 201, /*!< Bus reset error  */
+    UBI_ERR_BUS_IO              = 202, /*!< Bus IO error  */
+    UBI_ERR_BUS_TX              = 203, /*!< Bus TX error  */
+    UBI_ERR_BUS_RX              = 204, /*!< Bus RX error  */
 } ubi_err_t;
+
+#define ubi_assert(__e) assert(__e)
+
+#define ubi_assert_ok(__ubi_err) ubi_assert(__ubi_err == UBI_ERR_OK)
+#define ubi_assert_not_null(__ptr) ubi_assert((void *) __ptr != NULL)
+
+#define ubi_unused(__var) do { (void) __var; } while(0)
+
+/* Deprecated */
+#define UBI_ERR_INTERNAL UBI_ERR_ERROR
 
 #endif /* __ASSEMBLY__ */
 

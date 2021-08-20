@@ -302,7 +302,7 @@ common-test:
 
 common-xsel:
 	$(call begin_message)
-	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python "$(_UBINOS_DIR)/make/confsel.py" .. library
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/confsel.py" .. library
 	$(call end_message)
 
 ###############################################################################
