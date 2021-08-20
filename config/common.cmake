@@ -335,10 +335,15 @@ macro(___project_add_app)
     target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
 
     if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "OPENOCD")
+        math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
+        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
         if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
             add_custom_target(dsvr
                 COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
                 ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
+                "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
+                "-c" "\"tcl_port" "${_tmp_tcl_port}\""
+                "-c" "\"telnet_port" "${_tmp_telnet_port}\""
                 "-c" "\"hla_serial" "${UBINOS__BSP__DEBUG_SERVER_SERIAL}\""
                 DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -348,6 +353,61 @@ macro(___project_add_app)
             add_custom_target(dsvr
                 COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
                 ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
+                "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
+                "-c" "\"tcl_port" "${_tmp_tcl_port}\""
+                "-c" "\"telnet_port" "${_tmp_telnet_port}\""
+                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+        endif()
+    elseif(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "JLINK")
+        math(EXPR _tmp_swo_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
+        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
+        set(_tmp_device_model "")
+        if(${UBINOS__BSP__CPU_MODEL} STREQUAL "NRF52840XXAA")
+            set(_tmp_device_model "nRF52840_xxAA")
+        else()
+        endif()
+        if(NOT ${_tmp_device_model} STREQUAL "")
+            if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
+                add_custom_target(dsvr
+                    COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
+                    "-select" "USB=${UBINOS__BSP__DEBUG_SERVER_SERIAL}"
+                    "-device" "${_tmp_device_model}"
+                    "-port"  "${UBINOS__BSP__DEBUG_SERVER_PORT}"
+                    "-swoport"  "${_tmp_swo_port}"
+                    "-telnetport"  "${_tmp_telnet_port}"
+                    "-endian" "little"
+                    "-if" "SWD"
+                    "-speed" "auto"
+                    "-ir"
+                    "-LocalhostOnly"
+                    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                    USES_TERMINAL
+                )
+            else()
+                add_custom_target(dsvr
+                    COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
+                    "-select" "USB"
+                    "-device" "${_tmp_device_model}"
+                    "-port"  "${UBINOS__BSP__DEBUG_SERVER_PORT}"
+                    "-swoport"  "${_tmp_swo_port}"
+                    "-telnetport"  "${_tmp_telnet_port}"
+                    "-endian" "little"
+                    "-if" "SWD"
+                    "-speed" "auto"
+                    "-ir"
+                    "-LocalhostOnly"
+                    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                    USES_TERMINAL
+                )
+            endif()
+        else()
+            add_custom_target(dsvr
+                COMMAND  "echo" "not supported device model"
                 DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 USES_TERMINAL
@@ -355,7 +415,7 @@ macro(___project_add_app)
         endif()
     else()
         add_custom_target(dsvr
-            COMMAND  "echo" "not supported"
+            COMMAND  "echo" "not supported debug server type"
             DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
@@ -420,79 +480,79 @@ macro(___project_add_app)
         )
     endif()
 
-    if(NOT ${UBINOS__BSP__GDBSERVER_HOST} STREQUAL "")
+    if(NOT ${UBINOS__BSP__DEBUG_SERVER_HOST} STREQUAL "")
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-            "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+            "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
         )
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-            "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+            "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
         )
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-            "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+            "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
         )
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-            "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+            "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
         )
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-            "localhost:" "${UBINOS__BSP__GDBSERVER_HOST}:"
+            "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
         )
     endif()
 
-    if(NOT ${UBINOS__BSP__GDBSERVER_PORT} STREQUAL "")
+    if(NOT ${UBINOS__BSP__DEBUG_SERVER_PORT} STREQUAL "")
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-            ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+            ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
         )
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-            ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+            ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
         )
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-            ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+            ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
         )
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-            ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+            ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
         )
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
             ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-            ":2331" ":${UBINOS__BSP__GDBSERVER_PORT}"
+            ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
         )
     endif()
 
