@@ -372,7 +372,7 @@ macro(___project_add_app)
         if(NOT ${_tmp_device_model} STREQUAL "")
             if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
                 add_custom_target(dsvr
-                    COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
+                    COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND}
                     "-select" "USB=${UBINOS__BSP__DEBUG_SERVER_SERIAL}"
                     "-device" "${_tmp_device_model}"
                     "-port"  "${UBINOS__BSP__DEBUG_SERVER_PORT}"
@@ -389,7 +389,7 @@ macro(___project_add_app)
                 )
             else()
                 add_custom_target(dsvr
-                    COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
+                    COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND}
                     "-select" "USB"
                     "-device" "${_tmp_device_model}"
                     "-port"  "${UBINOS__BSP__DEBUG_SERVER_PORT}"
