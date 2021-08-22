@@ -306,16 +306,22 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m7")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
 
+        include_directories(${PROJECT_UBINOS_DIR}/include/ubinos/bsp/arch/arm/cortexm/cmsis_v5_7_0)
+
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4")
 
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m4")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
+
+        include_directories(${PROJECT_UBINOS_DIR}/include/ubinos/bsp/arch/arm/cortexm/cmsis_v5_7_0)
 
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3")
 
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m3")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
         set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=soft")
+
+        include_directories(${PROJECT_UBINOS_DIR}/include/ubinos/bsp/arch/arm/cortexm/cmsis_v5_7_0)
 
     else()
 
