@@ -338,7 +338,7 @@ macro(___project_add_app)
         math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
         math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
         if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
-            add_custom_target(dsvr
+            add_custom_target(debugs
                 COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
                 ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
                 "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
@@ -350,7 +350,7 @@ macro(___project_add_app)
                 USES_TERMINAL
             )
         else()
-            add_custom_target(dsvr
+            add_custom_target(debugs
                 COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
                 ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
                 "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
@@ -371,7 +371,7 @@ macro(___project_add_app)
         endif()
         if(NOT ${_tmp_device_model} STREQUAL "")
             if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
-                add_custom_target(dsvr
+                add_custom_target(debugs
                     COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND}
                     "-select" "USB=${UBINOS__BSP__DEBUG_SERVER_SERIAL}"
                     "-device" "${_tmp_device_model}"
@@ -388,7 +388,7 @@ macro(___project_add_app)
                     USES_TERMINAL
                 )
             else()
-                add_custom_target(dsvr
+                add_custom_target(debugs
                     COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND}
                     "-select" "USB"
                     "-device" "${_tmp_device_model}"
@@ -406,7 +406,7 @@ macro(___project_add_app)
                 )
             endif()
         else()
-            add_custom_target(dsvr
+            add_custom_target(debugs
                 COMMAND  "echo" "not supported device model"
                 DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -414,7 +414,7 @@ macro(___project_add_app)
             )
         endif()
     else()
-        add_custom_target(dsvr
+        add_custom_target(debugs
             COMMAND  "echo" "not supported debug server type"
             DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
