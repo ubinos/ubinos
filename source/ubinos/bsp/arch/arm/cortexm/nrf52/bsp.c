@@ -61,16 +61,16 @@ int bsp_getcpuid(unsigned char * buf, int max) {
     buf[2] = tmp_p[2];
     buf[3] = tmp_p[3];
     tmp_p = (unsigned char *) &tmp2;
-    buf[4] = tmp_p[4];
-    buf[5] = tmp_p[5];
-    buf[6] = tmp_p[6];
-    buf[7] = tmp_p[7];
+    buf[4] = tmp_p[0];
+    buf[5] = tmp_p[1];
+    buf[6] = tmp_p[2];
+    buf[7] = tmp_p[3];
 #else
     tmp_p = (unsigned char *) &tmp;
-    buf[0] = tmp_p[7];
-    buf[1] = tmp_p[6];
-    buf[2] = tmp_p[5];
-    buf[3] = tmp_p[4];
+    buf[0] = tmp_p[3];
+    buf[1] = tmp_p[2];
+    buf[2] = tmp_p[1];
+    buf[3] = tmp_p[0];
     tmp_p = (unsigned char *) &tmp2;
     buf[4] = tmp_p[3];
     buf[5] = tmp_p[2];
