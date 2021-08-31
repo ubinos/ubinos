@@ -128,6 +128,7 @@ set_cache_default(UBINOS__BSP__INCLUDE_INTERRUPT_DISABLE_ENABLE_RETRY           
     elseif((UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M7") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4") OR (UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3"))
 
 set_cache_default(UBINOS__BSP__CORTEX_MX                                        TRUE    BOOL "ARM Cortex-M family CPU Type")
+set_cache_default(UBINOS__BSP__CMSIS_INCLUDE_DIR                                "${PROJECT_UBINOS_DIR}/include/ubinos/bsp/arch/arm/cortexm/cmsis_v5_7_0" PATH "CMSIS include directory")
 
     else()
 
@@ -306,14 +307,14 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m7")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
 
-        include_directories(${PROJECT_UBINOS_DIR}/include/ubinos/bsp/arch/arm/cortexm/cmsis_v5_7_0)
+        include_directories(${UBINOS__BSP__CMSIS_INCLUDE_DIR})
 
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4")
 
         set(_tmp_all_flags "${_tmp_all_flags} -mcpu=cortex-m4")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
 
-        include_directories(${PROJECT_UBINOS_DIR}/include/ubinos/bsp/arch/arm/cortexm/cmsis_v5_7_0)
+        include_directories(${UBINOS__BSP__CMSIS_INCLUDE_DIR})
 
     elseif( UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M3")
 
@@ -321,7 +322,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         set(_tmp_all_flags "${_tmp_all_flags} -mthumb")
         set(_tmp_all_flags "${_tmp_all_flags} -mfloat-abi=soft")
 
-        include_directories(${PROJECT_UBINOS_DIR}/include/ubinos/bsp/arch/arm/cortexm/cmsis_v5_7_0)
+        include_directories(${UBINOS__BSP__CMSIS_INCLUDE_DIR})
 
     else()
 
