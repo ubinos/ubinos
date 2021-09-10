@@ -642,6 +642,15 @@ macro(___project_add_app)
         ../Default/
     )
 
+    if(NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            nrf52_softdevice.hex
+            ../Default/
+        )
+    endif()
+
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
