@@ -101,6 +101,22 @@ void bsp_busywaitms(unsigned int timems) {
     bsp_busywait(count);
 }
 
+void bsp_busywaitus(unsigned int timems) {
+    unsigned int count;
+
+    count = bsp_timemstobwc(timems);
+    if (count < timems) {
+        count = UINT_MAX;
+    }
+
+    count /= 1000;
+    if (count == 0) {
+        count = 1;
+    }
+
+    bsp_busywait(count);
+}
+
 unsigned int arm_get_cp15(void) {
     register unsigned int value;
     __asm__ __volatile__ ("mrc p15, 0, %0, c1, c0, 0" : "=r" (value));

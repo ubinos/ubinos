@@ -227,6 +227,14 @@ unsigned int bsp_timemstobwc(unsigned int timems);
  */
 unsigned int bsp_bwctotimems(unsigned int count);
 
+/*!
+ * CPU를 점유한 채로 기다리는 함수 (백만분의 일초 단위)
+ *
+ * @param	timeus	기다릴 시간 (백만분의 일초)<br>
+ *					<br>
+ */
+void bsp_busywaitus(unsigned int timeus);
+
 #include <ubinos/bsp/dtty.h>
 #include <ubinos/bsp/intr.h>
 
