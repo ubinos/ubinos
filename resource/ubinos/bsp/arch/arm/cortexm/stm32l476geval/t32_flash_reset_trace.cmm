@@ -106,6 +106,9 @@ Register.Set PC Reset_Handler
 
 Break.Set main
 Mode.Hll
+SYStem.Option.IMASKASM ON
+SYStem.Option.IMASKHLL ON
+; Probe.ARM
 
 ; --------------------------------------------------------------------------------
 
