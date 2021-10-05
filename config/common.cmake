@@ -29,6 +29,9 @@ macro(___project_config_begin)
         "\n"
         "\n"
     )
+
+    include_directories(${PROJECT_BINARY_DIR})
+    include_directories(${PROJECT_BASE_DIR}/include)
 endmacro(___project_config_begin)
 
 macro(___project_config_end)
@@ -52,9 +55,6 @@ macro(___project_config_end)
         "\n"
         "\n"
     )
-    include_directories(${PROJECT_BINARY_DIR})
-
-    include_directories(${PROJECT_BASE_DIR}/include)
 
 	set(_tmp_include_flags)
     get_property(_tmp_include_dirs DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY INCLUDE_DIRECTORIES)
