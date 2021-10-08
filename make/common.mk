@@ -81,7 +81,7 @@ endif
 ###############################################################################
 
 ifeq ($(strip $(JOBS)),)
-_JOBS                   = $(shell "$(_TOOLBOX)" cpu_count)
+_JOBS                   = $(shell python "$(_TOOLBOX)" cpu_count)
 else
 _JOBS                   = $(JOBS)
 endif
@@ -217,14 +217,14 @@ common-build:
 
 common-clean:
 	$(call begin_message)
-ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "$(_OUTPUT_DIR)/Makefile")", "1")
+ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "$(_OUTPUT_DIR)/Makefile")", "1")
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make clean
 endif
 	$(call end_message)
 
 common-cleand:
 	$(call begin_message)
-ifeq ("$(shell "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
+ifeq ("$(shell python "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
 	$(_PRECMD) && rm -rf "$(_OUTPUT_DIR)"
 endif
 	$(call end_message)
@@ -302,26 +302,30 @@ common-test:
 
 common-xsel:
 	$(call begin_message)
+ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python "$(_UBINOS_DIR)/make/confsel.py" .. library
+else
 	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/confsel.py" .. library
+endif
 	$(call end_message)
 
 ###############################################################################
 
 common-zbatch-all:
 	make -f batch.mk all
-ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk config
 endif
 
 common-zbatch-rebuild:
 	make -f batch.mk rebuild
-ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk clean config
 endif
 
 common-zbatch-rebuildd:
 	make -f batch.mk rebuildd
-ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk cleand config
 endif
 
@@ -367,7 +371,7 @@ common-zbatch-test:
 
 common-zbatch-%:
 	make -f batch.mk $*
-ifeq ("$(shell "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk $*
 endif
 

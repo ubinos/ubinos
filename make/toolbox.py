@@ -1,8 +1,8 @@
-#!/usr/bin/python
+#! /usr/bin/python
 
 #
 # Copyright (c) 2019 Sung Ho Park and CSOS
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -23,6 +23,7 @@ def print_help():
     print("    %s which <executable file name>" % (sys.argv[0]))
     print("    %s getuid" % (sys.argv[0]))
     print("    %s getgid" % (sys.argv[0]))
+    print("    %s is_python3" % (sys.argv[0]))
     print("    %s refine_gdbscript <source file name> <destination file name> <app file name>" % (sys.argv[0]))
     print("    %s refine_linkscript <source file name> <destination file name> <memory type> <origin> <length>" % (sys.argv[0]))
     print("    %s parse_mapfile_get_value <source file name> <symbol>" % (sys.argv[0]))
@@ -32,13 +33,13 @@ def print_help():
 
 def system_name():
     print(platform.system())
-    
+
 def cpu_count():
     print(multiprocessing.cpu_count())
 
 def realpath(fname):
     print(os.path.realpath(fname))
-    
+
 def is_existing_path(pname):
     if os.path.exists(pname):
         print("1")
@@ -59,6 +60,12 @@ def getuid():
 
 def getgid():
     print(os.getgid())
+
+def is_python3():
+    if sys.version_info.major == 3:
+        print("1")
+    else:
+        print("0")
 
 def refine_gdbscript(sfn, dfn, afn):
     oldstr = "<size_of_app.bin>"
@@ -105,7 +112,7 @@ def parse_mapfile_get_value(sfn, symbol):
 def show_mapfile_info(sfn):
     print("")
     print("")
-    
+
     addr = parse_mapfile_get_value(sfn, "__entry_address__")
     print("entry address                = 0x%08x (%12d)" % (addr, addr))
     print("")
@@ -142,7 +149,7 @@ def show_mapfile_info(sfn):
     print("data end                     = 0x%08x (%12d)" % (limit, limit))
     print("data size                    = 0x%08x (%12d) bytes" % (size, size))
     print("")
-    
+
     addr = parse_mapfile_get_value(sfn, "__bss_start__")
     limit = parse_mapfile_get_value(sfn, "__bss_end__")
     size = parse_mapfile_get_value(sfn, "__bss_size__")
@@ -150,7 +157,7 @@ def show_mapfile_info(sfn):
     print("bss end                      = 0x%08x (%12d)" % (limit, limit))
     print("bss size                     = 0x%08x (%12d) bytes" % (size, size))
     print("")
-    
+
     addr = parse_mapfile_get_value(sfn, "_heap_base__")
     limit = parse_mapfile_get_value(sfn, "__heap_limit__")
     size = parse_mapfile_get_value(sfn, "__heap_size__")
@@ -158,7 +165,7 @@ def show_mapfile_info(sfn):
     print("heap limit                   = 0x%08x (%12d)" % (limit, limit))
     print("heap size                    = 0x%08x (%12d) bytes" % (size, size))
     print("")
-    
+
     addr = parse_mapfile_get_value(sfn, "__stack_top__")
     limit = parse_mapfile_get_value(sfn, "__stack_limit__")
     size = parse_mapfile_get_value(sfn, "__stack_size__")
@@ -184,7 +191,7 @@ def show_mapfile_info(sfn):
         print("flash2 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash2 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-        
+
     addr = parse_mapfile_get_value(sfn, "__flash3_start__")
     size = parse_mapfile_get_value(sfn, "__flash3_size__")
     usage = parse_mapfile_get_value(sfn, "__flash3_usage__")
@@ -193,7 +200,7 @@ def show_mapfile_info(sfn):
         print("flash3 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash3 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-        
+
     addr = parse_mapfile_get_value(sfn, "__flash4_start__")
     size = parse_mapfile_get_value(sfn, "__flash4_size__")
     usage = parse_mapfile_get_value(sfn, "__flash4_usage__")
@@ -202,7 +209,7 @@ def show_mapfile_info(sfn):
         print("flash4 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash4 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-                
+
     addr = parse_mapfile_get_value(sfn, "__flash5_start__")
     size = parse_mapfile_get_value(sfn, "__flash5_size__")
     usage = parse_mapfile_get_value(sfn, "__flash5_usage__")
@@ -211,7 +218,7 @@ def show_mapfile_info(sfn):
         print("flash5 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash5 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-                
+
     addr = parse_mapfile_get_value(sfn, "__flash6_start__")
     size = parse_mapfile_get_value(sfn, "__flash6_size__")
     usage = parse_mapfile_get_value(sfn, "__flash6_usage__")
@@ -220,7 +227,7 @@ def show_mapfile_info(sfn):
         print("flash6 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash6 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-                
+
     addr = parse_mapfile_get_value(sfn, "__flash7_start__")
     size = parse_mapfile_get_value(sfn, "__flash7_size__")
     usage = parse_mapfile_get_value(sfn, "__flash7_usage__")
@@ -229,7 +236,7 @@ def show_mapfile_info(sfn):
         print("flash7 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash7 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-                
+
     addr = parse_mapfile_get_value(sfn, "__ram_start__")
     size = parse_mapfile_get_value(sfn, "__ram_size__")
     usage = parse_mapfile_get_value(sfn, "__ram_static_usage__")
@@ -247,7 +254,7 @@ def show_mapfile_info(sfn):
         print("ram2 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram2 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-    
+
     addr = parse_mapfile_get_value(sfn, "__ram3_start__")
     size = parse_mapfile_get_value(sfn, "__ram3_size__")
     usage = parse_mapfile_get_value(sfn, "__ram3_static_usage__")
@@ -256,7 +263,7 @@ def show_mapfile_info(sfn):
         print("ram3 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram3 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-    
+
     addr = parse_mapfile_get_value(sfn, "__ram4_start__")
     size = parse_mapfile_get_value(sfn, "__ram4_size__")
     usage = parse_mapfile_get_value(sfn, "__ram4_static_usage__")
@@ -292,7 +299,7 @@ def show_mapfile_info(sfn):
         print("ram7 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram7 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
-    
+
     addr = parse_mapfile_get_value(sfn, "  _SEGGER_RTT")
     if addr > 0:
         print("SEGGER RTT CB address        = 0x%08x (%12d)" % (addr, addr))
@@ -336,6 +343,8 @@ if __name__ == '__main__':
             getuid()
         elif "getgid" == sys.argv[1]:
             getgid()
+        elif "is_python3" == sys.argv[1]:
+            is_python3()
         elif "refine_gdbscript" == sys.argv[1]:
             if 5 > len(sys.argv):
                 print_help()
