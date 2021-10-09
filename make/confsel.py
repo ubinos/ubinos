@@ -16,6 +16,7 @@ import tkinter.font as font
 from os import listdir
 from os.path import isfile, isdir, join, splitext
 from shutil import copyfile
+from tkinter import ttk
 
 def print_help():
     print("===============================================================================")
@@ -45,25 +46,59 @@ class confsel(tk.Tk):
         print("    library dir : %s" % self.lib_rel_dir)
         print("")
 
-        self.update_options()
-
         self.title('Ubinos config selector')
-        frame = tk.Frame(self)
 
-        if self.conf_len > 0:
-            self.options = tk.StringVar(frame)
-            self.options.set(self.conf_list[self.conf_index])
-            self.option_menu = tk.OptionMenu(frame, self.options, *self.conf_list, command=self.select_option)
-            self.option_menu.pack()
+        window_width = 1000
+        window_height = 700
+        screen_width = self.winfo_screenwidth()
+        screen_height = self.winfo_screenheight()
+        x_cordinate = int((screen_width/2) - (window_width/2))
+        y_cordinate = int((screen_height/2) - (window_height/2))
+        self.geometry("{}x{}+{}+{}".format(window_width, window_height, x_cordinate, y_cordinate))
 
-        cancel_button = tk.Button(frame, text="Cancel", command=quit)
-        cancel_button.pack(side=tk.LEFT)
-        ok_button = tk.Button(frame, text="OK", command=self.press_ok)
-        ok_button.pack(side=tk.RIGHT)
+        self.rowconfigure(0, weight=1)
+        self.columnconfigure(0, weight=1)
 
-        frame.pack()
         self.bind('<Key>', self.key_pressed)
-        self.eval('tk::PlaceWindow . center')
+
+        frame_tv = tk.Frame(self)
+        frame_tv.grid(row=0, column=0, sticky="nsew")
+        frame_tv.rowconfigure(0, weight=1)
+        frame_tv.columnconfigure(0, weight=1)
+
+        frame_bt = tk.Frame(self)
+        frame_bt.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
+
+        self.tv = ttk.Treeview(frame_tv, columns=(1, 2, 3, 4), show="headings", selectmode="browse")
+        self.tv.grid(row=0, column=0, sticky="nsew")
+
+        sb = tk.Scrollbar(frame_tv, orient=tk.VERTICAL)
+        sb.grid(row=0, column=1, sticky="ns")
+
+        self.tv.config(yscrollcommand=sb.set)
+        sb.config(command=self.tv.yview)
+
+        self.tv.bind('<ButtonRelease-1>', self.select_item)
+
+        cancel_button = tk.Button(frame_bt, text="Cancel", command=quit)
+        cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
+        ok_button = tk.Button(frame_bt, text="OK", command=self.press_ok)
+        ok_button.pack(side=tk.RIGHT, padx=10, pady=0)
+
+        self.tv.heading(1, text="index")
+        self.tv.column(1, width=50)
+        self.tv.heading(2, text="project")
+        self.tv.column(2, width=200)
+        self.tv.heading(3, text="name")
+        self.tv.column(3, width=450)
+        self.tv.heading(4, text="dir")
+        self.tv.column(4, width=280)
+
+        self.update_options()
+        for conf in self.conf_list:
+            self.tv.insert(parent='', index=conf["index"], iid=conf["index"], values=(conf["index"], conf["project"], conf["name"], conf["dir"]))
+            self.tv.selection_set(self.conf_index)
+            self.tv.see(self.conf_index)
 
     def update_options(self):
         index = 0
@@ -86,13 +121,24 @@ class confsel(tk.Tk):
                     file = open(join(conf_dir, conf_fname))
                     if (self.keyword in file.read()):
                         conf_name = splitext(conf_fname)[0]
-                        self.conf_list.append({"index": index, "prj": prj["name"], "name": conf_name, "dir": conf_dir})
+                        self.conf_list.append({"index": index, "project": prj["name"], "name": conf_name, "dir": conf_dir})
                         index += 1
                     file.close()
         self.conf_len = index
 
         # for conf in self.conf_list:
         #     print(conf)
+
+    def print_selection(self):
+        selection = self.conf_list[self.conf_index]
+        print(selection)
+        print("")
+
+    def select_item(self, event):
+        item = self.tv.focus()
+        if item != '':
+            self.conf_index = int(item)
+            self.print_selection()
 
     def key_pressed(self, event):
         # print(event.keysym)
@@ -103,11 +149,15 @@ class confsel(tk.Tk):
         elif event.keysym == "Up":
             if self.conf_index > 0:
                 self.conf_index -= 1
-                self.options.set(self.conf_list[self.conf_index])
+                self.tv.selection_set(self.conf_index)
+                self.tv.see(self.conf_index)
+                self.print_selection()
         elif event.keysym == "Down":
             if self.conf_index < (self.conf_len - 1):
                 self.conf_index += 1
-                self.options.set(self.conf_list[self.conf_index])
+                self.tv.selection_set(self.conf_index)
+                self.tv.see(self.conf_index)
+                self.print_selection()
 
     def create_makefile(self):
         selection = self.conf_list[self.conf_index]
@@ -121,16 +171,12 @@ class confsel(tk.Tk):
         file.write("\n")
         file.close()
 
-    def select_option(self, selection):
-        self.conf_index = int(selection["index"])
-        print(selection)
-        print("")
-
     def press_ok(self):
         if self.conf_len > 0:
-            selection = self.conf_list[self.conf_index]
-            # print(selection)
+            print("Set config to\n")
+            self.print_selection()
 
+            selection = self.conf_list[self.conf_index]
             mfname = self.make_fname
 
             if not os.path.exists(mfname):
