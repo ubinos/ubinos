@@ -45,7 +45,7 @@ set(UBINOS__VERSION "${_ver_major}.${_ver_minor}.${_ver_patch}-${_ver_tweak}")
 
 
 set(INCLUDE__UBINOS__BSP                                                        TRUE)
-
+set(PROJECT_UBINOS_LIBRARIES ${PROJECT_UBINOS_LIBRARIES} ubinos)
 
 set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
 set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M7 | CORTEX_M4 | CORTEX_M3]")
