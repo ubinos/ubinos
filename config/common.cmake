@@ -789,11 +789,6 @@ endmacro(___project_show)
 macro(project_begin)
     get_filename_component(_tmp_base_dir "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 
-    get_filename_component(_tmp_base_dir_name ${_tmp_base_dir} NAME)
-    if(NOT ${PROJECT_NAME} STREQUAL ${_tmp_base_dir_name})
-        message(FATAL_ERROR "\nERROR: The project name must be the same as the base directory name.\n ")
-    endif()
-
     set(PROJECT_BASE_DIR "${_tmp_base_dir}")
 
     string(STRIP "${PROJECT_CONFIG_NAME}" _tmp_str)

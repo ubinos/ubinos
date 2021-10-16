@@ -58,7 +58,7 @@ ifeq ($(strip $(OUTPUT_DIR)),)
 ifeq ($(strip $(OUTPUT_BASE_DIR)),)
 _OUTPUT_DIR             = $(_BASE_DIR)/output/$(_CONFIG_NAME)
 else
-_OUTPUT_DIR             = $(OUTPUT_BASE_DIR)/output/$(_CONFIG_NAME)
+_OUTPUT_DIR             = $(realpath $(OUTPUT_BASE_DIR))/output/$(_CONFIG_NAME)
 endif
 else
 _OUTPUT_DIR             = $(OUTPUT_DIR)
