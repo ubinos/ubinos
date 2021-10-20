@@ -222,13 +222,13 @@ class confsel(tk.Tk):
         clone_button = tk.Button(frame_bt, text="Clone", command=self.press_clone)
         clone_button.pack(side=tk.LEFT, padx=10, pady=0)
 
-        self.tv.heading(1, text="index")
+        self.tv.heading(1, text="Index")
         self.tv.column(1, width=50)
-        self.tv.heading(2, text="project")
+        self.tv.heading(2, text="Project")
         self.tv.column(2, width=200)
-        self.tv.heading(3, text="name")
+        self.tv.heading(3, text="Name")
         self.tv.column(3, width=450)
-        self.tv.heading(4, text="dir")
+        self.tv.heading(4, text="Dir")
         self.tv.column(4, width=280)
 
         self.update_config_items()
@@ -477,6 +477,9 @@ class confsel(tk.Tk):
             print(src_file_paths)
             print(dst_file_paths)
             print("")
+
+        if not os.path.exists(dst_config_dir):
+            os.mkdir(dst_config_dir)
 
         if self.check_clone_dst_file_paths(dst_file_paths):
             for idx, src_file_path in enumerate(src_file_paths):

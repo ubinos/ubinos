@@ -10,17 +10,18 @@
 #include <stdlib.h>
 #include <string.h>
 
-static void rootfunc(void *arg);
-static void clihelphookfunc();
-static int clihookfunc(char *str, int len, void *arg);
-static int mycmd(char *str, int len, void *arg);
+static void root_func(void *arg);
+
+static void cli_help_hook_func();
+static int cli_hook_func(char *str, int len, void *arg);
+static int my_command(char *str, int len, void *arg);
 
 int appmain(int argc, char *argv[])
 {
     int r;
     (void) r;
 
-    r = task_create(NULL, rootfunc, NULL, task_getmiddlepriority(), 0, "root");
+    r = task_create(NULL, root_func, NULL, task_getmiddlepriority(), 0, "root");
     ubi_assert(r == 0);
 
     ubik_comp_start();
@@ -28,7 +29,7 @@ int appmain(int argc, char *argv[])
     return 0;
 }
 
-static void rootfunc(void *arg)
+static void root_func(void *arg)
 {
     int r;
     (void) r;
@@ -39,10 +40,10 @@ static void rootfunc(void *arg)
     printf("================================================================================\n");
     printf("\n");
 
-    r = cli_sethookfunc(clihookfunc, NULL);
+    r = cli_sethookfunc(cli_hook_func, NULL);
     ubi_assert(r == 0);
 
-    r = cli_sethelphookfunc(clihelphookfunc);
+    r = cli_sethelphookfunc(cli_help_hook_func);
     ubi_assert(r == 0);
 
     r = cli_setprompt("cli_tester> ");
@@ -52,7 +53,7 @@ static void rootfunc(void *arg)
     ubi_assert(r == 0);
 }
 
-static int clihookfunc(char *str, int len, void *arg)
+static int cli_hook_func(char *str, int len, void *arg)
 {
     int r = -1;
     char *tmpstr;
@@ -70,18 +71,18 @@ static int clihookfunc(char *str, int len, void *arg)
         tmpstr = &tmpstr[cmdlen];
         tmplen -= cmdlen;
 
-        r = mycmd(tmpstr, tmplen, arg);
+        r = my_command(tmpstr, tmplen, arg);
     }
 
     return r;
 }
 
-static void clihelphookfunc()
+static void cli_help_hook_func()
 {
     printf("mc                                      : my command\n");
 }
 
-static int mycmd(char *str, int len, void *arg)
+static int my_command(char *str, int len, void *arg)
 {
     printf("\n");
     printf("done\n");
