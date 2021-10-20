@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# {ubinos_config_type: [buildable, cmake, lib]}
+# ubinos_config_info {"name_base": "ubinos", "build_type": "cmake_ubinos"}
 
 set_cache(UBINOS__BSP__EXCLUDE_ARCH_INIT TRUE BOOL)
 set_cache(UBINOS__UBICLIB__EXCLUDE_ARCH_INIT TRUE BOOL)
@@ -18,5 +18,4 @@ include(${PROJECT_UBINOS_DIR}/config/ubinos/bsp.cmake)
 include(${PROJECT_UBINOS_DIR}/config/ubinos/ubiclib.cmake)
 include(${PROJECT_UBINOS_DIR}/config/ubinos/ubik.cmake)
 include(${PROJECT_UBINOS_DIR}/config/ubinos/ubidrv.cmake)
-
 

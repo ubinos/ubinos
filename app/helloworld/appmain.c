@@ -7,14 +7,10 @@
 #include <ubinos/bsp.h>
 #include <ubinos/ubiclib.h>
 
-#if (INCLUDE__APP__helloworld == 1)
-
 #include <stdio.h>
-
 
 int appmain(int argc, char * argv[]) {
     int r;
-
     (void) r;
 
     printf("\n\n\n");
@@ -31,8 +27,4 @@ int appmain(int argc, char * argv[]) {
 
 	return 0;
 }
-
-
-#endif /* (INCLUDE__APP__helloworld == 1) */
-
 

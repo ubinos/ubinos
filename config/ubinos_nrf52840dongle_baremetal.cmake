@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# {ubinos_config_type: [buildable, cmake, lib]}
+# ubinos_config_info {"name_base": "ubinos", "build_type": "cmake_ubinos"}
 
 set_cache(UBINOS__BSP__BOARD_MODEL "NRF52840DONGLE" STRING)
 
@@ -24,5 +24,4 @@ set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubin
 set_cache(UBINOS__BSP__USE_DTTY FALSE BOOL)
 
 include(${CMAKE_CURRENT_LIST_DIR}/ubinos_nrf52840dk_baremetal.cmake)
-
 

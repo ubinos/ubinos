@@ -6,8 +6,6 @@
 
 #include <ubinos/ubiclib_test.h>
 
-#if (INCLUDE__APP__ubiclib_tester == 1)
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,6 +13,7 @@ static void rootfunc(void *arg);
 
 int appmain(int argc, char *argv[]) {
 	int r;
+	(void) r;
 
 	printf("\n\n\n");
 	printf("================================================================================\n");
@@ -22,9 +21,7 @@ int appmain(int argc, char *argv[]) {
 	printf("================================================================================\n");
 
 	r = task_create(NULL, rootfunc, NULL, task_getmiddlepriority(), 192, "root");
-	if (0 != r) {
-		logme("fail at task_create");
-	}
+	ubi_assert(r == 0);
 
 	ubik_comp_start();
 
@@ -73,6 +70,4 @@ static void rootfunc(void *arg) {
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
 }
-
-#endif /* (INCLUDE__APP__ubiclib_tester == 1) */
 

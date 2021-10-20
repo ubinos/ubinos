@@ -6,8 +6,6 @@
 
 #include <ubinos.h>
 
-#if (INCLUDE__APP__cli_tester == 1)
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -20,12 +18,10 @@ static int mycmd(char *str, int len, void *arg);
 int appmain(int argc, char *argv[])
 {
     int r;
+    (void) r;
 
     r = task_create(NULL, rootfunc, NULL, task_getmiddlepriority(), 0, "root");
-    if (0 != r)
-    {
-        logme("fail at task_create");
-    }
+    ubi_assert(r == 0);
 
     ubik_comp_start();
 
@@ -35,6 +31,7 @@ int appmain(int argc, char *argv[])
 static void rootfunc(void *arg)
 {
     int r;
+    (void) r;
 
     printf("\n\n\n");
     printf("================================================================================\n");
@@ -43,28 +40,16 @@ static void rootfunc(void *arg)
     printf("\n");
 
     r = cli_sethookfunc(clihookfunc, NULL);
-    if (0 != r)
-    {
-        logme("fail at cli_sethookfunc");
-    }
+    ubi_assert(r == 0);
 
     r = cli_sethelphookfunc(clihelphookfunc);
-    if (0 != r)
-    {
-        logme("fail at cli_sethelphookfunc");
-    }
+    ubi_assert(r == 0);
 
     r = cli_setprompt("cli_tester> ");
-    if (0 != r)
-    {
-        logme("fail at cli_setprompt");
-    }
+    ubi_assert(r == 0);
 
     r = task_create(NULL, cli_main, NULL, task_getmiddlepriority(), 0, "cli_main");
-    if (0 != r)
-    {
-        logme("fail at task_create");
-    }
+    ubi_assert(r == 0);
 }
 
 static int clihookfunc(char *str, int len, void *arg)
@@ -103,6 +88,4 @@ static int mycmd(char *str, int len, void *arg)
 
     return 0;
 }
-
-#endif /* (INCLUDE__APP__cli_tester == 1) */
 

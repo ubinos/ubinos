@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
-# {ubinos_config_type: [buildable, cmake, app]}
+# ubinos_config_info {"name_base": "heap_tester", "build_type": "cmake_ubinos", "app": true}
 
 set_cache(PROJECT_BUILD_TYPE "Release"   STRING)
 
@@ -26,5 +26,5 @@ set_cache(UBINOS__UBICLIB_TEST__EXCLUDE_HEAPTEST FALSE BOOL)
 include(${PROJECT_UBINOS_DIR}/config/ubinos_sam9xe512ek.cmake)
 include(${PROJECT_UBINOS_DIR}/config/ubinos/ubiclib_test.cmake)
 
-include(${PROJECT_UBINOS_DIR}/app/heap_tester.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/heap_tester.cmake)
 

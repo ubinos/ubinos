@@ -6,8 +6,6 @@
 
 #include <ubinos.h>
 
-#if (INCLUDE__APP__heap_tester == 1)
-
 #include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +15,7 @@
 
 int appmain(int argc, char *argv[]) {
 	int r;
+	(void) r;
 	ubiclib_test_heaptest_param_t params;
 	int ci[] = {
 			10, 11, 12, // group system
@@ -37,9 +36,7 @@ int appmain(int argc, char *argv[]) {
 	printf("\n");
 
 	r = ubik_hrtick_enable(1);
-	if (0 != r) {
-		logme("fail at ubik_hrtick_enable");
-	}
+	ubi_assert(r == 0);
 
 	params.test_index = 1;
 	params.heapsize = 8 * 1024 * 1024;
@@ -363,7 +360,4 @@ int appmain(int argc, char *argv[]) {
 
 	return 0;
 }
-
-#endif /* (INCLUDE__APP__heap_tester == 1) */
-
 

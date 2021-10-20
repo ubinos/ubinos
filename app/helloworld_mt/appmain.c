@@ -6,10 +6,6 @@
 
 #include <ubinos.h>
 
-
-#if (INCLUDE__APP__helloworld_mt == 1)
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
@@ -19,6 +15,7 @@ static void helloworld_mt_task2func(void * arg);
 
 int appmain(int argc, char * argv[]) {
 	int r;
+	(void) r;
 
 	printf("\n\n\n");
 	printf("================================================================================\n");
@@ -29,14 +26,10 @@ int appmain(int argc, char * argv[]) {
     srand(time(NULL));
 
 	r = task_create(NULL, helloworld_mt_task1func, NULL, task_getmiddlepriority(), 0, "task1");
-	if (0 != r) {
-		logme("fail at task_create");
-	}
+	ubi_assert(r == 0);
 
 	r = task_create(NULL, helloworld_mt_task2func, NULL, task_getmiddlepriority(), 0, "task2");
-    if (0 != r) {
-        logme("fail at task_create");
-    }
+	ubi_assert(r == 0);
 
 	ubik_comp_start();
 
@@ -72,8 +65,4 @@ static void helloworld_mt_task2func(void * arg) {
         task_sleepms(delayms);
     }
 }
-
-
-#endif /* (INCLUDE__APP__helloworld_mt == 1) */
-
 
