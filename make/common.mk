@@ -159,6 +159,8 @@ common-help:
 	@echo ""
 	@echo "make help                    (show help)"
 	@echo ""
+	@echo "make xsel                    (run select configure GUI)"
+	@echo ""
 	@echo "make all                     (config and build)"
 	@echo ""
 	@echo "make config                  (configure)"

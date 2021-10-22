@@ -14,6 +14,7 @@ import tkinter as tk
 import tkinter.font as font
 import json
 import copy
+import pathlib
 
 from os import listdir, popen
 from os.path import isfile, isdir, join, splitext, exists
@@ -23,7 +24,7 @@ from tkinter import ttk
 from tkinter import Toplevel
 from tkinter import messagebox
 
-debug_level = 2
+debug_level = 1
 
 # config_name_base
 # config_name_board
@@ -149,8 +150,9 @@ class clone_dialog(tk.Toplevel):
 
             src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
 
-            print(src_file_paths)
-            print(dst_file_paths)
+            if debug_level > 2:
+                print(src_file_paths)
+                print(dst_file_paths)
 
             self.src_file_paths = src_file_paths
             self.dst_file_paths = dst_file_paths
@@ -255,7 +257,7 @@ class confsel(tk.Tk):
         for prj in prjs:
             config_dirs = []
             for config_dir_name in self.config_dir_names:
-                config_dir = join(prj["dir"], config_dir_name)
+                config_dir = pathlib.Path(join(prj["dir"], config_dir_name)).as_posix()
                 if os.path.exists(config_dir) and os.path.isdir(config_dir):
                     config_dirs.append(config_dir)
 
@@ -458,6 +460,11 @@ class confsel(tk.Tk):
                 src_file_paths.append(src_config_app_path + "/")
                 dst_file_paths.append(dst_config_app_path + "/")
 
+        for idx in range(len(src_file_paths)):
+            src_file_paths[idx] = pathlib.Path(src_file_paths[idx]).as_posix()
+        for idx in range(len(dst_file_paths)):
+            dst_file_paths[idx] = pathlib.Path(dst_file_paths[idx]).as_posix()
+
         return src_file_paths, dst_file_paths, src_config_name_base, dst_config_name
 
     def check_clone_dst_file_paths(self, dst_file_paths):
@@ -550,7 +557,7 @@ class confsel(tk.Tk):
         item = self.tv.focus()
         if item != '':
             self.config_item_idx = int(item)
-            if debug_level >= 1:
+            if debug_level >= 2:
                 self.print_selection()
 
     def key_pressed(self, event):
@@ -564,14 +571,14 @@ class confsel(tk.Tk):
                 self.config_item_idx -= 1
                 self.tv.selection_set(self.config_item_idx)
                 self.tv.see(self.config_item_idx)
-                if debug_level >= 1:
+                if debug_level >= 2:
                     self.print_selection()
         elif event.keysym == "Down":
             if self.config_item_idx < (self.config_len - 1):
                 self.config_item_idx += 1
                 self.tv.selection_set(self.config_item_idx)
                 self.tv.see(self.config_item_idx)
-                if debug_level >= 1:
+                if debug_level >= 2:
                     self.print_selection()
 
     def press_select(self):
