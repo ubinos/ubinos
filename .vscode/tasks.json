@@ -213,6 +213,28 @@
             "problemMatcher": ["$gcc"],
         },
         {
+            "label": "make reset xrun",
+            "type": "shell",
+            "command": "make",
+            "args": ["reset", "xrun"],
+            "options": {
+                "cwd": "${workspaceFolder}/make"
+            },
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+        },
+        {
+            "label": "make reset xdebug",
+            "type": "shell",
+            "command": "make",
+            "args": ["reset", "xdebug"],
+            "options": {
+                "cwd": "${workspaceFolder}/make"
+            },
+            "group": "build",
+            "problemMatcher": ["$gcc"],
+        },
+        {
             "label": "make doc",
             "type": "shell",
             "command": "make",
