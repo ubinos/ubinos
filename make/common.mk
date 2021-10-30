@@ -159,7 +159,7 @@ common-help:
 	@echo ""
 	@echo "make help                    (show help)"
 	@echo ""
-	@echo "make xsel                    (run select configure GUI)"
+	@echo "make xsel                    (run config selector with GUI or new window)"
 	@echo ""
 	@echo "make all                     (config and build)"
 	@echo ""
@@ -174,25 +174,23 @@ common-help:
 	@echo "make rebuild                 (clean and all)"
 	@echo "make rebuildd                (cleand and all)"
 	@echo ""
-	@echo "make debugs                  (run debug server)"
+	@echo "make dserver                 (run debug server)"
+	@echo "make xdserver                (run debug server with GUI or new window)"
 	@echo ""
 	@echo "make load                    (load execution binary file into target)"
-	@echo "make run                     (run execution binary file on target)"
 	@echo "make reset                   (reset target)"
+	@echo ""
+	@echo "make run                     (run execution binary file on target)"
+	@echo "make xrun                    (run execution binary file on target with GUI or new window)"
+	@echo ""
 	@echo "make debug                   (run execution binary file on target and attach debug CLI)"
+	@echo "make xdebug                  (run execution binary file on target and attach debug CLI with GUI or new window)"
+	@echo ""
 	@echo "make attach                  (attach debug CLI)"
+	@echo "make xattach                 (attach debug CLI with GUI or new window)"
 	@echo ""
-	@echo "-------------------------------------------------------------------------------"
-	@echo ""
-	@echo "make env                     (install development environment)"
-	@echo "make cleanenv                (remove development environment)"
-	@echo ""
-	@echo "make xconfig                 (open config GUI using cmake-gui)"
-	@echo "make menuconfig              (open config TUI using ccmake)"
-	@echo ""
-	@echo "make doc                     (build document)"
-	@echo ""
-	@echo "make test                    (run test)"
+	@echo "make xconfig                 (run config GUI using cmake-gui)"
+	@echo "make menuconfig              (run config TUI using ccmake)"
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
@@ -235,9 +233,14 @@ common-rebuild: clean all
 
 common-rebuildd: cleand all
 
-common-debugs:
+common-dserver:
 	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make debugs
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make dserver
+	$(call end_message)
+
+common-xdserver:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make xdserver
 	$(call end_message)
 
 common-load:
@@ -258,6 +261,11 @@ common-run:
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make run
 	$(call end_message)
 
+common-xrun:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make xrun
+	$(call end_message)
+
 common-reset:
 	$(call begin_message)
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make reset
@@ -268,19 +276,19 @@ common-debug:
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make debug
 	$(call end_message)
 
+common-xdebug:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make xdebug
+	$(call end_message)
+
 common-attach:
 	$(call begin_message)
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make attach
 	$(call end_message)
 
-###############################################################################
-
-common-env:
+common-xattach:
 	$(call begin_message)
-	$(call end_message)
-
-common-cleanenv:
-	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make xattach
 	$(call end_message)
 
 common-xconfig:
@@ -293,15 +301,6 @@ common-menuconfig:
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && ccmake .
 	$(call end_message)
 
-common-doc:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && doxygen
-	$(call end_message)
-
-common-test:
-	$(call begin_message)
-	$(call end_message)
-
 common-xsel:
 	$(call begin_message)
 ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
@@ -309,6 +308,25 @@ ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
 else
 	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/confsel.py" .. library
 endif
+	$(call end_message)
+
+###############################################################################
+
+common-env:
+	$(call begin_message)
+	$(call end_message)
+
+common-cleanenv:
+	$(call begin_message)
+	$(call end_message)
+
+common-doc:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && doxygen
+	$(call end_message)
+
+common-test:
+	$(call begin_message)
 	$(call end_message)
 
 ###############################################################################
@@ -344,6 +362,14 @@ common-zbatch-reset:
 	$(call end_message)
 
 common-zbatch-debug:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-dserver:
+	$(call begin_message)
+	$(call end_message)
+
+common-zbatch-xdserver:
 	$(call begin_message)
 	$(call end_message)
 

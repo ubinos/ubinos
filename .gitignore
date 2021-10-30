@@ -1,15 +1,11 @@
 /output/
-
-/make/custom.mk
-/make/custom.py
-/make/Makefile.bak
-
-/include/*_config.h
-
-/.cproject
-/.project
-/.pydevproject
+/env/
 /.settings/
 /.externalToolBuilders/
 
 *.pyc
+
+/make/Makefile.bak
+/make/custom.mk
+/make/custom.py
+

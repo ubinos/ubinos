@@ -334,63 +334,86 @@ macro(___project_add_app)
     add_executable(${PROJECT_EXE_NAME} ${PROJECT_APP_SOURCES})
     target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
 
+    execute_process(COMMAND ${PROJECT_TOOLBOX_RUN_CMD} get_start_command_for_cmake OUTPUT_VARIABLE __tmp_start_cmd)
+    string(STRIP "${__tmp_start_cmd}" __tmp_start_cmd)
+
+    execute_process(COMMAND ${PROJECT_TOOLBOX_RUN_CMD} system_name OUTPUT_VARIABLE __tmp_system_name)
+
     if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "OPENOCD")
         math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
         math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
-        if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
-            add_custom_target(debugs
-                COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
-                ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
-                "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
-                "-c" "\"tcl_port" "${_tmp_tcl_port}\""
-                "-c" "\"telnet_port" "${_tmp_telnet_port}\""
-                "-c" "\"hla_serial" "${UBINOS__BSP__DEBUG_SERVER_SERIAL}\""
-                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                USES_TERMINAL
-            )
-        else()
-            add_custom_target(debugs
-                COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f
-                ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
-                "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
-                "-c" "\"tcl_port" "${_tmp_tcl_port}\""
-                "-c" "\"telnet_port" "${_tmp_telnet_port}\""
-                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                USES_TERMINAL
+
+        set(__tmp_dserver_cmd ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg)
+
+        set(__tmp_dserver_params
+            "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
+            "-c" "\"tcl_port" "${_tmp_tcl_port}\""
+            "-c" "\"telnet_port" "${_tmp_telnet_port}\""
+        )
+        if (${__tmp_system_name} MATCHES "Darwin")
+            set(__tmp_dserver_params_2
+                "-c" "\\\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\\\""
+                "-c" "\\\"tcl_port" "${_tmp_tcl_port}\\\""
+                "-c" "\\\"telnet_port" "${_tmp_telnet_port}\\\""
             )
         endif()
+        if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
+            set(__tmp_dserver_params ${__tmp_dserver_params}
+                "-c" "\"hla_serial" "${UBINOS__BSP__DEBUG_SERVER_SERIAL}\""
+            )
+            if (${__tmp_system_name} MATCHES "Darwin")
+                set(__tmp_dserver_params_2 ${__tmp_dserver_params_2}
+                    "-c" "\\\"hla_serial" "${UBINOS__BSP__DEBUG_SERVER_SERIAL}\\\""
+                )
+            endif()
+        endif()
+        if (NOT ${__tmp_system_name} MATCHES "Darwin")
+            set(__tmp_dserver_params_2 ${__tmp_dserver_params})
+            if (${__tmp_system_name} MATCHES "Linux")
+                set(__tmp_dserver_params_2 ${__tmp_dserver_params_2} "&")
+            endif()
+            if (${__tmp_system_name} MATCHES "Windows")
+                set(__tmp_start_cmd ${__tmp_start_cmd} "call")
+            endif()
+        endif()
+
+        add_custom_target(dserver
+            COMMAND ${__tmp_dserver_cmd} ${__tmp_dserver_params}
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+
+        add_custom_target(xdserver
+            COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_2}
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
     elseif(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "JLINK")
         math(EXPR _tmp_swo_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
         math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
+
         set(_tmp_device_model "")
-        if(${UBINOS__BSP__CPU_MODEL} STREQUAL "NRF52840XXAA")
+        if(${UBINOS__BSP__CPU_MODEL} STREQUAL "NRF52832XXAA")
+            set(_tmp_device_model "nRF52832_xxAA")
+        elseif(${UBINOS__BSP__CPU_MODEL} STREQUAL "NRF52840XXAA")
             set(_tmp_device_model "nRF52840_xxAA")
-        else()
         endif()
+
         if(NOT ${_tmp_device_model} STREQUAL "")
+            set(__tmp_dserver_cmd ${UBINOS__BSP__DEBUG_SERVER_COMMAND})
+
             if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
-                add_custom_target(debugs
-                    COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND}
+                set(__tmp_dserver_params
                     "-select" "USB=${UBINOS__BSP__DEBUG_SERVER_SERIAL}"
-                    "-device" "${_tmp_device_model}"
-                    "-port"  "${UBINOS__BSP__DEBUG_SERVER_PORT}"
-                    "-swoport"  "${_tmp_swo_port}"
-                    "-telnetport"  "${_tmp_telnet_port}"
-                    "-endian" "little"
-                    "-if" "SWD"
-                    "-speed" "auto"
-                    "-ir"
-                    "-LocalhostOnly"
-                    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                    USES_TERMINAL
                 )
             else()
-                add_custom_target(debugs
-                    COMMAND  ${UBINOS__BSP__DEBUG_SERVER_COMMAND}
+                set(__tmp_dserver_params
                     "-select" "USB"
+                )
+            endif()
+            set(__tmp_dserver_params ${__tmp_dserver_params}
                     "-device" "${_tmp_device_model}"
                     "-port"  "${UBINOS__BSP__DEBUG_SERVER_PORT}"
                     "-swoport"  "${_tmp_swo_port}"
@@ -400,13 +423,27 @@ macro(___project_add_app)
                     "-speed" "auto"
                     "-ir"
                     "-LocalhostOnly"
-                    DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                    USES_TERMINAL
-                )
+            )
+            set(__tmp_dserver_params_2 ${__tmp_dserver_params})
+            if (${__tmp_system_name} MATCHES "Linux")
+                set(__tmp_dserver_params_2 ${__tmp_dserver_params_2} "&")
             endif()
+
+            add_custom_target(dserver
+                COMMAND ${__tmp_dserver_cmd} ${__tmp_dserver_params}
+                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+
+            add_custom_target(xdserver
+                COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_2}
+                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
         else()
-            add_custom_target(debugs
+            add_custom_target(dserver
                 COMMAND  "echo" "not supported device model"
                 DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -414,7 +451,7 @@ macro(___project_add_app)
             )
         endif()
     else()
-        add_custom_target(debugs
+        add_custom_target(dserver
             COMMAND  "echo" "not supported debug server type"
             DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
@@ -422,31 +459,49 @@ macro(___project_add_app)
         )
     endif()
     add_custom_target(reset
-        COMMAND  ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_reset.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_reset.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(load
-        COMMAND  ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_load.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_load.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(run
-        COMMAND  ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_run.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_run.gdb
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        USES_TERMINAL
+    )
+    add_custom_target(xrun
+        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_run.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(debug
-        COMMAND  ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_debug.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_debug.gdb
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        USES_TERMINAL
+    )
+    add_custom_target(xdebug
+        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_debug.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(attach
-        COMMAND  ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_attach.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_attach.gdb
+        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+        USES_TERMINAL
+    )
+    add_custom_target(xattach
+        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_attach.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL

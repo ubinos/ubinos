@@ -17,6 +17,7 @@ def print_help():
     print("Usage:")
     print("    %s system_name" % (sys.argv[0]))
     print("    %s cpu_count" % (sys.argv[0]))
+    print("    %s get_start_command_for_cmake" % (sys.argv[0]))
     print("    %s realpath <file name>" % (sys.argv[0]))
     print("    %s is_existing_path <path name>" % (sys.argv[0]))
     print("    %s is_removable_dir <output dir>" % (sys.argv[0]))
@@ -32,10 +33,21 @@ def print_help():
     print("===============================================================================")
 
 def system_name():
+    # 'Linux', 'Windows', 'Darwin'
     print(platform.system())
 
 def cpu_count():
     print(multiprocessing.cpu_count())
+
+def get_start_command_for_cmake():
+    if platform.system() == "Windows":
+        print("start")
+    elif platform.system() == "Linux":
+        print("xterm;-hold;-e")
+    elif platform.system() == "Darwin":
+        cmd_dir = os.path.dirname(os.path.abspath(__file__))
+        cmd_path = os.path.join(cmd_dir, "start.applescript")
+        print("osascript;%s;\"`pwd`\"" % cmd_path)
 
 def realpath(fname):
     print(os.path.realpath(fname))
@@ -315,6 +327,8 @@ if __name__ == '__main__':
             system_name()
         elif "cpu_count" == sys.argv[1]:
             cpu_count()
+        elif "get_start_command_for_cmake" == sys.argv[1]:
+            get_start_command_for_cmake()
         elif "realpath" == sys.argv[1]:
             if 3 > len(sys.argv):
                 print_help()
