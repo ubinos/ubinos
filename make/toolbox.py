@@ -10,7 +10,7 @@ import os
 import sys
 import multiprocessing
 import platform
-from distutils.spawn import find_executable
+import shutil
 
 def print_help():
     print("===============================================================================")
@@ -22,6 +22,7 @@ def print_help():
     print("    %s is_existing_path <path name>" % (sys.argv[0]))
     print("    %s is_removable_dir <output dir>" % (sys.argv[0]))
     print("    %s which <executable file name>" % (sys.argv[0]))
+    print("    %s copy_file <src> <dst>"% (sys.argv[0]))
     print("    %s getuid" % (sys.argv[0]))
     print("    %s getgid" % (sys.argv[0]))
     print("    %s is_python3" % (sys.argv[0]))
@@ -65,7 +66,12 @@ def is_removable_dir(output_dir):
         print("0")
 
 def which(ename):
-    print(find_executable(ename))
+    print(shutil.which(ename))
+
+def copy_file(src, dst):
+    if os.path.isdir(dst):
+        dst = os.path.join(dst, os.path.split(src)[1])
+    shutil.copyfile(src, dst)
 
 def getuid():
     print(os.getuid())
@@ -353,6 +359,11 @@ if __name__ == '__main__':
             else:
                 ename = sys.argv[2]
                 which(ename)
+        elif "copy_file" == sys.argv[1]:
+            if 4 > len(sys.argv):
+                print_help()
+            else:
+                copy_file(sys.argv[2], sys.argv[3])
         elif "getuid" == sys.argv[1]:
             getuid()
         elif "getgid" == sys.argv[1]:

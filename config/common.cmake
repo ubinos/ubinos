@@ -79,6 +79,11 @@ macro(___project_config_end)
 endmacro(___project_config_end)
 
 macro(___project_add_app)
+
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T\"${PROJECT_BINARY_DIR}/linkscript.ld\"")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u main")
+
     if(NOT ${UBINOS__BSP__LINKSCRIPT_FILE} STREQUAL "")
         add_custom_command(
             TARGET ${PROJECT_NAME} PRE_BUILD
@@ -845,7 +850,7 @@ macro(___project_show)
     message(STATUS "")
 endmacro(___project_show)
 
-macro(project_begin)
+macro(ubinos_project_begin)
     get_filename_component(_tmp_base_dir "${CMAKE_CURRENT_LIST_DIR}/.." ABSOLUTE)
 
     set(PROJECT_BASE_DIR "${_tmp_base_dir}")
@@ -854,7 +859,6 @@ macro(project_begin)
     if("${_tmp_str}"  STREQUAL "")
         set_cache(PROJECT_CONFIG_NAME "none" PATH)
     endif()
-
     string(STRIP "${PROJECT_CONFIG_DIR}" _tmp_str)
     if("${_tmp_str}"  STREQUAL "")
         set_cache(PROJECT_CONFIG_DIR "${PROJECT_BASE_DIR}/app" PATH)
@@ -862,20 +866,16 @@ macro(project_begin)
 
     string(STRIP "${PROJECT_LIBRARY_DIR}" _tmp_str)
     if("${_tmp_str}"  STREQUAL "")
-        if(${PROJECT_NAME} STREQUAL "ubinos")
-            set_cache(PROJECT_LIBRARY_DIR "${PROJECT_BASE_DIR}/.." PATH)
-        else()
+        if(EXISTS "${PROJECT_BASE_DIR}/library")
             set_cache(PROJECT_LIBRARY_DIR "${PROJECT_BASE_DIR}/library" PATH)
+        else()
+            set_cache(PROJECT_LIBRARY_DIR "${PROJECT_BASE_DIR}/.." PATH)
         endif()
     endif()
 
     string(STRIP "${PROJECT_UBINOS_DIR}" _tmp_str)
     if("${_tmp_str}"  STREQUAL "")
-        if(${PROJECT_NAME} STREQUAL "ubinos")
-            set(PROJECT_UBINOS_DIR "${PROJECT_BASE_DIR}")
-        else()
-            set(PROJECT_UBINOS_DIR "${PROJECT_LIBRARY_DIR}/ubinos")
-        endif()
+        set(PROJECT_UBINOS_DIR "${PROJECT_LIBRARY_DIR}/ubinos")
     endif()
 
     string(STRIP "${PROJECT_TOOLBOX}" _tmp_str)
@@ -889,11 +889,9 @@ macro(project_begin)
     set_cache_default(PROJECT_LIBRARY_DIR "" PATH "Library directory")
 
     include("${PROJECT_CONFIG_DIR}/${PROJECT_CONFIG_NAME}.cmake")
+endmacro(ubinos_project_begin)
 
-    ___project_config_begin()
-endmacro(project_begin)
-
-macro(project_add_library name)
+macro(___add_ubinos_library name)
     if(NOT ${PROJECT_NAME} STREQUAL ${name})
         set(_tmp_fname "${PROJECT_LIBRARY_DIR}/${name}/source/config.h.cmake")
         if(EXISTS "${_tmp_fname}")
@@ -918,9 +916,17 @@ macro(project_add_library name)
             endif()
         endif()
     endif()
-endmacro(project_add_library)
+endmacro(___add_ubinos_library)
 
-macro(project_end)
+macro(ubinos_project_end)
+    ___project_config_begin()
+
+    foreach(_lib ${PROJECT_UBINOS_LIBRARIES})
+        ___add_ubinos_library(${_lib})
+    endforeach()
+
+    ___project_config_end()
+
     set(PROJECT_SOURCES)
     set(_tmp_fname "${PROJECT_SOURCE_DIR}/sources.cmake")
     if(NOT EXISTS "${_tmp_fname}")
@@ -941,19 +947,6 @@ macro(project_end)
             DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 
-    ___project_config_end()
-
     ___project_show()
-endmacro(project_end)
+endmacro(ubinos_project_end)
 
-macro(add_ubinos_libraries)
-
-    project_begin()
-
-    foreach(_lib ${PROJECT_UBINOS_LIBRARIES})
-        project_add_library(${_lib})
-    endforeach()
-
-    project_end()
-
-endmacro(add_ubinos_libraries)

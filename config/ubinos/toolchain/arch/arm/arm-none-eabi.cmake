@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2019 Sung Ho Park and CSOS
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -8,10 +8,20 @@ set(_tmp_prefix "arm-none-eabi")
 
 ########
 
-set_cache(PROJECT_TOOLCHAIN_PREFIX                                              "${_tmp_prefix}"            STRING)
-set_cache(PROJECT_TOOLCHAIN_GDB_COMMAND                                         "${_tmp_prefix}-gdb"        STRING)
+set_cache(PROJECT_TOOLCHAIN_PREFIX "${_tmp_prefix}" STRING)
+set_cache(PROJECT_TOOLCHAIN_GDB_COMMAND "${_tmp_prefix}-gdb" STRING)
 
 ########
+
+set(CMAKE_SYSTEM_NAME "Generic")
+set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY NEVER)
+set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
+set(CMAKE_C_COMPILER_FORCED TRUE)
+set(CMAKE_CXX_COMPILER_FORCED TRUE)
+
+set(CMAKE_C_COMPILER ${_tmp_prefix}-gcc)
+set(CMAKE_CXX_COMPILER ${_tmp_prefix}-g++)
 
 enable_language(ASM C CXX)
 
@@ -19,13 +29,12 @@ set(CMAKE_ASM_COMPILER ${_tmp_prefix}-gcc)
 set(CMAKE_ASM_COMPILER_AR ${_tmp_prefix}-gcc-ar)
 set(CMAKE_ASM_COMPILER_RANLIB ${_tmp_prefix}-gcc-ranlib)
 
-set(CMAKE_C_COMPILER ${_tmp_prefix}-gcc)
 set(CMAKE_C_COMPILER_AR ${_tmp_prefix}-gcc-ar)
 set(CMAKE_C_COMPILER_RANLIB ${_tmp_prefix}-gcc-ranlib)
 
-set(CMAKE_CXX_COMPILER ${_tmp_prefix}-g++)
 set(CMAKE_CXX_COMPILER_AR ${_tmp_prefix}-gcc-ar)
 set(CMAKE_CXX_COMPILER_RANLIB ${_tmp_prefix}-gcc-ranlib)
+
 
 set(CMAKE_AR ${_tmp_prefix}-ar)
 set(CMAKE_RANLIB ${_tmp_prefix}-ranlib)

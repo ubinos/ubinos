@@ -94,10 +94,6 @@ endif
 ###############################################################################
 
 _CMAKE_OPTION           = -G "Unix Makefiles"
-_CMAKE_OPTION          += -D CMAKE_SYSTEM_NAME=Generic
-_CMAKE_OPTION          += -D CMAKE_C_COMPILER_FORCED=TRUE
-_CMAKE_OPTION          += -D CMAKE_CXX_COMPILER_FORCED=TRUE
-
 _CMAKE_OPTION          += -D PROJECT_CONFIG_NAME=$(_CONFIG_NAME)
 _CMAKE_OPTION          += -D PROJECT_CONFIG_DIR="$(_CONFIG_DIR)"
 _CMAKE_OPTION          += -D PROJECT_LIBRARY_DIR="$(_LIBRARY_DIR)"
@@ -205,7 +201,7 @@ common-config:
 	$(call begin_message)
 	$(_PRECMD) && mkdir -p "$(_OUTPUT_DIR)"
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake $(_CMAKE_OPTION) "$(_SOURCE_DIR)"
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cp compile_commands.json "$(_OUTPUT_DIR)/../Default/"
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python "$(_TOOLBOX)" copy_file compile_commands.json "$(_OUTPUT_DIR)/../Default/"
 	$(call end_message)
 
 common-configd: cleand config
