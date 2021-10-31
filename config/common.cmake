@@ -76,6 +76,12 @@ macro(___project_config_end)
     file(COPY ${PROJECT_BINARY_DIR}/compile_flags_asm.txt DESTINATION ${PROJECT_BINARY_DIR}/../Default/)
     file(COPY ${PROJECT_BINARY_DIR}/compile_flags_c.txt DESTINATION ${PROJECT_BINARY_DIR}/../Default/)
     file(COPY ${PROJECT_BINARY_DIR}/compile_flags_cxx.txt DESTINATION ${PROJECT_BINARY_DIR}/../Default/)
+
+    if(NOT ${UBINOS__BSP__OPENOCD_CONFIG_FILE} STREQUAL "")
+        file(COPY ${UBINOS__BSP__OPENOCD_CONFIG_FILE} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/)
+        file(COPY ${UBINOS__BSP__OPENOCD_CONFIG_FILE} DESTINATION ${PROJECT_BINARY_DIR}/../Default/)
+    endif()
+
 endmacro(___project_config_end)
 
 macro(___project_add_app)
@@ -297,15 +303,6 @@ macro(___project_add_app)
             COMMAND ${CMAKE_COMMAND} -E copy
             ${UBINOS__BSP__SYS_INIT_FILE}
             ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf
-        )
-    endif()
-
-    if(NOT ${UBINOS__BSP__OPENOCD_CONFIG_FILE} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_NAME} PRE_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${UBINOS__BSP__OPENOCD_CONFIG_FILE}
-            ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
         )
     endif()
 
@@ -634,15 +631,6 @@ macro(___project_add_app)
             TARGET ${PROJECT_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf
-            ../Default/
-        )
-    endif()
-
-    if(NOT ${UBINOS__BSP__OPENOCD_CONFIG_FILE} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
             ../Default/
         )
     endif()
