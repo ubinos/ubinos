@@ -379,14 +379,12 @@ macro(___project_add_app)
 
         add_custom_target(dserver
             COMMAND ${__tmp_dserver_cmd} ${__tmp_dserver_params}
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
         )
 
         add_custom_target(xdserver
             COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_2}
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
         )
@@ -431,21 +429,23 @@ macro(___project_add_app)
 
             add_custom_target(dserver
                 COMMAND ${__tmp_dserver_cmd} ${__tmp_dserver_params}
-                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 USES_TERMINAL
             )
 
             add_custom_target(xdserver
                 COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_2}
-                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 USES_TERMINAL
             )
         else()
             add_custom_target(dserver
                 COMMAND  "echo" "not supported device model"
-                DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+            add_custom_target(xdserver
+                COMMAND  "echo" "not supported device model"
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 USES_TERMINAL
             )
@@ -453,7 +453,11 @@ macro(___project_add_app)
     else()
         add_custom_target(dserver
             COMMAND  "echo" "not supported debug server type"
-            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+        add_custom_target(xdserver
+            COMMAND  "echo" "not supported debug server type"
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
         )
