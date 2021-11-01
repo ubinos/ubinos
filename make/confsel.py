@@ -15,11 +15,8 @@ import tkinter.font as font
 import json
 import copy
 import pathlib
+import shutil
 
-from os import listdir, popen
-from os.path import isfile, isdir, join, splitext, exists
-from shutil import copyfile
-from distutils.dir_util import copy_tree
 from tkinter import ttk
 from tkinter import Toplevel
 from tkinter import messagebox
@@ -27,9 +24,8 @@ from tkinter import messagebox
 debug_level = 1
 
 # config_name_base
-# config_name_board
 # config_name_variation
-# config_name = <config_name_base>_<config_name_board>(_<config_name_variation>)
+# config_name = <config_name_base>__<config_name_variation>
 # config_extension
 # config_file_name = <config_name>.<config_extension>
 # config_dir
@@ -246,27 +242,27 @@ class confsel(tk.Tk):
     def update_config_items(self):
         index = 0
         prjs = [{"name": ".", "dir": ".."}]
-        lib_dir = join(self.prj_dir_base, self.lib_rel_dir)
+        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
 
         if os.path.exists(lib_dir):
-            for file_name in sorted(listdir(lib_dir)):
-                prj_dir = join(lib_dir, file_name)
-                if isdir(prj_dir):
+            for file_name in sorted(os.listdir(lib_dir)):
+                prj_dir = os.path.join(lib_dir, file_name)
+                if os.path.isdir(prj_dir):
                     prjs += [{"name": file_name, "dir": prj_dir}]
 
         for prj in prjs:
             config_dirs = []
             for config_dir_name in self.config_dir_names:
-                config_dir = pathlib.Path(join(prj["dir"], config_dir_name)).as_posix()
+                config_dir = pathlib.Path(os.path.join(prj["dir"], config_dir_name)).as_posix()
                 if os.path.exists(config_dir) and os.path.isdir(config_dir):
                     config_dirs.append(config_dir)
 
             for config_dir in config_dirs:
-                config_file_names = [file_name for file_name in sorted(listdir(config_dir)) if isfile(join(config_dir, file_name))]
+                config_file_names = [file_name for file_name in sorted(os.listdir(config_dir)) if os.path.isfile(os.path.join(config_dir, file_name))]
                 for config_file_name in config_file_names:
-                    config_info = self.load_config_info(join(config_dir, config_file_name))
+                    config_info = self.load_config_info(os.path.join(config_dir, config_file_name))
                     if config_info is not None and "build_type" in config_info:
-                        config_name = splitext(config_file_name)[0]
+                        config_name = os.path.splitext(config_file_name)[0]
                         self.config_items.append({"index": index, "project": prj["name"], "name": config_name, "dir": config_dir, "file_name": config_file_name})
                         index += 1
 
@@ -295,7 +291,7 @@ class confsel(tk.Tk):
 
     def get_cmake_include_file_names(self, config_dir, config_file_name):
         include_file_names = []
-        config_file_path = join(config_dir, config_file_name)
+        config_file_path = os.path.join(config_dir, config_file_name)
 
         with open(config_file_path, 'r') as file:
             lines = file.readlines()
@@ -304,7 +300,7 @@ class confsel(tk.Tk):
                 if line.startswith(self.cmake_inclucde_file_keyword):
                     k_len = len(self.cmake_inclucde_file_keyword)
                     include_file_name = line[k_len:].strip()[:-1]
-                    include_file_path = join(config_dir, include_file_name)
+                    include_file_path = os.path.join(config_dir, include_file_name)
                     include_file_names.append(include_file_name)
                     sub_include_file_names = self.get_cmake_include_file_names(config_dir, include_file_name)
                     include_file_names += sub_include_file_names
@@ -377,7 +373,7 @@ class confsel(tk.Tk):
                 self.create_makefile(make_file_path, config_dir, config_name)
 
             else:
-                copyfile(make_file_path, make_file_path + ".bak")
+                shutil.copyfile(make_file_path, make_file_path + ".bak")
 
                 need_config_dir = True
                 need_config_name = True
@@ -427,15 +423,15 @@ class confsel(tk.Tk):
                     file.close()
 
     def get_clone_params(self, src_config_dir, src_config_file_name, dst_config_dir, dst_config_name_base):
-        src_config_file_path = join(src_config_dir, src_config_file_name)
+        src_config_file_path = os.path.join(src_config_dir, src_config_file_name)
         src_config_info = self.load_config_info(src_config_file_path)
         src_file_paths = []
 
         src_config_name_base = src_config_info["name_base"]
 
         dst_config_file_name = src_config_file_name.replace(src_config_name_base, dst_config_name_base, 1)
-        dst_config_name = splitext(dst_config_file_name)[0]
-        dst_config_file_path = join(dst_config_dir, dst_config_file_name)
+        dst_config_name = os.path.splitext(dst_config_file_name)[0]
+        dst_config_file_path = os.path.join(dst_config_dir, dst_config_file_name)
         dst_file_paths = []
 
         src_file_paths.append(src_config_file_path)
@@ -444,19 +440,19 @@ class confsel(tk.Tk):
         if "include_files" in src_config_info:
             for idx, src_file_name in enumerate(src_config_info["include_files"]):
                 dst_file_name = src_file_name.replace(src_config_name_base, dst_config_name_base, 1)
-                src_file_paths.append(join(src_config_dir, src_file_name))
-                dst_file_paths.append(join(dst_config_dir, dst_file_name))
+                src_file_paths.append(os.path.join(src_config_dir, src_file_name))
+                dst_file_paths.append(os.path.join(dst_config_dir, dst_file_name))
 
         cmake_include_file_names = self.get_cmake_include_file_names(src_config_dir, src_config_file_name)
         for src_file_name in cmake_include_file_names:
             dst_file_name = src_file_name.replace(src_config_name_base, dst_config_name_base, 1)
-            src_file_paths.append(join(src_config_dir, src_file_name))
-            dst_file_paths.append(join(dst_config_dir, dst_file_name))
+            src_file_paths.append(os.path.join(src_config_dir, src_file_name))
+            dst_file_paths.append(os.path.join(dst_config_dir, dst_file_name))
 
         if src_config_info is not None and "app" in src_config_info and src_config_info["app"]:
-            src_config_app_path = join(src_config_dir, src_config_name_base)
-            dst_config_app_path = join(dst_config_dir, dst_config_name_base)
-            if exists(src_config_app_path):
+            src_config_app_path = os.path.join(src_config_dir, src_config_name_base)
+            dst_config_app_path = os.path.join(dst_config_dir, dst_config_name_base)
+            if os.path.exists(src_config_app_path):
                 src_file_paths.append(src_config_app_path + "/")
                 dst_file_paths.append(dst_config_app_path + "/")
 
@@ -471,7 +467,7 @@ class confsel(tk.Tk):
         is_valid = True
 
         for file_path in dst_file_paths:
-            if exists(file_path):
+            if os.path.exists(file_path):
                 print("%s is already exists" % file_path)
                 is_valid = False
 
@@ -491,8 +487,8 @@ class confsel(tk.Tk):
         if self.check_clone_dst_file_paths(dst_file_paths):
             for idx, src_file_path in enumerate(src_file_paths):
                 dst_file_path = dst_file_paths[idx]
-                if isdir(src_file_path):
-                    copy_tree(src_file_path, dst_file_path)
+                if os.path.isdir(src_file_path):
+                    shutil.copytree(src_file_path, dst_file_path)
                 else:
                     file = open(src_file_path, 'r')
                     lines = file.readlines()
@@ -543,7 +539,7 @@ class confsel(tk.Tk):
 
             self.select_config(make_file_path, dst_config_dir, dst_config_name)
 
-            return True, ("%s cloned %s has been created successfully." % (dst_config_name, splitext(src_config_file_name)[0]))
+            return True, ("%s cloned %s has been created successfully." % (dst_config_name, os.path.splitext(src_config_file_name)[0]))
 
         else:
             return False, "Files already exist."
