@@ -465,49 +465,49 @@ macro(___project_add_app)
         )
     endif()
     add_custom_target(reset
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_reset.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_reset.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(load
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_load.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_load.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(run
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_run.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(xrun
-        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_run.gdb
+        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(debug
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_debug.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_debug.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(xdebug
-        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_debug.gdb
+        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_debug.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(attach
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_attach.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_attach.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
     add_custom_target(xattach
-        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -x ./gdb_attach.gdb
+        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_attach.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
