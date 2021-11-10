@@ -56,6 +56,9 @@ MEMORY
  *   __StackTop
  *   __StackTopTemp
  *   __stack
+ *
+ *   for boot loader
+ *
  */
 
 ENTRY(Reset_Handler)
@@ -94,7 +97,7 @@ SECTIONS
 
         KEEP(*(.eh_frame*))
     } > FLASH
-    
+
     .mem_section_dummy_rom :
     {
         . = ALIGN(4);
@@ -206,7 +209,7 @@ SECTIONS
         KEEP(*(SORT(.mbr_params_page*)))
         PROVIDE(__stop_mbr_params_page = .);
     } > FLASH2
-  
+
     . = ALIGN(4);
     .bootloader_settings_page(NOLOAD) :
     {
@@ -367,13 +370,13 @@ SECTIONS
 
     /* Check if data + heap + stack exceeds limit */
     ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")
-    
+
     /* Check if text sections + data exceeds FLASH limit */
     DataInitFlashUsed = __bss_start__ - __data_start__;
     CodeFlashUsed = __etext - ORIGIN(FLASH);
     TotalFlashUsed = CodeFlashUsed + DataInitFlashUsed;
     ASSERT(TotalFlashUsed <= LENGTH(FLASH), "region FLASH overflowed with .data and user data")
-    
+
     __flash_start__                 = ORIGIN(FLASH);
     __flash_size__                  = LENGTH(FLASH);
     __flash_usage__                 = TotalFlashUsed;
