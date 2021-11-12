@@ -12,6 +12,7 @@
 #if (UBINOS__BSP__USE_DTTY == 1)
 
 int _g_bsp_dtty_init = 0;
+int _g_bsp_dtty_in_init = 0;
 int _g_bsp_dtty_echo = 0;
 int _g_bsp_dtty_autocr = 0; // auto carriage return
 

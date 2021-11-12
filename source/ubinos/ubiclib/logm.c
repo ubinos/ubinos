@@ -127,8 +127,6 @@ const char *_ubiclib_logm_levelname[LOGM_LEVEL__END] = {
 		"[VERBOSE] ",
 };
 
-extern int _g_bsp_dtty_init;
-
 int logm_setlevel(int category, int level) {
 	int i;
 
@@ -172,11 +170,6 @@ int logm_printfln(int category, int level, const char *tag, const char *func, in
 	}
 
 	if (_ubiclib_logm_level[category] < level) {
-		return 0;
-	}
-
-	if (!_g_bsp_dtty_init)
-	{
 		return 0;
 	}
 
@@ -255,11 +248,6 @@ int logm_println(int category, int level, const char *tag, const char *func, int
 	}
 
 	if (_ubiclib_logm_level[category] < level) {
-		return 0;
-	}
-
-	if (!_g_bsp_dtty_init)
-	{
 		return 0;
 	}
 

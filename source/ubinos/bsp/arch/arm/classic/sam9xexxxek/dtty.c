@@ -15,38 +15,46 @@
 #define SLEEP_TIMEMS	1
 
 extern int _g_bsp_dtty_init;
+extern int _g_bsp_dtty_in_init;
 extern int _g_bsp_dtty_echo;
 extern int _g_bsp_dtty_autocr;
 
 int dtty_init(void) {
-	_g_bsp_dtty_echo = 1;
-	_g_bsp_dtty_autocr = 1;
+    if (!_g_bsp_dtty_init && !_g_bsp_dtty_in_init)
+    {
+        _g_bsp_dtty_in_init = 1;
 
-	/* Reset and disable receiver */
-	AT91C_BASE_DBGU->DBGU_CR = AT91C_US_RSTRX | AT91C_US_RSTTX;
+		/* Reset and disable receiver */
+		AT91C_BASE_DBGU->DBGU_CR = AT91C_US_RSTRX | AT91C_US_RSTTX;
 
-	/* Disable interrupts */
-	AT91C_BASE_DBGU->DBGU_IDR = 0xFFFFFFFF;
+		/* Disable interrupts */
+		AT91C_BASE_DBGU->DBGU_IDR = 0xFFFFFFFF;
 
-	/* Configure PIOs for DBGU */
-	AT91C_BASE_PIOB->PIO_ASR = AT91C_PB14_DRXD | AT91C_PB15_DTXD;
-	AT91C_BASE_PIOB->PIO_BSR = 0;
-	AT91C_BASE_PIOB->PIO_PDR = AT91C_PB14_DRXD | AT91C_PB15_DTXD;
+		/* Configure PIOs for DBGU */
+		AT91C_BASE_PIOB->PIO_ASR = AT91C_PB14_DRXD | AT91C_PB15_DTXD;
+		AT91C_BASE_PIOB->PIO_BSR = 0;
+		AT91C_BASE_PIOB->PIO_PDR = AT91C_PB14_DRXD | AT91C_PB15_DTXD;
 
-	/* === Configure serial link === */
-	/* Define the baud rate divisor register [BRGR = MCK / (115200 * 16)] */
-	AT91C_BASE_DBGU->DBGU_BRGR = 54;
-	/* Define the USART mode */
-	AT91C_BASE_DBGU->DBGU_MR = AT91C_US_CHMODE_NORMAL | AT91C_US_PAR_NONE;
+		/* === Configure serial link === */
+		/* Define the baud rate divisor register [BRGR = MCK / (115200 * 16)] */
+		AT91C_BASE_DBGU->DBGU_BRGR = 54;
+		/* Define the USART mode */
+		AT91C_BASE_DBGU->DBGU_MR = AT91C_US_CHMODE_NORMAL | AT91C_US_PAR_NONE;
 
-	/* Disable the RX and TX PDC transfer requests */
-	AT91C_BASE_DBGU->DBGU_PTCR = AT91C_PDC_RXTDIS;
-	AT91C_BASE_DBGU->DBGU_PTCR = AT91C_PDC_TXTDIS;
+		/* Disable the RX and TX PDC transfer requests */
+		AT91C_BASE_DBGU->DBGU_PTCR = AT91C_PDC_RXTDIS;
+		AT91C_BASE_DBGU->DBGU_PTCR = AT91C_PDC_TXTDIS;
 
-	/* Enable transmitter */
-	AT91C_BASE_DBGU->DBGU_CR = AT91C_US_TXEN | AT91C_US_RXEN;
+		/* Enable transmitter */
+		AT91C_BASE_DBGU->DBGU_CR = AT91C_US_TXEN | AT91C_US_RXEN;
 
-	_g_bsp_dtty_init = 1;
+		_g_bsp_dtty_echo = 1;
+		_g_bsp_dtty_autocr = 1;
+
+		_g_bsp_dtty_init = 1;
+
+		_g_bsp_dtty_in_init = 0;
+	}
 
 	return 0;
 }

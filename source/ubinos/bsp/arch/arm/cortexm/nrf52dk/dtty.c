@@ -15,6 +15,7 @@
 #define SLEEP_TIMEMS	1
 
 extern int _g_bsp_dtty_init;
+extern int _g_bsp_dtty_in_init;
 extern int _g_bsp_dtty_echo;
 extern int _g_bsp_dtty_autocr;
 
@@ -64,36 +65,43 @@ static int _dtty_getc_advan(char *ch_p, int blocked);
 
 int dtty_init(void)
 {
-    NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
+    if (!_g_bsp_dtty_init && !_g_bsp_dtty_in_init)
+    {
+        _g_bsp_dtty_in_init = 1;
 
-    /* Disable receiver & transmitter interrupts */
-    NRF_UART0->INTENCLR = 0xffffffff;
+        NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Disabled << UART_ENABLE_ENABLE_Pos);
 
-    /* Stop receiver & transmitter */
-    NRF_UART0->TASKS_STOPTX = 1;
-    NRF_UART0->TASKS_STOPRX = 1;
+        /* Disable receiver & transmitter interrupts */
+        NRF_UART0->INTENCLR = 0xffffffff;
 
-    /* Configure GPIO */
-    GPIO_PIN_OUTSET(6); // TXD
-    GPIO_CFG_OUTPUT(6);
-    GPIO_CFG_INPUT(8, GPIO_PIN_CNF_PULL_Disabled); // RXD
+        /* Stop receiver & transmitter */
+        NRF_UART0->TASKS_STOPTX = 1;
+        NRF_UART0->TASKS_STOPRX = 1;
 
-    /* Configure serial link */
-    NRF_UART0->BAUDRATE = (UART_BAUDRATE_BAUDRATE_Baud115200 << UART_BAUDRATE_BAUDRATE_Pos);
-    NRF_UART0->CONFIG = (UART_CONFIG_PARITY_Excluded << UART_CONFIG_PARITY_Pos) | (UART_CONFIG_HWFC_Disabled << UART_CONFIG_HWFC_Pos);
-    NRF_UART0->PSELTXD = 6;
-    NRF_UART0->PSELRXD = 8;
-    NRF_UART0->EVENTS_ERROR = 0;
-    NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Enabled << UART_ENABLE_ENABLE_Pos);
+        /* Configure GPIO */
+        GPIO_PIN_OUTSET(6); // TXD
+        GPIO_CFG_OUTPUT(6);
+        GPIO_CFG_INPUT(8, GPIO_PIN_CNF_PULL_Disabled); // RXD
 
-    /* Start receiver & transmitter */
-    NRF_UART0->TASKS_STARTTX = 1;
-    NRF_UART0->TASKS_STARTRX = 1;
+        /* Configure serial link */
+        NRF_UART0->BAUDRATE = (UART_BAUDRATE_BAUDRATE_Baud115200 << UART_BAUDRATE_BAUDRATE_Pos);
+        NRF_UART0->CONFIG = (UART_CONFIG_PARITY_Excluded << UART_CONFIG_PARITY_Pos) | (UART_CONFIG_HWFC_Disabled << UART_CONFIG_HWFC_Pos);
+        NRF_UART0->PSELTXD = 6;
+        NRF_UART0->PSELRXD = 8;
+        NRF_UART0->EVENTS_ERROR = 0;
+        NRF_UART0->ENABLE = (UART_ENABLE_ENABLE_Enabled << UART_ENABLE_ENABLE_Pos);
 
-    _g_bsp_dtty_echo = 1;
-    _g_bsp_dtty_autocr = 1;
+        /* Start receiver & transmitter */
+        NRF_UART0->TASKS_STARTTX = 1;
+        NRF_UART0->TASKS_STARTRX = 1;
 
-    _g_bsp_dtty_init = 1;
+        _g_bsp_dtty_echo = 1;
+        _g_bsp_dtty_autocr = 1;
+
+        _g_bsp_dtty_init = 1;
+
+		_g_bsp_dtty_in_init = 0;
+	}
 
     return 0;
 }

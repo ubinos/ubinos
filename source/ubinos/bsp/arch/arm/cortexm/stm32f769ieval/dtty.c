@@ -44,6 +44,7 @@
 #define SLEEP_TIMEMS	1
 
 extern int _g_bsp_dtty_init;
+extern int _g_bsp_dtty_in_init;
 extern int _g_bsp_dtty_echo;
 extern int _g_bsp_dtty_autocr;
 
@@ -109,12 +110,19 @@ static void Configure_USART(void) {
 }
 
 int dtty_init(void) {
-	_g_bsp_dtty_echo = 1;
-	_g_bsp_dtty_autocr = 1;
+    if (!_g_bsp_dtty_init && !_g_bsp_dtty_in_init)
+    {
+        _g_bsp_dtty_in_init = 1;
 
-	Configure_USART();
+		Configure_USART();
 
-	_g_bsp_dtty_init = 1;
+		_g_bsp_dtty_echo = 1;
+		_g_bsp_dtty_autocr = 1;
+
+		_g_bsp_dtty_init = 1;
+
+		_g_bsp_dtty_in_init = 0;
+	}
 
 	return 0;
 }
