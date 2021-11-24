@@ -221,7 +221,7 @@ endif
 common-cleand:
 	$(call begin_message)
 ifeq ("$(shell python "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
-	$(_PRECMD) && rm -rf "$(_OUTPUT_DIR)"
+	$(_PRECMD) && rm -rf "$(_OUTPUT_DIR)" || true
 endif
 	$(call end_message)
 
