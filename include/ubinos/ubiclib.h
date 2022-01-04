@@ -23,25 +23,7 @@ extern "C"
 #include <ubinos_config.h>
 #include <ubinos/type.h>
 
-#ifdef	__cplusplus
-
-#if (!defined(ARDUINO) && (INCLUDE__ARDUINOCORE_API != 1) && (INCLUDE__ARDUINOCORE_MBED != 1) && (INCLUDE__ARDUINOCORE_STM32 != 1))
-
-template<class T, class L>
-auto min(const T& a, const L& b) -> decltype((b < a) ? b : a)
-{
-    return (b < a) ? b : a;
-}
-
-template<class T, class L>
-auto max(const T& a, const L& b) -> decltype((b < a) ? b : a)
-{
-    return (a < b) ? b : a;
-}
-
-#endif
-
-#else
+#if !defined(__cplusplus) || (!defined(ARDUINO) && (INCLUDE__ARDUINOCORE_API != 1) && (INCLUDE__ARDUINOCORE_MBED != 1) && (INCLUDE__ARDUINOCORE_STM32 != 1))
 
 #ifndef min
 #define min(a,b) \
@@ -56,7 +38,7 @@ auto max(const T& a, const L& b) -> decltype((b < a) ? b : a)
      _a > _b ? _a : _b; })
 #endif
 
-#endif /*	__cplusplus */
+#endif /* !defined(__cplusplus) || (!defined(ARDUINO) && (INCLUDE__ARDUINOCORE_API != 1) && (INCLUDE__ARDUINOCORE_MBED != 1) && (INCLUDE__ARDUINOCORE_STM32 != 1)) */
 
 /*!
  * 부호 없는 정수 지수승 연산을 수행하는 함수
