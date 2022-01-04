@@ -44,6 +44,11 @@ def set_geometry_center(win, width, height):
     y_cordinate = int((screen_height/2) - (height/2))
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
 
+def file_open(fname, mode):
+    if sys.version_info.major >= 3:
+        return open(fname, mode, encoding="UTF-8")
+    else:
+        return open(fname, mode)
 class clone_dialog(tk.Toplevel):
 
     src_config_dir = "../app"
@@ -276,7 +281,7 @@ class confsel(tk.Tk):
     def load_config_info(self, config_file_path):
         config_info = None
 
-        with open(config_file_path, 'r') as file:
+        with file_open(config_file_path, 'r') as file:
             lines = file.readlines()
             file.close()
             for line in lines:
@@ -293,7 +298,7 @@ class confsel(tk.Tk):
         include_file_names = []
         config_file_path = os.path.join(config_dir, config_file_name)
 
-        with open(config_file_path, 'r') as file:
+        with file_open(config_file_path, 'r') as file:
             lines = file.readlines()
             file.close()
             for line in lines:
@@ -321,7 +326,7 @@ class confsel(tk.Tk):
         return dst_config_info
 
     def create_makefile(self, make_file_path, config_dir, config_name):
-        file = open(make_file_path, 'w+')
+        file = file_open(make_file_path, 'w+')
         file.write("CONFIG_DIR ?= %s\n" % config_dir)
         file.write("CONFIG_NAME ?= %s\n" % config_name)
         file.write("\n")
@@ -333,7 +338,7 @@ class confsel(tk.Tk):
         config_dir = ""
         config_name = ""
 
-        with open(make_file_path, 'r') as file:
+        with file_open(make_file_path, 'r') as file:
             lines = file.readlines()
             file.close()
             for line in lines:
@@ -364,7 +369,7 @@ class confsel(tk.Tk):
             self.create_makefile(make_file_path, config_dir, config_name)
 
         elif not os.path.isdir(make_file_path):
-            file = open(make_file_path, 'r')
+            file = file_open(make_file_path, 'r')
             file.seek(0, io.SEEK_END)
             file_len = file.tell()
             file.close()
@@ -378,10 +383,10 @@ class confsel(tk.Tk):
                 need_config_dir = True
                 need_config_name = True
 
-                file = open(make_file_path, 'r')
+                file = file_open(make_file_path, 'r')
                 lines = file.readlines()
                 file.close()
-                file = open(make_file_path, 'w+')
+                file = file_open(make_file_path, 'w+')
                 for line in lines:
                     if line.startswith("CONFIG_DIR "):
                         file.write("CONFIG_DIR ?= %s\n" % config_dir)
@@ -394,10 +399,10 @@ class confsel(tk.Tk):
                 file.close()
 
                 if need_config_dir:
-                    file = open(make_file_path, 'r')
+                    file = file_open(make_file_path, 'r')
                     lines = file.readlines()
                     file.close()
-                    file = open(make_file_path, 'w+')
+                    file = file_open(make_file_path, 'w+')
                     for line in lines:
                         if need_config_dir and line.startswith("include makefile.mk"):
                             file.write("CONFIG_DIR ?= %s\n" % config_dir)
@@ -408,10 +413,10 @@ class confsel(tk.Tk):
                             file.write(line)
                     file.close()
                 if need_config_name:
-                    file = open(make_file_path, 'r')
+                    file = file_open(make_file_path, 'r')
                     lines = file.readlines()
                     file.close()
-                    file = open(make_file_path, 'w+')
+                    file = file_open(make_file_path, 'w+')
                     for line in lines:
                         if need_config_name and line.startswith("include makefile.mk"):
                             file.write("CONFIG_NAME ?= %s\n" % config_name)
@@ -490,10 +495,10 @@ class confsel(tk.Tk):
                 if os.path.isdir(src_file_path):
                     shutil.copytree(src_file_path, dst_file_path)
                 else:
-                    file = open(src_file_path, 'r')
+                    file = file_open(src_file_path, 'r')
                     lines = file.readlines()
                     file.close()
-                    file = open(dst_file_path, 'w+')
+                    file = file_open(dst_file_path, 'w+')
 
                     for line in lines:
                         written = False

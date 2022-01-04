@@ -98,12 +98,18 @@ def refine_linkscript(sfn, dfn, memtype, origin, length):
     newstr = ("%s" % length)
     replace_string(sfn, dfn, oldstr, newstr)
 
+def file_open(fname, mode):
+    if sys.version_info.major >= 3:
+        return open(fname, mode, encoding="UTF-8")
+    else:
+        return open(fname, mode)
+
 def replace_string(sfn, dfn, oldstr, newstr):
-    sf = open(sfn, 'r')
+    sf = file_open(sfn, 'r')
     lines = sf.readlines()
     sf.close()
 
-    df = open(dfn, 'w')
+    df = file_open(dfn, 'w')
     for line in lines:
         if -1 != line.find(oldstr):
             newline = line.replace(oldstr, newstr)
@@ -113,7 +119,7 @@ def replace_string(sfn, dfn, oldstr, newstr):
     df.close()
 
 def parse_mapfile_get_value(sfn, symbol):
-    sf = open(sfn, 'r')
+    sf = file_open(sfn, 'r')
     lines = sf.readlines()
     sf.close()
 
