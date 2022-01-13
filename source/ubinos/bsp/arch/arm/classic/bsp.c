@@ -40,14 +40,29 @@ void bsp_busywait(unsigned int count) {
 }
 
 void bsp_abortsystem(void) {
-    ARM_INTERRUPT_DISABLE();
+    if (!_bsp_aborted)
+    {
+        _bsp_aborted = 1;
 
-    dtty_puts("\n\nsystem is aborted\n\n", 80);
+        ARM_INTERRUPT_DISABLE();
+        dtty_puts("\n\nsystem is aborted\n\n", 80);
+    }
 
+#if (UBINOS__BSP__ABORTSYSTEM_TYPE == UBINOS__BSP__ABORTSYSTEM_TYPE__STOP)
     __asm__ __volatile__ (
             "1:                                                 \n\t"
             "b  1b                                              \n\t"
     );
+#elif (UBINOS__BSP__ABORTSYSTEM_TYPE == UBINOS__BSP__ABORTSYSTEM_TYPE__RESET)
+    AT91C_BASE_RSTC->RSTC_RCR = AT91C_RSTC_KEY |
+                                AT91C_RSTC_PERRST |
+                                AT91C_RSTC_EXTRST |
+                                AT91C_RSTC_PROCRST;
+
+    while (AT91C_BASE_RSTC->RSTC_RSR & AT91C_RSTC_SRCMP);
+#else
+    #error "Unsupported UBINOS__BSP__ABORTSYSTEM_TYPE"
+#endif
 }
 
 void bsp_enableintr(void) {

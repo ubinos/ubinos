@@ -46,10 +46,16 @@ void bsp_abortsystem(void) {
         dtty_puts("\n\nsystem is aborted\n\n", 80);
     }
 
+#if (UBINOS__BSP__ABORTSYSTEM_TYPE == UBINOS__BSP__ABORTSYSTEM_TYPE__STOP)
     __asm__ __volatile__ (
             "1:                                                 \n\t"
             "b  1b                                              \n\t"
     );
+#elif (UBINOS__BSP__ABORTSYSTEM_TYPE == UBINOS__BSP__ABORTSYSTEM_TYPE__RESET)
+    NVIC_SystemReset();
+#else
+    #error "Unsupported UBINOS__BSP__ABORTSYSTEM_TYPE"
+#endif
 }
 
 void bsp_enableintr(void) {

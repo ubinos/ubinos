@@ -115,6 +115,8 @@ set_cache_default(UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN                      
 
 set_cache_default(UBINOS__BSP__EXCLUDE_ARCH_INIT                                FALSE   BOOL "Exclude bsp architecture initialization code")
 
+set_cache_default(UBINOS__BSP__ABORTSYSTEM_TYPE                                 "RESET"  STRING "Abort system type [STOP | RESET]")
+
 
 if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
