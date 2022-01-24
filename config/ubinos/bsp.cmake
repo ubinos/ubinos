@@ -54,7 +54,7 @@ set_cache_default(UBINOS__BSP__CPU_MODEL                                        
 
 set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | ARDUINONANO33BLE | STM3221GEVAL | NUCLEOF207ZG | STM32L476GEVAL | NUCLEOL476RG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32429IEVAL | STM32F429IDISCO]")
 set_cache_default(UBINOS__BSP__BOARD_REVISION_NO                                0       STRING "Board revision number")
-set_cache_default(UBINOS__BSP__BOARD_VARIATION_NAME                             "NONE"  STRING "Board variation name [NONE | ...]")
+set_cache_default(UBINOS__BSP__BOARD_VARIATION_NAME  "${UBINOS__BSP__BOARD_MODEL}"      STRING "Board variation name")
 
 set_cache_default(UBINOS__BSP__LINK_MEMMAP_TYPE                                 ""      STRING "Link memory map type [FLASH | SRAM | FLASH_EXTSRAM | FLASH_EXTSDRAM | EXTFLASH_EXTSDRAM]")
 
