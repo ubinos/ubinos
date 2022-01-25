@@ -934,15 +934,18 @@ macro(ubinos_project_end)
     ___project_config_end()
 
     set(PROJECT_SOURCES)
+
     set(_tmp_fname "${PROJECT_SOURCE_DIR}/sources.cmake")
-    if(NOT EXISTS "${_tmp_fname}")
-        set(_tmp_fname "${PROJECT_UBINOS_DIR}/resource/ubinos/dummy/sources.cmake")
+    if(EXISTS "${_tmp_fname}")
+        include(${_tmp_fname})
     endif()
-    include(${_tmp_fname})
-    if(PROJECT_SOURCES)
-        add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
-        set(PROJECT_LIBRARIES ${PROJECT_NAME} ${PROJECT_LIBRARIES})
+
+    if(NOT PROJECT_SOURCES)
+        set(PROJECT_SOURCES "${PROJECT_UBINOS_DIR}/resource/ubinos/dummy/dummy.c")
     endif()
+
+    add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
+    set(PROJECT_LIBRARIES ${PROJECT_NAME} ${PROJECT_LIBRARIES})
 
     if(INCLUDE__APP)
         ___project_add_app()
