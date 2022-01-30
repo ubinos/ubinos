@@ -306,7 +306,7 @@ set_cache_default(UBINOS__BSP__DOXYGEN_FILE                                     
 
 set_cache_default(UBINOS__BSP__DEBUG_SERVER_HOST "" STRING "Debug server host name or IP")
 set_cache_default(UBINOS__BSP__DEBUG_SERVER_PORT "2331" STRING "Debug server port number")
-set_cache_default(UBINOS__BSP__DEBUG_SERVER_TYPE "NONE" STRING "Debug server type [NONE | GDBSERVER | JLINK | OPENOCD]")
+set_cache_default(UBINOS__BSP__DEBUG_SERVER_TYPE "NONE" STRING "Debug server type [NONE | GDBSERVER | JLINK | OPENOCD | QEMU]")
 set_cache_default(UBINOS__BSP__DEBUG_SERVER_COMMAND "" STRING "Debug server command")
 set_cache_default(UBINOS__BSP__DEBUG_SERVER_SERIAL "" STRING "Debug server serial number")
 

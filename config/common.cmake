@@ -468,6 +468,17 @@ macro(___project_add_app)
                 USES_TERMINAL
             )
         endif()
+    elseif(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "QEMU")
+        add_custom_target(dserver
+            COMMAND  "echo" "not needed"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+        add_custom_target(xdserver
+            COMMAND  "echo" "not needed"
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
     else()
         add_custom_target(dserver
             COMMAND  "echo" "not supported debug server type"
@@ -486,12 +497,31 @@ macro(___project_add_app)
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
     )
-    add_custom_target(load
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_load.gdb
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        USES_TERMINAL
-    )
+
+    if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "QEMU")
+        math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
+        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
+
+        set(__tmp_dserver_cmd ${UBINOS__BSP__DEBUG_SERVER_COMMAND})
+
+        set(__tmp_dserver_params
+            "-gdb" "tcp::${UBINOS__BSP__DEBUG_SERVER_PORT}"
+            "-kernel" "app.elf"
+        )
+
+        add_custom_target(load
+            COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+    else()
+        add_custom_target(load
+            COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_load.gdb
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+    endif()
     add_custom_target(run
         COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
