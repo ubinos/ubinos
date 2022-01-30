@@ -50,9 +50,9 @@ set(PROJECT_UBINOS_LIBRARIES ${PROJECT_UBINOS_LIBRARIES} ubinos)
 set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
 set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M7 | CORTEX_M4 | CORTEX_M3]")
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
-set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG  | STM32L476ZG | STM32L476RG | STM32L475VG | STM32F769NI | STM32F429NI | STM32F429ZI]")
+set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG  | STM32L476ZG | STM32L476RG | STM32L475VG | STM32F769NI | STM32F429NI | STM32F429ZI | STM32F100XB]")
 
-set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | ARDUINONANO33BLE | STM3221GEVAL | NUCLEOF207ZG | STM32L476GEVAL | NUCLEOL476RG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32429IEVAL | STM32F429IDISCO]")
+set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | ARDUINONANO33BLE | STM3221GEVAL | NUCLEOF207ZG | STM32L476GEVAL | NUCLEOL476RG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32429IEVAL | STM32F429IDISCO | STM32VLDISCO]")
 set_cache_default(UBINOS__BSP__BOARD_REVISION_NO                                0       STRING "Board revision number")
 set_cache_default(UBINOS__BSP__BOARD_VARIATION_NAME  "${UBINOS__BSP__BOARD_MODEL}"      STRING "Board variation name")
 
@@ -118,6 +118,8 @@ set_cache_default(UBINOS__BSP__STACK_OVERFLOW_CHECK_MARGIN                      
 set_cache_default(UBINOS__BSP__EXCLUDE_ARCH_INIT                                FALSE   BOOL "Exclude bsp architecture initialization code")
 
 set_cache_default(UBINOS__BSP__ABORTSYSTEM_TYPE                                 "RESET"  STRING "Abort system type [STOP | RESET]")
+
+set_cache_default(UBINOS__BSP__USE_QEMU                                         FALSE   BOOL "Use QEMU")
 
 
 if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
@@ -209,6 +211,13 @@ set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  
 set_cache_default(UBINOS__BSP__STM32_STM32F4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32F429                                  TRUE    BOOL "STM32F429 family CPU Model")
 
+    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F100XB")
+
+set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
+
+set_cache_default(UBINOS__BSP__STM32_STM32F1XX                                  TRUE    BOOL "STM32F1XX family CPU Model")
+set_cache_default(UBINOS__BSP__STM32_STM32F100                                  TRUE    BOOL "STM32F100 family CPU Model")
+
     else()
 
         message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
@@ -256,6 +265,12 @@ set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               
 set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      STRING "Value of the External oscillator in Hz [25000000U | 8000000U]")
 
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1]")
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32VLDISCO")
+
+set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               FALSE   BOOL "")
+
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1 | 2]")
 
     else()
 
@@ -502,6 +517,10 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
         endif()
 
+    elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F100XB")
+
+        set(_tmp_all_flags "${_tmp_all_flags} -DSTM32F100xB")
+
     else()
 
        message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_MODEL")
@@ -574,6 +593,10 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32F429IDISCO")
 
         set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32F429I_DISCO")
+
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32VLDISCO")
+
+        set(_tmp_all_flags "${_tmp_all_flags} -DUSE_STM32VL_DISCO")
 
     else()
 
