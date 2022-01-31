@@ -18,6 +18,10 @@ macro(set_cache_default name value type helpstr)
     set_property(CACHE ${name} PROPERTY HELPSTRING ${helpstr})
 endmacro(set_cache_default)
 
+set(UBINOS__BSP__CMD_LOAD "")
+set(UBINOS__BSP__CMD_DSERVER "")
+set(UBINOS__BSP__CMD_XDSERVER "")
+
 macro(___project_config_begin)
     file(WRITE ${PROJECT_BINARY_DIR}/ubinos_config.h
         "#ifndef UBINOS_CONFIG_H_\n"
@@ -338,6 +342,14 @@ macro(___project_add_app)
 
     execute_process(COMMAND ${PROJECT_TOOLBOX_RUN_CMD} get_start_command_for_cmake OUTPUT_VARIABLE __tmp_start_cmd)
     string(STRIP "${__tmp_start_cmd}" __tmp_start_cmd)
+    separate_arguments(__tmp_start_cmd)
+
+    set(__tmp_dserver_cmd ${UBINOS__BSP__DEBUG_SERVER_COMMAND})
+    string(STRIP "${__tmp_dserver_cmd}" __tmp_dserver_cmd)
+    separate_arguments(__tmp_dserver_cmd)
+    if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "OPENOCD")
+        set(__tmp_dserver_cmd ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg)
+    endif()
 
     execute_process(COMMAND ${PROJECT_TOOLBOX_RUN_CMD} system_name OUTPUT_VARIABLE __tmp_system_name)
 
@@ -345,37 +357,30 @@ macro(___project_add_app)
         math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
         math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
 
-        set(__tmp_dserver_cmd ${UBINOS__BSP__DEBUG_SERVER_COMMAND} -f ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg)
-
         set(__tmp_dserver_params
             "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
             "-c" "\"tcl_port" "${_tmp_tcl_port}\""
             "-c" "\"telnet_port" "${_tmp_telnet_port}\""
         )
         if (${__tmp_system_name} MATCHES "Darwin")
-            set(__tmp_dserver_params_2
+            set(__tmp_dserver_params_with_start_cmd
                 "-c" "\\\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\\\""
                 "-c" "\\\"tcl_port" "${_tmp_tcl_port}\\\""
                 "-c" "\\\"telnet_port" "${_tmp_telnet_port}\\\""
             )
+        else()
+            set(__tmp_dserver_params_with_start_cmd ${__tmp_dserver_params})
         endif()
         if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
             set(__tmp_dserver_params ${__tmp_dserver_params}
                 "-c" "\"hla_serial" "${UBINOS__BSP__DEBUG_SERVER_SERIAL}\""
             )
             if (${__tmp_system_name} MATCHES "Darwin")
-                set(__tmp_dserver_params_2 ${__tmp_dserver_params_2}
+                set(__tmp_dserver_params_with_start_cmd ${__tmp_dserver_params_with_start_cmd}
                     "-c" "\\\"hla_serial" "${UBINOS__BSP__DEBUG_SERVER_SERIAL}\\\""
                 )
-            endif()
-        endif()
-        if (NOT ${__tmp_system_name} MATCHES "Darwin")
-            set(__tmp_dserver_params_2 ${__tmp_dserver_params})
-            if (${__tmp_system_name} MATCHES "Linux")
-                set(__tmp_dserver_params_2 ${__tmp_dserver_params_2})
-            endif()
-            if (${__tmp_system_name} MATCHES "Windows")
-                set(__tmp_start_cmd ${__tmp_start_cmd} "call")
+            else()
+                set(__tmp_dserver_params_with_start_cmd ${__tmp_dserver_params})
             endif()
         endif()
 
@@ -386,10 +391,12 @@ macro(___project_add_app)
         )
 
         add_custom_target(xdserver
-            COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_2}
+            COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
         )
+        set(UBINOS__BSP__CMD_DSERVER ${__tmp_dserver_cmd} ${__tmp_dserver_params})
+        set(UBINOS__BSP__CMD_XDSERVER ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
     elseif(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "JLINK")
         math(EXPR _tmp_swo_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
         math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
@@ -418,8 +425,6 @@ macro(___project_add_app)
         endif()
 
         if(NOT ${_tmp_device_model} STREQUAL "")
-            set(__tmp_dserver_cmd ${UBINOS__BSP__DEBUG_SERVER_COMMAND})
-
             if(NOT ${UBINOS__BSP__DEBUG_SERVER_SERIAL} STREQUAL "")
                 set(__tmp_dserver_params
                     "-select" "USB=${UBINOS__BSP__DEBUG_SERVER_SERIAL}"
@@ -440,10 +445,7 @@ macro(___project_add_app)
                     "-ir"
                     "-LocalhostOnly"
             )
-            set(__tmp_dserver_params_2 ${__tmp_dserver_params})
-            if (${__tmp_system_name} MATCHES "Linux")
-                set(__tmp_dserver_params_2 ${__tmp_dserver_params_2})
-            endif()
+            set(__tmp_dserver_params_with_start_cmd ${__tmp_dserver_params})
 
             add_custom_target(dserver
                 COMMAND ${__tmp_dserver_cmd} ${__tmp_dserver_params}
@@ -452,10 +454,12 @@ macro(___project_add_app)
             )
 
             add_custom_target(xdserver
-                COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_2}
+                COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 USES_TERMINAL
             )
+            set(UBINOS__BSP__CMD_DSERVER ${__tmp_dserver_cmd} ${__tmp_dserver_params})
+            set(UBINOS__BSP__CMD_XDSERVER ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
         else()
             add_custom_target(dserver
                 COMMAND  "echo" "not supported device model"
@@ -499,21 +503,17 @@ macro(___project_add_app)
     )
 
     if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "QEMU")
-        math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
-        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
-
-        set(__tmp_dserver_cmd ${UBINOS__BSP__DEBUG_SERVER_COMMAND})
-
-        set(__tmp_dserver_params
+        set(__tmp_dserver_params_with_start_cmd
             "-gdb" "tcp::${UBINOS__BSP__DEBUG_SERVER_PORT}"
             "-kernel" "app.elf"
         )
 
         add_custom_target(load
-            COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params}
+            COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
         )
+        set(UBINOS__BSP__CMD_LOAD ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
     else()
         add_custom_target(load
             COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_load.gdb
@@ -521,6 +521,7 @@ macro(___project_add_app)
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
         )
+        set(UBINOS__BSP__CMD_LOAD ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_load.gdb)
     endif()
     add_custom_target(run
         COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
@@ -910,6 +911,12 @@ macro(___project_show)
     get_property(_tmp_def DIRECTORY PROPERTY COMPILE_DEFINITIONS)
     message(STATUS "COMPILE_DEFINITIONS             = ${_tmp_def}")
     message(STATUS "")
+    # message(STATUS "----------------------------------------------------------------------------")
+    # message(STATUS "")
+    # message(STATUS "UBINOS__BSP__CMD_DSERVER        = ${UBINOS__BSP__CMD_DSERVER}")
+    # message(STATUS "UBINOS__BSP__CMD_XDSERVER       = ${UBINOS__BSP__CMD_XDSERVER}")
+    # message(STATUS "UBINOS__BSP__CMD_LOAD           = ${UBINOS__BSP__CMD_LOAD}")
+    # message(STATUS "")
     message(STATUS "============================================================================")
     message(STATUS "")
 endmacro(___project_show)
