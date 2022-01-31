@@ -648,6 +648,34 @@
 	@echo ""
 	@echo ""
 	@echo "Config          : ubinos library"
+	@echo "Target board    : stm32vldisco"
+	@echo "OS Kernel       : none"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_stm32vldisco_baremetal
+	@echo ""
+	@echo ""
+
+
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : Hi, World! application on QEMU"
+	@echo "Target board    : stm32vldisco"
+	@echo "OS Kernel       : none"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=hi_world_stm32vldisco_baremetal_qemu
+	@echo ""
+	@echo ""
+
+
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : ubinos library"
 	@echo "Target board    : stm3221geval"
 	@echo "OS Kernel       : none"
 	@echo "Link memory map : sram"
