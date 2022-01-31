@@ -390,11 +390,21 @@ macro(___project_add_app)
             USES_TERMINAL
         )
 
-        add_custom_target(xdserver
-            COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-            USES_TERMINAL
-        )
+        if (${__tmp_system_name} MATCHES "Linux")
+            add_custom_target(xdserver
+                COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd} &
+                COMMAND sleep 1
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+        else()
+            add_custom_target(xdserver
+                COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+        endif()
+
         set(UBINOS__BSP__CMD_DSERVER ${__tmp_dserver_cmd} ${__tmp_dserver_params})
         set(UBINOS__BSP__CMD_XDSERVER ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
     elseif(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "JLINK")
@@ -453,11 +463,21 @@ macro(___project_add_app)
                 USES_TERMINAL
             )
 
-            add_custom_target(xdserver
-                COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
-                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                USES_TERMINAL
-            )
+            if (${__tmp_system_name} MATCHES "Linux")
+                add_custom_target(xdserver
+                    COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd} &
+                    COMMAND sleep 1
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                    USES_TERMINAL
+                )
+            else()
+                add_custom_target(xdserver
+                    COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
+                    WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                    USES_TERMINAL
+                )
+            endif()
+
             set(UBINOS__BSP__CMD_DSERVER ${__tmp_dserver_cmd} ${__tmp_dserver_params})
             set(UBINOS__BSP__CMD_XDSERVER ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
         else()
@@ -508,11 +528,21 @@ macro(___project_add_app)
             "-kernel" "app.elf"
         )
 
-        add_custom_target(load
-            COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
-            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-            USES_TERMINAL
-        )
+        if (${__tmp_system_name} MATCHES "Linux")
+            add_custom_target(load
+                COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd} &
+                COMMAND sleep 1
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+        else()
+            add_custom_target(load
+                COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
+                WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                USES_TERMINAL
+            )
+        endif()
+
         set(UBINOS__BSP__CMD_LOAD ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
     else()
         add_custom_target(load
