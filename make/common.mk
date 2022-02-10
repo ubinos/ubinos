@@ -80,6 +80,14 @@ endif
 
 ###############################################################################
 
+ifeq ($(strip $(LIBRARY_UPGRADE_LIST)),)
+_LIBRARY_UPGRADE_LIST   = ubinos seggerrtt seggerrtt_wrapper
+else
+_LIBRARY_UPGRADE_LIST   = $(LIBRARY_UPGRADE_LIST)
+endif
+
+###############################################################################
+
 ifeq ($(strip $(JOBS)),)
 _JOBS                   = $(shell python "$(_TOOLBOX)" cpu_count)
 else
@@ -141,6 +149,10 @@ common-help:
 	@echo ""
 	@echo "RESOURCE_DIR                 = $(_RESOURCE_DIR)"
 	@echo "MAKE_DIR                     = $(_MAKE_DIR)"
+	@echo ""
+	@echo "-------------------------------------------------------------------------------"
+	@echo ""
+	@echo "LIBRARY_UPGRADE_LIST         = $(_LIBRARY_UPGRADE_LIST)"
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
@@ -304,6 +316,18 @@ ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
 else
 	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/confsel.py" .. library
 endif
+	$(call end_message)
+
+###############################################################################
+
+common-upgrade:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote $(_LIBRARY_UPGRADE_LIST)
+	$(call end_message)
+
+common-upgradef:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote -f $(_LIBRARY_UPGRADE_LIST)
 	$(call end_message)
 
 ###############################################################################
