@@ -81,7 +81,7 @@ endif
 ###############################################################################
 
 ifeq ($(strip $(LIBRARY_UPGRADE_LIST)),)
-_LIBRARY_UPGRADE_LIST   = ubinos seggerrtt seggerrtt_wrapper
+_LIBRARY_UPGRADE_LIST   = ubinos
 else
 _LIBRARY_UPGRADE_LIST   = $(LIBRARY_UPGRADE_LIST)
 endif
@@ -328,6 +328,16 @@ common-upgrade:
 common-upgradef:
 	$(call begin_message)
 	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote -f $(_LIBRARY_UPGRADE_LIST)
+	$(call end_message)
+
+common-upgradea:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote
+	$(call end_message)
+
+common-upgradeaf:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote -f
 	$(call end_message)
 
 ###############################################################################
