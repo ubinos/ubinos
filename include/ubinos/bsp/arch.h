@@ -37,6 +37,8 @@ extern "C"
 #include "arch/arm/cortexm/stm32429ieval.h"
 #elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32F769IEVAL) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32F769IDISCO)
 #include "arch/arm/cortexm/stm32f769ieval.h"
+#elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32H747IDISCO)
+#include "arch/arm/cortexm/stm32h747idisco.h"
 #elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32VLDISCO)
 #include "arch/arm/cortexm/stm32vldisco.h"
 #else
