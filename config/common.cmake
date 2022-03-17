@@ -354,8 +354,8 @@ macro(___project_add_app)
     execute_process(COMMAND ${PROJECT_TOOLBOX_RUN_CMD} system_name OUTPUT_VARIABLE __tmp_system_name)
 
     if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "OPENOCD")
-        math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
-        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
+        math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 3")
+        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 6")
 
         set(__tmp_dserver_params
             "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
@@ -408,8 +408,8 @@ macro(___project_add_app)
         set(UBINOS__BSP__CMD_DSERVER ${__tmp_dserver_cmd} ${__tmp_dserver_params})
         set(UBINOS__BSP__CMD_XDSERVER ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
     elseif(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "JLINK")
-        math(EXPR _tmp_swo_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 1")
-        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 2")
+        math(EXPR _tmp_swo_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 3")
+        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 6")
 
         set(_tmp_device_model "")
         if(${UBINOS__BSP__CPU_MODEL} STREQUAL "NRF52832XXAA")
