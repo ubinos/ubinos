@@ -227,7 +227,7 @@ typedef enum
 #define __Vendor_SysTickConfig    0U       /*!< Set to 1 if different SysTick Config is used  */
 #define __FPU_PRESENT             1U       /*!< FPU present                                   */
 
-#include "core_cm4.h"                     /*!< Cortex-M4 processor and core peripherals      */
+#include "../cmsis_v5_7_0/core_cm4.h"                     /*!< Cortex-M4 processor and core peripherals      */
 #else  /* CORE_CM7 */
 #ifdef CORE_CM7
 #define __CM7_REV               0x0100U   /*!< Cortex-M7 revision r1p0                       */
@@ -237,7 +237,7 @@ typedef enum
 #define __FPU_PRESENT             1U       /*!< FPU present                                   */
 #define __ICACHE_PRESENT          1U       /*!< CM7 instruction cache present                 */
 #define __DCACHE_PRESENT          1U       /*!< CM7 data cache present                        */
-#include "core_cm7.h"                 /*!< Cortex-M7 processor and core peripherals          */
+#include "../cmsis_v5_7_0/core_cm7.h"                 /*!< Cortex-M7 processor and core peripherals          */
 #else  /* UNKNOWN_CORE */
 #error Please #define CORE_CM4 or CORE_CM7
 #endif /* CORE_CM7 */

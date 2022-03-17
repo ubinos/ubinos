@@ -14,6 +14,12 @@
   * If no LICENSE file comes with this software, it is provided AS-IS.
   ******************************************************************************
   */
+
+#include <ubinos/bsp/arch.h>
+
+#if (INCLUDE__UBINOS__BSP == 1)
+#if (UBINOS__BSP__CPU_MODEL__STM32H7XX == 1)
+
 #if defined(USE_FULL_LL_DRIVER)
 
 /* Includes ------------------------------------------------------------------*/
@@ -1784,3 +1790,5 @@ static uint32_t RCC_GetPCLK4ClockFreq(uint32_t HCLK_Frequency)
 
 #endif /* USE_FULL_LL_DRIVER */
 
+#endif /* (UBINOS__BSP__CPU_MODEL__STM32H7XX == 1) */
+#endif /* (INCLUDE__UBINOS__BSP == 1) */
