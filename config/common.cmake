@@ -616,6 +616,26 @@ macro(___project_add_app)
         COMMAND ${CMAKE_OBJDUMP} -d -l
         ${PROJECT_EXE_NAME}.elf > ${PROJECT_EXE_NAME}.s
     )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -t
+        ${PROJECT_EXE_NAME}.elf > ${PROJECT_EXE_NAME}.syms.s
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -j .data
+        ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.data.elf
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -s
+        ${PROJECT_EXE_NAME}.data.elf > ${PROJECT_EXE_NAME}.data.txt
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove -f
+        ${PROJECT_EXE_NAME}.data.elf
+    )
 
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
         add_custom_command(
@@ -787,6 +807,18 @@ macro(___project_add_app)
 
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove -f
+        ../Default/${PROJECT_EXE_NAME}.elf
+        ../Default/${PROJECT_EXE_NAME}.bin
+        ../Default/${PROJECT_EXE_NAME}.hex
+        ../Default/${PROJECT_EXE_NAME}.s
+        ../Default/${PROJECT_EXE_NAME}.syms.s
+        ../Default/${PROJECT_EXE_NAME}.data.txt
+        ../Default/${PROJECT_EXE_NAME}.map
+    )
+    
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         ${PROJECT_EXE_NAME}.elf
         ../Default/
@@ -807,6 +839,24 @@ macro(___project_add_app)
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         ${PROJECT_EXE_NAME}.s
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.syms.s
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.data.txt
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.map
         ../Default/
     )
 
@@ -1046,16 +1096,13 @@ macro(ubinos_project_end)
 
     ___project_config_end()
 
-    set(PROJECT_SOURCES)
-
     set(_tmp_fname "${PROJECT_SOURCE_DIR}/sources.cmake")
     if(EXISTS "${_tmp_fname}")
         include(${_tmp_fname})
     endif()
 
-    if(NOT PROJECT_SOURCES)
-        set(PROJECT_SOURCES "${PROJECT_UBINOS_DIR}/resource/ubinos/dummy/dummy.c")
-    endif()
+    set(PROJECT_SOURCES ${PROJECT_SOURCES} "${PROJECT_UBINOS_DIR}/resource/ubinos/dummy/dummy.c")
+    set(PROJECT_APP_SOURCES ${PROJECT_APP_SOURCES} "${PROJECT_UBINOS_DIR}/resource/ubinos/dummy/dummy.c")
 
     add_library(${PROJECT_NAME} STATIC ${PROJECT_SOURCES})
     set(PROJECT_LIBRARIES ${PROJECT_NAME} ${PROJECT_LIBRARIES})

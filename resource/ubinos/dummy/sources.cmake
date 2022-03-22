@@ -1,3 +1,2 @@
-set(PROJECT_SOURCES ${CMAKE_CURRENT_LIST_DIR}/dummy.c)
-
+########
 
