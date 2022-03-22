@@ -309,6 +309,8 @@ set_cache_default(UBINOS__BSP__SYS_INIT_FILE                                    
 
 set_cache_default(UBINOS__BSP__OPENOCD_CONFIG_FILE                              ""      PATH "OpenOCD config file")
 
+set_cache_default(UBINOS__BSP__GDBSCRIPT_FILE_INIT                              ""      PATH "GDB script file to init")
+
 set_cache_default(UBINOS__BSP__GDBSCRIPT_FILE_ATTACH                            ""      PATH "Gdb script file to attach")
 set_cache_default(UBINOS__BSP__GDBSCRIPT_FILE_DEBUG                             ""      PATH "Gdb script file to debug")
 set_cache_default(UBINOS__BSP__GDBSCRIPT_FILE_RUN                               ""      PATH "Gdb script file to run")

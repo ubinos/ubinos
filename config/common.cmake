@@ -283,6 +283,15 @@ macro(___project_add_app)
         )
     endif()
 
+    if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_INIT} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${UBINOS__BSP__GDBSCRIPT_FILE_INIT}
+            ${CMAKE_CURRENT_BINARY_DIR}/gdb_init.gdb
+        )
+    endif()
+
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_ATTACH} STREQUAL "")
         add_custom_command(
             TARGET ${PROJECT_NAME} PRE_BUILD
@@ -720,6 +729,15 @@ macro(___project_add_app)
                 ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
             )
         endif()
+    endif()
+
+    if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_INIT} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${CMAKE_CURRENT_BINARY_DIR}/gdb_init.gdb
+            ../Default/
+        )
     endif()
 
     if(NOT ${UBINOS__BSP__FLASH_WRITER_FILE} STREQUAL "")
