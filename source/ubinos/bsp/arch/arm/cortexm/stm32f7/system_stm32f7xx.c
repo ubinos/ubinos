@@ -666,6 +666,16 @@ __WEAK void SystemInit2(void)
 	SCB_DisableDCache();
 #endif /* (UBINOS__BSP__USE_DCACHE == 1) */
 
+  /* Configure Instruction cache through ART accelerator */ 
+#if (ART_ACCLERATOR_ENABLE != 0)
+   __HAL_FLASH_ART_ENABLE();
+#endif /* ART_ACCLERATOR_ENABLE */
+
+  /* Configure Flash prefetch */
+#if (PREFETCH_ENABLE != 0U)
+  __HAL_FLASH_PREFETCH_BUFFER_ENABLE();
+#endif /* PREFETCH_ENABLE */
+
 	SystemClock_Config();
 
 	SystemCoreClockUpdate();
