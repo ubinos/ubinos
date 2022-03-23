@@ -569,6 +569,13 @@ __WEAK void SystemInit2(void)
   SCB_DisableDCache();
 #endif /* (UBINOS__BSP__USE_DCACHE == 1) */
 
+#if defined(DUAL_CORE) && defined(CORE_CM4)
+   /* Configure Cortex-M4 Instruction cache through ART accelerator */
+   __HAL_RCC_ART_CLK_ENABLE();                   /* Enable the Cortex-M4 ART Clock */
+   __HAL_ART_CONFIG_BASE_ADDRESS(0x08100000UL);  /* Configure the Cortex-M4 ART Base address to the Flash Bank 2 : */
+   __HAL_ART_ENABLE();                           /* Enable the Cortex-M4 ART */
+#endif /* DUAL_CORE &&  CORE_CM4 */
+
   SystemClock_Config();
 
   SystemCoreClockUpdate();
