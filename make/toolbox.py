@@ -73,6 +73,11 @@ def copy_file(src, dst):
         dst = os.path.join(dst, os.path.split(src)[1])
     shutil.copyfile(src, dst)
 
+def copy_tree(src, dst):
+    if os.path.isdir(dst):
+        dst = os.path.join(dst, os.path.split(src)[1])
+    shutil.copytree(src, dst)
+
 def getuid():
     print(os.getuid())
 
