@@ -441,6 +441,8 @@ macro(___project_add_app)
             set(_tmp_device_model "STM32F429NI")
         elseif(${UBINOS__BSP__CPU_MODEL} STREQUAL "STM32F429ZI")
             set(_tmp_device_model "STM32F429ZI")
+        elseif(${UBINOS__BSP__CPU_MODEL} STREQUAL "SAM9XE512")
+            set(_tmp_device_model "AT91SAM9XE512")
         endif()
 
         if(NOT ${_tmp_device_model} STREQUAL "")
@@ -459,7 +461,17 @@ macro(___project_add_app)
                     "-swoport"  "${_tmp_swo_port}"
                     "-telnetport"  "${_tmp_telnet_port}"
                     "-endian" "little"
+            )
+            if(${UBINOS__BSP__DEBUG_SERVER_TARGET_INTERFACE} STREQUAL "JTAG")
+                set(__tmp_dserver_params ${__tmp_dserver_params}
+                    "-if" "JTAG"
+                )
+            else()
+                set(__tmp_dserver_params ${__tmp_dserver_params}
                     "-if" "SWD"
+                )
+            endif()
+            set(__tmp_dserver_params ${__tmp_dserver_params}
                     "-speed" "auto"
                     "-ir"
                     "-LocalhostOnly"

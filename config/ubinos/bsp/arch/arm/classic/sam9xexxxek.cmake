@@ -47,6 +47,10 @@ set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubin
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/classic/sam9xexxxek/t32_flash_load.cmm" PATH)
 set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/classic/sam9xexxxek/t32_flash_reset.cmm" PATH)
 
+set_cache(UBINOS__BSP__DEBUG_SERVER_TYPE "JLINK" STRING)
+set_cache(UBINOS__BSP__DEBUG_SERVER_COMMAND "JLinkGDBServer" STRING)
+set_cache(UBINOS__BSP__DEBUG_SERVER_TARGET_INTERFACE "JTAG" STRING)
+
 # maximum size = 64 MiB
 set_cache(UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM "GROUP" STRING)
 set_cache(UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE "MUTEX" STRING)

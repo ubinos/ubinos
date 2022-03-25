@@ -328,6 +328,7 @@ set_cache_default(UBINOS__BSP__DEBUG_SERVER_PORT "2331" STRING "Debug server por
 set_cache_default(UBINOS__BSP__DEBUG_SERVER_TYPE "NONE" STRING "Debug server type [NONE | GDBSERVER | JLINK | OPENOCD | QEMU]")
 set_cache_default(UBINOS__BSP__DEBUG_SERVER_COMMAND "" STRING "Debug server command")
 set_cache_default(UBINOS__BSP__DEBUG_SERVER_SERIAL "" STRING "Debug server serial number")
+set_cache_default(UBINOS__BSP__DEBUG_SERVER_TARGET_INTERFACE "SWD" STRING "Debug server target interface [SWE | JTAG]")
 
 ########
 
