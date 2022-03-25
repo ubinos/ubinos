@@ -24,6 +24,10 @@ MEMORY
     FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
     RAM (rwx) : ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
     RAM2 (rwx) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
+    RAM3 (rwx) : ORIGIN = <RAM3_ORIGIN>, LENGTH = <RAM3_LENGTH>
+    RAM4 (rwx) : ORIGIN = <RAM4_ORIGIN>, LENGTH = <RAM4_LENGTH>
+    RAM5 (rwx) : ORIGIN = <RAM5_ORIGIN>, LENGTH = <RAM5_LENGTH>
+    RAM6 (rwx) : ORIGIN = <RAM6_ORIGIN>, LENGTH = <RAM6_LENGTH>
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -248,6 +252,18 @@ SECTIONS
     __ram2_start__                  = ORIGIN(RAM2);
     __ram2_size__                   = LENGTH(RAM2);
     __ram2_static_usage__           = 0;
+    __ram3_start__                  = ORIGIN(RAM3);
+    __ram3_size__                   = LENGTH(RAM3);
+    __ram3_static_usage__           = 0;
+    __ram4_start__                  = ORIGIN(RAM4);
+    __ram4_size__                   = LENGTH(RAM4);
+    __ram4_static_usage__           = 0;
+    __ram5_start__                  = ORIGIN(RAM5);
+    __ram5_size__                   = LENGTH(RAM5);
+    __ram5_static_usage__           = 0;
+    __ram6_start__                  = ORIGIN(RAM6);
+    __ram6_size__                   = LENGTH(RAM6);
+    __ram6_static_usage__           = 0;
     __entry_address__               = Reset_Handler;
     __isr_vector_size__             = __isr_vector_end__ - __isr_vector_start__;
     __text_size__                   = __text_end__ - __text_start__;
