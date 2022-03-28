@@ -424,7 +424,7 @@ int _heap_release_block(_heap_pt heap, void * ptr) {
 	}
 
 	if (NULL == ptr) {
-		logmw("ptr is NULL");
+		logmi("ptr is NULL");
 		r2 = -3;
 		goto end0;
 	}
