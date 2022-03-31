@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+#include <sys/time.h>
 
 #define CLI_SLEEP_TICK 1
 #define CLI_CMD_SIZE_MAX 127
@@ -42,6 +44,10 @@ static int cli_cmdfunc__show(char *str, int len, void *arg);
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
 static int cli_cmdfunc__heap(char *str, int len, void *arg);
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+static int cli_cmdfunc__date_set(char *str, int len, void *arg);
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
 int cli_sethookfunc(cli_hookfunc_ft hookfunc, void *arg) {
 	_cli_hookfunc = hookfunc;
@@ -178,6 +184,36 @@ static int cli_rootfunc(char *str, int len, void *arg) {
 		}
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
 
+#if (INCLUDE__UBINOS__UBIK == 1)
+		cmd = "date";
+		cmdlen = strlen(cmd);
+		if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
+			struct timeval tv;
+			struct tm* tm_ptr;
+		    char time_string[40];
+
+			gettimeofday(&tv, NULL);
+			tm_ptr = localtime(&tv.tv_sec);
+			strftime(time_string, sizeof (time_string), "%a %b %d %H:%M:%S %Y", tm_ptr);
+			printf(time_string);
+
+			r = 0;
+			break;
+		}
+
+		cmd = "date ";
+		cmdlen = strlen(cmd);
+		if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
+			tmpstr = &tmpstr[cmdlen];
+			tmplen -= cmdlen;
+
+			printf("\n");
+
+			r = cli_cmdfunc__date_set(tmpstr, tmplen, arg);
+			break;
+		}
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
+
 		break;
 	} while (1);
 
@@ -228,6 +264,10 @@ static int cli_cmdfunc__help(char *str, int len, void *arg) {
 	printf("    size: heap size \n");
 	printf("    m: M value for group system and pure group system\n");
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
+#if (INCLUDE__UBINOS__UBIK == 1)
+	printf("\n");
+	printf("date [MMDDhhmm[YYYY][.ss]]              : print or set the system date and time\n");
+#endif
 	printf("\n");
 	return 0;
 }
@@ -552,6 +592,41 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 	return r;
 }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
+
+#if (INCLUDE__UBINOS__UBIK == 1)
+static int cli_cmdfunc__date_set(char *str, int len, void *arg) {
+	int r = -1;
+
+	struct timeval tv;
+	struct tm tm_data;
+
+	int mon = 1;
+	int mday = 0;
+	int hour = 0;
+	int min = 0;
+	int year = 1970;
+	int sec = 0;
+
+	// [MMDDhhmm[YYYY][.ss]]
+	sscanf(str, "%2d%2d%2d%2d%4d.%2d", &mon, &mday, &hour, &min, &year, &sec); 
+
+	tm_data.tm_year = year - 1900;
+	tm_data.tm_mon = mon - 1;
+	tm_data.tm_mday = mday;
+	tm_data.tm_hour = hour;
+	tm_data.tm_min = min;
+	tm_data.tm_sec = sec;
+	tm_data.tm_isdst = -1;
+
+	tv.tv_sec = mktime(&tm_data);
+	tv.tv_usec = 0;
+	settimeofday(&tv, NULL);
+
+	r = 0;
+
+	return r;
+}
+#endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_CLI == 1) */
 
