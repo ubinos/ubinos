@@ -23,6 +23,8 @@ from tkinter import messagebox
 
 debug_level = 1
 
+config_file_exts = (".cmake", ".mk", ".config")
+
 # config_name_base
 # config_name_variation
 # config_name = <config_name_base>__<config_name_variation>
@@ -151,7 +153,7 @@ class clone_dialog(tk.Toplevel):
 
             src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
 
-            if debug_level > 2:
+            if debug_level >= 2:
                 print(src_file_paths)
                 print(dst_file_paths)
 
@@ -263,7 +265,10 @@ class confsel(tk.Tk):
                     config_dirs.append(config_dir)
 
             for config_dir in config_dirs:
-                config_file_names = [file_name for file_name in sorted(os.listdir(config_dir)) if os.path.isfile(os.path.join(config_dir, file_name))]
+                config_file_names = [file_name for file_name in sorted(os.listdir(config_dir)) if os.path.isfile(os.path.join(config_dir, file_name)) and file_name.endswith(config_file_exts)]
+                if debug_level >= 3:
+                    print(config_file_names)
+
                 for config_file_name in config_file_names:
                     config_info = self.load_config_info(os.path.join(config_dir, config_file_name))
                     if config_info is not None and "build_type" in config_info:
@@ -282,15 +287,19 @@ class confsel(tk.Tk):
         config_info = None
 
         with file_open(config_file_path, 'r') as file:
-            lines = file.readlines()
+            try:
+                lines = file.readlines()
+                for line in lines:
+                    k_idx = line.find(self.config_info_keyword)
+                    if k_idx > -1:
+                        k_len = len(self.config_info_keyword)
+                        config_info_string = line[k_idx + k_len - 1:]
+                        config_info = json.loads(config_info_string)
+                        break
+            except Exception as e:
+                print('Exception occurred.', e, config_file_path)
+
             file.close()
-            for line in lines:
-                k_idx = line.find(self.config_info_keyword)
-                if k_idx > -1:
-                    k_len = len(self.config_info_keyword)
-                    config_info_string = line[k_idx + k_len - 1:]
-                    config_info = json.loads(config_info_string)
-                    break
 
         return config_info
 
