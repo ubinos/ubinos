@@ -35,6 +35,8 @@ extern "C"
 #include "arch/arm/cortexm/stm32l476geval.h"
 #elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32429IEVAL) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32F429IDISCO)
 #include "arch/arm/cortexm/stm32429ieval.h"
+#elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NETDUINOPLUS2)
+#include "arch/arm/cortexm/netduinoplus2.h"
 #elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32F769IEVAL) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32F769IDISCO)
 #include "arch/arm/cortexm/stm32f769ieval.h"
 #elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32H747IDISCO)
