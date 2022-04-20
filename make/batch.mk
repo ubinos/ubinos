@@ -685,6 +685,19 @@
 	@echo ""
 	@echo ""
 
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : ubinos library"
+	@echo "Target board    : netduinoplus2"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_netduinoplus2
+	@echo ""
+	@echo ""
+
 
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 	@echo ""
@@ -696,6 +709,33 @@
 	@echo ""
 	@echo ""
 	make -f makefile.mk $@ CONFIG_NAME=hi_world_netduinoplus2_baremetal_qemu
+	@echo ""
+	@echo ""
+
+
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : Hello, World! application on QEMU"
+	@echo "Target board    : netduinoplus2"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=hello_world_netduinoplus2_qemu
+	@echo ""
+	@echo ""
+
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : command line interface tester application on QEMU"
+	@echo "Target board    : netduinoplus2"
+	@echo "OS Kernel       : ubik"
+	@echo "Link memory map : flash"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=cli_tester_netduinoplus2_qemu
 	@echo ""
 	@echo ""
 
