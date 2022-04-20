@@ -16,7 +16,24 @@
 #include "../stm32f4/stm32f4xx_ll_gpio.h"
 #include "../stm32f4/stm32f4xx_ll_usart.h"
 
-#if (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 2)
+#if (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 1)
+
+#define USARTx_INSTANCE               USART1
+#define USARTx_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
+
+#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+#define USARTx_TX_PIN                 LL_GPIO_PIN_2
+#define USARTx_TX_GPIO_PORT           GPIOA
+#define USARTx_SET_TX_GPIO_AF()
+
+#define USARTx_RX_GPIO_CLK_ENABLE()   LL_APB2_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
+#define USARTx_RX_PIN                 LL_GPIO_PIN_3
+#define USARTx_RX_GPIO_PORT           GPIOA
+#define USARTx_SET_RX_GPIO_AF() 
+
+#define APB_Div 2
+
+#elif (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 2)
 
 #define USARTx_INSTANCE               USART2
 #define USARTx_CLK_ENABLE()           LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART2)

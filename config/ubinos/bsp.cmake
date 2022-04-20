@@ -296,7 +296,11 @@ set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               
 
 set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      STRING "Value of the External oscillator in Hz [25000000U]")
 
+        if (UBINOS__BSP__USE_QEMU)
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1]")
+        else()
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "2"            STRING "[2]")
+        endif()
 
     elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "STM32VLDISCO")
 
