@@ -190,12 +190,16 @@ set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  
 set_cache_default(UBINOS__BSP__STM32_STM32L4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32L476                                  TRUE    BOOL "STM32L476 family CPU Model")
 
+set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
+
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32L475VG")
 
 set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
 
 set_cache_default(UBINOS__BSP__STM32_STM32L4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32L475                                  TRUE    BOOL "STM32L475 family CPU Model")
+
+set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F769NI")
 
@@ -204,12 +208,16 @@ set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  
 set_cache_default(UBINOS__BSP__STM32_STM32F7XX                                  TRUE    BOOL "STM32F7XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32F769                                  TRUE    BOOL "STM32F769 family CPU Model")
 
+set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
+
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32H747XI")
 
 set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
 
 set_cache_default(UBINOS__BSP__STM32_STM32H7XX                                  TRUE    BOOL "STM32H7XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32H747                                  TRUE    BOOL "STM32H747 family CPU Model")
+
+set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
 
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F429NI") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F429ZI"))
 
@@ -218,12 +226,16 @@ set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  
 set_cache_default(UBINOS__BSP__STM32_STM32F4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32F429                                  TRUE    BOOL "STM32F429 family CPU Model")
 
+set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
+
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F405RG"))
 
 set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")
 
 set_cache_default(UBINOS__BSP__STM32_STM32F4XX                                  TRUE    BOOL "STM32F4XX family CPU Model")
 set_cache_default(UBINOS__BSP__STM32_STM32F405                                  TRUE    BOOL "STM32F405 family CPU Model")
+
+set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32F100XB")
 
