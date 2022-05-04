@@ -35,3 +35,8 @@ define ushowcore
     ushowstack 64
 end
 
+define ushowcoreall
+    x/5i $pc - 6
+    info all-reg
+    ushowstack 64
+end
