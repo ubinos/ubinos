@@ -47,12 +47,12 @@ set(UBINOS__VERSION "${_ver_major}.${_ver_minor}.${_ver_patch}-${_ver_tweak}")
 set(INCLUDE__UBINOS__BSP                                                        TRUE)
 set(PROJECT_UBINOS_LIBRARIES ${PROJECT_UBINOS_LIBRARIES} ubinos)
 
-set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM]")
-set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M7 | CORTEX_M4 | CORTEX_M3]")
+set_cache_default(UBINOS__BSP__CPU_ARCH                                         ""      STRING "CPU Architecture [ARM | LOCAL]")
+set_cache_default(UBINOS__BSP__CPU_TYPE                                         ""      STRING "CPU Type [ARM7TDMI | ARM926EJ_S | CORTEX_M7 | CORTEX_M4 | CORTEX_M3 | LOCAL]")
 set_cache_default(UBINOS__BSP__CPU_ENDIAN                                       ""      STRING "CPU endian [LITTLE | BIG]")
-set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG  | STM32L476ZG | STM32L476RG | STM32L475VG | STM32F769NI | STM32H747XI | STM32F429NI | STM32F429ZI | STM32F100XB | STM32F405RG]")
+set_cache_default(UBINOS__BSP__CPU_MODEL                                        ""      STRING "CPU model [SAM7X256 | SAM7X512 | SAM9XE512 | NRF52832XXAA | NRF52840XXAA | STM32F217IG | STM32F207ZG  | STM32L476ZG | STM32L476RG | STM32L475VG | STM32F769NI | STM32H747XI | STM32F429NI | STM32F429ZI | STM32F100XB | STM32F405RG | LOCAL]")
 
-set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | ARDUINONANO33BLE | STM3221GEVAL | NUCLEOF207ZG | STM32L476GEVAL | NUCLEOL476RG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32H747IDISCO | STM32429IEVAL | STM32F429IDISCO | STM32VLDISCO | NETDUINOPLUS2]")
+set_cache_default(UBINOS__BSP__BOARD_MODEL                                      ""      STRING "Board model [SAM7X256EK | SAM7X512EK | SAM9XE512EK | NRF52DK | NRF52840DK | NRF52840DONGLE | ARDUINONANO33BLE | STM3221GEVAL | NUCLEOF207ZG | STM32L476GEVAL | NUCLEOL476RG | STM32L475EIOT01 | STM32F769IEVAL | STM32F769IDISCO | STM32H747IDISCO | STM32429IEVAL | STM32F429IDISCO | STM32VLDISCO | NETDUINOPLUS2 | LOCAL]")
 set_cache_default(UBINOS__BSP__BOARD_REVISION_NO                                0       STRING "Board revision number")
 set_cache_default(UBINOS__BSP__BOARD_VARIATION_NAME  "${UBINOS__BSP__BOARD_MODEL}"      STRING "Board variation name")
 
@@ -325,6 +325,8 @@ set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            
         message(FATAL_ERROR "Unsupported UBINOS__BSP__BOARD_MODEL")
 
     endif()
+
+elseif(UBINOS__BSP__CPU_ARCH STREQUAL "LOCAL")
 
 else()
 
@@ -724,20 +726,22 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--gc-sections")
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --specs=nano.specs --specs=nosys.specs")
 
-else()
+    set(_tmp_all_flags "${_tmp_all_flags} -g3")
+    set(_tmp_all_flags "${_tmp_all_flags} -Wall -Werror -fmessage-length=0")
+    
+    set(_tmp_all_flags "${_tmp_all_flags} -D_GNU_SOURCE")
+
+elseif(UBINOS__BSP__CPU_ARCH STREQUAL "LOCAL")
+
+else() # if(UBINOS__BSP__CPU_ARCH STREQUAL "...")
 
     message(FATAL_ERROR "Unsupported UBINOS__BSP__CPU_ARCH")
 
-endif()
+endif() # if(UBINOS__BSP__CPU_ARCH STREQUAL "...")
 
 if(INCLUDE__UBINOS__BSP)
 	set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_BSP_PRESENT")
 endif()
-
-set(_tmp_all_flags "${_tmp_all_flags} -g3")
-set(_tmp_all_flags "${_tmp_all_flags} -Wall -Werror -fmessage-length=0")
-
-set(_tmp_all_flags "${_tmp_all_flags} -D_GNU_SOURCE")
 
 set(CMAKE_ASM_FLAGS "${_tmp_all_flags} ${CMAKE_ASM_FLAGS}")
 set(CMAKE_C_FLAGS   "${_tmp_all_flags} ${CMAKE_C_FLAGS}")

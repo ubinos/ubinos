@@ -21,9 +21,11 @@
 
 #if (INCLUDE__UBINOS__BSP == 1)
 
-#define UBINOS__BSP__CPU_ARCH__ARM                        1
+#define UBINOS__BSP__CPU_ARCH__LOCAL                      1
+#define UBINOS__BSP__CPU_ARCH__ARM                        2
 #define UBINOS__BSP__CPU_ARCH                             UBINOS__BSP__CPU_ARCH__@UBINOS__BSP__CPU_ARCH@
 
+#define UBINOS__BSP__CPU_TYPE__LOCAL                      1
 #define UBINOS__BSP__CPU_TYPE__ARM926EJ_S                 2
 #define UBINOS__BSP__CPU_TYPE__CORTEX_M0                  10
 #define UBINOS__BSP__CPU_TYPE__CORTEX_M3                  13
@@ -37,7 +39,8 @@
 #define UBINOS__BSP__CPU_ENDIAN__BIG                      2
 #define UBINOS__BSP__CPU_ENDIAN                           UBINOS__BSP__CPU_ENDIAN__@UBINOS__BSP__CPU_ENDIAN@
 
-#define UBINOS__BSP__CPU_MODEL__SAM9XE512                 0x00010023
+#define UBINOS__BSP__CPU_MODEL__LOCAL                     0x00010100
+#define UBINOS__BSP__CPU_MODEL__SAM9XE512                 0x00010223
 #define UBINOS__BSP__CPU_MODEL__NRF52832XXAA              0x00010311
 #define UBINOS__BSP__CPU_MODEL__NRF52840XXAA              0x00010321
 #define UBINOS__BSP__CPU_MODEL__STM32F100XB               0x00010401
@@ -77,7 +80,8 @@
 #cmakedefine01 UBINOS__BSP__STM32_STM32H7XX
 #cmakedefine01 UBINOS__BSP__STM32_STM32H747
 
-#define UBINOS__BSP__BOARD_MODEL__SAM9XE512EK             0x00020023
+#define UBINOS__BSP__BOARD_MODEL__LOCAL                   0x00020100
+#define UBINOS__BSP__BOARD_MODEL__SAM9XE512EK             0x00020223
 #define UBINOS__BSP__BOARD_MODEL__NRF52DK                 0x00020311
 #define UBINOS__BSP__BOARD_MODEL__NRF52840DK              0x00020321
 #define UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE          0x00020322
@@ -325,6 +329,10 @@
         #error "Unsupported UBINOS__BSP__BOARD_MODEL"
 
     #endif /* (UBINOS__BSP__BOARD_MODEL == ...) */
+
+#elif (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__LOCAL)
+
+
 
 #else
 

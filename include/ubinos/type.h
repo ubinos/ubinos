@@ -109,6 +109,16 @@ typedef __SIZE_TYPE__ size_t;
 /*! 메모리 정렬 매크로 */
 #define MEM_ALIGN(a) ((((unsigned int) (a)) + MEM_ALIGNMASK) & (~MEM_ALIGNMASK))
 
+#elif (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__LOCAL)
+
+#ifndef NULL
+/*! NULL 정의 */
+#define NULL 0
+#endif
+
+/*! size_t 형 정의 */
+typedef __SIZE_TYPE__ size_t;
+
 #else
 
 #error "Unsupported UBINOS__BSP__CPU_ARCH"

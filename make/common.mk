@@ -88,6 +88,11 @@ endif
 
 ###############################################################################
 
+ifeq ($(strip $(SYSTEM_NAME)),)
+_SYSTEM_NAME            = $(shell python "$(_TOOLBOX)" system_name)
+else
+_SYSTEM_NAME            = $(SYSTEM_NAME)
+endif
 ifeq ($(strip $(JOBS)),)
 _JOBS                   = $(shell python "$(_TOOLBOX)" cpu_count)
 else
@@ -156,6 +161,7 @@ common-help:
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
+	@echo "SYSTEM_NAME                  = $(_SYSTEM_NAME)"
 	@echo "JOBS                         = $(_JOBS)"
 	@echo "PRECMD                       = $(_PRECMD)"
 	@echo ""
@@ -218,6 +224,7 @@ common-config:
 	$(call begin_message)
 	$(_PRECMD) && mkdir -p "$(_OUTPUT_DIR)"
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake $(_CMAKE_OPTION) "$(_SOURCE_DIR)"
+	$(_PRECMD) && mkdir -p "$(_OUTPUT_DIR)/../Default"
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python "$(_TOOLBOX)" copy_file compile_commands.json "$(_OUTPUT_DIR)/../Default/"
 	$(call end_message)
 
@@ -367,21 +374,21 @@ common-test:
 ###############################################################################
 
 common-zbatch-all:
-	make -f batch.mk all
+	make -f batch.mk SYSTEM_NAME=$(_SYSTEM_NAME) all
 ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
-	make -f batch_external_build.mk config
+	make -f batch_external_build.mk SYSTEM_NAME=$(_SYSTEM_NAME) config
 endif
 
 common-zbatch-rebuild:
-	make -f batch.mk rebuild
+	make -f batch.mk SYSTEM_NAME=$(_SYSTEM_NAME) rebuild
 ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
-	make -f batch_external_build.mk clean config
+	make -f batch_external_build.mk SYSTEM_NAME=$(_SYSTEM_NAME) clean config
 endif
 
 common-zbatch-rebuildd:
-	make -f batch.mk rebuildd
+	make -f batch.mk SYSTEM_NAME=$(_SYSTEM_NAME) rebuildd
 ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
-	make -f batch_external_build.mk cleand config
+	make -f batch_external_build.mk SYSTEM_NAME=$(_SYSTEM_NAME) cleand config
 endif
 
 common-zbatch-load:
@@ -433,9 +440,9 @@ common-zbatch-test:
 	$(call end_message)
 
 common-zbatch-%:
-	make -f batch.mk $*
+	make -f batch.mk SYSTEM_NAME=$(_SYSTEM_NAME) $*
 ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
-	make -f batch_external_build.mk $*
+	make -f batch_external_build.mk SYSTEM_NAME=$(_SYSTEM_NAME) $*
 endif
 
 ###############################################################################

@@ -8,6 +8,19 @@
 	@echo ""
 	@echo ""
 
+ifeq ("$(SYSTEM_NAME)", "Darwin")
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : ubinos library"
+	@echo "Target board    : local llvm"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_DIR=../config CONFIG_NAME=ubinos_local_llvm_baremetal
+	@echo ""
+	@echo ""
+endif
+
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 	@echo ""
 	@echo ""
@@ -45,6 +58,19 @@
 	@echo ""
 	@echo ""
 
+
+ifeq ("$(SYSTEM_NAME)", "Darwin")
+	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+	@echo ""
+	@echo ""
+	@echo "Config          : Hi, World! application"
+	@echo "Target board    : local llvm"
+	@echo ""
+	@echo ""
+	make -f makefile.mk $@ CONFIG_NAME=hi_world_local_llvm_baremetal
+	@echo ""
+	@echo ""
+endif
 	@echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
 	@echo ""
 	@echo ""

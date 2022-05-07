@@ -8,8 +8,18 @@ set(_tmp_prefix "arm-none-eabi")
 
 ########
 
+set_cache(PROJECT_TOOLCHAIN_TYPE "GCC" STRING)
 set_cache(PROJECT_TOOLCHAIN_PREFIX "${_tmp_prefix}" STRING)
 set_cache(PROJECT_TOOLCHAIN_GDB_COMMAND "${_tmp_prefix}-gdb" STRING)
+
+set_cache_default(PROJECT_TOOLCHAIN_C_STD "C99" STRING "C standard version [C99 | GNU11]")
+
+set_cache_default(PROJECT_TOOLCHAIN_CXX_STD "GNU++98" STRING "C++ standard version [GNU++98 | GNU++14]")
+set_cache_default(PROJECT_TOOLCHAIN_CXX_F_NO_RTTI TRUE BOOL "-fno-rtti")
+set_cache_default(PROJECT_TOOLCHAIN_CXX_F_NO_EXCEPTIONS TRUE BOOL "-fno-exceptions")
+set_cache_default(PROJECT_TOOLCHAIN_CXX_W_NO_CXX14_COMPAT TRUE BOOL "-Wno-c++14-compat")
+
+set_cache(PROJECT_TOOLCHAIN_DATA_SECTION_NAME ".data" STRING)
 
 ########
 
@@ -73,4 +83,33 @@ set(CMAKE_ASM_FLAGS)
 set(CMAKE_C_FLAGS)
 set(CMAKE_CXX_FLAGS)
 set(CMAKE_EXE_LINKER_FLAGS)
+
+########
+
+if(PROJECT_TOOLCHAIN_C_STD STREQUAL "C99")
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -std=c99")
+elseif(PROJECT_TOOLCHAIN_C_STD STREQUAL "GNU11")
+    set(CMAKE_C_FLAGS   "${CMAKE_C_FLAGS} -std=gnu11")
+else()
+    message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_C_STD")
+endif()
+
+if(PROJECT_TOOLCHAIN_CXX_STD STREQUAL "GNU++98")
+    set(CMAKE_CXX_FLAGS   "${CMAKE_CXX_FLAGS} -std=gnu++98")
+elseif(PROJECT_TOOLCHAIN_CXX_STD STREQUAL "GNU++14")
+    set(CMAKE_CXX_FLAGS   "${CMAKE_CXX_FLAGS} -std=gnu++14")
+else()
+    message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_CXX_STD")
+endif()
+if(PROJECT_TOOLCHAIN_CXX_F_NO_RTTI)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
+endif()
+if(PROJECT_TOOLCHAIN_CXX_F_NO_EXCEPTIONS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
+endif()
+if(PROJECT_TOOLCHAIN_CXX_W_NO_CXX14_COMPAT)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-c++14-compat")
+endif()
+
+set(CMAKE_ASM_FLAGS "${CMAKE_ASM_FLAGS} -x assembler-with-cpp -D__ASSEMBLY__")
 

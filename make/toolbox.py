@@ -28,8 +28,9 @@ def print_help():
     print("    %s is_python3" % (sys.argv[0]))
     print("    %s refine_gdbscript <source file name> <destination file name> <app file name>" % (sys.argv[0]))
     print("    %s refine_linkscript <source file name> <destination file name> <memory type> <origin> <length>" % (sys.argv[0]))
-    print("    %s parse_mapfile_get_value <source file name> <symbol>" % (sys.argv[0]))
-    print("    %s show_mapfile_info <source file name>" % (sys.argv[0]))
+    print("    %s parse_mapfile_get_value_gcc <source file name> <symbol>" % (sys.argv[0]))
+    print("    %s parse_mapfile_get_value_llvm <source file name> <symbol>" % (sys.argv[0]))
+    print("    %s show_mapfile_info <source file name> <toolchain type>" % (sys.argv[0]))
     print("    %s replace_string <source file name> <destination file name> <old string> <new string>" % (sys.argv[0]))
     print("===============================================================================")
 
@@ -123,7 +124,7 @@ def replace_string(sfn, dfn, oldstr, newstr):
             df.write(line)
     df.close()
 
-def parse_mapfile_get_value(sfn, symbol):
+def parse_mapfile_get_value_gcc(sfn, symbol):
     sf = file_open(sfn, 'r')
     lines = sf.readlines()
     sf.close()
@@ -138,203 +139,247 @@ def parse_mapfile_get_value(sfn, symbol):
 
     return 0
 
-def show_mapfile_info(sfn):
+def parse_mapfile_get_value_llvm(sfn, symbol):
+    sf = file_open(sfn, 'r')
+    lines = sf.readlines()
+    sf.close()
+
+    for line in lines:
+        if -1 != line.find(symbol + "\n"):
+            addr = int(line.split()[0], 16);
+            size = int(line.split()[1], 16)
+            limit = addr + size
+            return addr, limit, size
+
+    return 0, 0, 0
+
+def show_mapfile_info_gcc(sfn):
     print("")
     print("")
 
-    addr = parse_mapfile_get_value(sfn, "__entry_address__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__entry_address__")
     print("entry address                = 0x%08x (%12d)" % (addr, addr))
     print("")
 
-    addr = parse_mapfile_get_value(sfn, "__isr_vector_start__")
-    limit = parse_mapfile_get_value(sfn, "__isr_vector_end__")
-    size = parse_mapfile_get_value(sfn, "__isr_vector_size__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__isr_vector_start__")
+    limit = parse_mapfile_get_value_gcc(sfn, "__isr_vector_end__")
+    size = parse_mapfile_get_value_gcc(sfn, "__isr_vector_size__")
     print("isr vector start             = 0x%08x (%12d)" % (addr, addr))
     print("isr vector end               = 0x%08x (%12d)" % (limit, limit))
     print("isr vector size              = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
-    addr2 = parse_mapfile_get_value(sfn, "__relocated_isr_vector_start__")
-    limit2 = parse_mapfile_get_value(sfn, "__relocated_isr_vector_end__")
-    size2 = parse_mapfile_get_value(sfn, "__relocated_isr_vector_size__")
+    addr2 = parse_mapfile_get_value_gcc(sfn, "__relocated_isr_vector_start__")
+    limit2 = parse_mapfile_get_value_gcc(sfn, "__relocated_isr_vector_end__")
+    size2 = parse_mapfile_get_value_gcc(sfn, "__relocated_isr_vector_size__")
     if addr != addr2 or limit != limit2 or size != size2:
         print("relocated isr vector start   = 0x%08x (%12d)" % (addr2, addr2))
         print("relocated isr vector end     = 0x%08x (%12d)" % (limit2, limit2))
         print("relocated isr vector size    = 0x%08x (%12d) bytes" % (size2, size2))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__text_start__")
-    limit = parse_mapfile_get_value(sfn, "__text_end__")
-    size = parse_mapfile_get_value(sfn, "__text_size__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__text_start__")
+    limit = parse_mapfile_get_value_gcc(sfn, "__text_end__")
+    size = parse_mapfile_get_value_gcc(sfn, "__text_size__")
     print("text start                   = 0x%08x (%12d)" % (addr, addr))
     print("text end                     = 0x%08x (%12d)" % (limit, limit))
     print("text size                    = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
-    addr = parse_mapfile_get_value(sfn, "__data_start__")
-    limit = parse_mapfile_get_value(sfn, "__data_end__")
-    size = parse_mapfile_get_value(sfn, "__data_size__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__data_start__")
+    limit = parse_mapfile_get_value_gcc(sfn, "__data_end__")
+    size = parse_mapfile_get_value_gcc(sfn, "__data_size__")
     print("data start                   = 0x%08x (%12d)" % (addr, addr))
     print("data end                     = 0x%08x (%12d)" % (limit, limit))
     print("data size                    = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
-    addr = parse_mapfile_get_value(sfn, "__bss_start__")
-    limit = parse_mapfile_get_value(sfn, "__bss_end__")
-    size = parse_mapfile_get_value(sfn, "__bss_size__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__bss_start__")
+    limit = parse_mapfile_get_value_gcc(sfn, "__bss_end__")
+    size = parse_mapfile_get_value_gcc(sfn, "__bss_size__")
     print("bss start                    = 0x%08x (%12d)" % (addr, addr))
     print("bss end                      = 0x%08x (%12d)" % (limit, limit))
     print("bss size                     = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
-    addr = parse_mapfile_get_value(sfn, "_heap_base__")
-    limit = parse_mapfile_get_value(sfn, "__heap_limit__")
-    size = parse_mapfile_get_value(sfn, "__heap_size__")
+    addr = parse_mapfile_get_value_gcc(sfn, "_heap_base__")
+    limit = parse_mapfile_get_value_gcc(sfn, "__heap_limit__")
+    size = parse_mapfile_get_value_gcc(sfn, "__heap_size__")
     print("heap base                    = 0x%08x (%12d)" % (addr, addr))
     print("heap limit                   = 0x%08x (%12d)" % (limit, limit))
     print("heap size                    = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
-    addr = parse_mapfile_get_value(sfn, "__stack_top__")
-    limit = parse_mapfile_get_value(sfn, "__stack_limit__")
-    size = parse_mapfile_get_value(sfn, "__stack_size__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__stack_top__")
+    limit = parse_mapfile_get_value_gcc(sfn, "__stack_limit__")
+    size = parse_mapfile_get_value_gcc(sfn, "__stack_size__")
     print("stack limit                  = 0x%08x (%12d)" % (limit, limit))
     print("stack top                    = 0x%08x (%12d)" % (addr, addr))
     print("stack size                   = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
-    addr = parse_mapfile_get_value(sfn, "__flash_start__")
-    size = parse_mapfile_get_value(sfn, "__flash_size__")
-    usage = parse_mapfile_get_value(sfn, "__flash_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__flash_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__flash_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__flash_usage__")
     if size > 0:
         print("flash start                  = 0x%08x (%12d)      " % (addr, addr))
         print("flash size                   = 0x%08x (%12d) bytes" % (size, size))
         print("flash usage                  = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__flash2_start__")
-    size = parse_mapfile_get_value(sfn, "__flash2_size__")
-    usage = parse_mapfile_get_value(sfn, "__flash2_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__flash2_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__flash2_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__flash2_usage__")
     if size > 0:
         print("flash2 start                 = 0x%08x (%12d)      " % (addr, addr))
         print("flash2 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash2 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__flash3_start__")
-    size = parse_mapfile_get_value(sfn, "__flash3_size__")
-    usage = parse_mapfile_get_value(sfn, "__flash3_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__flash3_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__flash3_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__flash3_usage__")
     if size > 0:
         print("flash3 start                 = 0x%08x (%12d)      " % (addr, addr))
         print("flash3 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash3 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__flash4_start__")
-    size = parse_mapfile_get_value(sfn, "__flash4_size__")
-    usage = parse_mapfile_get_value(sfn, "__flash4_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__flash4_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__flash4_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__flash4_usage__")
     if size > 0:
         print("flash4 start                 = 0x%08x (%12d)      " % (addr, addr))
         print("flash4 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash4 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__flash5_start__")
-    size = parse_mapfile_get_value(sfn, "__flash5_size__")
-    usage = parse_mapfile_get_value(sfn, "__flash5_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__flash5_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__flash5_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__flash5_usage__")
     if size > 0:
         print("flash5 start                 = 0x%08x (%12d)      " % (addr, addr))
         print("flash5 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash5 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__flash6_start__")
-    size = parse_mapfile_get_value(sfn, "__flash6_size__")
-    usage = parse_mapfile_get_value(sfn, "__flash6_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__flash6_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__flash6_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__flash6_usage__")
     if size > 0:
         print("flash6 start                 = 0x%08x (%12d)      " % (addr, addr))
         print("flash6 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash6 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__flash7_start__")
-    size = parse_mapfile_get_value(sfn, "__flash7_size__")
-    usage = parse_mapfile_get_value(sfn, "__flash7_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__flash7_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__flash7_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__flash7_usage__")
     if size > 0:
         print("flash7 start                 = 0x%08x (%12d)      " % (addr, addr))
         print("flash7 size                  = 0x%08x (%12d) bytes" % (size, size))
         print("flash7 usage                 = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__ram_start__")
-    size = parse_mapfile_get_value(sfn, "__ram_size__")
-    usage = parse_mapfile_get_value(sfn, "__ram_static_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__ram_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__ram_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__ram_static_usage__")
     if size > 0:
         print("ram start                    = 0x%08x (%12d)      " % (addr, addr))
         print("ram size                     = 0x%08x (%12d) bytes" % (size, size))
         print("ram static usage             = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__ram2_start__")
-    size = parse_mapfile_get_value(sfn, "__ram2_size__")
-    usage = parse_mapfile_get_value(sfn, "__ram2_static_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__ram2_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__ram2_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__ram2_static_usage__")
     if size > 0:
         print("ram2 start                   = 0x%08x (%12d)      " % (addr, addr))
         print("ram2 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram2 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__ram3_start__")
-    size = parse_mapfile_get_value(sfn, "__ram3_size__")
-    usage = parse_mapfile_get_value(sfn, "__ram3_static_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__ram3_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__ram3_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__ram3_static_usage__")
     if size > 0:
         print("ram3 start                   = 0x%08x (%12d)      " % (addr, addr))
         print("ram3 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram3 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__ram4_start__")
-    size = parse_mapfile_get_value(sfn, "__ram4_size__")
-    usage = parse_mapfile_get_value(sfn, "__ram4_static_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__ram4_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__ram4_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__ram4_static_usage__")
     if size > 0:
         print("ram4 start                   = 0x%08x (%12d)      " % (addr, addr))
         print("ram4 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram4 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__ram5_start__")
-    size = parse_mapfile_get_value(sfn, "__ram5_size__")
-    usage = parse_mapfile_get_value(sfn, "__ram5_static_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__ram5_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__ram5_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__ram5_static_usage__")
     if size > 0:
         print("ram5 start                   = 0x%08x (%12d)      " % (addr, addr))
         print("ram5 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram5 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__ram6_start__")
-    size = parse_mapfile_get_value(sfn, "__ram6_size__")
-    usage = parse_mapfile_get_value(sfn, "__ram6_static_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__ram6_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__ram6_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__ram6_static_usage__")
     if size > 0:
         print("ram6 start                   = 0x%08x (%12d)      " % (addr, addr))
         print("ram6 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram6 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "__ram7_start__")
-    size = parse_mapfile_get_value(sfn, "__ram7_size__")
-    usage = parse_mapfile_get_value(sfn, "__ram7_static_usage__")
+    addr = parse_mapfile_get_value_gcc(sfn, "__ram7_start__")
+    size = parse_mapfile_get_value_gcc(sfn, "__ram7_size__")
+    usage = parse_mapfile_get_value_gcc(sfn, "__ram7_static_usage__")
     if size > 0:
         print("ram7 start                   = 0x%08x (%12d)      " % (addr, addr))
         print("ram7 size                    = 0x%08x (%12d) bytes" % (size, size))
         print("ram7 static usage            = 0x%08x (%12d) bytes" % (usage, usage))
         print("")
 
-    addr = parse_mapfile_get_value(sfn, "  _SEGGER_RTT")
+    addr = parse_mapfile_get_value_gcc(sfn, "  _SEGGER_RTT")
     if addr > 0:
         print("SEGGER RTT CB address        = 0x%08x (%12d)" % (addr, addr))
         print("")
 
     print("")
+
+def show_mapfile_info_llvm(sfn):
+    print("")
+    print("")
+
+    addr, limit, size = parse_mapfile_get_value_llvm(sfn, "__text")
+    print("text start                   = 0x%08x (%12d)" % (addr, addr))
+    print("text end                     = 0x%08x (%12d)" % (limit, limit))
+    print("text size                    = 0x%08x (%12d) bytes" % (size, size))
+    print("")
+
+    addr, limit, size = parse_mapfile_get_value_llvm(sfn, "__got")
+    print("data_const start             = 0x%08x (%12d)" % (addr, addr))
+    print("data_const end               = 0x%08x (%12d)" % (limit, limit))
+    print("data_const size              = 0x%08x (%12d) bytes" % (size, size))
+    print("")
+
+    addr, limit, size = parse_mapfile_get_value_llvm(sfn, "__data")
+    print("data start                   = 0x%08x (%12d)" % (addr, addr))
+    print("data end                     = 0x%08x (%12d)" % (limit, limit))
+    print("data size                    = 0x%08x (%12d) bytes" % (size, size))
+    print("")
+
+    print("")
+
+def show_mapfile_info(sfn, type):
+    if (type == "gcc"):
+        show_mapfile_info_gcc(sfn)
+    elif (type == "llvm"):
+        show_mapfile_info_llvm(sfn)
 
 if __name__ == '__main__':
     if 2 > len(sys.argv):
@@ -399,19 +444,27 @@ if __name__ == '__main__':
                 origin = sys.argv[5]
                 length = sys.argv[6]
                 refine_linkscript(sfn, dfn, memtype, origin, length)
-        elif "parse_mapfile_get_value" == sys.argv[1]:
+        elif "parse_mapfile_get_value_gcc" == sys.argv[1]:
             if 4 > len(sys.argv):
                 print_help()
             else:
                 sfn = sys.argv[2]
                 symbol = sys.argv[3]
-                parse_mapfile_get_value(sfn, symbol)
-        elif "show_mapfile_info" == sys.argv[1]:
-            if 3 > len(sys.argv):
+                parse_mapfile_get_value_gcc(sfn, symbol)
+        elif "parse_mapfile_get_value_llvm" == sys.argv[1]:
+            if 4 > len(sys.argv):
                 print_help()
             else:
                 sfn = sys.argv[2]
-                show_mapfile_info(sfn)
+                symbol = sys.argv[3]
+                parse_mapfile_get_value_llvm(sfn, symbol)
+        elif "show_mapfile_info" == sys.argv[1]:
+            if 4 > len(sys.argv):
+                print_help()
+            else:
+                sfn = sys.argv[2]
+                type = sys.argv[3]
+                show_mapfile_info(sfn, type)
         elif "replace_string" == sys.argv[1]:
             if 6 > len(sys.argv):
                 print_help()

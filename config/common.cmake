@@ -9,6 +9,9 @@ if(___UBINOS_COMMON_CMAKE)
 endif()
 set(___UBINOS_COMMON_CMAKE 1)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(IGNORE_NOT_USED_WARNING "${PROJECT_CONFIG_DIR} ${PROJECT_CONFIG_NAME} ${PROJECT_LIBRARY_DIR}")
+
 macro(set_cache name value type)
     set(${name} ${value} CACHE ${type} "")
 endmacro(set_cache)
@@ -90,9 +93,38 @@ endmacro(___project_config_end)
 
 macro(___project_add_app)
 
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T\"${PROJECT_BINARY_DIR}/linkscript.ld\"")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u main")
+    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T\"${PROJECT_BINARY_DIR}/linkscript.ld\"")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u main")
+    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-map,${PROJECT_EXE_NAME}.map")
+    else()
+        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+    endif()
+    
+    add_custom_command(
+        TARGET ${PROJECT_NAME} PRE_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove -f
+        ../Default/${PROJECT_EXE_NAME}
+        ../Default/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+        ../Default/${PROJECT_EXE_NAME}.bin
+        ../Default/${PROJECT_EXE_NAME}.hex
+        ../Default/${PROJECT_EXE_NAME}.s
+        ../Default/${PROJECT_EXE_NAME}.syms.s
+        ../Default/${PROJECT_EXE_NAME}.data.txt
+        ../Default/${PROJECT_EXE_NAME}.map
+        ../Default/ubinos_config.h
+        ../Default/*.elf
+        ../Default/*.a
+        ../Default/*.ld
+        ../Default/*.gdb
+        ../Default/*.cmm
+        ../Default/CMakefiles
+        ../Default/cmake_install.cmake
+        ../Default/CMakeCache.txt
+        ../Default/Doxyfile
+    )
 
     if(NOT ${UBINOS__BSP__LINKSCRIPT_FILE} STREQUAL "")
         add_custom_command(
@@ -347,7 +379,13 @@ macro(___project_add_app)
     endif()
 
     add_executable(${PROJECT_EXE_NAME} ${PROJECT_APP_SOURCES})
-    target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
+    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+        target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
+    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+        target_link_libraries(${PROJECT_EXE_NAME} ${PROJECT_LIBRARIES})
+    else()
+        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+    endif()
 
     execute_process(COMMAND ${PROJECT_TOOLBOX_RUN_CMD} get_start_command_for_cmake OUTPUT_VARIABLE __tmp_start_cmd)
     string(STRIP "${__tmp_start_cmd}" __tmp_start_cmd)
@@ -546,7 +584,7 @@ macro(___project_add_app)
     if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "QEMU")
         set(__tmp_dserver_params_with_start_cmd
             "-gdb" "tcp::${UBINOS__BSP__DEBUG_SERVER_PORT}"
-            "-kernel" "app.elf"
+            "-kernel" "app${CMAKE_EXECUTABLE_SUFFIX}"
         )
 
         if (${__tmp_system_name} MATCHES "Linux")
@@ -611,42 +649,43 @@ macro(___project_add_app)
         USES_TERMINAL
     )
 
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -O binary
-        ${PROJECT_EXE_NAME}.elf
-        ${PROJECT_EXE_NAME}.bin
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -O ihex
-        ${PROJECT_EXE_NAME}.elf
-        ${PROJECT_EXE_NAME}.hex
-    )
+    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY} -O binary
+            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            ${PROJECT_EXE_NAME}.bin
+        )
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY} -O ihex
+            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            ${PROJECT_EXE_NAME}.hex
+        )
+    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+    else()
+        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+    endif()
+
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJDUMP} -d -l
-        ${PROJECT_EXE_NAME}.elf > ${PROJECT_EXE_NAME}.s
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.s
     )
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJDUMP} -t
-        ${PROJECT_EXE_NAME}.elf > ${PROJECT_EXE_NAME}.syms.s
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.syms.s
     )
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJCOPY} -j .data
-        ${PROJECT_EXE_NAME}.elf ${PROJECT_EXE_NAME}.data.elf
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJDUMP} -s
-        ${PROJECT_EXE_NAME}.data.elf > ${PROJECT_EXE_NAME}.data.txt
+        COMMAND ${CMAKE_OBJDUMP} -s -j ${PROJECT_TOOLCHAIN_DATA_SECTION_NAME}
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.data.txt
     )
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E remove -f
-        ${PROJECT_EXE_NAME}.data.elf
+        ${PROJECT_EXE_NAME}.data${CMAKE_EXECUTABLE_SUFFIX}
     )
 
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
@@ -819,34 +858,27 @@ macro(___project_add_app)
 
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E remove -f
-        ../Default/${PROJECT_EXE_NAME}.elf
-        ../Default/${PROJECT_EXE_NAME}.bin
-        ../Default/${PROJECT_EXE_NAME}.hex
-        ../Default/${PROJECT_EXE_NAME}.s
-        ../Default/${PROJECT_EXE_NAME}.syms.s
-        ../Default/${PROJECT_EXE_NAME}.data.txt
-        ../Default/${PROJECT_EXE_NAME}.map
-    )
-    
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}.elf
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         ../Default/
     )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}.bin
-        ../Default/
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}.hex
-        ../Default/
-    )
+    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}.bin
+            ../Default/
+        )
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}.hex
+            ../Default/
+        )
+    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+    else()
+        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+    endif()
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
@@ -888,11 +920,23 @@ macro(___project_add_app)
         )
     endif()
 
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-        ${PROJECT_EXE_NAME}.map
-    )
+    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+            ${PROJECT_EXE_NAME}.map
+            gcc
+        )
+    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+            ${PROJECT_EXE_NAME}.map
+            llvm
+        )
+    else()
+        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+    endif()
 endmacro(___project_add_app)
 
 macro(___project_show)
@@ -1127,6 +1171,9 @@ macro(ubinos_project_end)
         file(COPY ${UBINOS__BSP__DOXYGEN_FILE}
             DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif()
+
+    # set(CMAKE_COLOR_MAKEFILE OFF)
+    # set(CMAKE_VERBOSE_MAKEFILE ON)
 
     ___project_show()
 endmacro(ubinos_project_end)
