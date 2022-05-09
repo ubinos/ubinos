@@ -26,3 +26,4 @@ else()
     set(CMAKE_BUILD_TYPE "None")
 endif()
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON) # for cmake version 3.16.1
