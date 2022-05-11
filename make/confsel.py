@@ -531,6 +531,14 @@ class confsel(tk.Tk):
                             file.write(new_line)
                             written = True
 
+                        keyword = "APP__NAME = "
+                        k_idx = line.find(keyword)
+                        if not written and k_idx > -1:
+                            k_idx = k_idx + len(keyword)
+                            new_line = line[:k_idx] + line[k_idx:].replace(src_config_name_base, dst_config_name_base, 1)
+                            file.write(new_line)
+                            written = True
+
                         keyword = "include(${CMAKE_CURRENT_LIST_DIR}"
                         k_idx = line.find(keyword)
                         if not written and k_idx > -1:
