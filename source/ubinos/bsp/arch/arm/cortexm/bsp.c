@@ -196,6 +196,31 @@ unsigned int arm_get_svcpend(void) {
     return ((value & SCB_SHCSR_SVCALLPENDED_Msk) >> SCB_SHCSR_SVCALLPENDED_Pos);
 }
 
+void arm_set_usgfault_enable(void) {
+    register unsigned int value;
+    value = SCB->SHCSR;
+    SCB->SHCSR = (value | SCB_SHCSR_USGFAULTENA_Msk);
+    __DSB();
+    __ISB();
+}
+
+void arm_set_busfault_enable(void)
+{
+    register unsigned int value;
+    value = SCB->SHCSR;
+    SCB->SHCSR = (value | SCB_SHCSR_BUSFAULTENA_Msk);
+    __DSB();
+    __ISB();
+}
+
+void arm_set_memfault_enable(void) {
+    register unsigned int value;
+    value = SCB->SHCSR;
+    SCB->SHCSR = (value | SCB_SHCSR_MEMFAULTENA_Msk);
+    __DSB();
+    __ISB();
+}
+
 #endif /* (UBINOS__BSP__CORTEX_MX == 1) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
 

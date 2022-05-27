@@ -104,6 +104,10 @@ unsigned int arm_get_pendsv(void);
 void arm_set_svcpend(void);
 unsigned int arm_get_svcpend(void);
 
+void arm_set_usgfault_enable(void);
+void arm_set_busfault_enable(void);
+void arm_set_memfault_enable(void);
+
 #endif /* __ASSEMBLY__ */
 
 /* Platform specific definition */

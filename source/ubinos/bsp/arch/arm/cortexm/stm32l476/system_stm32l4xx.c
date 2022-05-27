@@ -222,6 +222,10 @@ void SystemInit(void)
 	SCB->VTOR = (uint32_t) &relocated_isr_vector_start;
 	__DSB();
 #endif /* (UBINOS__BSP__USE_RELOCATED_ISR_VECTOR == 1) */
+
+    arm_set_usgfault_enable();
+    arm_set_busfault_enable();
+    arm_set_memfault_enable();
 }
 
 /**
