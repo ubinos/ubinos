@@ -121,6 +121,7 @@ set_cache_default(UBINOS__BSP__ABORTSYSTEM_TYPE                                 
 
 set_cache_default(UBINOS__BSP__USE_QEMU                                         FALSE   BOOL "Use QEMU")
 
+set_cache_default(UBINOS__BSP__USE_CRITCOUNT_IN_ISR_CHECK                       TRUE    BOOL "Use critical section entry count in interrupt service routine check")
 
 if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 

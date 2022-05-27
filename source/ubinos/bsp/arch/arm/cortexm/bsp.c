@@ -20,11 +20,13 @@ int bsp_isintr(void) {
         return 1;
     }
     else {
+#if (UBINOS__BSP__USE_CRITCOUNT_IN_ISR_CHECK == 1)
         if (_bsp_critcount_in_isr > 0) {
             ARM_INTERRUPT_DISABLE();
             dtty_puts("\n\n_bsp_critcount_in_isr is not zero outside isr\n\n", 80);
             bsp_abortsystem();
         }
+#endif /* (UBINOS__BSP__USE_CRITCOUNT_IN_ISR_CHECK == 1) */
         return 0;
     }
 }
@@ -163,13 +165,13 @@ unsigned int arm_get_epsr(void) {
 }
 
 void arm_set_pendsv(void) {
-    SCB->ICSR = (1 << 28);
+    SCB->ICSR = SCB_ICSR_PENDSVSET_Msk;
     __DSB();
     __ISB();
 }
 
 void arm_clear_pendsv(void) {
-    SCB->ICSR = (1 << 27);
+    SCB->ICSR = SCB_ICSR_PENDSVCLR_Msk;
     __DSB();
     __ISB();
 }
@@ -177,11 +179,13 @@ void arm_clear_pendsv(void) {
 unsigned int arm_get_pendsv(void) {
     register unsigned int value;
     value = SCB->ICSR;
-    return (value >> 28);
+    return ((value & SCB_ICSR_PENDSVSET_Msk) >> SCB_ICSR_PENDSVSET_Pos);
 }
 
 void arm_set_svcpend(void) {
-    SCB->SHCSR = (1 << 15);
+    register unsigned int value;
+    value = SCB->SHCSR;
+    SCB->SHCSR = (value | SCB_SHCSR_SVCALLPENDED_Msk);
     __DSB();
     __ISB();
 }
@@ -189,7 +193,7 @@ void arm_set_svcpend(void) {
 unsigned int arm_get_svcpend(void) {
     register unsigned int value;
     value = SCB->SHCSR;
-    return (value >> 15);
+    return ((value & SCB_SHCSR_SVCALLPENDED_Msk) >> SCB_SHCSR_SVCALLPENDED_Pos);
 }
 
 #endif /* (UBINOS__BSP__CORTEX_MX == 1) */
