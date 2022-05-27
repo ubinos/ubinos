@@ -13,19 +13,39 @@
 #include <assert.h>
 
 void ubik_entercrit(void) {
-	ARM_INTERRUPT_DISABLE();
-	_bsp_critcount++;
+	if (0 == bsp_isintr()) {
+        ARM_INTERRUPT_DISABLE();
+        _bsp_critcount++;
+	}
+    else
+    {
+        __disable_irq();
+        _bsp_critcount_in_isr++;
+    }
 }
 
 void ubik_exitcrit(void) {
-	if (0 == _bsp_critcount) {
-		dtty_puts("\nubik_exitcrit fail (_bsp_critcount is already 0)\n", 80);
-		bsp_abortsystem();
+	if (0 == bsp_isintr()) {
+        if (0 == _bsp_critcount) {
+            dtty_puts("\nubik_exitcrit fail (_bsp_critcount is already 0)\n", 80);
+            bsp_abortsystem();
+        }
+        _bsp_critcount--;
+        if (0 == _bsp_critcount) {
+            ARM_INTERRUPT_ENABLE();
+        }
 	}
-	_bsp_critcount--;
-	if (0 == _bsp_critcount) {
-		ARM_INTERRUPT_ENABLE();
-	}
+    else
+    {
+        if (0 == _bsp_critcount_in_isr) {
+            dtty_puts("\nubik_exitcrit fail (_bsp_critcount_in_isr is already 0)\n", 80);
+            bsp_abortsystem();
+        }
+        _bsp_critcount_in_isr--;
+        if (0 == _bsp_critcount_in_isr) {
+            __enable_irq();
+        }
+    }
 }
 
 #if (__FPU_USED == 1)

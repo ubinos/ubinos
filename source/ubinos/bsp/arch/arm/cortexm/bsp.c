@@ -20,6 +20,11 @@ int bsp_isintr(void) {
         return 1;
     }
     else {
+        if (_bsp_critcount_in_isr > 0) {
+            ARM_INTERRUPT_DISABLE();
+            dtty_puts("\n\n_bsp_critcount_in_isr is not zero outside isr\n\n", 80);
+            bsp_abortsystem();
+        }
         return 0;
     }
 }
