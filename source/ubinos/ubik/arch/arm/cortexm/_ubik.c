@@ -19,7 +19,7 @@ void ubik_entercrit(void) {
 	}
     else
     {
-        __disable_irq();
+        ARM_INTERRUPT_DISABLE();
         _bsp_critcount_in_isr++;
     }
 }
@@ -43,7 +43,7 @@ void ubik_exitcrit(void) {
         }
         _bsp_critcount_in_isr--;
         if (0 == _bsp_critcount_in_isr) {
-            __enable_irq();
+            ARM_INTERRUPT_ENABLE();
         }
     }
 }
