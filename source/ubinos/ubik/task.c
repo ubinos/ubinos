@@ -844,6 +844,15 @@ void task_unlock(void) {
 	ubik_exitcrit();
 }
 
+void task_yield(void)
+{
+	ubik_entercrit();
+
+	_task_schedule();
+
+	ubik_exitcrit();
+}
+
 int task_setmaxwaitsigobj(task_pt _task, int max) {
 	int r;
 	_task_pt task = (_task_pt) _task;

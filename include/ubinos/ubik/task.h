@@ -615,6 +615,11 @@ void task_lock(void);
 void task_unlock(void);
 
 /*!
+ * 현재 태스크의 제어권을 양보하는 함수
+ */
+void task_yield(void);
+
+/*!
  * 대상 태스크가 동시에 기다릴 수 있는 신호 객체 최대 수를 설정하는 함수
  *
  * @param	task		대상 태스크 포인터<br>
