@@ -324,9 +324,9 @@ common-menuconfig:
 common-xsel:
 	$(call begin_message)
 ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
-	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python "$(_UBINOS_DIR)/make/confsel.py" .. library
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python  "$(_UBINOS_DIR)/make/confsel.py" --lib-absolute .. $(_LIBRARY_DIR)
 else
-	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/confsel.py" .. library
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/confsel.py" --lib-absolute .. $(_LIBRARY_DIR)
 endif
 	$(call end_message)
 
