@@ -401,17 +401,22 @@ macro(___project_add_app)
     execute_process(COMMAND ${PROJECT_TOOLBOX_RUN_CMD} system_name OUTPUT_VARIABLE __tmp_system_name)
 
     if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "OPENOCD")
-        math(EXPR _tmp_tcl_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 3")
-        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 6")
+        if(NOT ${UBINOS__BSP__DEBUG_SERVER_PORT} STREQUAL "")
+            set(_tmp_debug_port "${UBINOS__BSP__DEBUG_SERVER_PORT}")
+        else()
+            set(_tmp_debug_port "2331")
+        endif()
+        math(EXPR _tmp_tcl_port "${_tmp_debug_port} + 3")
+        math(EXPR _tmp_telnet_port "${_tmp_debug_port} + 6")
 
         set(__tmp_dserver_params
-            "-c" "\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\""
+            "-c" "\"gdb_port" "${_tmp_debug_port}\""
             "-c" "\"tcl_port" "${_tmp_tcl_port}\""
             "-c" "\"telnet_port" "${_tmp_telnet_port}\""
         )
         if (${__tmp_system_name} MATCHES "Darwin")
             set(__tmp_dserver_params_with_start_cmd
-                "-c" "\\\"gdb_port" "${UBINOS__BSP__DEBUG_SERVER_PORT}\\\""
+                "-c" "\\\"gdb_port" "${_tmp_debug_port}\\\""
                 "-c" "\\\"tcl_port" "${_tmp_tcl_port}\\\""
                 "-c" "\\\"telnet_port" "${_tmp_telnet_port}\\\""
             )
@@ -455,8 +460,13 @@ macro(___project_add_app)
         set(UBINOS__BSP__CMD_DSERVER ${__tmp_dserver_cmd} ${__tmp_dserver_params})
         set(UBINOS__BSP__CMD_XDSERVER ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
     elseif(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "JLINK")
-        math(EXPR _tmp_swo_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 3")
-        math(EXPR _tmp_telnet_port "${UBINOS__BSP__DEBUG_SERVER_PORT} + 6")
+        if(NOT ${UBINOS__BSP__DEBUG_SERVER_PORT} STREQUAL "")
+            set(_tmp_debug_port "${UBINOS__BSP__DEBUG_SERVER_PORT}")
+        else()
+            set(_tmp_debug_port "2331")
+        endif()
+        math(EXPR _tmp_swo_port "${_tmp_debug_port} + 3")
+        math(EXPR _tmp_telnet_port "${_tmp_debug_port} + 6")
 
         set(_tmp_device_model "")
         if(${UBINOS__BSP__CPU_MODEL} STREQUAL "NRF52832XXAA")
@@ -495,7 +505,7 @@ macro(___project_add_app)
             endif()
             set(__tmp_dserver_params ${__tmp_dserver_params}
                     "-device" "${_tmp_device_model}"
-                    "-port"  "${UBINOS__BSP__DEBUG_SERVER_PORT}"
+                    "-port"  "${_tmp_debug_port}"
                     "-swoport"  "${_tmp_swo_port}"
                     "-telnetport"  "${_tmp_telnet_port}"
                     "-endian" "little"
@@ -582,8 +592,13 @@ macro(___project_add_app)
     )
 
     if(${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "QEMU")
+        if(NOT ${UBINOS__BSP__DEBUG_SERVER_PORT} STREQUAL "")
+            set(_tmp_debug_port "${UBINOS__BSP__DEBUG_SERVER_PORT}")
+        else()
+            set(_tmp_debug_port "2331")
+        endif()
         set(__tmp_dserver_params_with_start_cmd
-            "-gdb" "tcp::${UBINOS__BSP__DEBUG_SERVER_PORT}"
+            "-gdb" "tcp::${_tmp_debug_port}"
             "-kernel" "app${CMAKE_EXECUTABLE_SUFFIX}"
         )
 
@@ -1043,18 +1058,21 @@ macro(___project_show)
     message(STATUS "")
     message(STATUS "----------------------------------------------------------------------------")
     message(STATUS "")
-    message(STATUS "UBINOS__VERSION                 = ${UBINOS__VERSION}")
+    message(STATUS "UBINOS__VERSION                     = ${UBINOS__VERSION}")
     message(STATUS "")
-    message(STATUS "UBINOS__BSP__BOARD_MODEL        = ${UBINOS__BSP__BOARD_MODEL}")
-    message(STATUS "UBINOS__BSP__BOARD_REVISION_NO  = ${UBINOS__BSP__BOARD_REVISION_NO}")
+    message(STATUS "UBINOS__BSP__BOARD_MODEL            = ${UBINOS__BSP__BOARD_MODEL}")
+    message(STATUS "UBINOS__BSP__BOARD_REVISION_NO      = ${UBINOS__BSP__BOARD_REVISION_NO}")
     message(STATUS "UBINOS__BSP__BOARD_VARIATION_NAME   = ${UBINOS__BSP__BOARD_VARIATION_NAME}")
-    message(STATUS "UBINOS__BSP__CPU_ARCH           = ${UBINOS__BSP__CPU_ARCH}")
-    message(STATUS "UBINOS__BSP__CPU_TYPE           = ${UBINOS__BSP__CPU_TYPE}")
-    message(STATUS "UBINOS__BSP__CPU_ENDIAN         = ${UBINOS__BSP__CPU_ENDIAN}")
-    message(STATUS "UBINOS__BSP__CPU_ARMTHUMBSTATE  = ${UBINOS__BSP__CPU_ARMTHUMBSTATE}")
-    message(STATUS "UBINOS__BSP__CPU_MODEL          = ${UBINOS__BSP__CPU_MODEL}")
+    message(STATUS "UBINOS__BSP__CPU_ARCH               = ${UBINOS__BSP__CPU_ARCH}")
+    message(STATUS "UBINOS__BSP__CPU_TYPE               = ${UBINOS__BSP__CPU_TYPE}")
+    message(STATUS "UBINOS__BSP__CPU_ENDIAN             = ${UBINOS__BSP__CPU_ENDIAN}")
+    message(STATUS "UBINOS__BSP__CPU_ARMTHUMBSTATE      = ${UBINOS__BSP__CPU_ARMTHUMBSTATE}")
+    message(STATUS "UBINOS__BSP__CPU_MODEL              = ${UBINOS__BSP__CPU_MODEL}")
     message(STATUS "")
-    message(STATUS "UBINOS__BSP__LINKSCRIPT_FILE    = ${UBINOS__BSP__LINKSCRIPT_FILE}")
+    message(STATUS "UBINOS__BSP__LINKSCRIPT_FILE        = ${UBINOS__BSP__LINKSCRIPT_FILE}")
+    message(STATUS "")
+    message(STATUS "UBINOS__BSP__DEBUG_SERVER_SERIAL    = ${UBINOS__BSP__DEBUG_SERVER_SERIAL}")
+    message(STATUS "UBINOS__BSP__DEBUG_SERVER_PORT      = ${UBINOS__BSP__DEBUG_SERVER_PORT}")
     message(STATUS "")
     message(STATUS "----------------------------------------------------------------------------")
     message(STATUS "")
