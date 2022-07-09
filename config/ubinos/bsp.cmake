@@ -177,6 +177,8 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_INCLUDE_DIR                     
 
 set_cache_default(UBINOS__BSP__NRF52_MBR_PRESENT                                FALSE   BOOL "")
 
+set_cache_default(UBINOS__BSP__NRF52_IGNORE_HARDFAULT_EXCEPTION_FROM_SOFTDEVICE TRUE    BOOL "Ignore hard fault exception from nrf softdevice for debugging")
+
     elseif((UBINOS__BSP__CPU_MODEL STREQUAL "STM32F217IG") OR (UBINOS__BSP__CPU_MODEL STREQUAL "STM32F207ZG"))
 
 set_cache_default(UBINOS__BSP__STM32_STM32XXXX                                  TRUE    BOOL "STM32XXXX family CPU Model")

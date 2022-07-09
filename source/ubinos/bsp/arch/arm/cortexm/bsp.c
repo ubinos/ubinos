@@ -22,8 +22,13 @@ int bsp_isintr(void) {
     else {
 #if (UBINOS__BSP__USE_CRITCOUNT_IN_ISR_CHECK == 1)
         if (_bsp_critcount_in_isr > 0) {
-            ARM_INTERRUPT_DISABLE();
-            dtty_puts("\n\n_bsp_critcount_in_isr is not zero outside isr\n\n", 80);
+            if (!_bsp_aborted)
+            {
+                _bsp_aborted = 1;
+                ARM_INTERRUPT_DISABLE();
+                dtty_puts("\n\nsystem is aborted: _bsp_critcount_in_isr is not zero outside isr\n\n", 80);
+            }
+
             bsp_abortsystem();
         }
 #endif /* (UBINOS__BSP__USE_CRITCOUNT_IN_ISR_CHECK == 1) */

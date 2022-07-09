@@ -425,13 +425,31 @@ void bsp_ubik_tick_handler(void) {
 	}
 }
 
-void bsp_ubik_irq_handler(void) {
-    unsigned int exceptiontype;
-
+void __attribute__((naked)) bsp_ubik_irq_handler(void) {
     __asm__ __volatile__ (
-        "mrs        %0, ipsr                                        \n\t"
-        : "=r" (exceptiontype)
+        "mrs    r0, ipsr                \n\t" // get exception number
+        "tst    lr, #4                  \n\t" // test bit 2 of EXC_RETURN
+        "ite    eq                      \n\t"
+        "mrseq  r1, msp                 \n\t" // if 0, stacking used msp, copy to r0
+        "mrsne  r1, psp                 \n\t" // if 1, stacking used psp, copy to r0
+        "b      bsp_ubik_irq_handler_c  \n\t"
     );
+}
+
+void bsp_ubik_irq_handler_c(unsigned int exceptiontype, unsigned int * prev_sp) {
+#if (UBINOS__BSP__NRF52_IGNORE_HARDFAULT_EXCEPTION_FROM_SOFTDEVICE == 1)
+    uint16_t prev_insturction;
+
+    if (exceptiontype == 3) // hard fault
+    {
+        prev_insturction = *((uint16_t *) &(((char *)prev_sp[6])[-2]));
+        if (prev_insturction == 0xDFFF) // svc 0xff
+        {
+            // ignore
+            return;
+        }
+    }
+#endif /* (UBINOS__BSP__NRF52_IGNORE_HARDFAULT_EXCEPTION_FROM_SOFTDEVICE == 1) */
 
     dtty_puts("\n\nunknown exception (", 80);
     switch (exceptiontype) {

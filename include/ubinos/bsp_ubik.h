@@ -46,10 +46,11 @@ void bsp_ubik_swisr(unsigned int swino);
 #if (UBINOS__BSP__CORTEX_MX == 1)
 
 void __attribute__((naked)) bsp_ubik_psv_handler(void);
+void __attribute__((naked)) bsp_ubik_irq_handler(void);
 
 void bsp_ubik_swi_handler(void);
 void bsp_ubik_tick_handler(void);
-void bsp_ubik_irq_handler(void);
+void bsp_ubik_irq_handler_c(unsigned int exceptiontype, unsigned int * prev_sp);
 
 #endif /* (UBINOS__BSP__CORTEX_MX == 1) */
 
