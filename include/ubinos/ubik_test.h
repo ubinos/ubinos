@@ -55,6 +55,9 @@ int ubik_test_tasktest01(void); //!< Test on basic functions of task
 
 int ubik_test_semtest00(void); //!< Simple semaphore example
 int ubik_test_semtest01(void); //!< Test on basic functions of semaphore
+int ubik_test_semtest02(void); //!< Test for priority inversion situation by semaphore
+int ubik_test_semtest03(void); //!< Test on priority inheritance feature of semaphore preventing priority inversion situation
+int ubik_test_semtest04(void); //!< Test for memory leak by semaphore
 
 int ubik_test_mutextest00(void); //!< Simple mutex example
 int ubik_test_mutextest01(void); //!< Test on basic functions of mutex
@@ -64,6 +67,10 @@ int ubik_test_mutextest04(void); //!< Test for memory leak by mutex
 
 int ubik_test_msgqtest00(void); //!< Simple message queue example
 int ubik_test_msgqtest01(void); //!< Test on basic functions of message queue
+int ubik_test_msgqtest02(void); //!< Test for priority inversion situation by message queue
+int ubik_test_msgqtest03(void); //!< Test on priority inheritance feature of message queue preventing priority inversion situation
+int ubik_test_msgqtest04(void); //!< Test for memory leak by message queue
+int ubik_test_msgqtest05(void); //!< Misc tests
 
 int ubik_test_stimertest00(void); //!< Simple semaphore timer example
 int ubik_test_stimertest01(void); //!< Test on periodic notification function of semaphore timer
@@ -92,12 +99,6 @@ int ubik_test_condvtest02(void); //!< Test for priority inversion situation by c
 int ubik_test_condvtest03(void); //!< Test on priority inheritance feature of condition variable preventing priority inversion situation
 int ubik_test_condvtest04(void); //!< Test for memory leak by condition variable
 
-int ubik_test_semtest02(void); //!< Test for priority inversion situation by semaphore
-int ubik_test_semtest03(void); //!< Test on priority inheritance feature of semaphore preventing priority inversion situation
-int ubik_test_semtest04(void); //!< Test for memory leak by semaphore
 
-int ubik_test_msgqtest02(void); //!< Test for priority inversion situation by message queue
-int ubik_test_msgqtest03(void); //!< Test on priority inheritance feature of message queue preventing priority inversion situation
-int ubik_test_msgqtest04(void); //!< Test for memory leak by message queue
 
 #endif /* UBIK_TEST_H_ */

@@ -337,6 +337,14 @@ int ubik_test_testall(void) {
 	}
 	ubik_collectgarbage();
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
+
+	printf("<!-- ====================================================================== -->\n");
+	testcount++;
+	r = ubik_test_msgqtest05();
+	if (0 != r) {
+		failcount++;
+	}
+	ubik_collectgarbage();
 #endif /* !(UBINOS__UBIK_TEST__EXCLUDE_MSGQTESTSET == 1) */
 
 #if (1 != UBINOS__UBIK_TEST__EXCLUDE_STIMERTESTSET)
@@ -386,7 +394,7 @@ int ubik_test_testall(void) {
 		failcount++;
 	}
 	ubik_collectgarbage();
-	#endif /* ( !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_MUTEXTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_SIGNALTESTSET == 1) &&
+	#endif /* ( !(UBINOS__UBIK_TEST__EXCLUDE_TASKTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_MUTEXTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_SIGNALTESTSET == 1) && \
 			  !(UBINOS__UBIK_TEST__EXCLUDE_CONDVTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_SEMTESTSET == 1) && !(UBINOS__UBIK_TEST__EXCLUDE_MSGQTESTSET == 1) ) */
 
 	printf("<!-- ====================================================================== -->\n");

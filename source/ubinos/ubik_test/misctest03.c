@@ -45,7 +45,7 @@ int ubik_test_misctest03(void) {
 	tickcount2 = ubik_gettickcount();
 	tickcount_task_sleepms = ubik_gettickdiff(tickcount1, tickcount2);
 
-	printf("bsp_busywait tick coutn is %d\n", tickcount_busywait.low);
+	printf("bsp_busywait tick count is %d\n", tickcount_busywait.low);
 	printf("task_sleepms tick count is %d\n", tickcount_task_sleepms.low);
 
 	if (tickcount_busywait.low >= tickcount_task_sleepms.low) {
