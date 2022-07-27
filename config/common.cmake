@@ -1189,9 +1189,10 @@ macro(ubinos_project_end)
             DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 
-    # set(CMAKE_COLOR_MAKEFILE OFF)
-    # set(CMAKE_VERBOSE_MAKEFILE ON)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+    
+    set(CMAKE_COLOR_MAKEFILE OFF)
+    # set(CMAKE_VERBOSE_MAKEFILE ON)
 
     ___project_show()
 endmacro(ubinos_project_end)
