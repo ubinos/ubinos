@@ -9,7 +9,6 @@ if(___UBINOS_COMMON_CMAKE)
 endif()
 set(___UBINOS_COMMON_CMAKE 1)
 
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(IGNORE_NOT_USED_WARNING "${PROJECT_CONFIG_DIR} ${PROJECT_CONFIG_NAME} ${PROJECT_LIBRARY_DIR}")
 
 macro(set_cache name value type)
@@ -1192,6 +1191,7 @@ macro(ubinos_project_end)
 
     # set(CMAKE_COLOR_MAKEFILE OFF)
     # set(CMAKE_VERBOSE_MAKEFILE ON)
+    set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
     ___project_show()
 endmacro(ubinos_project_end)
