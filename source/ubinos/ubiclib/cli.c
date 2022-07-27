@@ -15,7 +15,7 @@
 #include <sys/time.h>
 
 #define CLI_SLEEP_TICK 1
-#define CLI_CMD_SIZE_MAX 127
+#define CLI_CMD_SIZE_MAX 255
 #define CLI_PROMPT_SIZE_MAX 31
 #define CLI_PROMPT__DEFAULT	"cli> "
 
