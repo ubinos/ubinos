@@ -348,22 +348,22 @@ endif
 
 common-upgrade:
 	$(call begin_message)
-	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote $(_LIBRARY_UPGRADE_LIST)
+	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote --init $(_LIBRARY_UPGRADE_LIST)
 	$(call end_message)
 
 common-upgradef:
 	$(call begin_message)
-	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote -f $(_LIBRARY_UPGRADE_LIST)
+	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote --init -f $(_LIBRARY_UPGRADE_LIST)
 	$(call end_message)
 
 common-upgradea:
 	$(call begin_message)
-	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote
+	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote --init
 	$(call end_message)
 
 common-upgradeaf:
 	$(call begin_message)
-	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote -f
+	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote --init -f
 	$(call end_message)
 
 ###############################################################################
