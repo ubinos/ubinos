@@ -584,7 +584,7 @@ macro(___project_add_app)
         )
     endif()
     add_custom_target(reset
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_reset.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -batch -x ./gdb_reset.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
@@ -619,12 +619,12 @@ macro(___project_add_app)
         set(UBINOS__BSP__CMD_LOAD ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd})
     else()
         add_custom_target(load
-            COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_load.gdb
+            COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -batch -x ./gdb_load.gdb
             DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
             WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
             USES_TERMINAL
         )
-        set(UBINOS__BSP__CMD_LOAD ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_load.gdb)
+        set(UBINOS__BSP__CMD_LOAD ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -batch -x ./gdb_load.gdb)
     endif()
     add_custom_target(run
         COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
