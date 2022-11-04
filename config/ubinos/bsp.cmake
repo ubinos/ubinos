@@ -269,7 +269,7 @@ set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               
 set_cache_default(UBINOS__BSP__STM32_RCC_HSE_CONFIG           "ON"             STRING "[ON | OFF | BYPASS]")
 set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "25000000U"      STRING "Value of the External oscillator in Hz [25000000U | 8000000U]")
 
-set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"            STRING "[3 | 6]")
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"            STRING "[3 | 6 | 2]")
 
     elseif((UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L476GEVAL") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "NUCLEOL476RG") OR (UBINOS__BSP__BOARD_MODEL STREQUAL "STM32L475EIOT01"))
 
