@@ -29,7 +29,8 @@ def print_help():
     print("    %s refine_gdbscript <source file name> <destination file name> <app file name>" % (sys.argv[0]))
     print("    %s refine_linkscript <source file name> <destination file name> <memory type> <origin> <length>" % (sys.argv[0]))
     print("    %s parse_mapfile_get_value_gcc <source file name> <symbol>" % (sys.argv[0]))
-    print("    %s parse_mapfile_get_value_llvm <source file name> <symbol>" % (sys.argv[0]))
+    print("    %s parse_mapfile_get_value_local_gcc <source file name> <symbol>" % (sys.argv[0]))
+    print("    %s parse_mapfile_get_value_local_llvm <source file name> <symbol>" % (sys.argv[0]))
     print("    %s show_mapfile_info <source file name> <toolchain type>" % (sys.argv[0]))
     print("    %s replace_string <source file name> <destination file name> <old string> <new string>" % (sys.argv[0]))
     print("===============================================================================")
@@ -139,14 +140,28 @@ def parse_mapfile_get_value_gcc(sfn, symbol):
 
     return 0
 
-def parse_mapfile_get_value_llvm(sfn, symbol):
+def parse_mapfile_get_value_local_gcc(sfn, symbol):
+    sf = file_open(sfn, 'r')
+    lines = sf.readlines()
+    sf.close()
+
+    for line in lines:
+        if line.startswith(symbol + " "):
+            addr = int(line.split()[1], 16)
+            size = int(line.split()[2], 16)
+            limit = addr + size
+            return addr, limit, size
+
+    return 0, 0, 0
+
+def parse_mapfile_get_value_local_llvm(sfn, symbol):
     sf = file_open(sfn, 'r')
     lines = sf.readlines()
     sf.close()
 
     for line in lines:
         if -1 != line.find(symbol + "\n"):
-            addr = int(line.split()[0], 16);
+            addr = int(line.split()[0], 16)
             size = int(line.split()[1], 16)
             limit = addr + size
             return addr, limit, size
@@ -351,23 +366,47 @@ def show_mapfile_info_gcc(sfn):
 
     print("")
 
-def show_mapfile_info_llvm(sfn):
+def show_mapfile_info_local_gcc(sfn):
     print("")
     print("")
 
-    addr, limit, size = parse_mapfile_get_value_llvm(sfn, "__text")
+    addr, limit, size = parse_mapfile_get_value_local_gcc(sfn, ".text")
     print("text start                   = 0x%08x (%12d)" % (addr, addr))
     print("text end                     = 0x%08x (%12d)" % (limit, limit))
     print("text size                    = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
-    addr, limit, size = parse_mapfile_get_value_llvm(sfn, "__got")
+    addr, limit, size = parse_mapfile_get_value_local_gcc(sfn, ".rodata")
     print("data_const start             = 0x%08x (%12d)" % (addr, addr))
     print("data_const end               = 0x%08x (%12d)" % (limit, limit))
     print("data_const size              = 0x%08x (%12d) bytes" % (size, size))
     print("")
 
-    addr, limit, size = parse_mapfile_get_value_llvm(sfn, "__data")
+    addr, limit, size = parse_mapfile_get_value_local_gcc(sfn, ".data")
+    print("data start                   = 0x%08x (%12d)" % (addr, addr))
+    print("data end                     = 0x%08x (%12d)" % (limit, limit))
+    print("data size                    = 0x%08x (%12d) bytes" % (size, size))
+    print("")
+
+    print("")
+
+def show_mapfile_info_local_llvm(sfn):
+    print("")
+    print("")
+
+    addr, limit, size = parse_mapfile_get_value_local_llvm(sfn, "__text")
+    print("text start                   = 0x%08x (%12d)" % (addr, addr))
+    print("text end                     = 0x%08x (%12d)" % (limit, limit))
+    print("text size                    = 0x%08x (%12d) bytes" % (size, size))
+    print("")
+
+    addr, limit, size = parse_mapfile_get_value_local_llvm(sfn, "__got")
+    print("data_const start             = 0x%08x (%12d)" % (addr, addr))
+    print("data_const end               = 0x%08x (%12d)" % (limit, limit))
+    print("data_const size              = 0x%08x (%12d) bytes" % (size, size))
+    print("")
+
+    addr, limit, size = parse_mapfile_get_value_local_llvm(sfn, "__data")
     print("data start                   = 0x%08x (%12d)" % (addr, addr))
     print("data end                     = 0x%08x (%12d)" % (limit, limit))
     print("data size                    = 0x%08x (%12d) bytes" % (size, size))
@@ -378,8 +417,10 @@ def show_mapfile_info_llvm(sfn):
 def show_mapfile_info(sfn, type):
     if (type == "gcc"):
         show_mapfile_info_gcc(sfn)
-    elif (type == "llvm"):
-        show_mapfile_info_llvm(sfn)
+    elif (type == "local_gcc"):
+        show_mapfile_info_local_gcc(sfn)
+    elif (type == "local_llvm"):
+        show_mapfile_info_local_llvm(sfn)
 
 if __name__ == '__main__':
     if 2 > len(sys.argv):
@@ -451,13 +492,20 @@ if __name__ == '__main__':
                 sfn = sys.argv[2]
                 symbol = sys.argv[3]
                 parse_mapfile_get_value_gcc(sfn, symbol)
-        elif "parse_mapfile_get_value_llvm" == sys.argv[1]:
+        elif "parse_mapfile_get_value_local_gcc" == sys.argv[1]:
             if 4 > len(sys.argv):
                 print_help()
             else:
                 sfn = sys.argv[2]
                 symbol = sys.argv[3]
-                parse_mapfile_get_value_llvm(sfn, symbol)
+                parse_mapfile_get_value_local_gcc(sfn, symbol)
+        elif "parse_mapfile_get_value_local_llvm" == sys.argv[1]:
+            if 4 > len(sys.argv):
+                print_help()
+            else:
+                sfn = sys.argv[2]
+                symbol = sys.argv[3]
+                parse_mapfile_get_value_local_llvm(sfn, symbol)
         elif "show_mapfile_info" == sys.argv[1]:
             if 4 > len(sys.argv):
                 print_help()

@@ -92,14 +92,23 @@ endmacro(___project_config_end)
 
 macro(___project_add_app)
 
-    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T\"${PROJECT_BINARY_DIR}/linkscript.ld\"")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u main")
-    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-map,${PROJECT_EXE_NAME}.map")
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u main")
+        elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-map,${PROJECT_EXE_NAME}.map")
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
     else()
-        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -T\"${PROJECT_BINARY_DIR}/linkscript.ld\"")
+            set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u main")
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
     endif()
     
     add_custom_command(
@@ -378,12 +387,20 @@ macro(___project_add_app)
     endif()
 
     add_executable(${PROJECT_EXE_NAME} ${PROJECT_APP_SOURCES})
-    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
-        target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
-    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
-        target_link_libraries(${PROJECT_EXE_NAME} ${PROJECT_LIBRARIES})
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            target_link_libraries(${PROJECT_EXE_NAME} ${PROJECT_LIBRARIES})
+        elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+            target_link_libraries(${PROJECT_EXE_NAME} ${PROJECT_LIBRARIES})
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
     else()
-        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
     endif()
 
     execute_process(COMMAND ${PROJECT_TOOLBOX_RUN_CMD} get_start_command_for_cmake OUTPUT_VARIABLE __tmp_start_cmd)
@@ -626,18 +643,33 @@ macro(___project_add_app)
         )
         set(UBINOS__BSP__CMD_LOAD ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -batch -x ./gdb_load.gdb)
     endif()
-    add_custom_target(run
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        USES_TERMINAL
-    )
-    add_custom_target(xrun
-        COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
-        DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        USES_TERMINAL
-    )
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+        add_custom_target(run
+            COMMAND ./app
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+        add_custom_target(xrun
+            COMMAND ${__tmp_start_cmd} ./app
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+    else()
+        add_custom_target(run
+            COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+        add_custom_target(xrun
+            COMMAND ${__tmp_start_cmd} ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_run.gdb
+            DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            USES_TERMINAL
+        )
+    endif()
     add_custom_target(debug
         COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -x ./gdb_debug.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
@@ -934,22 +966,35 @@ macro(___project_add_app)
         )
     endif()
 
-    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-            ${PROJECT_EXE_NAME}.map
-            gcc
-        )
-    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-            ${PROJECT_EXE_NAME}.map
-            llvm
-        )
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                local_gcc
+            )
+        elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                local_llvm
+            )
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
     else()
-        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                gcc
+            )
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
     endif()
 endmacro(___project_add_app)
 
