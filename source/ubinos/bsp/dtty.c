@@ -101,6 +101,11 @@ int dtty_setautocr(int autocr)
     return 0;
 }
 
+int dtty_getautocr()
+{
+    return _g_bsp_dtty_autocr;
+}
+
 #else /* (UBINOS__BSP__USE_DTTY == ...) */
 
 int dtty_puts(const char *str, int max)

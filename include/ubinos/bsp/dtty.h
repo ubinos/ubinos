@@ -98,11 +98,20 @@ int dtty_getc_unblocked(char * ch_p);
 int dtty_putc(int ch);
 
 /*!
- * 디버깅 터미널에 문자열을 출력하는 함수
+ * 디버깅 터미널 출력 버퍼에 저장된 내용을 모두 출력하는 함수
+ *
+ * @return   0: 성공<br>
+ *          <br>
+ *          -1: 오류
+ */
+int dtty_flush(void);
+
+/*!
+ * 디버깅 터미널에 문자열을 출력하는 함수 (NULL도 출력함)
  *
  * @param	str		출력할 문자열
  *
- * @param	max		출력할 문자열의 크기
+ * @param	len		출력할 문자열의 크기
  *
  * @return	 출력한 문자열의 크기
  * 			<br>
@@ -122,6 +131,8 @@ int dtty_kbhit(void);
 /*!
  * 디버깅 터미널에 문자열을 출력하는 함수
  *
+ * "\0" 이전까지 또는 출력할 문자열의 최대 크기까지 출력한다.
+ * 
  * @param	str		출력할 문자열
  *
  * @param	max		출력할 문자열의 최대 크기
@@ -187,15 +198,12 @@ int dtty_getecho();
 int dtty_setautocr(int autocr);
 
 /*!
- * 디버깅 터미널 출력 버퍼에 저장된 내용을 모두 출력하는 함수
+ * 디버깅 터미널 자동 캐리지 리턴 설정을 돌려주는 함수
  *
- * @param   ch      출력할 문자
- *
- * @return   0: 성공<br>
- *          <br>
- *          -1: 오류
+ * @return    0: auto carriage return off<br>
+ *            1: auto carriage return on<br>
  */
-int dtty_flush(void);
+int dtty_getecho();
 
 #ifdef	__cplusplus
 }

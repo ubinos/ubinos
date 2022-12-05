@@ -546,6 +546,8 @@
 
 #cmakedefine01 UBINOS__UBIDRV__INCLUDE_NVMEM
 
+#cmakedefine01 UBINOS__UBIDRV__INCLUDE_UART
+
 #endif /* (INCLUDE__UBINOS__UBIDRV == 1) */
 
 
