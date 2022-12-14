@@ -5,7 +5,8 @@
 #
 
 CONFIG_DIR ?= ../app
-CONFIG_NAME ?= hello_world_nrf52840dk
+CONFIG_NAME ?= hello_world_netduinoplus2_qemu
+# COMPILER_LAUNCHER ?= ccache
 
 include makefile.mk
 

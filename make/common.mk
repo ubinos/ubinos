@@ -115,6 +115,11 @@ _PRECMD                 = :
 else
 _PRECMD                 = $(PRECMD)
 endif
+ifeq ($(strip $(COMPILER_LAUNCHER)),)
+_COMPILER_LAUNCHER     = ""
+else
+_COMPILER_LAUNCHER     = $(COMPILER_LAUNCHER)
+endif
 
 ###############################################################################
 
@@ -124,6 +129,12 @@ _CMAKE_OPTION          += -D PROJECT_CONFIG_DIR="$(_CONFIG_DIR)"
 _CMAKE_OPTION          += -D PROJECT_LIBRARY_DIR="$(_LIBRARY_DIR)"
 _CMAKE_OPTION          += -D UBINOS__BSP__DEBUG_SERVER_SERIAL="$(_DEBUG_SERVER_SERIAL)"
 _CMAKE_OPTION          += -D UBINOS__BSP__DEBUG_SERVER_PORT="$(_DEBUG_SERVER_PORT)"
+
+ifeq ($(strip $(_COMPILER_LAUNCHER)),)
+else
+_CMAKE_OPTION          += -D CMAKE_C_COMPILER_LAUNCHER=$(_COMPILER_LAUNCHER)
+_CMAKE_OPTION          += -D CMAKE_CXX_COMPILER_LAUNCHER=$(_COMPILER_LAUNCHER)
+endif
 
 ###############################################################################
 
@@ -178,6 +189,7 @@ common-help:
 	@echo "SYSTEM_NAME                  = $(_SYSTEM_NAME)"
 	@echo "JOBS                         = $(_JOBS)"
 	@echo "PRECMD                       = $(_PRECMD)"
+	@echo "COMPILER_LAUNCHER            = $(COMPILER_LAUNCHER)"
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
