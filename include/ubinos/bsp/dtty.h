@@ -203,7 +203,7 @@ int dtty_setautocr(int autocr);
  * @return    0: auto carriage return off<br>
  *            1: auto carriage return on<br>
  */
-int dtty_getecho();
+int dtty_getautocr();
 
 #ifdef	__cplusplus
 }
