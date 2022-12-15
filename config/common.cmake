@@ -695,7 +695,8 @@ macro(___project_add_app)
         USES_TERMINAL
     )
 
-    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+    else()
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${CMAKE_OBJCOPY} -O binary
@@ -708,9 +709,6 @@ macro(___project_add_app)
             ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
             ${PROJECT_EXE_NAME}.hex
         )
-    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
-    else()
-        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
     endif()
 
     add_custom_command(
@@ -734,14 +732,17 @@ macro(___project_add_app)
         ${PROJECT_EXE_NAME}.data${CMAKE_EXECUTABLE_SUFFIX}
     )
 
-    if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_gdbscript
-            ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-            ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-            ${PROJECT_EXE_NAME}.bin
-        )
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+    else()
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_gdbscript
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${PROJECT_EXE_NAME}.bin
+            )
+        endif()
     endif()
 
     if(NOT ${UBINOS__BSP__DEBUG_SERVER_HOST} STREQUAL "")
@@ -908,7 +909,9 @@ macro(___project_add_app)
         ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         ../Default/
     )
-    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+    
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+    else()
         add_custom_command(
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
@@ -921,10 +924,8 @@ macro(___project_add_app)
             ${PROJECT_EXE_NAME}.hex
             ../Default/
         )
-    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
-    else()
-        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
     endif()
+    
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
