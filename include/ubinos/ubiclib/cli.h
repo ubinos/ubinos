@@ -68,6 +68,17 @@ int cli_sethelphookfunc(cli_helphookfunc_ft helphookfunc);
 int cli_setprompt(char *prompt);
 
 /**
+ * 시작할때 자동 실행되는 명령어를 설정하는 함수
+ *
+ * @param	명령어<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ */
+int cli_set_initial_cmd(char * cmd);
+
+/**
  * cli 메인 함수
  *
  * @param	사용자 정의 인수<br>

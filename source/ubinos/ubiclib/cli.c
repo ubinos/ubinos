@@ -28,6 +28,7 @@ extern const char *_ubiclib_logm_levelname[LOGM_LEVEL__END];
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1) */
 
 char _cli_cmd_buf[CLI_CMD_SIZE_MAX + 1] = { 0, };
+char _cli_initial_cmd_buf[CLI_CMD_SIZE_MAX + 1] = { 0, };
 char _cli_prompt_buf[CLI_PROMPT_SIZE_MAX + 1] = { 0, };
 
 cli_hookfunc_ft _cli_hookfunc = NULL;
@@ -65,8 +66,20 @@ int cli_sethelphookfunc(cli_helphookfunc_ft helphookfunc) {
 int cli_setprompt(char *prompt) {
 	int r = -1;
 
-	if (prompt) {
+	if (prompt != NULL) {
 		strncpy(_cli_prompt_buf, prompt, CLI_PROMPT_SIZE_MAX);
+		r = 0;
+	}
+
+	return r;
+}
+
+int cli_set_initial_cmd(char * cmd)
+{
+	int r = -1;
+
+	if (cmd != NULL) {
+		strncpy(_cli_initial_cmd_buf, cmd, CLI_CMD_SIZE_MAX);
 		r = 0;
 	}
 
@@ -76,6 +89,7 @@ int cli_setprompt(char *prompt) {
 void cli_main(void *arg) {
 	int r = -1;
 	int len;
+	int is_first = 1;
 
 	if (strlen(_cli_prompt_buf) == 0) {
 		strncpy(_cli_prompt_buf, CLI_PROMPT__DEFAULT, CLI_PROMPT_SIZE_MAX);
@@ -84,7 +98,23 @@ void cli_main(void *arg) {
 	printf("\n%s", _cli_prompt_buf);
 	fflush(stdout);
 	for (;;) {
-		len = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
+		if (is_first)
+		{
+			len = strnlen(_cli_initial_cmd_buf, CLI_CMD_SIZE_MAX);
+			if (len > 0)
+			{
+				strncpy(_cli_cmd_buf, _cli_initial_cmd_buf, CLI_CMD_SIZE_MAX);
+			}
+			else
+			{
+				len = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
+			}
+			is_first = 0;
+		}
+		else
+		{
+			len = dtty_gets(_cli_cmd_buf, CLI_CMD_SIZE_MAX);
+		}
 		if (0 < len) {
 			printf("\n%s\n", _cli_cmd_buf);
 
