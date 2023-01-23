@@ -77,6 +77,8 @@ int ubik_comp_init(unsigned int idle_stackdepth);
 /*!
  * ubik 컴포넌트를 시작하는 함수
  *
+ * Cortax-M 구현에서는 이 함수를 수행하면 MSP가 초기화되기 때문에 직전까지의 지역 변수들은 사용할 수 없게 된다.
+ *
  * @return	  0: 성공<br>
  * 			<br>
  * 			 -1: 오류<br>

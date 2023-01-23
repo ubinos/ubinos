@@ -22,6 +22,9 @@ extern void SystemInit2(void);
 int main(void) {
     int r = 0;
 
+    int argc = 1;
+    char * argv[] = {"app"};
+
     SystemInit2();
 
 #if (INCLUDE__UBINOS__UBICLIB == 1)
@@ -74,7 +77,7 @@ int main(void) {
     }
 #endif
 
-    appmain(0, 0x0);
+    appmain(argc, argv);
 
     for (;;) {
     }
