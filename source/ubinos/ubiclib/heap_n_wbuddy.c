@@ -15,45 +15,45 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__HEAP
 
-#define _UBINOS__UBICLIB__HEAP_DIR    0
-#define _UBINOS__UBICLIB__HEAP_DIR_r    1
+#define _UBINOS__UBICLIB__HEAP_DIR 0
+#define _UBINOS__UBICLIB__HEAP_DIR_r 1
 
-#define HEAP_GTYPE_W1                    (0x8 + 0x4 + 0x1)
-#define HEAP_GTYPE_W3                    (0x8 + 0x4 + 0x3)
+#define HEAP_GTYPE_W1 (0x8 + 0x4 + 0x1)
+#define HEAP_GTYPE_W3 (0x8 + 0x4 + 0x3)
 
-#define    _wbuddy_tag_to_asize(tag)        _tag_to_g_asize(tag, 1)
+#define _wbuddy_tag_to_asize(tag) _tag_to_g_asize(tag, 1)
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_INTERMEDIATE_DATA_CHECK == 1)
-    #define _wbuddy_tag_check(tag, dir, min)    {                                                        \
-        if (min > _wbuddy_tag_to_asize(tag)) {                                                            \
-            logme("tag is wrong (error type 1)");                                                        \
-            bsp_abortsystem();                                                                            \
-        }                                                                                                \
+    #define _wbuddy_tag_check(tag, dir, min)    {                                                       \
+        if (min > _wbuddy_tag_to_asize(tag)) {                                                          \
+            logme("tag is wrong (error type 1)");                                                       \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
         if (dir != _tag_to_d(tag)) {                                                                    \
-            logme("tag is wrong (error type 2)");                                                        \
-            bsp_abortsystem();                                                                            \
-        }                                                                                                \
-        if (HEAP_G_K_MAX < _tag_to_g_k(tag)) {                                                            \
-            logme("tag is wrong (error type 3)");                                                        \
-            bsp_abortsystem();                                                                            \
-        }                                                                                                \
-        if ((4) <= _tag_to_g_b(tag)) {                                                                    \
-            logme("tag is wrong (error type 4)");                                                        \
-            bsp_abortsystem();                                                                            \
-        }                                                                                                \
-        if ((0) != _tag_to_g_l(tag)) {                                                                    \
-            logme("tag is wrong (error type 5)");                                                        \
-            bsp_abortsystem();                                                                            \
-        }                                                                                                \
-        if ((0) != _tag_to_g_r(tag)) {                                                                    \
-            logme("tag is wrong (error type 6)");                                                        \
-            bsp_abortsystem();                                                                            \
-        }                                                                                                \
-        if (      HEAP_GTYPE_W1 != _tag_to_g(tag)                                                        \
-                  && HEAP_GTYPE_W3 != _tag_to_g(tag)) {                                                    \
-            logme("tag is wrong (error type 7)");                                                        \
-            bsp_abortsystem();                                                                            \
-        }                                                                                                \
+            logme("tag is wrong (error type 2)");                                                       \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
+        if (HEAP_G_K_MAX < _tag_to_g_k(tag)) {                                                          \
+            logme("tag is wrong (error type 3)");                                                       \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
+        if ((4) <= _tag_to_g_b(tag)) {                                                                  \
+            logme("tag is wrong (error type 4)");                                                       \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
+        if ((0) != _tag_to_g_l(tag)) {                                                                  \
+            logme("tag is wrong (error type 5)");                                                       \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
+        if ((0) != _tag_to_g_r(tag)) {                                                                  \
+            logme("tag is wrong (error type 6)");                                                       \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
+        if (      HEAP_GTYPE_W1 != _tag_to_g(tag)                                                       \
+                  && HEAP_GTYPE_W3 != _tag_to_g(tag)) {                                                 \
+            logme("tag is wrong (error type 7)");                                                       \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
     }
 #else
     #define _wbuddy_tag_check(tag, dir, min)
@@ -61,60 +61,60 @@
 
 
 #define  _wbuddy_kw_to_tag(k, w, a, d, g) (                                                             \
-    (((unsigned int) (a    ) << HEAP_G_TAG__DGKLRB_BITSIZE ) & HEAP_G_TAG_A_______MASK) |                \
-    (((unsigned int) (d    ) << HEAP_G_TAG___GKLRB_BITSIZE ) & HEAP_G_TAG__D______MASK) |                \
-    (((unsigned int) (g    ) << HEAP_G_TAG____KLRB_BITSIZE ) & HEAP_G_TAG___G_____MASK) |                \
-    (((unsigned int) (k    ) << HEAP_G_TAG_____LRB_BITSIZE ) & HEAP_G_TAG____K____MASK) |                \
+    (((unsigned int) (a    ) << HEAP_G_TAG__DGKLRB_BITSIZE ) & HEAP_G_TAG_A_______MASK) |               \
+    (((unsigned int) (d    ) << HEAP_G_TAG___GKLRB_BITSIZE ) & HEAP_G_TAG__D______MASK) |               \
+    (((unsigned int) (g    ) << HEAP_G_TAG____KLRB_BITSIZE ) & HEAP_G_TAG___G_____MASK) |               \
+    (((unsigned int) (k    ) << HEAP_G_TAG_____LRB_BITSIZE ) & HEAP_G_TAG____K____MASK) |               \
     (((unsigned int) (w    )                               ) & HEAP_G_TAG_______B_MASK)    )
 
 
 #define    _wbuddy_tag_to_size(tag)            (_wbuddy_tag_to_asize(tag) - HEAP_BLOCK_OVERHEAD)
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_INTERMEDIATE_DATA_CHECK == 1)
-    #define _wbuddy_kw_check(k, w) {                                                                            \
-        if (HEAP_G_K_MAX < (k)) {                                                                                \
-            logme("kw is wrong (error type 1)");                                                                \
-            bsp_abortsystem();                                                                                    \
-        }                                                                                                        \
-        if (3 != w && 1 != w) {                                                                                    \
-            logme("kw is wrong (error type 2)");                                                                \
-            bsp_abortsystem();                                                                                    \
-        }                                                                                                        \
+    #define _wbuddy_kw_check(k, w) {                                                                    \
+        if (HEAP_G_K_MAX < (k)) {                                                                       \
+            logme("kw is wrong (error type 1)");                                                        \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
+        if (3 != w && 1 != w) {                                                                         \
+            logme("kw is wrong (error type 2)");                                                        \
+            bsp_abortsystem();                                                                          \
+        }                                                                                               \
     }
 #else
     #define _wbuddy_kw_check(k, w)
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_INTERMEDIATE_DATA_CHECK == 1) */
 
-#define _wbuddy_kw_refine(k, w) {                                                                                \
-    if ((4) == (w)) {                                                                                            \
-        (k) += (2);                                                                                                \
-        (w)  = (1);                                                                                                \
-    }                                                                                                            \
-    else if ((2) == (w)) {                                                                                        \
-        (k) += (1);                                                                                                \
-        (w)  = (1);                                                                                                \
-    }                                                                                                            \
-    _wbuddy_kw_check(k, w);                                                                                        \
+#define _wbuddy_kw_refine(k, w) {                                                                       \
+    if ((4) == (w)) {                                                                                   \
+        (k) += (2);                                                                                     \
+        (w)  = (1);                                                                                     \
+    }                                                                                                   \
+    else if ((2) == (w)) {                                                                              \
+        (k) += (1);                                                                                     \
+        (w)  = (1);                                                                                     \
+    }                                                                                                   \
+    _wbuddy_kw_check(k, w);                                                                             \
 }
 
-#define _wbuddy_asize_to_kw(asize, k, w)    {                                                                    \
-    (k) = uilog2_floor(asize) / (1);                                                                            \
-    (w) = (unsigned int) (asize) >> ((1) * (k));                                                                \
-    switch ( div_ceil(    (asize) - ((unsigned int) (w) << ((1) * (k))        ),                                     \
-                                    ((unsigned int) 0x1 << ((1) * (k)) >> (1) )    )    ) {                            \
-    case 0:                                                                                                        \
-        break;                                                                                                    \
-    case 1:                                                                                                        \
-        (k) -= (1);                                                                                                \
-        (w)  = (3);                                                                                                \
-        break;                                                                                                    \
-    case 2:                                                                                                        \
-        (k) += (1);                                                                                                \
-        break;                                                                                                    \
-    default:                                                                                                    \
-        bsp_abortsystem();                                                                                        \
-    }                                                                                                            \
-    _wbuddy_kw_refine(k, w);                                                                                    \
+#define _wbuddy_asize_to_kw(asize, k, w)    {                                                           \
+    (k) = uilog2_floor(asize) / (1);                                                                    \
+    (w) = (unsigned int) (asize) >> ((1) * (k));                                                        \
+    switch ( div_ceil(    (asize) - ((unsigned int) (w) << ((1) * (k))        ),                        \
+                                    ((unsigned int) 0x1 << ((1) * (k)) >> (1) )    )    ) {             \
+    case 0:                                                                                             \
+        break;                                                                                          \
+    case 1:                                                                                             \
+        (k) -= (1);                                                                                     \
+        (w)  = (3);                                                                                     \
+        break;                                                                                          \
+    case 2:                                                                                             \
+        (k) += (1);                                                                                     \
+        break;                                                                                          \
+    default:                                                                                            \
+        bsp_abortsystem();                                                                              \
+    }                                                                                                   \
+    _wbuddy_kw_refine(k, w);                                                                            \
 }
 
 #define _wbuddy_kw_to_asize(k, w)        _kwt_to_asize(k, w, 0, 1)
@@ -125,26 +125,27 @@
 
 #define _wbuddy_sn_to_index(sn, offset)  _sn_to_index(sn, offset, 1, 2)
 
-#define _wbuddy_tag_to_kw(tag, k, w)    {                                                                        \
-        (k) = _tag_to_g_k(tag);                                                                                    \
-        (w) = _tag_to_g_b(tag);                                                                                    \
-        _wbuddy_kw_check(k, w);                                                                                    \
+#define _wbuddy_tag_to_kw(tag, k, w)    {                                                               \
+        (k) = _tag_to_g_k(tag);                                                                         \
+        (w) = _tag_to_g_b(tag);                                                                         \
+        _wbuddy_kw_check(k, w);                                                                         \
 }
 
 
 int _heap_n_wbuddy_init_region(
         _heap_pt heap, unsigned int addr, unsigned int size, int locktype,
-        unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm            ) {
+        unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm)
+{
     int r;
     unsigned int k, w;
     _heap_region_pt region;
     unsigned int i;
 
-    region                        = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    region->dir                    = _UBINOS__UBICLIB__HEAP_DIR;
-    region->algorithm            = UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY;
-    region->locktype            = locktype;
+    region->dir = _UBINOS__UBICLIB__HEAP_DIR;
+    region->algorithm = UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY;
+    region->locktype = locktype;
 
     _wbuddy_asize_to_kw(size, k, w);
     if (k < 1 || HEAP_G_K_MAX < k) {
@@ -156,21 +157,21 @@ int _heap_n_wbuddy_init_region(
         goto end0;
     }
 
-    region->m                    = 2;
-    region->log2m                = 1;
-    region->maskm                = ~((unsigned int) (-1) << 1);
+    region->m = 2;
+    region->log2m = 1;
+    region->maskm = ~((unsigned int) (-1) << 1);
     _wbuddy_asize_to_kw(HEAP_BLOCK_ASIZE_MIN, k, w);
-    region->min                    = _wbuddy_kw_to_asize(k, w);
+    region->min = _wbuddy_kw_to_asize(k, w);
 
-    region->size_min            = _wbuddy_kw_to_asize(k + 2, 1);
-    region->size                = 0;
-    region->k                    = 0;
-    region->w                    = 0;
-    region->t                    = 0;
-    region->addr                = addr;
-    region->end                    = addr;
+    region->size_min = _wbuddy_kw_to_asize(k + 2, 1);
+    region->size = 0;
+    region->k = 0;
+    region->w = 0;
+    region->t = 0;
+    region->addr = addr;
+    region->end = addr;
 
-    region->limit                = addr + size;
+    region->limit = addr + size;
 
     if (region->size_min > size) {
         r = -4;
@@ -181,22 +182,22 @@ int _heap_n_wbuddy_init_region(
         edlist_init(&fbl_p[i]);
         fbl_p[i].data = (void *) i;
     }
-    region->fblcount            = fblcount;
-    region->fbloffset             = _wbuddy_kw_to_sn(k, w) - 1;
-    region->fbl_ap                = fbl_p;
-    region->fblbm                = fblbm;
+    region->fblcount = fblcount;
+    region->fbloffset = _wbuddy_kw_to_sn(k, w) - 1;
+    region->fbl_ap = fbl_p;
+    region->fblbm = fblbm;
 
-    region->dregs_size            = 0;
+    region->dregs_size = 0;
 
     edlist_init(&region->abl);
 
-    region->acount_max            = 0;
-    region->asize                = 0;
-    region->asize_max            = 0;
-    region->rsize                = 0;
-    region->rsize_max            = 0;
+    region->acount_max = 0;
+    region->asize = 0;
+    region->asize_max = 0;
+    region->rsize = 0;
+    region->rsize_max = 0;
 
-    region->mutex                 = NULL;
+    region->mutex = NULL;
 
     r = 0;
 
@@ -204,7 +205,8 @@ end0:
     return r;
 }
 
-_heap_block_pt _heap_n_wbuddy_expand(_heap_pt heap, unsigned int asize) {
+_heap_block_pt _heap_n_wbuddy_expand(_heap_pt heap, unsigned int asize)
+{
     _heap_region_pt region;
     _heap_block_pt b1;
     unsigned int b1k, b1b, b1g, b1asize;
@@ -213,7 +215,7 @@ _heap_block_pt _heap_n_wbuddy_expand(_heap_pt heap, unsigned int asize) {
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, asize);
 
-    region     = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
     if (0 >= asize) {
         b1 = NULL;
@@ -223,11 +225,11 @@ _heap_block_pt _heap_n_wbuddy_expand(_heap_pt heap, unsigned int asize) {
     if (0 == region->size) {
         b1asize = region->limit - region->addr;
         _wbuddy_asize_to_kw(b1asize, bxk, bxw);
-        b1asize     = _wbuddy_kw_to_asize(bxk, bxw);
+        b1asize = _wbuddy_kw_to_asize(bxk, bxw);
 
-        b1k         = bxk;
-        b1b         = bxw;
-        
+        b1k = bxk;
+        b1b = bxw;
+
         if (3 == b1b) {
             b1g = HEAP_GTYPE_W3;
         }
@@ -284,8 +286,8 @@ _heap_block_pt _heap_n_wbuddy_expand(_heap_pt heap, unsigned int asize) {
     _wbuddy_asize_to_kw(region->size, region->k, region->w);
 
     _wbuddy_kw_refine(b1k, b1b);
-    b1         = (_heap_block_pt) addr;
-    tag         = _wbuddy_kw_to_tag(b1k, b1b, 1, _UBINOS__UBICLIB__HEAP_DIR, b1g);
+    b1 = (_heap_block_pt) addr;
+    tag = _wbuddy_kw_to_tag(b1k, b1b, 1, _UBINOS__UBICLIB__HEAP_DIR, b1g);
     _block_set_tag(b1, tag, 1);
     heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1);
 
@@ -297,11 +299,13 @@ end0:
     return b1;
 }
 
-int _heap_n_wbuddy_reduce(_heap_pt heap) {
+int _heap_n_wbuddy_reduce(_heap_pt heap)
+{
     return 0;
 }
 
-_heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block, int endflag) {
+_heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block, int endflag)
+{
     _heap_region_pt region;
     unsigned int offset;
     _heap_block_pt b1;
@@ -316,16 +320,16 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
     unsigned int end;
     unsigned int flag;
 
-    b1          = block;
+    b1 = block;
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, endflag %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, endflag);
 
-    region      = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    offset     = region->fbloffset;
+    offset = region->fbloffset;
 
-    addr     = region->addr;
-    end         = region->end;
+    addr = region->addr;
+    end = region->end;
 
     heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1);
     _wbuddy_tag_check(b1->tag, _UBINOS__UBICLIB__HEAP_DIR, region->min);
@@ -334,35 +338,35 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
 
         flag = 0;
 
-        tag         = b1->tag;
+        tag = b1->tag;
         _wbuddy_tag_to_kw(tag, b1k, b1b);
         b1g = _tag_to_g(tag);
 
         if (HEAP_GTYPE_W3 == b1g && 1 == b1b && addr != (unsigned int) b1) {
-            b2         = _block_pt_to_upper_block_pt(b1, 1);
-            tag         = b2->tag;
+            b2 = _block_pt_to_upper_block_pt(b1, 1);
+            tag = b2->tag;
             _wbuddy_tag_to_kw(tag, b2k, b2b);
             b2g = _tag_to_g(tag);
 
             if (0 == _tag_to_a(tag)) {
             }
             else if (HEAP_GTYPE_W1 == b2g && 1 == b2b && b1k == b2k && addr != (unsigned int) b2) {
-                b3         = _block_pt_to_upper_block_pt(b2, 1);
-                tag         = b3->tag;
+                b3 = _block_pt_to_upper_block_pt(b2, 1);
+                tag = b3->tag;
                 _wbuddy_tag_to_kw(tag, b3k, b3b);
                 b3g = _tag_to_g(tag);
 
                 if (0 == _tag_to_a(tag)) {
                 }
                 else if (HEAP_GTYPE_W1 == b3g && 1 == b3b && b1k + 1 == b3k) {
-                    bxi         = _wbuddy_kw_to_sn(b3k, b3b);
-                    bxi         = _wbuddy_sn_to_index(bxi, offset);
+                    bxi = _wbuddy_kw_to_sn(b3k, b3b);
+                    bxi = _wbuddy_sn_to_index(bxi, offset);
                     _region_remove_fb(region, bxi, b3, 1);
                     heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b3, bxi, 1);
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b3, 1);
 
-                    bxi         = _wbuddy_kw_to_sn(b2k, b2b);
-                    bxi         = _wbuddy_sn_to_index(bxi, offset);
+                    bxi = _wbuddy_kw_to_sn(b2k, b2b);
+                    bxi = _wbuddy_sn_to_index(bxi, offset);
                     _region_remove_fb(region, bxi, b2, 1);
                     heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, 1);
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, 1);
@@ -370,14 +374,14 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1);
 
                     b1k += 2;
-                    b1b  = 1;
-                    b1   = b3;
+                    b1b = 1;
+                    b1 = b3;
                     flag = 1;
                 }
             }
             else if (HEAP_GTYPE_W3 == b2g && 3 == b2b && b1k == b2k) {
-                bxi         = _wbuddy_kw_to_sn(b2k, b2b);
-                bxi         = _wbuddy_sn_to_index(bxi, offset);
+                bxi = _wbuddy_kw_to_sn(b2k, b2b);
+                bxi = _wbuddy_sn_to_index(bxi, offset);
                 _region_remove_fb(region, bxi, b2, 1);
                 heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, 1);
                 heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, 1);
@@ -385,36 +389,36 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
                 heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1);
 
                 b1k += 2;
-                b1b  = 1;
-                b1   = b2;
+                b1b = 1;
+                b1 = b2;
                 flag = 1;
             }
         }
         else if (HEAP_GTYPE_W1 == b1g && 1 == b1b && end != (unsigned int) _block_pt_to_end_prt(b1, 1)) {
-            b2         = _block_pt_to_lower_block_pt(b1, 1);
-            tag         = b2->tag;
+            b2 = _block_pt_to_lower_block_pt(b1, 1);
+            tag = b2->tag;
             _wbuddy_tag_to_kw(tag, b2k, b2b);
             b2g = _tag_to_g(tag);
 
             if (0 == _tag_to_a(tag)) {
             }
             else if (HEAP_GTYPE_W3 == b2g && 1 == b2b && b1k == b2k && addr != (unsigned int) b1) {
-                b3         = _block_pt_to_upper_block_pt(b1, 1);
-                tag         = b3->tag;
+                b3 = _block_pt_to_upper_block_pt(b1, 1);
+                tag = b3->tag;
                 _wbuddy_tag_to_kw(tag, b3k, b3b);
                 b3g = _tag_to_g(tag);
 
                 if (0 == _tag_to_a(tag)) {
                 }
                 else if (HEAP_GTYPE_W1 == b3g && 1 == b3b && b1k + 1 == b3k) {
-                    bxi         = _wbuddy_kw_to_sn(b3k, b3b);
-                    bxi         = _wbuddy_sn_to_index(bxi, offset);
+                    bxi = _wbuddy_kw_to_sn(b3k, b3b);
+                    bxi = _wbuddy_sn_to_index(bxi, offset);
                     _region_remove_fb(region, bxi, b3, 1);
                     heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b3, bxi, 1);
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b3, 1);
 
-                    bxi         = _wbuddy_kw_to_sn(b2k, b2b);
-                    bxi         = _wbuddy_sn_to_index(bxi, offset);
+                    bxi = _wbuddy_kw_to_sn(b2k, b2b);
+                    bxi = _wbuddy_sn_to_index(bxi, offset);
                     _region_remove_fb(region, bxi, b2, 1);
                     heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, 1);
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, 1);
@@ -422,28 +426,28 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1);
 
                     b1k += 2;
-                    b1b  = 1;
-                    b1   = b3;
+                    b1b = 1;
+                    b1 = b3;
                     flag = 1;
                 }
             }
             else if (HEAP_GTYPE_W1 == b2g && 1 == b2b && b1k == b2k + 1 && end != (unsigned int) _block_pt_to_end_prt(b2, 1)) {
-                b3         = _block_pt_to_lower_block_pt(b2, 1);
-                tag         = b3->tag;
+                b3 = _block_pt_to_lower_block_pt(b2, 1);
+                tag = b3->tag;
                 _wbuddy_tag_to_kw(tag, b3k, b3b);
                 b3g = _tag_to_g(tag);
 
                 if (0 == _tag_to_a(tag)) {
                 }
                 else if (HEAP_GTYPE_W3 == b3g && 1 == b3b && b1k == b3k + 1) {
-                    bxi         = _wbuddy_kw_to_sn(b3k, b3b);
-                    bxi         = _wbuddy_sn_to_index(bxi, offset);
+                    bxi = _wbuddy_kw_to_sn(b3k, b3b);
+                    bxi = _wbuddy_sn_to_index(bxi, offset);
                     _region_remove_fb(region, bxi, b3, 1);
                     heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b3, bxi, 1);
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b3, 1);
 
-                    bxi         = _wbuddy_kw_to_sn(b2k, b2b);
-                    bxi         = _wbuddy_sn_to_index(bxi, offset);
+                    bxi = _wbuddy_kw_to_sn(b2k, b2b);
+                    bxi = _wbuddy_sn_to_index(bxi, offset);
                     _region_remove_fb(region, bxi, b2, 1);
                     heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, 1);
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, 1);
@@ -451,22 +455,22 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1);
 
                     b1k += 1;
-                    b1b  = 1;
+                    b1b = 1;
                     flag = 1;
                 }
             }
         }
         else if (HEAP_GTYPE_W3 == b1g && 3 == b1b && end != (unsigned int) _block_pt_to_end_prt(b1, 1)) {
-            b2         = _block_pt_to_lower_block_pt(b1, 1);
-            tag         = b2->tag;
+            b2 = _block_pt_to_lower_block_pt(b1, 1);
+            tag = b2->tag;
             _wbuddy_tag_to_kw(tag, b2k, b2b);
             b2g = _tag_to_g(tag);
 
             if (0 == _tag_to_a(tag)) {
             }
             else if (HEAP_GTYPE_W3 == b2g && 1 == b2b && b1k == b2k) {
-                bxi         = _wbuddy_kw_to_sn(b2k, b2b);
-                bxi         = _wbuddy_sn_to_index(bxi, offset);
+                bxi = _wbuddy_kw_to_sn(b2k, b2b);
+                bxi = _wbuddy_sn_to_index(bxi, offset);
                 _region_remove_fb(region, bxi, b2, 1);
                 heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, 1);
                 heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, 1);
@@ -474,7 +478,7 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
                 heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1);
 
                 b1k += 2;
-                b1b  = 1;
+                b1b = 1;
                 flag = 1;
             }
         }
@@ -482,11 +486,11 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
         if (flag == 1) {
             _wbuddy_kw_refine(b1k, b1b);
 
-            if (        0 != (((unsigned int) b1                      - addr) % (0x1 << (b1k + 2)))    &&
-                        0 == (((unsigned int) b1 + (b1b << b1k)       - addr) % (0x1 << (b1k + 2)))        ) {
+            if (        0 != (((unsigned int) b1                      - addr) % (0x1 << (b1k + 2))) &&
+                        0 == (((unsigned int) b1 + (b1b << b1k)       - addr) % (0x1 << (b1k + 2)))     ) {
                 b1g = HEAP_GTYPE_W3;
             }
-            else if (    0 != (((unsigned int) b1 + (b1b << b1k)       - addr) % (0x1 << (b1k + 2)))        ) {
+            else if (    0 != (((unsigned int) b1 + (b1b << b1k)       - addr) % (0x1 << (b1k + 2)))    ) {
                 b1g = HEAP_GTYPE_W1;
             }
             else {
@@ -503,8 +507,8 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
         break;
     }
 
-    bxi         = _wbuddy_kw_to_sn(b1k, b1b);
-    bxi         = _wbuddy_sn_to_index(bxi, offset);
+    bxi = _wbuddy_kw_to_sn(b1k, b1b);
+    bxi = _wbuddy_sn_to_index(bxi, offset);
     _region_insert_fb_head(region, bxi, b1, 1);
     heap_logmfd_block_inserted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, bxi, 1);
 
@@ -524,29 +528,29 @@ _heap_block_pt _heap_n_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, u
     unsigned int tag;
     unsigned int addr;
 
-    b1         = block;
+    b1 = block;
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, asize);
 
-    region   = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
     if (0 >= asize) {
         goto end0;
     }
 
-    //offset     = region->fbloffset;
-    min         = region->min;
+    //offset = region->fbloffset;
+    min = region->min;
 
     asize = max(asize, min);
 
-    addr     = region->addr;
+    addr = region->addr;
 
     heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1);
     _wbuddy_tag_check(b1->tag, _UBINOS__UBICLIB__HEAP_DIR, min);
 
     _wbuddy_asize_to_kw(asize, bxk, bxw);
 
-    tag         = b1->tag;
+    tag = b1->tag;
     _wbuddy_tag_to_kw(tag, b1k, b1b);
     b1asize = _wbuddy_tag_to_asize(tag);
     if (asize >= b1asize) {
@@ -637,10 +641,10 @@ _heap_block_pt _heap_n_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, u
 
         }
 
-        b2k  = b1k;
-        b2b  = b1b - bxc;
+        b2k = b1k;
+        b2b = b1b - bxc;
 
-        b1b  = bxc;
+        b1b = bxc;
 
         _wbuddy_kw_refine(b2k, b2b);
         b2asize = _wbuddy_kw_to_asize(b2k, b2b);
@@ -662,13 +666,13 @@ _heap_block_pt _heap_n_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, u
                 b2g = HEAP_GTYPE_W3;
 
                 if (    0 == (((unsigned int) b1                - addr) % (0x1 << (b1k + 2)))    &&
-                        0 != (((unsigned int) b1 + (b1b << b1k) - addr) % (0x1 << (b1k + 2)))        ) {
+                        0 != (((unsigned int) b1 + (b1b << b1k) - addr) % (0x1 << (b1k + 2)))       ) {
                 }
                 else {
                     bsp_abortsystem();
                 }
                 if (    0 != (((unsigned int) b2                - addr) % (0x1 << (b2k + 2)))    &&
-                        0 == (((unsigned int) b2 + (b2b << b2k) - addr) % (0x1 << (b2k + 2)))        ) {
+                        0 == (((unsigned int) b2 + (b2b << b2k) - addr) % (0x1 << (b2k + 2)))       ) {
                 }
                 else {
                     bsp_abortsystem();
@@ -685,13 +689,13 @@ _heap_block_pt _heap_n_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, u
                 b1g = HEAP_GTYPE_W1;
                 b2g = HEAP_GTYPE_W1;
 
-                if (    0 != (((unsigned int) b1 + (b1b << b1k) - addr) % (0x1 << (b1k + 2)))    ) {
+                if (    0 != (((unsigned int) b1 + (b1b << b1k) - addr) % (0x1 << (b1k + 2)))       ) {
                 }
                 else {
                     bsp_abortsystem();
                 }
                 if (    0 != (((unsigned int) b2                - addr) % (0x1 << (b2k + 2)))    &&
-                        0 != (((unsigned int) b2 + (b2b << b2k) - addr) % (0x1 << (b2k + 2)))        ) {
+                        0 != (((unsigned int) b2 + (b2b << b2k) - addr) % (0x1 << (b2k + 2)))       ) {
                 }
                 else {
                     bsp_abortsystem();
@@ -756,7 +760,7 @@ _heap_block_pt _heap_n_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, u
                 }
             }
         }
-        
+
         tag = _wbuddy_kw_to_tag(b1k, b1b, 0, _UBINOS__UBICLIB__HEAP_DIR, b1g);
         _block_set_tag(b1, tag, 1);
 
@@ -787,14 +791,14 @@ void * _heap_n_wbuddy_allocate_block(_heap_pt heap, unsigned int size) {
 
     b1 = NULL;
 
-    region     = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    offset     = region->fbloffset;
-    min         = region->min;
+    offset = region->fbloffset;
+    min = region->min;
 
-    b1asize     = _size_to_asize(size, min);
+    b1asize = _size_to_asize(size, min);
     _wbuddy_asize_to_kw(b1asize, bxk, bxw);
-    b1asize    = _wbuddy_kw_to_asize(bxk, bxw);
+    b1asize = _wbuddy_kw_to_asize(bxk, bxw);
 
     if (heap->size < b1asize) {
         logmw("memory is not enough");
@@ -821,9 +825,9 @@ void * _heap_n_wbuddy_allocate_block(_heap_pt heap, unsigned int size) {
         goto end0;
     }
 
-    bxi         = _wbuddy_kw_to_sn(bxk, bxw);
-    bxi         = _wbuddy_sn_to_index(bxi, offset);
-    b1i      = bitmap_getlsb2(region->fblbm, bxi);
+    bxi = _wbuddy_kw_to_sn(bxk, bxw);
+    bxi = _wbuddy_sn_to_index(bxi, offset);
+    b1i = bitmap_getlsb2(region->fblbm, bxi);
 
     if (0 == b1i) {
         b1 = _heap_n_wbuddy_expand(heap, b1asize);
@@ -1000,9 +1004,9 @@ unsigned int heap_wbuddy_calc_fblcount(unsigned int size, unsigned int m) {
     }
 
     _wbuddy_asize_to_kw(HEAP_BLOCK_ASIZE_MIN, k, w);
-    fbln    = _wbuddy_kw_to_sn(k, w);
+    fbln = _wbuddy_kw_to_sn(k, w);
     _wbuddy_asize_to_kw(size, k, w);
-    fbln    = _wbuddy_kw_to_sn(k, w) - fbln + 1 + 1;
+    fbln = _wbuddy_kw_to_sn(k, w) - fbln + 1 + 1;
 
     return fbln;
 }
@@ -1016,7 +1020,7 @@ unsigned int heap_wbuddy_calc_fblcount_raw(unsigned int size, unsigned int m) {
     }
 
     _wbuddy_asize_to_kw(size, k, w);
-    fbln    = _wbuddy_kw_to_sn(k, w);
+    fbln = _wbuddy_kw_to_sn(k, w);
 
     return fbln;
 }

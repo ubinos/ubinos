@@ -15,41 +15,42 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__HEAP
 
-#define _UBINOS__UBICLIB__HEAP_DIR    0
-#define _UBINOS__UBICLIB__HEAP_DIR_r    1
+#define _UBINOS__UBICLIB__HEAP_DIR 0
+#define _UBINOS__UBICLIB__HEAP_DIR_r 1
 
 int _heap_n_bestfit_init_region(
         _heap_pt heap, unsigned int addr, unsigned int size, int locktype,
-        unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm            ) {
+        unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm)
+{
     int r;
     _heap_region_pt region;
     unsigned int i;
 
-    region                        = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    region->dir                    = _UBINOS__UBICLIB__HEAP_DIR;
-    region->algorithm            = UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
-    region->locktype            = locktype;
+    region->dir = _UBINOS__UBICLIB__HEAP_DIR;
+    region->algorithm = UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
+    region->locktype = locktype;
 
     if (fblcount < 2) {
         r = -7;
         goto end0;
     }
 
-    region->m                    = 0;
-    region->log2m                = 0;
-    region->maskm                = 0;
-    region->min                    = HEAP_BLOCK_ASIZE_MIN;
+    region->m = 0;
+    region->log2m = 0;
+    region->maskm = 0;
+    region->min = HEAP_BLOCK_ASIZE_MIN;
 
-    region->size_min            = region->min;
-    region->size                = 0;
-    region->k                    = 0;
-    region->w                    = 0;
-    region->t                    = 0;
-    region->addr                = addr;
-    region->end                    = addr;
+    region->size_min = region->min;
+    region->size = 0;
+    region->k = 0;
+    region->w = 0;
+    region->t = 0;
+    region->addr = addr;
+    region->end = addr;
 
-    region->limit                = addr + size;
+    region->limit = addr + size;
 
     if (region->size_min > size) {
         r = -4;
@@ -60,22 +61,22 @@ int _heap_n_bestfit_init_region(
         edlist_init(&fbl_p[i]);
         fbl_p[i].data = (void *) i;
     }
-    region->fblcount            = fblcount;
-    region->fbloffset             = 0;
-    region->fbl_ap                = fbl_p;
-    region->fblbm                = fblbm;
+    region->fblcount = fblcount;
+    region->fbloffset = 0;
+    region->fbl_ap = fbl_p;
+    region->fblbm = fblbm;
 
-    region->dregs_size            = 0;
+    region->dregs_size = 0;
 
     edlist_init(&region->abl);
 
-    region->acount_max            = 0;
-    region->asize                = 0;
-    region->asize_max            = 0;
-    region->rsize                = 0;
-    region->rsize_max            = 0;
+    region->acount_max = 0;
+    region->asize = 0;
+    region->asize_max = 0;
+    region->rsize = 0;
+    region->rsize_max = 0;
 
-    region->mutex                 = NULL;
+    region->mutex = NULL;
 
     r = 0;
 
@@ -83,7 +84,8 @@ end0:
     return r;
 }
 
-_heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize) {
+_heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize)
+{
     _heap_region_pt region;
     unsigned int min;
     _heap_block_pt b1;
@@ -91,14 +93,14 @@ _heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize) {
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, asize);
 
-    region     = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
     if (0 >= asize) {
         b1 = NULL;
         goto end0;
     }
 
-    min         = region->min;
+    min = region->min;
 
     asize = max(asize, min);
 
@@ -107,7 +109,7 @@ _heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize) {
     if (end <= region->limit) {
         bsp_ubik_entercrit();
         if (end <= heap->region[_UBINOS__UBICLIB__HEAP_DIR_r].addr) {
-            region->end   = end;
+            region->end = end;
             region->size += asize;
         }
         else {
@@ -143,8 +145,8 @@ _heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize) {
     }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 
-    b1         = (_heap_block_pt) addr;
-    tag         = _asize_to_tag_l(asize, 1, _UBINOS__UBICLIB__HEAP_DIR);
+    b1 = (_heap_block_pt) addr;
+    tag = _asize_to_tag_l(asize, 1, _UBINOS__UBICLIB__HEAP_DIR);
     _block_set_tag(b1, tag, 0);
     heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 0);
 
@@ -156,7 +158,8 @@ end0:
     return b1;
 }
 
-int _heap_n_bestfit_reduce(_heap_pt heap) {
+int _heap_n_bestfit_reduce(_heap_pt heap)
+{
     int r;
     _heap_region_pt region;
     unsigned int size_min;
@@ -166,7 +169,7 @@ int _heap_n_bestfit_reduce(_heap_pt heap) {
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR);
 
-    region     = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
     if (0 == region->size) {
         r = 0;
@@ -175,9 +178,9 @@ int _heap_n_bestfit_reduce(_heap_pt heap) {
 
     size_min = region->size_min;
 
-    addr      = region->addr;
-    end       = region->end;
-    size      = region->size;
+    addr = region->addr;
+    end = region->end;
+    size = region->size;
 
     for (;;) {
         if (size_min >= size) {
@@ -195,8 +198,8 @@ int _heap_n_bestfit_reduce(_heap_pt heap) {
         heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 1, 0);
         heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 0);
 
-        end        -= b1asize;
-        size    -= b1asize;
+        end -= b1asize;
+        size -= b1asize;
 
         break;
     }
@@ -206,9 +209,9 @@ int _heap_n_bestfit_reduce(_heap_pt heap) {
         goto end0;
     }
 
-    region->addr     = addr;
-    region->end         = end;
-    region->size     = size;
+    region->addr = addr;
+    region->end = end;
+    region->size = size;
 
     if (size_min > size) {
         b1 = _heap_n_bestfit_expand(heap, size_min - size);
@@ -231,33 +234,34 @@ end0:
     return r;
 }
 
-_heap_block_pt _heap_n_bestfit_combine_block(_heap_pt heap, _heap_block_pt block, int endflag) {
+_heap_block_pt _heap_n_bestfit_combine_block(_heap_pt heap, _heap_block_pt block, int endflag)
+{
     _heap_region_pt region;
     _heap_block_pt b1;
     _heap_block_pt b2;
     unsigned int tag, asize;
     unsigned int addr;
 
-    b1          = block;
+    b1 = block;
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, endflag %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, endflag);
 
-    region      = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    addr     = region->addr;
+    addr = region->addr;
 
     heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 0);
 
     for (;;) {
-        tag         = b1->tag;
-        asize     = _tag_to_asize(tag, 0);
+        tag = b1->tag;
+        asize = _tag_to_asize(tag, 0);
 
         if (addr != (unsigned int) b1) {
-            b2         = _block_pt_to_upper_block_pt(b1, 0);
-            tag         = b2->tag;
+            b2 = _block_pt_to_upper_block_pt(b1, 0);
+            tag = b2->tag;
 
             if (1 == _tag_to_a(tag)) {
-                asize    += _tag_to_asize(tag, 0);
+                asize += _tag_to_asize(tag, 0);
 
                 _region_remove_fb(region, 1, b2, 0);
                 heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, 1, 0);
@@ -278,11 +282,11 @@ _heap_block_pt _heap_n_bestfit_combine_block(_heap_pt heap, _heap_block_pt block
             break;
         }
 
-        b2         = _block_pt_to_lower_block_pt(b1, 0);
-        tag         = b2->tag;
+        b2 = _block_pt_to_lower_block_pt(b1, 0);
+        tag = b2->tag;
 
         if (1 == _tag_to_a(tag)) {
-            asize    += _tag_to_asize(tag, 0);
+            asize += _tag_to_asize(tag, 0);
 
             _region_remove_fb(region, 1, b2, 0);
             heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, 1, 0);
@@ -308,7 +312,8 @@ _heap_block_pt _heap_n_bestfit_combine_block(_heap_pt heap, _heap_block_pt block
     return b1;
 }
 
-_heap_block_pt _heap_n_bestfit_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize) {
+_heap_block_pt _heap_n_bestfit_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize)
+{
     _heap_region_pt region;
     unsigned int min;
     _heap_block_pt b1;
@@ -317,26 +322,26 @@ _heap_block_pt _heap_n_bestfit_split_block(_heap_pt heap, _heap_block_pt block, 
     unsigned int tag;
     //unsigned int addr;
 
-    b1         = block;
+    b1 = block;
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, asize);
 
-    region   = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
     if (0 >= asize) {
         goto end0;
     }
 
-    min         = region->min;
+    min = region->min;
 
     asize = max(asize, min);
 
-    //addr     = region->addr;
+    //addr = region->addr;
 
     heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 0);
 
-    tag         = b1->tag;
-    bxasize     = _tag_to_asize(tag, 0);
+    tag = b1->tag;
+    bxasize = _tag_to_asize(tag, 0);
     if (asize >= bxasize) {
         goto end0;
     }
@@ -370,7 +375,8 @@ end0:
     return b1;
 }
 
-void * _heap_n_bestfit_allocate_block(_heap_pt heap, unsigned int size) {
+void * _heap_n_bestfit_allocate_block(_heap_pt heap, unsigned int size)
+{
     int r;
     _heap_region_pt region;
     _heap_block_pt b1;
@@ -382,9 +388,9 @@ void * _heap_n_bestfit_allocate_block(_heap_pt heap, unsigned int size) {
 
     b1 = NULL;
 
-    region     = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    b1asize     = _size_to_asize(size, region->min);
+    b1asize = _size_to_asize(size, region->min);
 
     if (heap->size < b1asize) {
         logmw("memory is not enough");
@@ -594,7 +600,8 @@ end0:
     return (void *) tmp;
 }
 
-int _heap_n_bestfit_release_block(_heap_pt heap, void * ptr) {
+int _heap_n_bestfit_release_block(_heap_pt heap, void * ptr)
+{
     int r, r2;
     _heap_region_pt region;
     _heap_block_pt b1;

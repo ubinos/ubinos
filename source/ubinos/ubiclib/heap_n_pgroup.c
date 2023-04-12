@@ -15,29 +15,29 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__HEAP
 
-#define _UBINOS__UBICLIB__HEAP_DIR    0
-#define _UBINOS__UBICLIB__HEAP_DIR_r    1
+#define _UBINOS__UBICLIB__HEAP_DIR 0
+#define _UBINOS__UBICLIB__HEAP_DIR_r 1
 
-#define _kw_to_tag(k, w, a, d)                    _kblr_to_tag(k, w, 0, 0, a, d)
+#define _kw_to_tag(k, w, a, d) _kblr_to_tag(k, w, 0, 0, a, d)
 
-#define _kw_check(k, w, log2m, m)                _kwt_check(k, w, 0, log2m, m)
+#define _kw_check(k, w, log2m, m) _kwt_check(k, w, 0, log2m, m)
 
 #define _kw_refine(k, w, log2m, m) {                                                                            \
-    if ((m) == (w)) {                                                                                            \
-        (k) += (1);                                                                                                \
-        (w)  = (1);                                                                                                \
-    }                                                                                                            \
-    _kw_check(k, w, log2m, m);                                                                                    \
+    if ((m) == (w)) {                                                                                           \
+        (k) += (1);                                                                                             \
+        (w)  = (1);                                                                                             \
+    }                                                                                                           \
+    _kw_check(k, w, log2m, m);                                                                                  \
 }
 
-#define _asize_to_kw(asize, k, w, log2m, m)    {                                                                    \
+#define _asize_to_kw(asize, k, w, log2m, m)    {                                                                \
     (k) = uilog2_floor(asize) / (log2m);                                                                        \
-    (w) = div_ceil(asize, (unsigned int) 0x1 << ((log2m) * (k)));                                                \
-    if ((m) == (w)) {                                                                                            \
-        (k) += (1);                                                                                                    \
-        (w)  = (1);                                                                                                \
-    }                                                                                                            \
-    _kw_check(k, w, log2m, m);                                                                                    \
+    (w) = div_ceil(asize, (unsigned int) 0x1 << ((log2m) * (k)));                                               \
+    if ((m) == (w)) {                                                                                           \
+        (k) += (1);                                                                                             \
+        (w)  = (1);                                                                                             \
+    }                                                                                                           \
+    _kw_check(k, w, log2m, m);                                                                                  \
 }
 
 #define _kw_to_asize(k, w, log2m)                _kwt_to_asize(k, w, 0, log2m)
@@ -46,36 +46,37 @@
 
 #define _kw_to_sn(k, w, log2m, m)                 (((unsigned int) (m)-1) * (k) + (w))
 
-#define _tag_to_kw(tag, k, w, log2m, m)    {                                                                        \
-        (k) = _tag_to_g_k(tag);                                                                                    \
-        (w) = _tag_to_g_b(tag);                                                                                    \
-        _kw_check(k, w, log2m, m);                                                                                \
+#define _tag_to_kw(tag, k, w, log2m, m)    {                                                                    \
+        (k) = _tag_to_g_k(tag);                                                                                 \
+        (w) = _tag_to_g_b(tag);                                                                                 \
+        _kw_check(k, w, log2m, m);                                                                              \
 }
 
-#define _block_get_gid__pgroup(block, region, k, b, gid, log2m)    {                                                \
+#define _block_get_gid__pgroup(block, region, k, b, gid, log2m)    {                                            \
     if (0 == (region)->dir) {                                                                                   \
         gid = ((unsigned int) (block) - (region)->addr   ) >> ((log2m) * ((k) + 1));                            \
     }                                                                                                           \
     else {                                                                                                      \
-        gid = ((region)->end - (unsigned int) (block) - 1) >> ((log2m) * ((k) + 1));                             \
+        gid = ((region)->end - (unsigned int) (block) - 1) >> ((log2m) * ((k) + 1));                            \
     }                                                                                                           \
 }
 
 
 int _heap_n_pgroup_init_region(
         _heap_pt heap, unsigned int addr, unsigned int size, int locktype,
-        unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm            ) {
+        unsigned int m, unsigned int fblcount, edlist_pt fbl_p, bitmap_pt fblbm)
+{
     int r;
     unsigned int log2m;
     unsigned int k, w;
     _heap_region_pt region;
     unsigned int i;
 
-    region                        = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    region->dir                    = _UBINOS__UBICLIB__HEAP_DIR;
-    region->algorithm            = UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP;
-    region->locktype            = locktype;
+    region->dir = _UBINOS__UBICLIB__HEAP_DIR;
+    region->algorithm = UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP;
+    region->locktype = locktype;
 
     log2m = uilog2_floor(m);
 
@@ -89,21 +90,21 @@ int _heap_n_pgroup_init_region(
         goto end0;
     }
 
-    region->m                    = m;
-    region->log2m                = log2m;
-    region->maskm                = ~((unsigned int) (-1) << log2m);
+    region->m = m;
+    region->log2m = log2m;
+    region->maskm = ~((unsigned int) (-1) << log2m);
     _asize_to_kw(HEAP_BLOCK_ASIZE_MIN, k, w, log2m, m);
-    region->min                    = _kw_to_asize(k, w, log2m);
+    region->min = _kw_to_asize(k, w, log2m);
 
-    region->size_min            = _kw_to_asize(k + 2, 1, log2m);
-    region->size                = 0;
-    region->k                    = 0;
-    region->w                    = 0;
-    region->t                    = 0;
-    region->addr                = addr;
-    region->end                    = addr;
+    region->size_min = _kw_to_asize(k + 2, 1, log2m);
+    region->size = 0;
+    region->k = 0;
+    region->w = 0;
+    region->t = 0;
+    region->addr = addr;
+    region->end = addr;
 
-    region->limit                = addr + size;
+    region->limit = addr + size;
 
     if (region->size_min > size) {
         r = -4;
@@ -114,22 +115,22 @@ int _heap_n_pgroup_init_region(
         edlist_init(&fbl_p[i]);
         fbl_p[i].data = (void *) i;
     }
-    region->fblcount            = fblcount;
-    region->fbloffset             = _kw_to_sn(k, w, log2m, m) - 1;
-    region->fbl_ap                = fbl_p;
-    region->fblbm                = fblbm;
+    region->fblcount = fblcount;
+    region->fbloffset = _kw_to_sn(k, w, log2m, m) - 1;
+    region->fbl_ap = fbl_p;
+    region->fblbm = fblbm;
 
-    region->dregs_size            = 0;
+    region->dregs_size = 0;
 
     edlist_init(&region->abl);
 
-    region->acount_max            = 0;
-    region->asize                = 0;
-    region->asize_max            = 0;
-    region->rsize                = 0;
-    region->rsize_max            = 0;
+    region->acount_max = 0;
+    region->asize = 0;
+    region->asize_max = 0;
+    region->rsize = 0;
+    region->rsize_max = 0;
 
-    region->mutex                 = NULL;
+    region->mutex = NULL;
 
     r = 0;
 
@@ -137,7 +138,8 @@ end0:
     return r;
 }
 
-_heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize) {
+_heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize)
+{
     _heap_region_pt region;
     unsigned int log2m, m/*, maskm*/, min;
     unsigned int p1k, p1w_r;
@@ -151,68 +153,68 @@ _heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize) {
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, asize);
 
-    region     = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
     if (0 >= asize) {
         b1 = NULL;
         goto end0;
     }
 
-    m         = region->m;
-    log2m     = region->log2m;
-    //maskm     = region->maskm;
-    min         = region->min;
+    m = region->m;
+    log2m = region->log2m;
+    //maskm = region->maskm;
+    min = region->min;
 
     asize = max(asize, min);
 
     if (0 == region->size) {
-        p1k         = 0;
-        p1w_r     = 0;
+        p1k = 0;
+        p1w_r = 0;
 
-        b1div     = 0;
-        b1asize     = max(asize, region->size_min);
+        b1div = 0;
+        b1asize = max(asize, region->size_min);
         _asize_to_kw(b1asize, bxk, bxw, log2m, m);
-        b1asize     = _kw_to_asize(bxk, bxw, log2m);
+        b1asize = _kw_to_asize(bxk, bxw, log2m);
 
-        b1k         = bxk;
-        b1b         = bxw;
+        b1k = bxk;
+        b1b = bxw;
     }
     else {
-        p1k         = region->k;
-        p1w_r     = region->w;
+        p1k = region->k;
+        p1w_r = region->w;
         _kw_check(p1k, p1w_r, log2m, m);
-        p1w_r     = m - p1w_r;
+        p1w_r = m - p1w_r;
 
-        b1c         = div_ceil(asize, (unsigned int) 0x1 << (log2m * p1k));
-        b2c         = p1w_r;
+        b1c = div_ceil(asize, (unsigned int) 0x1 << (log2m * p1k));
+        b2c = p1w_r;
 
         if (b1c <= b2c) {
-            b1div     = 0;
+            b1div = 0;
 
-            b1asize     = b1c << (log2m * p1k);
+            b1asize = b1c << (log2m * p1k);
 
-            b1k         = p1k;
-            b1b         = b1c;
+            b1k = p1k;
+            b1b = b1c;
         }
         else {
-            b1div     = 1;
-            b1asize     = (p1w_r << (log2m * p1k));
+            b1div = 1;
+            b1asize = (p1w_r << (log2m * p1k));
 
-            b2c         = (m - 1);
+            b2c = (m - 1);
             for (i = p1k + 1; ; i++) {
-                b1c         = div_ceil(asize, (unsigned int) 0x1 << (log2m *  i));
+                b1c = div_ceil(asize, (unsigned int) 0x1 << (log2m *  i));
                 if (b1c <= b2c) {
                     break;
                 }
 
-                b1div    += 1;
-                b1asize    += ((m - 1) << (log2m *  i));
+                b1div += 1;
+                b1asize += ((m - 1) << (log2m *  i));
             }
 
-            b1asize    += (b1c << (log2m *  i));
+            b1asize += (b1c << (log2m *  i));
 
-            b1k         = i;
-            b1b         = b1c;
+            b1k = i;
+            b1b = b1c;
         }
     }
 
@@ -277,19 +279,19 @@ _heap_block_pt _heap_n_pgroup_expand(_heap_pt heap, unsigned int asize) {
         }
 
         _kw_refine(b2k, b2b, log2m, m);
-        b2asize     = _kw_to_asize(b2k, b2b, log2m);
-        b2         = (_heap_block_pt) addr;
-        addr    += b2asize;
-        b1asize    -= b2asize;
-        tag         = _kw_to_tag(b2k, b2b, 1, _UBINOS__UBICLIB__HEAP_DIR);
+        b2asize = _kw_to_asize(b2k, b2b, log2m);
+        b2 = (_heap_block_pt) addr;
+        addr += b2asize;
+        b1asize -= b2asize;
+        tag = _kw_to_tag(b2k, b2b, 1, _UBINOS__UBICLIB__HEAP_DIR);
         _block_set_tag(b2, tag, log2m);
         heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
         _heap_n_pgroup_combine_block(heap, b2, 1);
     }
 
     _kw_refine(b1k, b1b, log2m, m);
-    b1         = (_heap_block_pt) addr;
-    tag         = _kw_to_tag(b1k, b1b, 1, _UBINOS__UBICLIB__HEAP_DIR);
+    b1 = (_heap_block_pt) addr;
+    tag = _kw_to_tag(b1k, b1b, 1, _UBINOS__UBICLIB__HEAP_DIR);
     _block_set_tag(b1, tag, log2m);
     heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 
@@ -313,33 +315,33 @@ int _heap_n_pgroup_reduce(_heap_pt heap) {
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR);
 
-    region     = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
     if (0 == region->size) {
         r = 0;
         goto end0;
     }
 
-    m         = region->m;
-    log2m     = region->log2m;
-    //maskm     = region->maskm;
-    offset     = region->fbloffset;
+    m = region->m;
+    log2m = region->log2m;
+    //maskm = region->maskm;
+    offset = region->fbloffset;
     size_min = region->size_min;
 
-    p1k         = region->k;
-    p1w         = region->w;
+    p1k = region->k;
+    p1w = region->w;
     _kw_check(p1k, p1w, log2m, m);
 
-    addr      = region->addr;
-    end       = region->end;
-    size      = region->size;
+    addr = region->addr;
+    end = region->end;
+    size = region->size;
 
     for (;;) {
         if (size_min >= size) {
             break;
         }
 
-        b1  = _block_pt_to_upper_block_pt(end, log2m);
+        b1 = _block_pt_to_upper_block_pt(end, log2m);
         tag = b1->tag;
         if (1 != _tag_to_a(tag)) {
             break;
@@ -351,15 +353,15 @@ int _heap_n_pgroup_reduce(_heap_pt heap) {
             (                        b1k   == p1k                         ) ||
             (1 == p1w             && b1k+1 == p1k                         )
         ) {
-            b1asize     = _kw_to_asize(b1k, b1b, log2m);
-            bxi         = _kw_to_sn(b1k, b1b, log2m, m);
-            bxi         = _sn_to_index(bxi, offset, log2m, m);
+            b1asize = _kw_to_asize(b1k, b1b, log2m);
+            bxi = _kw_to_sn(b1k, b1b, log2m, m);
+            bxi = _sn_to_index(bxi, offset, log2m, m);
             _region_remove_fb(region, bxi, b1, log2m);
             heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, bxi, log2m);
             heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
 
-            end        -= b1asize;
-            size    -= b1asize;
+            end -= b1asize;
+            size -= b1asize;
             if (size > 0) {
                 _asize_to_kw(size, p1k, p1w, log2m, m);
             }
@@ -382,12 +384,12 @@ int _heap_n_pgroup_reduce(_heap_pt heap) {
         goto end0;
     }
 
-    region->addr     = addr;
-    region->end         = end;
-    region->size     = size;
+    region->addr = addr;
+    region->end = end;
+    region->size = size;
 
-    region->k         = p1k;
-    region->w         = p1w;
+    region->k = p1k;
+    region->w = p1w;
 
     if (size_min > size) {
         b1 = _heap_n_pgroup_expand(heap, size_min - size);
@@ -421,29 +423,29 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
     unsigned int tag;
     unsigned int addr;
 
-    b1          = block;
+    b1 = block;
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, endflag %d", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, endflag);
 
-    region      = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    m         = region->m;
-    log2m     = region->log2m;
-    //maskm     = region->maskm;
-    offset     = region->fbloffset;
+    m = region->m;
+    log2m = region->log2m;
+    //maskm = region->maskm;
+    offset = region->fbloffset;
 
-    addr     = region->addr;
+    addr = region->addr;
 
     heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
     _tag_check(b1->tag, _UBINOS__UBICLIB__HEAP_DIR, log2m, m, region->min);
 
     for (;;) {
-        tag         = b1->tag;
+        tag = b1->tag;
         _tag_to_kw(tag, b1k, b1b, log2m, m);
 
         if (addr != (unsigned int) b1) {
-            b2         = _block_pt_to_upper_block_pt(b1, log2m);
-            tag         = b2->tag;
+            b2 = _block_pt_to_upper_block_pt(b1, log2m);
+            tag = b2->tag;
 
             if (1 == _tag_to_a(tag)) {
                 _block_get_gid__pgroup(b1, region, b1k, b1b, b1gid, log2m);
@@ -452,8 +454,8 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
                 _block_get_gid__pgroup(b2, region, b2k, b2b, b2gid, log2m);
 
                 if (b1k == b2k && b1gid == b2gid) {
-                    bxi         = _kw_to_sn(b2k, b2b, log2m, m);
-                    bxi         = _sn_to_index(bxi, offset, log2m, m);
+                    bxi = _kw_to_sn(b2k, b2b, log2m, m);
+                    bxi = _sn_to_index(bxi, offset, log2m, m);
                     _region_remove_fb(region, bxi, b2, log2m);
                     heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, log2m);
                     heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
@@ -476,8 +478,8 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
             break;
         }
 
-        b2         = _block_pt_to_lower_block_pt(b1, log2m);
-        tag         = b2->tag;
+        b2 = _block_pt_to_lower_block_pt(b1, log2m);
+        tag = b2->tag;
 
         if (1 == _tag_to_a(tag)) {
             _block_get_gid__pgroup(b1, region, b1k, b1b, b1gid, log2m);
@@ -486,8 +488,8 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
             _block_get_gid__pgroup(b2, region, b2k, b2b, b2gid, log2m);
 
             if (b1k == b2k && b1gid == b2gid) {
-                bxi         = _kw_to_sn(b2k, b2b, log2m, m);
-                bxi         = _sn_to_index(bxi, offset, log2m, m);
+                bxi = _kw_to_sn(b2k, b2b, log2m, m);
+                bxi = _sn_to_index(bxi, offset, log2m, m);
                 _region_remove_fb(region, bxi, b2, log2m);
                 heap_logmfd_block_removed(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, bxi, log2m);
                 heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, log2m);
@@ -507,8 +509,8 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
         break;
     }
 
-    bxi         = _kw_to_sn(b1k, b1b, log2m, m);
-    bxi         = _sn_to_index(bxi, offset, log2m, m);
+    bxi = _kw_to_sn(b1k, b1b, log2m, m);
+    bxi = _sn_to_index(bxi, offset, log2m, m);
     _region_insert_fb_head(region, bxi, b1, log2m);
     heap_logmfd_block_inserted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, bxi, log2m);
 
@@ -528,32 +530,32 @@ _heap_block_pt _heap_n_pgroup_split_block(_heap_pt heap, _heap_block_pt block, u
     unsigned int tag;
     //unsigned int addr;
 
-    b1         = block;
+    b1 = block;
 
     heap_logmfd("0x%08x: called  : heap 0x%08x, dir %d, block 0x%08x, asize 0x%08x", bsp_task_getcur(), heap, _UBINOS__UBICLIB__HEAP_DIR, block, asize);
 
-    region   = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
     if (0 >= asize) {
         goto end0;
     }
 
-    m         = region->m;
-    log2m     = region->log2m;
-    //maskm     = region->maskm;
-    //offset     = region->fbloffset;
-    min         = region->min;
+    m = region->m;
+    log2m = region->log2m;
+    //maskm = region->maskm;
+    //offset = region->fbloffset;
+    min = region->min;
 
     asize = max(asize, min);
 
-    //addr     = region->addr;
+    //addr = region->addr;
 
     heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, log2m);
     _tag_check(b1->tag, _UBINOS__UBICLIB__HEAP_DIR, log2m, m, min);
 
     _asize_to_kw(asize, bxk, bxw, log2m, m);
 
-    tag         = b1->tag;
+    tag = b1->tag;
     _tag_to_kw(tag, b1k, b1b, log2m, m);
     bxasize = _tag_to_asize(tag, log2m);
     if (asize >= bxasize) {
@@ -563,7 +565,7 @@ _heap_block_pt _heap_n_pgroup_split_block(_heap_pt heap, _heap_block_pt block, u
     for (;;) {
         if (bxk < b1k && 1 == b1b) {
             b1k -= 1;
-            b1b  = m;
+            b1b = m;
         }
 
         if (bxk < b1k) {
@@ -576,10 +578,10 @@ _heap_block_pt _heap_n_pgroup_split_block(_heap_pt heap, _heap_block_pt block, u
             }
         }
 
-        b2k  = b1k;
-        b2b  = b1b - bxc;
+        b2k = b1k;
+        b2b = b1b - bxc;
 
-        b1b  = bxc;
+        b1b = bxc;
 
         _kw_refine(b2k, b2b, log2m, m);
         bxasize = _kw_to_asize(b2k, b2b, log2m);
@@ -624,17 +626,17 @@ void * _heap_n_pgroup_allocate_block(_heap_pt heap, unsigned int size) {
 
     b1 = NULL;
 
-    region     = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    m         = region->m;
-    log2m     = region->log2m;
-    //maskm     = region->maskm;
-    offset     = region->fbloffset;
-    min         = region->min;
+    m = region->m;
+    log2m = region->log2m;
+    //maskm = region->maskm;
+    offset = region->fbloffset;
+    min = region->min;
 
-    b1asize     = _size_to_asize(size, min);
+    b1asize = _size_to_asize(size, min);
     _asize_to_kw(b1asize, bxk, bxw, log2m, m);
-    b1asize    = _kw_to_asize(bxk, bxw, log2m);
+    b1asize = _kw_to_asize(bxk, bxw, log2m);
 
     if (heap->size < b1asize) {
         logmw("memory is not enough");
@@ -661,9 +663,9 @@ void * _heap_n_pgroup_allocate_block(_heap_pt heap, unsigned int size) {
         goto end0;
     }
 
-    bxi         = _kw_to_sn(bxk, bxw, log2m, m);
-    bxi         = _sn_to_index(bxi, offset, log2m, m);
-    b1i      = bitmap_getlsb2(region->fblbm, bxi);
+    bxi = _kw_to_sn(bxk, bxw, log2m, m);
+    bxi = _sn_to_index(bxi, offset, log2m, m);
+    b1i = bitmap_getlsb2(region->fblbm, bxi);
 
     if (0 == b1i) {
         b1 = _heap_n_pgroup_expand(heap, b1asize);
@@ -673,7 +675,7 @@ void * _heap_n_pgroup_allocate_block(_heap_pt heap, unsigned int size) {
         _region_remove_fb(region, b1i, b1, log2m);
     }
     if (NULL != b1) {
-        b1    = _heap_n_pgroup_split_block(heap, b1, b1asize);
+        b1 = _heap_n_pgroup_split_block(heap, b1, b1asize);
     }
 
     if (NULL != b1) {
@@ -761,10 +763,10 @@ int _heap_n_pgroup_release_block(_heap_pt heap, void * ptr) {
 
     region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    m        = region->m;
-    log2m    = region->log2m;
-    //maskm    = region->maskm;
-    //offset    = region->fbloffset;
+    m = region->m;
+    log2m = region->log2m;
+    //maskm = region->maskm;
+    //offset = region->fbloffset;
 
     _block_check_freeable_and_abort(b1);
     _block_check_boundary_and_abort(b1, log2m);
@@ -844,15 +846,15 @@ unsigned int heap_pgroup_calc_fblcount(unsigned int size, unsigned int m) {
         return 0;
     }
 
-    log2m    = uilog2_floor(m);
+    log2m = uilog2_floor(m);
     if (m != ((unsigned int) 0x1 << log2m)) {
         return 0;
     }
 
     _asize_to_kw(HEAP_BLOCK_ASIZE_MIN, k, w, log2m, m);
-    fbln    = _kw_to_sn(k, w, log2m, m);
+    fbln = _kw_to_sn(k, w, log2m, m);
     _asize_to_kw(size, k, w, log2m, m);
-    fbln    = _kw_to_sn(k, w, log2m, m) - fbln + 1 + 1;
+    fbln = _kw_to_sn(k, w, log2m, m) - fbln + 1 + 1;
 
     return fbln;
 }
@@ -866,13 +868,13 @@ unsigned int heap_pgroup_calc_fblcount_raw(unsigned int size, unsigned int m) {
         return 0;
     }
 
-    log2m    = uilog2_floor(m);
+    log2m = uilog2_floor(m);
     if (m != ((unsigned int) 0x1 << log2m)) {
         return 0;
     }
 
     _asize_to_kw(size, k, w, log2m, m);
-    fbln    = _kw_to_sn(k, w, log2m, m);
+    fbln = _kw_to_sn(k, w, log2m, m);
 
     return fbln;
 }

@@ -12,56 +12,57 @@
 #include <stdlib.h>
 #include <string.h>
 
-#undef    LOGM_CATEGORY
+#undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
-#if        (2 == INT_SIZE)    // 16 bit machine
+#if (2 == INT_SIZE) // 16 bit machine
 
-    #define LOG2_INT_BIT_SIZE    4
-    #define MASK_INT_BIT_SIZE    0x000F
+    #define LOG2_INT_BIT_SIZE 4
+    #define MASK_INT_BIT_SIZE 0x000F
 
-    #define _set_highbits(bits) {        \
-        (bits) |= ((bits) <<  1);        \
-        (bits) |= ((bits) <<  2);        \
-        (bits) |= ((bits) <<  4);        \
-        (bits) |= ((bits) <<  8);        \
+    #define _set_highbits(bits) { \
+        (bits) |= ((bits) <<  1); \
+        (bits) |= ((bits) <<  2); \
+        (bits) |= ((bits) <<  4); \
+        (bits) |= ((bits) <<  8); \
     }
 
-    #define _set_lowbits(bits) {        \
-        (bits) |= ((bits) >>  1);        \
-        (bits) |= ((bits) >>  2);        \
-        (bits) |= ((bits) >>  4);        \
-        (bits) |= ((bits) >>  8);        \
+    #define _set_lowbits(bits) {  \
+        (bits) |= ((bits) >>  1); \
+        (bits) |= ((bits) >>  2); \
+        (bits) |= ((bits) >>  4); \
+        (bits) |= ((bits) >>  8); \
     }
 
-#elif    (4 == INT_SIZE)    // 32 bit machine
+#elif (4 == INT_SIZE) // 32 bit machine
 
-    #define LOG2_INT_BIT_SIZE    5
-    #define MASK_INT_BIT_SIZE    0x0000001F
+    #define LOG2_INT_BIT_SIZE 5
+    #define MASK_INT_BIT_SIZE 0x0000001F
 
-    #define _set_highbits(bits) {        \
-        (bits) |= ((bits) <<  1);        \
-        (bits) |= ((bits) <<  2);        \
-        (bits) |= ((bits) <<  4);        \
-        (bits) |= ((bits) <<  8);        \
-        (bits) |= ((bits) << 16);        \
+    #define _set_highbits(bits) { \
+        (bits) |= ((bits) <<  1); \
+        (bits) |= ((bits) <<  2); \
+        (bits) |= ((bits) <<  4); \
+        (bits) |= ((bits) <<  8); \
+        (bits) |= ((bits) << 16); \
     }
 
-    #define _set_lowbits(bits) {        \
-        (bits) |= ((bits) >>  1);        \
-        (bits) |= ((bits) >>  2);        \
-        (bits) |= ((bits) >>  4);        \
-        (bits) |= ((bits) >>  8);        \
-        (bits) |= ((bits) >> 16);        \
+    #define _set_lowbits(bits) {  \
+        (bits) |= ((bits) >>  1); \
+        (bits) |= ((bits) >>  2); \
+        (bits) |= ((bits) >>  4); \
+        (bits) |= ((bits) >>  8); \
+        (bits) |= ((bits) >> 16); \
     }
 
 #else
     #error "Unsupported int size"
 #endif
 
-#define INT_BIT_SIZE            (INT_SIZE * 8)
+#define INT_BIT_SIZE (INT_SIZE * 8)
 
-unsigned int bitmap_getmapsize(unsigned int bitsize) {
+unsigned int bitmap_getmapsize(unsigned int bitsize)
+{
     unsigned int mapsize;
 
     bitsize = uidiv_ceil(bitsize, INT_BIT_SIZE);
@@ -77,7 +78,8 @@ unsigned int bitmap_getmapsize(unsigned int bitsize) {
     return mapsize;
 }
 
-int bitmap_init(bitmap_pt bitmap, unsigned int bitsize, unsigned char * buf, unsigned int bufsize) {
+int bitmap_init(bitmap_pt bitmap, unsigned int bitsize, unsigned char * buf, unsigned int bufsize)
+{
     int i;
     unsigned int offset;
     unsigned int needbufsize;
@@ -127,7 +129,8 @@ int bitmap_init(bitmap_pt bitmap, unsigned int bitsize, unsigned char * buf, uns
     return 0;
 }
 
-unsigned int bitmap_getmemsize(unsigned int bitsize) {
+unsigned int bitmap_getmemsize(unsigned int bitsize)
+{
     unsigned int mapsize;
 
     mapsize = bitmap_getmapsize(bitsize);
@@ -135,7 +138,8 @@ unsigned int bitmap_getmemsize(unsigned int bitsize) {
     return (mapsize * INT_SIZE);
 }
 
-int bitmap_create(bitmap_pt * bitmap_p, unsigned int bitsize) {
+int bitmap_create(bitmap_pt * bitmap_p, unsigned int bitsize)
+{
     int r;
     bitmap_pt bitmap;
     unsigned char * buf;
@@ -180,7 +184,8 @@ int bitmap_create(bitmap_pt * bitmap_p, unsigned int bitsize) {
     return 0;
 }
 
-int bitmap_delete(bitmap_pt * bitmap_p) {
+int bitmap_delete(bitmap_pt * bitmap_p)
+{
     bitmap_pt bitmap;
 
     assert(bitmap_p != NULL);
@@ -211,7 +216,8 @@ int bitmap_delete(bitmap_pt * bitmap_p) {
     return 0;
 }
 
-unsigned int bitmap_getlsb(bitmap_pt bitmap) {
+unsigned int bitmap_getlsb(bitmap_pt bitmap)
+{
     unsigned int offset;
     unsigned int l;
     unsigned int bi;
@@ -247,7 +253,8 @@ unsigned int bitmap_getlsb(bitmap_pt bitmap) {
     return (bi + 1);
 }
 
-unsigned int bitmap_getlsb2(bitmap_pt bitmap, unsigned int index) {
+unsigned int bitmap_getlsb2(bitmap_pt bitmap, unsigned int index)
+{
     unsigned int offset;
     unsigned int l;
     unsigned int bi;
@@ -310,7 +317,8 @@ unsigned int bitmap_getlsb2(bitmap_pt bitmap, unsigned int index) {
     return (bi + 1);
 }
 
-unsigned int bitmap_getmsb(bitmap_pt bitmap) {
+unsigned int bitmap_getmsb(bitmap_pt bitmap)
+{
     unsigned int offset;
     unsigned int l;
     unsigned int bi;
@@ -346,7 +354,8 @@ unsigned int bitmap_getmsb(bitmap_pt bitmap) {
     return (bi + 1);
 }
 
-int bitmap_getbit(bitmap_pt bitmap, unsigned int index) {
+int bitmap_getbit(bitmap_pt bitmap, unsigned int index)
+{
     unsigned int offset;
 
     assert(bitmap != NULL);
@@ -373,7 +382,8 @@ int bitmap_getbit(bitmap_pt bitmap, unsigned int index) {
     return (bitmap->map[offset - (index >> LOG2_INT_BIT_SIZE)] >> (index & MASK_INT_BIT_SIZE)) & 0x1;
 }
 
-int bitmap_setbit(bitmap_pt bitmap, unsigned int index, int value) {
+int bitmap_setbit(bitmap_pt bitmap, unsigned int index, int value)
+{
     unsigned int i;
     unsigned int level;
     unsigned int offset;
@@ -428,7 +438,8 @@ int bitmap_setbit(bitmap_pt bitmap, unsigned int index, int value) {
     return 0;
 }
 
-int bitmap_setbitall(bitmap_pt bitmap, int value) {
+int bitmap_setbitall(bitmap_pt bitmap, int value)
+{
     unsigned int i, j;
     unsigned int level;
     unsigned int offset;

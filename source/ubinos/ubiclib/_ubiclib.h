@@ -15,7 +15,7 @@
  * ubiclib 컴포넌트 내부 인터페이스를 정의합니다.
  */
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 extern "C" {
 #endif
 
@@ -25,7 +25,7 @@ extern "C" {
 #include <ubinos/ubik.h>
 #include <ubinos/ubiclib.h>
 
-#ifdef    __cplusplus
+#ifdef __cplusplus
 }
 #endif
 

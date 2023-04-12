@@ -127,7 +127,8 @@ const char *_ubiclib_logm_levelname[LOGM_LEVEL__END] = {
         "[VERBOSE] ",
 };
 
-int logm_setlevel(int category, int level) {
+int logm_setlevel(int category, int level)
+{
     int i;
 
     if (-1 > category || LOGM_CATEGORY__END <= category) {
@@ -149,7 +150,8 @@ int logm_setlevel(int category, int level) {
     return 0;
 }
 
-int logm_getlevel(int category) {
+int logm_getlevel(int category)
+{
     if (0 > category || LOGM_CATEGORY__END <= category) {
         return -2;
     }
@@ -157,7 +159,8 @@ int logm_getlevel(int category) {
     return _ubiclib_logm_level[category];
 }
 
-int logm_printfln(int category, int level, const char *tag, const char *func, int line, const char *format, ...) {
+int logm_printfln(int category, int level, const char *tag, const char *func, int line, const char *format, ...)
+{
     int n = 0;
     char buf[256];
     int len;
@@ -237,7 +240,8 @@ int logm_printfln(int category, int level, const char *tag, const char *func, in
     return n;
 }
 
-int logm_println(int category, int level, const char *tag, const char *func, int line, const char *msg) {
+int logm_println(int category, int level, const char *tag, const char *func, int line, const char *msg)
+{
     int n = 0;
     char buf[128];
     int len;

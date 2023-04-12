@@ -48,7 +48,8 @@ hist(nrx1*32+128, 100);
 mean(nrx1*32+128)
  */
 
-void ubiclib_test_heaptest(void *arg) {
+void ubiclib_test_heaptest(void *arg)
+{
     ubiclib_test_heaptest_param_t *params = arg;
     assert(params != NULL);
 
@@ -83,21 +84,21 @@ void ubiclib_test_heaptest(void *arg) {
     hrtick_t tick1, tick2, diff;
     unsigned int current;
 
-    double etimea, etimef;                                            // execution time (allocation, free)
-    double frag, fragi, frage;                                        // fragmentation (total, internal,external)
-    double average, sdev;                                            // average, standard deviation
-    unsigned int ssum  = 0;                                            // sum of size
-    unsigned int csum  = 0;                                            // sum of count
-    double esuma = 0, esum2a = 0, ebesta = UINT_MAX, eworsta = 0;    // allocation execution time: sum of ~, sum of square of ~, best ~, worst ~
-    double esumf = 0, esum2f = 0, ebestf = UINT_MAX, eworstf = 0;    //       free execution time: sum of ~, sum of square of ~, best ~, worst ~
-    double fsum  = 0, fsum2  = 0, fbest  = UINT_MAX, fworst  = 0;    //       total fragmentation: sum of ~, sum of square of ~, best ~, worst ~
-    double fsumi = 0, fsum2i = 0, fbesti = UINT_MAX, fworsti = 0;    //    internal fragmentation: sum of ~, sum of square of ~, best ~, worst ~
-    double fsume = 0, fsum2e = 0, fbeste = UINT_MAX, fworste = 0;    //    external fragmentation: sum of ~, sum of square of ~, best ~, worst ~
-    unsigned int enoa = 0;                                            //  allocation execution time: count of ~
-    unsigned int enof = 0;                                            //        free execution time: count of ~
-    unsigned int fno  = 0;                                            //        total fragmentation: count of ~
-    unsigned int fnoi = 0;                                            //     internal fragmentation: count of ~
-    unsigned int fnoe = 0;                                            //     external fragmentation: count of ~
+    double etimea, etimef;                                          // execution time (allocation, free)
+    double frag, fragi, frage;                                      // fragmentation (total, internal,external)
+    double average, sdev;                                           // average, standard deviation
+    unsigned int ssum  = 0;                                         // sum of size
+    unsigned int csum  = 0;                                         // sum of count
+    double esuma = 0, esum2a = 0, ebesta = UINT_MAX, eworsta = 0;   // allocation execution time: sum of ~, sum of square of ~, best ~, worst ~
+    double esumf = 0, esum2f = 0, ebestf = UINT_MAX, eworstf = 0;   //       free execution time: sum of ~, sum of square of ~, best ~, worst ~
+    double fsum  = 0, fsum2  = 0, fbest  = UINT_MAX, fworst  = 0;   //       total fragmentation: sum of ~, sum of square of ~, best ~, worst ~
+    double fsumi = 0, fsum2i = 0, fbesti = UINT_MAX, fworsti = 0;   //    internal fragmentation: sum of ~, sum of square of ~, best ~, worst ~
+    double fsume = 0, fsum2e = 0, fbeste = UINT_MAX, fworste = 0;   //    external fragmentation: sum of ~, sum of square of ~, best ~, worst ~
+    unsigned int enoa = 0;                                          // allocation execution time: count of ~
+    unsigned int enof = 0;                                          //       free execution time: count of ~
+    unsigned int fno  = 0;                                          //       total fragmentation: count of ~
+    unsigned int fnoi = 0;                                          //    internal fragmentation: count of ~
+    unsigned int fnoe = 0;                                          //    external fragmentation: count of ~
     double average_etimea, average_etimef;
     double average_frag, average_fragi, average_frage;
 
@@ -491,56 +492,56 @@ void ubiclib_test_heaptest(void *arg) {
             }
         }
 
-        result_p[stepcount].sm         = h;
-        result_p[stepcount].rsm        = (ssum / enoa);
-        result_p[stepcount].bc        = (csum / params->testcount_max);
+        result_p[stepcount].sm = h;
+        result_p[stepcount].rsm = (ssum / enoa);
+        result_p[stepcount].bc = (csum / params->testcount_max);
 
         average = esuma / enoa;
         sdev = (esum2a / enoa) - (average * average);
         sdev = sqrt(sdev);
-        result_p[stepcount].ac        = enoa;
-        result_p[stepcount].ata        = average;
-        result_p[stepcount].atd        = sdev;
-        result_p[stepcount].atb        = ebesta;
-        result_p[stepcount].atw        = eworsta;
-        average_etimea    += average;
+        result_p[stepcount].ac = enoa;
+        result_p[stepcount].ata = average;
+        result_p[stepcount].atd = sdev;
+        result_p[stepcount].atb = ebesta;
+        result_p[stepcount].atw = eworsta;
+        average_etimea += average;
 
         average = esumf / enof;
         sdev = (esum2f / enof) - (average * average);
         sdev = sqrt(sdev);
-        result_p[stepcount].rc        = enof;
-        result_p[stepcount].rta        = average;
-        result_p[stepcount].rtd        = sdev;
-        result_p[stepcount].rtb        = ebestf;
-        result_p[stepcount].rtw        = eworstf;
-        average_etimef    += average;
+        result_p[stepcount].rc = enof;
+        result_p[stepcount].rta = average;
+        result_p[stepcount].rtd = sdev;
+        result_p[stepcount].rtb = ebestf;
+        result_p[stepcount].rtw = eworstf;
+        average_etimef += average;
 
         average = fsum / fno;
         sdev = (fsum2 / fno) - (average * average);
         sdev = sqrt(sdev);
-        result_p[stepcount].tfa        = average;
-        result_p[stepcount].tfd        = sdev;
-        result_p[stepcount].tfb        = fbest;
-        result_p[stepcount].tfw        = fworst;
-        average_frag    += average;
+        result_p[stepcount].tfa = average;
+        result_p[stepcount].tfd = sdev;
+        result_p[stepcount].tfb = fbest;
+        result_p[stepcount].tfw = fworst;
+        average_frag += average;
 
         average = fsumi / fnoi;
         sdev = (fsum2i / fnoi) - (average * average);
         sdev = sqrt(sdev);
-        result_p[stepcount].ifa        = average;
-        result_p[stepcount].ifd        = sdev;
-        result_p[stepcount].ifb        = fbesti;
-        result_p[stepcount].ifw        = fworsti;
-        average_fragi    += average;
+        result_p[stepcount].ifa = average;
+        result_p[stepcount].ifd = sdev;
+        result_p[stepcount].ifb = fbesti;
+        result_p[stepcount].ifw = fworsti;
+        average_fragi += average;
 
         average = fsume / fnoe;
         sdev = (fsum2e / fnoe) - (average * average);
         sdev = sqrt(sdev);
-        result_p[stepcount].efa        = average;
-        result_p[stepcount].efd        = sdev;
-        result_p[stepcount].efb        = fbeste;
-        result_p[stepcount].efw        = fworste;
-        average_frage    += average;
+        result_p[stepcount].efa = average;
+        result_p[stepcount].efd = sdev;
+        result_p[stepcount].efb = fbeste;
+        result_p[stepcount].efw = fworste;
+        average_frage += average;
 
         heap_getfreeblockcount(heap, &fbcount);
         if (1 != fbcount) {
@@ -567,9 +568,9 @@ void ubiclib_test_heaptest(void *arg) {
     for (ii=0; ii<params->stepcount_max; ii++) {
         for (jj=1; jj<(params->stepcount_max-ii); jj++) {
             if (result_p[jj-1].rsm > result_p[jj].rsm) {
-                result_temp     = result_p[jj-1];
-                result_p[jj-1]     = result_p[jj];
-                result_p[jj]     = result_temp;
+                result_temp = result_p[jj-1];
+                result_p[jj-1] = result_p[jj];
+                result_p[jj] = result_temp;
             }
         }
     }

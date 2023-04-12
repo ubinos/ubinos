@@ -14,7 +14,8 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
-dlist_elmt_pt dlist_elmt_create(void * data, void * data2) {
+dlist_elmt_pt dlist_elmt_create(void * data, void * data2)
+{
     dlist_elmt_pt elmt;
 
     elmt = malloc(sizeof(dlist_elmt_t));
@@ -29,7 +30,8 @@ dlist_elmt_pt dlist_elmt_create(void * data, void * data2) {
     return elmt;
 }
 
-int dlist_elmt_delete(dlist_elmt_pt elmt) {
+int dlist_elmt_delete(dlist_elmt_pt elmt)
+{
     if (NULL == elmt) {
         return -2;
     }
@@ -39,7 +41,8 @@ int dlist_elmt_delete(dlist_elmt_pt elmt) {
     return 0;
 }
 
-int dlist_create(dlist_pt * dlist_p) {
+int dlist_create(dlist_pt * dlist_p)
+{
     dlist_pt dlist;
 
     if (NULL == dlist_p) {
@@ -64,7 +67,8 @@ int dlist_create(dlist_pt * dlist_p) {
     return 0;
 }
 
-int dlist_delete(dlist_pt * dlist_p) {
+int dlist_delete(dlist_pt * dlist_p)
+{
     dlist_pt dlist;
 
     if (NULL == dlist_p) {
@@ -97,7 +101,8 @@ int dlist_delete(dlist_pt * dlist_p) {
     return 0;
 }
 
-int dlist_insertprev(dlist_pt dlist, dlist_elmt_pt ref, dlist_elmt_pt elmt) {
+int dlist_insertprev(dlist_pt dlist, dlist_elmt_pt ref, dlist_elmt_pt elmt)
+{
     if (NULL == dlist) {
         logme("dlist is NULL");
         return -2;
@@ -133,7 +138,8 @@ int dlist_insertprev(dlist_pt dlist, dlist_elmt_pt ref, dlist_elmt_pt elmt) {
     return 0;
 }
 
-int dlist_insertnext(dlist_pt dlist, dlist_elmt_pt ref, dlist_elmt_pt elmt) {
+int dlist_insertnext(dlist_pt dlist, dlist_elmt_pt ref, dlist_elmt_pt elmt)
+{
     if (NULL == dlist) {
         logme("dlist is NULL");
         return -2;
@@ -169,7 +175,8 @@ int dlist_insertnext(dlist_pt dlist, dlist_elmt_pt ref, dlist_elmt_pt elmt) {
     return 0;
 }
 
-int dlist_remove(dlist_elmt_pt elmt) {
+int dlist_remove(dlist_elmt_pt elmt)
+{
     dlist_pt dlist;
 
     if (NULL == elmt) {
@@ -213,7 +220,8 @@ int dlist_remove(dlist_elmt_pt elmt) {
     return 0;
 }
 
-dlist_elmt_pt dlist_getcurnext(dlist_pt dlist) {
+dlist_elmt_pt dlist_getcurnext(dlist_pt dlist)
+{
     if (NULL == dlist->cur || NULL == dlist->cur->next) {
         dlist->cur = dlist->head;
     }
@@ -224,7 +232,8 @@ dlist_elmt_pt dlist_getcurnext(dlist_pt dlist) {
     return dlist->cur;
 }
 
-int dlist_find(dlist_pt dlist, dlist_elmt_pt * elmt_p, void * data) {
+int dlist_find(dlist_pt dlist, dlist_elmt_pt * elmt_p, void * data)
+{
     dlist_elmt_pt elmt;
 
     if (NULL == dlist) {
@@ -254,7 +263,8 @@ int dlist_find(dlist_pt dlist, dlist_elmt_pt * elmt_p, void * data) {
     return 0;
 }
 
-int dlist_findandremove(dlist_pt dlist, dlist_elmt_pt * elmt_p, void * data) {
+int dlist_findandremove(dlist_pt dlist, dlist_elmt_pt * elmt_p, void * data)
+{
     dlist_elmt_pt elmt;
 
     if (NULL == dlist) {

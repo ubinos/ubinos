@@ -23,20 +23,21 @@ _heap_pt _ubiclib_heap = NULL;
 
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
 
-_heap_t            __ubiclib_defaultheap;
-edlist_t        __ubiclib_defaultheap_fbl0_a[UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT];
-bitmap_t        __ubiclib_defaultheap_fblbm0;
-unsigned char    __ubiclib_defaultheap_fblbm0_buf[UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE];
-edlist_t        __ubiclib_defaultheap_fbl1_a[UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT];
-bitmap_t        __ubiclib_defaultheap_fblbm1;
-unsigned char    __ubiclib_defaultheap_fblbm1_buf[UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE];
+_heap_t __ubiclib_defaultheap;
+edlist_t __ubiclib_defaultheap_fbl0_a[UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT];
+bitmap_t __ubiclib_defaultheap_fblbm0;
+unsigned char __ubiclib_defaultheap_fblbm0_buf[UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE];
+edlist_t __ubiclib_defaultheap_fbl1_a[UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT];
+bitmap_t __ubiclib_defaultheap_fblbm1;
+unsigned char __ubiclib_defaultheap_fblbm1_buf[UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE];
 
-int ubiclib_heap_comp_init(void) {
+int ubiclib_heap_comp_init(void)
+{
     int r;
     int enable_dmpm = 0;
 
-    extern char   __heap_base;  /* Set by linker.  */
-    extern char   __heap_limit; /* Set by linker.  */
+    extern char __heap_base;  /* Set by linker.  */
+    extern char __heap_limit; /* Set by linker.  */
     unsigned int addr = (unsigned int) &__heap_base;
     unsigned int size = ((unsigned int) &__heap_limit) - addr;
 
@@ -85,7 +86,8 @@ int ubiclib_heap_comp_init(void) {
     return 0;
 }
 
-int ubiclib_heap_comp_init_reent(void) {
+int ubiclib_heap_comp_init_reent(void)
+{
     int r = 0;
 
     if (NULL == _ubiclib_heap) {
@@ -119,31 +121,36 @@ int ubiclib_heap_comp_init_reent(void) {
     return 0;
 }
 
-void * mallocn(size_t size) {
+void * mallocn(size_t size)
+{
     return _heap_allocate_block(_ubiclib_heap, 0, SIZETOUINT(size));
 }
 
-void * mallocr(size_t size) {
+void * mallocr(size_t size)
+{
     return _heap_allocate_block(_ubiclib_heap, 1, SIZETOUINT(size));
 }
 
 #else /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
-void * mallocn(size_t size) {
+void * mallocn(size_t size)
+{
     return malloc(size);
 }
 
-void * mallocr(size_t size) {
+void * mallocr(size_t size)
+{
     return malloc(size);
 }
 
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
-int _heap_init(    _heap_pt heap, unsigned int addr, unsigned int size, int enable_dmpm,
+int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_dmpm,
                 int algorithm0, int locktype0, unsigned int m0,
                 unsigned int fblcount0, edlist_pt fbl0_p, bitmap_pt fblbm0,
                 int algorithm1, int locktype1, unsigned int m1,
-                unsigned int fblcount1, edlist_pt fbl1_p, bitmap_pt fblbm1    )    {
+                unsigned int fblcount1, edlist_pt fbl1_p, bitmap_pt fblbm1)
+{
     int r;
     //unsigned int i;
     //unsigned int log2m;
@@ -194,20 +201,20 @@ int _heap_init(    _heap_pt heap, unsigned int addr, unsigned int size, int enab
         goto end0;
     }
 
-    heap->type                        = OBJTYPE__UBICLIB_HEAP;
-    heap->valid                        = 0;
-    heap->reserved                    = 0;
-    heap->reserved2                    = 0;
+    heap->type = OBJTYPE__UBICLIB_HEAP;
+    heap->valid = 0;
+    heap->reserved = 0;
+    heap->reserved2 = 0;
 
-    heap->size                        = size;
-    heap->addr                        = addr;
-    heap->end                        = addr + size;
+    heap->size = size;
+    heap->addr = addr;
+    heap->end = addr + size;
 
-    heap->acount_max                = 0;
-    heap->asize_max                    = 0;
-    heap->rsize_max                    = 0;
+    heap->acount_max = 0;
+    heap->asize_max = 0;
+    heap->rsize_max = 0;
 
-    heap->enable_dmpm                = enable_dmpm;
+    heap->enable_dmpm = enable_dmpm;
 
     switch (algorithm0) {
 
@@ -349,7 +356,7 @@ int _heap_init(    _heap_pt heap, unsigned int addr, unsigned int size, int enab
     }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 
-    heap->valid                        = 1;
+    heap->valid = 1;
 
     r = 0;
 
@@ -358,7 +365,8 @@ end0:
 }
 
 
-void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size) {
+void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size)
+{
     register void * ptr = NULL;
 
     if (NULL == heap) {
@@ -395,7 +403,8 @@ end0:
     return ptr;
 }
 
-int _heap_release_block(_heap_pt heap, void * ptr) {
+int _heap_release_block(_heap_pt heap, void * ptr)
+{
     register int r2 = 0;
     register int dir = 0;
 
@@ -445,15 +454,17 @@ end0:
 }
 
 
-int heap_create(heap_pt * heap_p, unsigned int addr, unsigned int size) {
-    return heap_create_ext(    heap_p, addr, size,
+int heap_create(heap_pt * heap_p, unsigned int addr, unsigned int size)
+{
+    return heap_create_ext( heap_p, addr, size,
                             UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM, UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE, UBINOS__UBICLIB__HEAP_DIR0_M, UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT,
                             UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM, UBINOS__UBICLIB__HEAP_DIR1_LOCKTYPE, UBINOS__UBICLIB__HEAP_DIR1_M, UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT    );
 }
 
 int heap_create_ext(heap_pt * heap_p, unsigned int addr, unsigned int size,
                     int algorithm0, int locktype0, unsigned int m0, unsigned int fblcount0,
-                    int algorithm1, int locktype1, unsigned int m1, unsigned int fblcount1    ) {
+                    int algorithm1, int locktype1, unsigned int m1, unsigned int fblcount1)
+{
     int r;
     _heap_pt heap;
     edlist_pt fbl0_p = NULL;
@@ -622,7 +633,8 @@ int heap_create_ext(heap_pt * heap_p, unsigned int addr, unsigned int size,
     return 0;
 }
 
-int heap_delete(heap_pt * heap_p) {
+int heap_delete(heap_pt * heap_p)
+{
     int r, r2;
     _heap_pt heap;
 
@@ -705,7 +717,8 @@ int heap_delete(heap_pt * heap_p) {
     return r2;
 }
 
-void * heap_malloc(heap_pt heap, unsigned int size) {
+void * heap_malloc(heap_pt heap, unsigned int size)
+{
     if (0 == bsp_ubik_isrt()) {
         return _heap_allocate_block((_heap_pt) heap, 0, size);
     }
@@ -714,19 +727,23 @@ void * heap_malloc(heap_pt heap, unsigned int size) {
     }
 }
 
-void * heap_mallocn(heap_pt heap, unsigned int size) {
+void * heap_mallocn(heap_pt heap, unsigned int size)
+{
     return _heap_allocate_block((_heap_pt) heap, 0, size);
 }
 
-void * heap_mallocr(heap_pt heap, unsigned int size) {
+void * heap_mallocr(heap_pt heap, unsigned int size)
+{
     return _heap_allocate_block((_heap_pt) heap, 1, size);
 }
 
-int heap_free(heap_pt heap, void * ptr) {
+int heap_free(heap_pt heap, void * ptr)
+{
     return _heap_release_block((_heap_pt) heap, ptr);
 }
 
-int heap_checkblockboundary(heap_pt _heap, void * ptr) {
+int heap_checkblockboundary(heap_pt _heap, void * ptr)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     int r;
@@ -763,7 +780,8 @@ int heap_checkblockboundary(heap_pt _heap, void * ptr) {
     return r;
 }
 
-int heap_checkblockboundaryall(heap_pt _heap) {
+int heap_checkblockboundaryall(heap_pt _heap)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     int r, r2;
@@ -881,7 +899,8 @@ end0:
     return r2;
 }
 
-int heap_getblocksize(heap_pt _heap, void * ptr, unsigned int * size_p) {
+int heap_getblocksize(heap_pt _heap, void * ptr, unsigned int * size_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     _heap_block_pt block;
@@ -911,7 +930,8 @@ int heap_getblocksize(heap_pt _heap, void * ptr, unsigned int * size_p) {
     return 0;
 }
 
-int heap_getsize(heap_pt _heap, unsigned int * size_p) {
+int heap_getsize(heap_pt _heap, unsigned int * size_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -943,7 +963,8 @@ int heap_getsize(heap_pt _heap, unsigned int * size_p) {
     return 0;
 }
 
-int heap_getrequestedsize(heap_pt _heap, unsigned int * size_p) {
+int heap_getrequestedsize(heap_pt _heap, unsigned int * size_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -975,7 +996,8 @@ int heap_getrequestedsize(heap_pt _heap, unsigned int * size_p) {
     return 0;
 }
 
-int heap_getrequestedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p) {
+int heap_getrequestedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1012,7 +1034,8 @@ int heap_getrequestedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int
     return 0;
 }
 
-int heap_getrequestedsizemax(heap_pt _heap, unsigned int * size_p) {
+int heap_getrequestedsizemax(heap_pt _heap, unsigned int * size_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1044,7 +1067,8 @@ int heap_getrequestedsizemax(heap_pt _heap, unsigned int * size_p) {
     return 0;
 }
 
-int heap_getrequestedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p) {
+int heap_getrequestedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1081,7 +1105,8 @@ int heap_getrequestedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned 
     return 0;
 }
 
-int heap_getallocatedcount(heap_pt _heap, unsigned int * count_p) {
+int heap_getallocatedcount(heap_pt _heap, unsigned int * count_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1113,7 +1138,8 @@ int heap_getallocatedcount(heap_pt _heap, unsigned int * count_p) {
     return 0;
 }
 
-int heap_getallocatedcount_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p) {
+int heap_getallocatedcount_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1150,7 +1176,8 @@ int heap_getallocatedcount_ext(heap_pt _heap, unsigned int * count_p, unsigned i
     return 0;
 }
 
-int heap_getallocatedcountmax(heap_pt _heap, unsigned int * count_p) {
+int heap_getallocatedcountmax(heap_pt _heap, unsigned int * count_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1182,7 +1209,8 @@ int heap_getallocatedcountmax(heap_pt _heap, unsigned int * count_p) {
     return 0;
 }
 
-int heap_getallocatedcountmax_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p) {
+int heap_getallocatedcountmax_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1219,7 +1247,8 @@ int heap_getallocatedcountmax_ext(heap_pt _heap, unsigned int * count_p, unsigne
     return 0;
 }
 
-int heap_getallocatedsize(heap_pt _heap, unsigned int * size_p) {
+int heap_getallocatedsize(heap_pt _heap, unsigned int * size_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1251,7 +1280,8 @@ int heap_getallocatedsize(heap_pt _heap, unsigned int * size_p) {
     return 0;
 }
 
-int heap_getallocatedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p) {
+int heap_getallocatedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1288,7 +1318,8 @@ int heap_getallocatedsize_ext(heap_pt _heap, unsigned int * size_p, unsigned int
     return 0;
 }
 
-int heap_getallocatedsizemax(heap_pt _heap, unsigned int * size_p) {
+int heap_getallocatedsizemax(heap_pt _heap, unsigned int * size_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1320,7 +1351,8 @@ int heap_getallocatedsizemax(heap_pt _heap, unsigned int * size_p) {
     return 0;
 }
 
-int heap_getallocatedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p) {
+int heap_getallocatedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned int * nsize_p, unsigned int * rsize_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1357,7 +1389,8 @@ int heap_getallocatedsizemax_ext(heap_pt _heap, unsigned int * size_p, unsigned 
     return 0;
 }
 
-int heap_getfreeblockcount(heap_pt _heap, unsigned int * count_p) {
+int heap_getfreeblockcount(heap_pt _heap, unsigned int * count_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     //edlist_pt fbl;
@@ -1400,7 +1433,8 @@ int heap_getfreeblockcount(heap_pt _heap, unsigned int * count_p) {
     return 0;
 }
 
-int heap_getfreeblockcount_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p) {
+int heap_getfreeblockcount_ext(heap_pt _heap, unsigned int * count_p, unsigned int * ncount_p, unsigned int * rcount_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     //edlist_pt fbl;
@@ -1449,7 +1483,8 @@ int heap_getfreeblockcount_ext(heap_pt _heap, unsigned int * count_p, unsigned i
     return 0;
 }
 
-int heap_getblockoverhead(heap_pt _heap, unsigned int * overhead_p) {
+int heap_getblockoverhead(heap_pt _heap, unsigned int * overhead_p)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     if (NULL == heap) {
@@ -1483,7 +1518,8 @@ int heap_getblockoverhead(heap_pt _heap, unsigned int * overhead_p) {
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_PRINTHEAPINFO == 1)
 
-int heap_printheapinfo(heap_pt _heap) {
+int heap_printheapinfo(heap_pt _heap)
+{
     _heap_pt heap = (_heap_pt) _heap;
 
     int r;
@@ -1606,16 +1642,16 @@ int heap_printheapinfo(heap_pt _heap) {
 
     ///////////////////////
         /////////////////////
-    #define _print_block(heap, dir, block, log2m)                                                                                                        \
-        printf("heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, <%4u>, (0x%08x, 0x%08x, 0x%08x, 0x%08x)\n",         \
-                (unsigned int) heap, dir, (unsigned int) block, (unsigned int)_block_pt_to_ptr(block), (unsigned int)_block_pt_to_end_prt(block, log2m), (unsigned int)_tag_to_asize(block->tag, log2m),            \
-                _tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag)&0x3,                                                                    \
-                _tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),                                        \
-                (((unsigned int) _block_pt_to_ptr(block) - (unsigned int) heap->region[0].addr) >> _tag_to_g_k(block->tag)) & 0x3,                         \
-                 (unsigned int) (block)                            - (unsigned int) heap->region[0].addr, \
-                 (unsigned int) _block_pt_to_end_prt(block, log2m) - (unsigned int) heap->region[0].addr, \
-                ((unsigned int) (block)                            - (unsigned int) heap->region[0].addr) % (0x1 << (_tag_to_g_k(block->tag) + 2)), \
-                ((unsigned int) _block_pt_to_end_prt(block, log2m) - (unsigned int) heap->region[0].addr) % (0x1 << (_tag_to_g_k(block->tag) + 2))  \
+    #define _print_block(heap, dir, block, log2m)                                                                                                                                                           \
+        printf( "heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, <%4u>, (0x%08x, 0x%08x, 0x%08x, 0x%08x)\n",                                        \
+                (unsigned int) heap, dir, (unsigned int) block, (unsigned int)_block_pt_to_ptr(block), (unsigned int)_block_pt_to_end_prt(block, log2m), (unsigned int)_tag_to_asize(block->tag, log2m),    \
+                _tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag)&0x3,                                                                                                                    \
+                _tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),                                                                                         \
+                (((unsigned int) _block_pt_to_ptr(block) - (unsigned int) heap->region[0].addr) >> _tag_to_g_k(block->tag)) & 0x3,                                                                          \
+                 (unsigned int) (block)                            - (unsigned int) heap->region[0].addr,                                                                                                   \
+                 (unsigned int) _block_pt_to_end_prt(block, log2m) - (unsigned int) heap->region[0].addr,                                                                                                   \
+                ((unsigned int) (block)                            - (unsigned int) heap->region[0].addr) % (0x1 << (_tag_to_g_k(block->tag) + 2)),                                                         \
+                ((unsigned int) _block_pt_to_end_prt(block, log2m) - (unsigned int) heap->region[0].addr) % (0x1 << (_tag_to_g_k(block->tag) + 2))                                                          \
         )
 
     for (int dir = 0; dir < 2; dir++) {
@@ -1626,8 +1662,8 @@ int heap_printheapinfo(heap_pt _heap) {
         unsigned int log2m/*, m, maskm, min*/;
 
         printf("\n");
-        region      = &heap->region[dir];
-        log2m     = region->log2m;
+        region = &heap->region[dir];
+        log2m = region->log2m;
 
         printf("---------\n");
         printf("dir %d\n", region->dir);
@@ -1681,15 +1717,18 @@ end0:
 
 #else /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
 
-int ubiclib_heap_comp_init(void) {
+int ubiclib_heap_comp_init(void)
+{
     return HEAP_ERR__UNSUPPORTED;
 }
 
-int ubiclib_heap_comp_init_reent(void) {
+int ubiclib_heap_comp_init_reent(void)
+{
     return HEAP_ERR__UNSUPPORTED;
 }
 
-int heap_printheapinfo(heap_pt _heap) {
+int heap_printheapinfo(heap_pt _heap)
+{
     return HEAP_ERR__UNSUPPORTED;
 }
 

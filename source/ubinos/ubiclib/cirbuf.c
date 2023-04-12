@@ -15,11 +15,13 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
-int cirbuf_create(cirbuf_pt * cirbuf_p, unsigned int maxsize) {
+int cirbuf_create(cirbuf_pt * cirbuf_p, unsigned int maxsize)
+{
     return cirbuf_create_ext(cirbuf_p, maxsize, 0);
 }
 
-int cirbuf_create_ext(cirbuf_pt * cirbuf_p, unsigned int maxsize, unsigned int option) {
+int cirbuf_create_ext(cirbuf_pt * cirbuf_p, unsigned int maxsize, unsigned int option)
+{
     cirbuf_pt cirbuf;
 
     assert(cirbuf_p != NULL);
@@ -55,7 +57,8 @@ int cirbuf_create_ext(cirbuf_pt * cirbuf_p, unsigned int maxsize, unsigned int o
     return 0;
 }
 
-int cirbuf_delete(cirbuf_pt * cirbuf_p) {
+int cirbuf_delete(cirbuf_pt * cirbuf_p)
+{
     cirbuf_pt cirbuf;
 
     assert(cirbuf_p != NULL);
@@ -81,7 +84,8 @@ int cirbuf_delete(cirbuf_pt * cirbuf_p) {
 }
 
 
-int cirbuf_write(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsigned int * written_p) {
+int cirbuf_write(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsigned int * written_p)
+{
     unsigned char *    cirbuf__head;
     unsigned char *    cirbuf__tail;
     unsigned int    cirbuf__size;
@@ -196,7 +200,8 @@ int cirbuf_write(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsig
     return 0;
 }
 
-int cirbuf_read(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsigned int * read_p) {
+int cirbuf_read(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsigned int * read_p)
+{
     unsigned char *    cirbuf__head;
     unsigned char *    cirbuf__tail;
     unsigned int    cirbuf__size;
@@ -284,7 +289,8 @@ int cirbuf_read(cirbuf_pt cirbuf, unsigned char * buf, unsigned int size, unsign
     return 0;
 }
 
-int cirbuf_clear(cirbuf_pt cirbuf) {
+int cirbuf_clear(cirbuf_pt cirbuf)
+{
     assert(cirbuf != NULL);
 
     if (NULL == cirbuf) {

@@ -17,7 +17,7 @@
 #define CLI_SLEEP_TICK 1
 #define CLI_CMD_SIZE_MAX 255
 #define CLI_PROMPT_SIZE_MAX 31
-#define CLI_PROMPT__DEFAULT    "cli> "
+#define CLI_PROMPT__DEFAULT "cli> "
 
 #if !(UBINOS__UBICLIB__EXCLUDE_LOGM == 1)
 
@@ -50,20 +50,23 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg);
 static int cli_cmdfunc__date_set(char *str, int len, void *arg);
 #endif /* (INCLUDE__UBINOS__UBIK == 1) */
 
-int cli_sethookfunc(cli_hookfunc_ft hookfunc, void *arg) {
+int cli_sethookfunc(cli_hookfunc_ft hookfunc, void *arg)
+{
     _cli_hookfunc = hookfunc;
     _cli_hookarg = arg;
 
     return 0;
 }
 
-int cli_sethelphookfunc(cli_helphookfunc_ft helphookfunc) {
+int cli_sethelphookfunc(cli_helphookfunc_ft helphookfunc)
+{
     _cli_helphookfunc = helphookfunc;
 
     return 0;
 }
 
-int cli_setprompt(char *prompt) {
+int cli_setprompt(char *prompt)
+{
     int r = -1;
 
     if (prompt != NULL) {
@@ -86,7 +89,8 @@ int cli_set_initial_cmd(char * cmd)
     return r;
 }
 
-void cli_main(void *arg) {
+void cli_main(void *arg)
+{
     int r = -1;
     int len;
     int is_first = 1;
@@ -141,7 +145,8 @@ void cli_main(void *arg) {
     }
 }
 
-static int cli_rootfunc(char *str, int len, void *arg) {
+static int cli_rootfunc(char *str, int len, void *arg)
+{
     int r = -1;
     char *tmpstr;
     int tmplen;
@@ -250,7 +255,8 @@ static int cli_rootfunc(char *str, int len, void *arg) {
     return r;
 }
 
-static int cli_cmdfunc__help(char *str, int len, void *arg) {
+static int cli_cmdfunc__help(char *str, int len, void *arg)
+{
     printf("\n");
     printf("h                                       : help\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
@@ -302,7 +308,8 @@ static int cli_cmdfunc__help(char *str, int len, void *arg) {
     return 0;
 }
 
-static int cli_cmdfunc__set(char *str, int len, void *arg) {
+static int cli_cmdfunc__set(char *str, int len, void *arg)
+{
     int r = -1;
     char *tmpstr;
     int tmplen;
@@ -406,7 +413,8 @@ static int cli_cmdfunc__set(char *str, int len, void *arg) {
     return r;
 }
 
-static int cli_cmdfunc__show(char *str, int len, void *arg) {
+static int cli_cmdfunc__show(char *str, int len, void *arg)
+{
     int r = -1;
     char *tmpstr;
     int tmplen;
@@ -442,7 +450,8 @@ static int cli_cmdfunc__show(char *str, int len, void *arg) {
 }
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
-static int cli_cmdfunc__heap(char *str, int len, void *arg) {
+static int cli_cmdfunc__heap(char *str, int len, void *arg)
+{
     int r = -1;
     char *tmpstr;
     int tmplen;
@@ -624,7 +633,8 @@ static int cli_cmdfunc__heap(char *str, int len, void *arg) {
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
 
 #if (INCLUDE__UBINOS__UBIK == 1)
-static int cli_cmdfunc__date_set(char *str, int len, void *arg) {
+static int cli_cmdfunc__date_set(char *str, int len, void *arg)
+{
     int r = -1;
 
     struct timeval tv;
@@ -638,7 +648,7 @@ static int cli_cmdfunc__date_set(char *str, int len, void *arg) {
     int sec = 0;
 
     // [MMDDhhmm[YYYY][.ss]]
-    sscanf(str, "%2d%2d%2d%2d%4d.%2d", &mon, &mday, &hour, &min, &year, &sec); 
+    sscanf(str, "%2d%2d%2d%2d%4d.%2d", &mon, &mday, &hour, &min, &year, &sec);
 
     tm_data.tm_year = year - 1900;
     tm_data.tm_mon = mon - 1;
