@@ -25,11 +25,11 @@ extern "C" {
 #endif
 
 #if !defined(UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM)
-    #define UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM        UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT
-    #define UBINOS__UBICLIB__HEAP_DIR0_LOCKTYPE         UBINOS__UBICLIB__HEAP_LOCK_TYPE__MUTEX
-    #define UBINOS__UBICLIB__HEAP_DIR0_M                (2)
-    #define UBINOS__UBICLIB__HEAP_DIR0_FBLCOUNT         (2)
-    #define UBINOS__UBICLIB__HEAP_DIR0_FBLBM_BUFSIZE    (4)
+    #define UBINOS__UBICLIB__HEAP_DIR1_ALGORITHM        UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT
+    #define UBINOS__UBICLIB__HEAP_DIR1_LOCKTYPE         UBINOS__UBICLIB__HEAP_LOCK_TYPE__MUTEX
+    #define UBINOS__UBICLIB__HEAP_DIR1_M                (2)
+    #define UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT         (2)
+    #define UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE    (4)
 #endif
 
 
@@ -352,26 +352,26 @@ extern "C" {
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK == 1) */
 
 
-#define _tag_to_size(tag, log2m)                    (_tag_to_asize(tag, log2m) - HEAP_BLOCK_OVERHEAD)
+#define _tag_to_size(tag, log2m)                            (_tag_to_asize(tag, log2m) - HEAP_BLOCK_OVERHEAD)
 
-#define    _ptr_to_block_pt(ptr)                        ((_heap_block_pt)   ((unsigned int) (ptr  ) - (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE)))
-#define    _block_pt_to_ptr(block)                        ((void *)           ((unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE)))
-#define    _block_pt_to_end_prt(block, log2m)            ((void *)           ((unsigned int) (block) + _tag_to_asize((block)->tag, log2m)))
-#define    _block_pt_to_endtag_ptr(block, log2m)        ((unsigned int *)   ((unsigned int) (block) + _tag_to_asize((block)->tag, log2m) - (HEAP_TAG_SIZE + BOUNDARY_SIZE)))
-#define _block_pt_to_upper_endtag(block)            (*((unsigned int *) ((unsigned int) (block) - (HEAP_TAG_SIZE + BOUNDARY_SIZE))))
-#define _block_pt_to_upper_block_pt(block, log2m)    ((_heap_block_pt)   ((unsigned int) (block) - _tag_to_asize(_block_pt_to_upper_endtag(block), log2m)))
-#define _block_pt_to_lower_block_pt(block, log2m)    ((_heap_block_pt) _block_pt_to_end_prt(block, log2m))
+#define _ptr_to_block_pt(ptr)                               ((_heap_block_pt)   ((unsigned int) (ptr  ) - (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE)))
+#define _block_pt_to_ptr(block)                             ((void *)           ((unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE)))
+#define _block_pt_to_end_prt(block, log2m)                  ((void *)           ((unsigned int) (block) + _tag_to_asize((block)->tag, log2m)))
+#define _block_pt_to_endtag_ptr(block, log2m)               ((unsigned int *)   ((unsigned int) (block) + _tag_to_asize((block)->tag, log2m) - (HEAP_TAG_SIZE + BOUNDARY_SIZE)))
+#define _block_pt_to_upper_endtag(block)                    (*((unsigned int *) ((unsigned int) (block) - (HEAP_TAG_SIZE + BOUNDARY_SIZE))))
+#define _block_pt_to_upper_block_pt(block, log2m)           ((_heap_block_pt)   ((unsigned int) (block) - _tag_to_asize(_block_pt_to_upper_endtag(block), log2m)))
+#define _block_pt_to_lower_block_pt(block, log2m)           ((_heap_block_pt) _block_pt_to_end_prt(block, log2m))
 
-#define _heap_blocklist_insertprev(blocklist, ref, block)    edlist_insertprev(    _heap_block_pt, heap_blocklist_link, blocklist, ref, block)
-#define _heap_blocklist_insertnext(blocklist, ref, block)    edlist_insertnext(    _heap_block_pt, heap_blocklist_link, blocklist, ref, block)
-#define _heap_blocklist_remove(block)                        edlist_remove(        _heap_block_pt, heap_blocklist_link, block)
-#define _heap_blocklist_getcur(blocklist)                    edlist_getcur(        _heap_block_pt, heap_blocklist_link, blocklist)
-#define _heap_blocklist_getcurnext(blocklist)                edlist_getcurnext(    _heap_block_pt, heap_blocklist_link, blocklist)
-#define _heap_blocklist_head(blocklist)                        edlist_head(        _heap_block_pt, heap_blocklist_link, blocklist)
-#define _heap_blocklist_tail(blocklist)                        edlist_tail(        _heap_block_pt, heap_blocklist_link, blocklist)
-#define _heap_blocklist_next(block)                            edlist_next(        _heap_block_pt, heap_blocklist_link, block)
-#define _heap_blocklist_prev(block)                            edlist_prev(        _heap_block_pt, heap_blocklist_link, block)
-#define _heap_blocklist_list(block)                            edlist_list(        _heap_block_pt, heap_blocklist_link, block)
+#define _heap_blocklist_insertprev(blocklist, ref, block)   edlist_insertprev(  _heap_block_pt, heap_blocklist_link, blocklist, ref, block)
+#define _heap_blocklist_insertnext(blocklist, ref, block)   edlist_insertnext(  _heap_block_pt, heap_blocklist_link, blocklist, ref, block)
+#define _heap_blocklist_remove(block)                       edlist_remove(      _heap_block_pt, heap_blocklist_link, block)
+#define _heap_blocklist_getcur(blocklist)                   edlist_getcur(      _heap_block_pt, heap_blocklist_link, blocklist)
+#define _heap_blocklist_getcurnext(blocklist)               edlist_getcurnext(  _heap_block_pt, heap_blocklist_link, blocklist)
+#define _heap_blocklist_head(blocklist)                     edlist_head(        _heap_block_pt, heap_blocklist_link, blocklist)
+#define _heap_blocklist_tail(blocklist)                     edlist_tail(        _heap_block_pt, heap_blocklist_link, blocklist)
+#define _heap_blocklist_next(block)                         edlist_next(        _heap_block_pt, heap_blocklist_link, block)
+#define _heap_blocklist_prev(block)                         edlist_prev(        _heap_block_pt, heap_blocklist_link, block)
+#define _heap_blocklist_list(block)                         edlist_list(        _heap_block_pt, heap_blocklist_link, block)
 
 
 typedef struct {
@@ -396,8 +396,8 @@ typedef struct {
 
     unsigned int        fblcount; // free block list count
     unsigned int        fbloffset; // free block list index offset (calculated from HEAP_BLOCK_ASIZE_MIN)
-    edlist_pt            fbl_ap; // free block list pointer array
-    bitmap_pt            fblbm; // free block list index empty bitmap pointer
+    edlist_pt           fbl_ap; // free block list pointer array
+    bitmap_pt           fblbm; // free block list index empty bitmap pointer
 
     unsigned int        dregs_size; //total size of blocks that cannot be used because they are smaller than the minimum allocation size
 
@@ -407,7 +407,7 @@ typedef struct {
     unsigned int        asize;
     unsigned int        asize_max;
     unsigned int        rsize;
-    unsigned int         rsize_max;
+    unsigned int        rsize_max;
 
     bsp_mutex_pt        mutex;
 } _heap_region_t;
@@ -421,15 +421,15 @@ typedef struct __heap_t {
     unsigned int        reserved2        : 16;
 
     unsigned int        size;
-    unsigned int         addr;
+    unsigned int        addr;
     unsigned int        end;
 
     unsigned int        acount_max;
     unsigned int        asize_max;
     unsigned int        rsize_max;
 
-    unsigned char        enable_dmpm; // enable dynamic memory power management
-    _heap_region_t        region[2]; // heap region array, 0: normal direction, 1: reverse direction
+    unsigned char       enable_dmpm; // enable dynamic memory power management
+    _heap_region_t      region[2]; // heap region array, 0: normal direction, 1: reverse direction
 
     void * (* allocate_block_afp[2]) (struct __heap_t *, unsigned int); // allocate block function pointer array, 0: normal direction, 1: reverse direction
     int    (*  release_block_afp[2]) (struct __heap_t *, void *); // release block function pointer array, 0: normal direction, 1: reverse direction
