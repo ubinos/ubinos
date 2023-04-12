@@ -14,16 +14,16 @@
 
 void * _edlist_setcur(edlist_pt edlist, void * cur)
 {
-	(edlist)->cur = cur;
+    (edlist)->cur = cur;
 
-	return cur;
+    return cur;
 }
 
 void * _edlist_getcur(edlist_pt edlist)
 {
-	if (NULL == (edlist)->cur) {
-		(edlist)->cur = (edlist)->head;
-	}
+    if (NULL == (edlist)->cur) {
+        (edlist)->cur = (edlist)->head;
+    }
 
-	return (edlist)->cur;
+    return (edlist)->cur;
 }

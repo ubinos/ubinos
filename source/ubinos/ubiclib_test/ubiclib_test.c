@@ -67,7 +67,7 @@ ubi_err_t ubiclib_test_test_all()
         }
 
         ubik_collectgarbage();
-#endif	/* !(UBINOS__UBICLIB__EXCLUDE_CBUF == 1) */
+#endif    /* !(UBINOS__UBICLIB__EXCLUDE_CBUF == 1) */
 
         printf("<!-- ====================================================================== -->\n");
 

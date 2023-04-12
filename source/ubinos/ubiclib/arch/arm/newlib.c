@@ -74,7 +74,7 @@ int stdlib_port_comp_init(void) {
     __timeval_offset_minus.tv_sec = 0;
     __timeval_offset_minus.tv_usec = 0;
 
-	return 0;
+    return 0;
 }
 
 int stdlib_port_comp_init_reent(void) {

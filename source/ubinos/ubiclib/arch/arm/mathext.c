@@ -104,21 +104,21 @@ unsigned int uilsb(register unsigned int x) {
 }
 
 unsigned int uilzc(register unsigned int x) {
-	x |= (x >> 1);
-	x |= (x >> 2);
-	x |= (x >> 4);
-	x |= (x >> 8);
-	x |= (x >> 16);
-	return(WORDBITS - uiones(x));
+    x |= (x >> 1);
+    x |= (x >> 2);
+    x |= (x >> 4);
+    x |= (x >> 8);
+    x |= (x >> 16);
+    return(WORDBITS - uiones(x));
 }
 
 unsigned int uimsb(register unsigned int x) {
-	x |= (x >> 1);
-	x |= (x >> 2);
-	x |= (x >> 4);
-	x |= (x >> 8);
-	x |= (x >> 16);
-	return(x & ~(x >> 1));
+    x |= (x >> 1);
+    x |= (x >> 2);
+    x |= (x >> 4);
+    x |= (x >> 8);
+    x |= (x >> 16);
+    return(x & ~(x >> 1));
 }
 
 unsigned int uipow(unsigned int x, unsigned int y) {
