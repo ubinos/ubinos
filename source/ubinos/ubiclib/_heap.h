@@ -57,91 +57,91 @@ extern "C" {
     #error "16 bit system can not support weighted buddy algorithm"
 #else
     // definitions for group system and buddy systems
-    #define HEAP_G_TAG_A_______BITSIZE    (1)                       // available
-    #define HEAP_G_TAG__D______BITSIZE    (1)                       // direction
-    #define HEAP_G_TAG___G_____BITSIZE    (1)                       // is group system or buddy system
+    #define HEAP_G_TAG_A_______BITSIZE  (1)                         // available
+    #define HEAP_G_TAG__D______BITSIZE  (1)                         // direction
+    #define HEAP_G_TAG___G_____BITSIZE  (1)                         // is group system or buddy system
 
-    #define HEAP_G_TAG____K____BITSIZE    (4)                       // level
-    #define HEAP_G_TAG_____L___BITSIZE    (3)                       // weight of left tail
-    #define HEAP_G_TAG______R__BITSIZE    (3)                       // weight of right tail
-    #define HEAP_G_TAG_______B_BITSIZE    (3)                       // weight of body
+    #define HEAP_G_TAG____K____BITSIZE  (4)                         // level
+    #define HEAP_G_TAG_____L___BITSIZE  (3)                         // weight of left tail
+    #define HEAP_G_TAG______R__BITSIZE  (3)                         // weight of right tail
+    #define HEAP_G_TAG_______B_BITSIZE  (3)                         // weight of body
 
-    #define HEAP_G_TAG_A_______MASK        (0x8000)
-    #define HEAP_G_TAG__D______MASK        (0x4000)
-    #define HEAP_G_TAG___G_____MASK        (0x2000)
-    #define HEAP_G_TAG____K____MASK        (0x1E00)
-    #define HEAP_G_TAG_____L___MASK        (0x01C0)
-    #define HEAP_G_TAG______R__MASK        (0x0038)
-    #define HEAP_G_TAG_______B_MASK        (0x0007)
+    #define HEAP_G_TAG_A_______MASK     (0x8000)
+    #define HEAP_G_TAG__D______MASK     (0x4000)
+    #define HEAP_G_TAG___G_____MASK     (0x2000)
+    #define HEAP_G_TAG____K____MASK     (0x1E00)
+    #define HEAP_G_TAG_____L___MASK     (0x01C0)
+    #define HEAP_G_TAG______R__MASK     (0x0038)
+    #define HEAP_G_TAG_______B_MASK     (0x0007)
 
     #define HEAP_G_K_MAX                (15)                        // 2 ^ HEAP_G_TAG____K____BITSIZE = 2 ^ 4 - 1 = 15
     #define HEAP_G_M_MAX                (8)                         // 2 ^ HEAP_G_TAG_______B_BITSIZE = 2 ^ 3     = 8
 
     // definitions for linear search systems (best fit, first fit, last fit)
     #define HEAP_L_BLOCK_ASIZE_OFFSET    (1)                        // 2 byte align
-    #define HEAP_L_BLOCK_ASIZE_MAX        (0x3FFE)                  // (2 ^ (16 - 3) - 1) * 2 = 16,382 = 0x3FFE
+    #define HEAP_L_BLOCK_ASIZE_MAX       (0x3FFE)                   // (2 ^ (16 - 3) - 1) * 2 = 16,382 = 0x3FFE
                                                                     // (2 ^ (bit size of machine - bit size of TAG_ADG) - zero value count) * (2 ^ HEAP_L_BLOCK_ASIZE_OFFSET)
 #endif
 
 #elif    (4 == INT_SIZE)    // 32 bit machine
 
-    #define HEAP_BOUNDARY_PATTERN        (0xA5B4C75A)
+    #define HEAP_BOUNDARY_PATTERN       (0xA5B4C75A)
     #define HEAP_BLOCK_ASIZE_MIN        (0x00000040)                // 64
 
-    #define HEAP_TAG_SIZE                (INT_SIZE)                 // 4
+    #define HEAP_TAG_SIZE               (INT_SIZE)                  // 4
     #define HEAP_TAG_BITSIZE            (HEAP_TAG_SIZE * 8)         // 32
 
 #if (1 != UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY)
     // definitions for group system and buddy systems
-    #define HEAP_G_TAG_A_______BITSIZE    (1)                       // available
-    #define HEAP_G_TAG__D______BITSIZE    (1)                       // direction
-    #define HEAP_G_TAG___G_____BITSIZE    (4)                       // is group system or buddy system (if weighted buddy, it also contains block type information)
+    #define HEAP_G_TAG_A_______BITSIZE  (1)                         // available
+    #define HEAP_G_TAG__D______BITSIZE  (1)                         // direction
+    #define HEAP_G_TAG___G_____BITSIZE  (4)                         // is group system or buddy system (if weighted buddy, it also contains block type information)
 
-    #define HEAP_G_TAG____K____BITSIZE    (5)                       // level
-    #define HEAP_G_TAG_____L___BITSIZE    (7)                       // weight of left tail
-    #define HEAP_G_TAG______R__BITSIZE    (7)                       // weight of right tail
-    #define HEAP_G_TAG_______B_BITSIZE    (7)                       // weight of body
+    #define HEAP_G_TAG____K____BITSIZE  (5)                         // level
+    #define HEAP_G_TAG_____L___BITSIZE  (7)                         // weight of left tail
+    #define HEAP_G_TAG______R__BITSIZE  (7)                         // weight of right tail
+    #define HEAP_G_TAG_______B_BITSIZE  (7)                         // weight of body
 
-    #define HEAP_G_TAG_A_______MASK        (0x80000000)
-    #define HEAP_G_TAG__D______MASK        (0x40000000)
-    #define HEAP_G_TAG___G_____MASK        (0x3C000000)
-    #define HEAP_G_TAG____K____MASK        (0x03E00000)
-    #define HEAP_G_TAG_____L___MASK        (0x001FC000)
-    #define HEAP_G_TAG______R__MASK        (0x00003F80)
-    #define HEAP_G_TAG_______B_MASK        (0x0000007F)
+    #define HEAP_G_TAG_A_______MASK     (0x80000000)
+    #define HEAP_G_TAG__D______MASK     (0x40000000)
+    #define HEAP_G_TAG___G_____MASK     (0x3C000000)
+    #define HEAP_G_TAG____K____MASK     (0x03E00000)
+    #define HEAP_G_TAG_____L___MASK     (0x001FC000)
+    #define HEAP_G_TAG______R__MASK     (0x00003F80)
+    #define HEAP_G_TAG_______B_MASK     (0x0000007F)
 
     #define HEAP_G_K_MAX                (31)                        // 2 ^ HEAP_G_TAG____K____BITSIZE = 2 ^ 5 - 1 = 31
     #define HEAP_G_M_MAX                (128)                       // 2 ^ HEAP_G_TAG_______B_BITSIZE = 2 ^ 7     = 128
 
     // definitions for linear search systems (best fit, first fit, last fit)
-    #define HEAP_L_BLOCK_ASIZE_OFFSET    (2)                        // 4 byte align
-    #define HEAP_L_BLOCK_ASIZE_MAX        (0x0FFFFFFC)              // (2 ^ (32 - 6) - 1) * 4 = 268,435,452 = 0x0FFFFFFC
+    #define HEAP_L_BLOCK_ASIZE_OFFSET   (2)                         // 4 byte align
+    #define HEAP_L_BLOCK_ASIZE_MAX      (0x0FFFFFFC)                // (2 ^ (32 - 6) - 1) * 4 = 268,435,452 = 0x0FFFFFFC
                                                                     // (2 ^ (bit size of machine - bit size of TAG_ADG) - zero value count) * (2 ^ HEAP_L_BLOCK_ASIZE_OFFSET)
 #else
     // definitions for group system and buddy systems
-    #define HEAP_G_TAG_A_______BITSIZE    (1)                       // available
-    #define HEAP_G_TAG__D______BITSIZE    (1)                       // direction
-    #define HEAP_G_TAG___G_____BITSIZE    (1)                       // is group system or buddy system
+    #define HEAP_G_TAG_A_______BITSIZE  (1)                         // available
+    #define HEAP_G_TAG__D______BITSIZE  (1)                         / direction
+    #define HEAP_G_TAG___G_____BITSIZE  (1)                         // is group system or buddy system
 
-    #define HEAP_G_TAG____K____BITSIZE    (5)                       // level
-    #define HEAP_G_TAG_____L___BITSIZE    (8)                       // weight of left tail
-    #define HEAP_G_TAG______R__BITSIZE    (8)                       // weight of right tail
-    #define HEAP_G_TAG_______B_BITSIZE    (8)                       // weight of body
+    #define HEAP_G_TAG____K____BITSIZE  (5)                         // level
+    #define HEAP_G_TAG_____L___BITSIZE  (8)                         // weight of left tail
+    #define HEAP_G_TAG______R__BITSIZE  (8)                         // weight of right tail
+    #define HEAP_G_TAG_______B_BITSIZE  (8)                         // weight of body
 
-    #define HEAP_G_TAG_A_______MASK        (0x80000000)
-    #define HEAP_G_TAG__D______MASK        (0x40000000)
-    #define HEAP_G_TAG___G_____MASK        (0x20000000)
-    #define HEAP_G_TAG____K____MASK        (0x1F000000)
-    #define HEAP_G_TAG_____L___MASK        (0x00FF0000)
-    #define HEAP_G_TAG______R__MASK        (0x0000FF00)
-    #define HEAP_G_TAG_______B_MASK        (0x000000FF)
+    #define HEAP_G_TAG_A_______MASK     (0x80000000)
+    #define HEAP_G_TAG__D______MASK     (0x40000000)
+    #define HEAP_G_TAG___G_____MASK     (0x20000000)
+    #define HEAP_G_TAG____K____MASK     (0x1F000000)
+    #define HEAP_G_TAG_____L___MASK     (0x00FF0000)
+    #define HEAP_G_TAG______R__MASK     (0x0000FF00)
+    #define HEAP_G_TAG_______B_MASK     (0x000000FF)
 
     #define HEAP_G_K_MAX                (31)                        // 2 ^ HEAP_G_TAG____K____BITSIZE = 2 ^ 5 - 1 = 31
     #define HEAP_G_M_MAX                (256)                       // 2 ^ HEAP_G_TAG_______B_BITSIZE = 2 ^ 8     = 256
 
     // definitions for linear search systems (best fit, first fit, last fit)
     #define HEAP_L_BLOCK_ASIZE_OFFSET    (2)                        // 4 byte align
-    #define HEAP_L_BLOCK_ASIZE_MAX        (0x7FFFFFFC)              // (2 ^ (32 - 3) - 1) * 4 = 2,147,483,644 = 0x7FFFFFFC
+    #define HEAP_L_BLOCK_ASIZE_MAX       (0x7FFFFFFC)               // (2 ^ (32 - 3) - 1) * 4 = 2,147,483,644 = 0x7FFFFFFC
                                                                     // (2 ^ (bit size of machine - bit size of TAG_ADG) - zero value count) * (2 ^ HEAP_L_BLOCK_ASIZE_OFFSET)
 #endif
 
@@ -151,31 +151,31 @@ extern "C" {
 
 #endif
 
-#define HEAP_G_TAG__DGKLRB_BITSIZE        (    HEAP_G_TAG__D______BITSIZE +     \
+#define HEAP_G_TAG__DGKLRB_BITSIZE        ( HEAP_G_TAG__D______BITSIZE +        \
                                             HEAP_G_TAG___G_____BITSIZE +        \
                                             HEAP_G_TAG____K____BITSIZE +        \
                                             HEAP_G_TAG_____L___BITSIZE +        \
                                             HEAP_G_TAG______R__BITSIZE +        \
                                             HEAP_G_TAG_______B_BITSIZE      )
-#define HEAP_G_TAG___GKLRB_BITSIZE        (    HEAP_G_TAG___G_____BITSIZE +     \
+#define HEAP_G_TAG___GKLRB_BITSIZE        ( HEAP_G_TAG___G_____BITSIZE +        \
                                             HEAP_G_TAG____K____BITSIZE +        \
                                             HEAP_G_TAG_____L___BITSIZE +        \
                                             HEAP_G_TAG______R__BITSIZE +        \
                                             HEAP_G_TAG_______B_BITSIZE      )
-#define HEAP_G_TAG____KLRB_BITSIZE        (    HEAP_G_TAG____K____BITSIZE +     \
+#define HEAP_G_TAG____KLRB_BITSIZE        ( HEAP_G_TAG____K____BITSIZE +        \
                                             HEAP_G_TAG_____L___BITSIZE +        \
                                             HEAP_G_TAG______R__BITSIZE +        \
                                             HEAP_G_TAG_______B_BITSIZE      )
-#define HEAP_G_TAG_____LRB_BITSIZE        (    HEAP_G_TAG_____L___BITSIZE +     \
+#define HEAP_G_TAG_____LRB_BITSIZE        ( HEAP_G_TAG_____L___BITSIZE +        \
                                             HEAP_G_TAG______R__BITSIZE +        \
                                             HEAP_G_TAG_______B_BITSIZE      )
-#define HEAP_G_TAG______RB_BITSIZE        (    HEAP_G_TAG______R__BITSIZE +     \
+#define HEAP_G_TAG______RB_BITSIZE        ( HEAP_G_TAG______R__BITSIZE +        \
                                             HEAP_G_TAG_______B_BITSIZE      )
 
-#define HEAP_L_TAG_ASIZE_MASK             (   HEAP_G_TAG____K____MASK |         \
-                                              HEAP_G_TAG_____L___MASK |         \
-                                              HEAP_G_TAG______R__MASK |         \
-                                              HEAP_G_TAG_______B_MASK       )
+#define HEAP_L_TAG_ASIZE_MASK             ( HEAP_G_TAG____K____MASK |           \
+                                            HEAP_G_TAG_____L___MASK |           \
+                                            HEAP_G_TAG______R__MASK |           \
+                                            HEAP_G_TAG_______B_MASK       )
 
 
 #define _tag_to_a(tag)                  (((unsigned int) (tag) & HEAP_G_TAG_A_______MASK) >> HEAP_G_TAG__DGKLRB_BITSIZE)
@@ -285,9 +285,9 @@ extern "C" {
     #define _check_header_boundary(block)                                                                                                               \
         ((HEAP_BOUNDARY_PATTERN == *((unsigned int *) ((unsigned int) (block))))                                                        ? 1 : 0)
     #define _check_top_boundary(block)                                                                                                                  \
-        ((HEAP_BOUNDARY_PATTERN == *((unsigned int *) ((unsigned int) (block) + HEAP_BLOCK_HEADER_SIZE)))                                ? 1 : 0)
+        ((HEAP_BOUNDARY_PATTERN == *((unsigned int *) ((unsigned int) (block) + HEAP_BLOCK_HEADER_SIZE)))                               ? 1 : 0)
     #define _check_bottom_boundary(block, log2m)                                                                                                        \
-        ((HEAP_BOUNDARY_PATTERN == *((unsigned int *) ((unsigned int) (block) + _tag_to_asize((block)->tag, log2m) - BOUNDARY_SIZE)))    ? 1 : 0)
+        ((HEAP_BOUNDARY_PATTERN == *((unsigned int *) ((unsigned int) (block) + _tag_to_asize((block)->tag, log2m) - BOUNDARY_SIZE)))   ? 1 : 0)
     #define _check_boundary(block, log2m) (                                                                                                             \
         _check_header_boundary(block) &&                                                                                                                \
         _check_top_boundary(block) &&                                                                                                                   \
@@ -304,7 +304,7 @@ extern "C" {
             bsp_abortsystem();                                                                                                                          \
         }                                                                                                                                               \
         else if    (!_check_bottom_boundary(block, log2m)) {                                                                                            \
-            logmfe("memory(0x%08x) is polluted (bottom boundary)",     (unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));              \
+            logmfe("memory(0x%08x) is polluted (bottom boundary)",      (unsigned int) (block) + (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE));             \
             bsp_abortsystem();                                                                                                                          \
         }                                                                                                                                               \
     }
@@ -333,18 +333,18 @@ extern "C" {
 
     typedef _heap_block_t * _heap_block_pt;
 
-    #define HEAP_BLOCK_HEADER_SIZE        (MEM_ALIGN(sizeof(_heap_block_t)))
-    #define HEAP_BLOCK_OVERHEAD            (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE + HEAP_TAG_SIZE + BOUNDARY_SIZE)
+    #define HEAP_BLOCK_HEADER_SIZE (MEM_ALIGN(sizeof(_heap_block_t)))
+    #define HEAP_BLOCK_OVERHEAD (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE + HEAP_TAG_SIZE + BOUNDARY_SIZE)
 
     #define _set_header_boundary(block)
     #define _set_top_boundary(block)
     #define _set_bottom_boundary(block, log2m)
     #define _set_boundary(block, log2m)
 
-    #define _check_header_boundary(block)                1
-    #define _check_top_boundary(block)                    1
-    #define _check_bottom_boundary(block, log2m)        1
-    #define _check_boundary(block, log2m)                1
+    #define _check_header_boundary(block) 1
+    #define _check_top_boundary(block) 1
+    #define _check_bottom_boundary(block, log2m) 1
+    #define _check_boundary(block, log2m) 1
 
     #define _check_boundary_and_abort(block, log2m)
     #define _check_freeable_and_abort(block)
@@ -415,10 +415,10 @@ typedef struct {
 typedef _heap_region_t * _heap_region_pt;
 
 typedef struct __heap_t {
-    unsigned int        type            :  8;
-    unsigned int        valid            :  1;
-    unsigned int        reserved        :  7;
-    unsigned int        reserved2        : 16;
+    unsigned int        type        :  8;
+    unsigned int        valid       :  1;
+    unsigned int        reserved    :  7;
+    unsigned int        reserved2   : 16;
 
     unsigned int        size;
     unsigned int        addr;
@@ -582,14 +582,14 @@ typedef _heap_t * _heap_pt;
         _kblr_check(k, b, l, r, log2m, m);                                                                          \
 }
 
-#define _block_check_freeable_and_abort(block)                _check_freeable_and_abort(block)
-#define _block_check_boundary(block, log2m)                    _check_boundary(block, log2m)
-#define _block_check_boundary_and_abort(block, log2m)        _check_boundary_and_abort(block, log2m)
-#define _block_set_boundary(block, log2m)                    _set_boundary(block, log2m)
+#define _block_check_freeable_and_abort(block)          _check_freeable_and_abort(block)
+#define _block_check_boundary(block, log2m)             _check_boundary(block, log2m)
+#define _block_check_boundary_and_abort(block, log2m)   _check_boundary_and_abort(block, log2m)
+#define _block_set_boundary(block, log2m)               _set_boundary(block, log2m)
 
 #define _block_set_tag(block, value, log2m) {                                                                       \
-    (block)->tag                             = value;                                                               \
-    *_block_pt_to_endtag_ptr(block, log2m)    = value;                                                              \
+    (block)->tag                                = value;                                                            \
+    *_block_pt_to_endtag_ptr(block, log2m)      = value;                                                            \
     _block_set_boundary(block, log2m);                                                                              \
 }
 
@@ -648,9 +648,9 @@ typedef _heap_t * _heap_pt;
     _heap_blocklist_remove(block)                                                                                   \
 }
 
-#define _region_get_fb_head(region, index)            _heap_blocklist_head(&((region)->fbl_ap[(index)]))
+#define _region_get_fb_head(region, index)          _heap_blocklist_head(&((region)->fbl_ap[(index)]))
 
-#define _region_get_fb_tail(region, index)            _heap_blocklist_tail(&((region)->fbl_ap[(index)]))
+#define _region_get_fb_tail(region, index)          _heap_blocklist_tail(&((region)->fbl_ap[(index)]))
 
 #define _region_get_fb_getcur(region, index)        _heap_blocklist_getcur(&((region)->fbl_ap[(index)]))
 
