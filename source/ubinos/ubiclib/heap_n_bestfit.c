@@ -129,6 +129,7 @@ _heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize)
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
     if (heap->enable_dmpm) {
         _heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK == 1)
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK == 1)
         unsigned int * last_addr = (unsigned int * ) (heap->region[0].end - INT_SIZE);
         *last_addr = HEAP_BOUNDARY_PATTERN;
@@ -142,6 +143,7 @@ _heap_block_pt _heap_n_bestfit_expand(_heap_pt heap, unsigned int asize)
             bsp_abortsystem();
         }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK == 1) */
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK == 1) */
     }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 
@@ -353,12 +355,14 @@ _heap_block_pt _heap_n_bestfit_split_block(_heap_pt heap, _heap_block_pt block, 
         }
 
         heap_logmfd_block_deleted(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 0);
+
         tag = _asize_to_tag_l(asize,  0, _UBINOS__UBICLIB__HEAP_DIR);
         _block_set_tag(b1, tag, 0);
 
         b2 = (_heap_block_pt) ((unsigned int) b1 + asize);
         tag = _asize_to_tag_l(bxasize, 1, _UBINOS__UBICLIB__HEAP_DIR);
         _block_set_tag(b2, tag, 0);
+
         heap_logmfd_block_created(heap, _UBINOS__UBICLIB__HEAP_DIR, b2, 0);
         _heap_n_bestfit_combine_block(heap, b2, 0);
 
