@@ -268,7 +268,7 @@ void ubiclib_test_heaptest(void *arg)
 
             ubik_hrtick_reset();
             ubik_hrtick_gettick(&tick1);
-            ptr = heap_mallocn(heap, size - boh);
+            ptr = heap_malloc(heap, size - boh, params->dir);
             ubik_hrtick_gettick(&tick2);
 
             if (1 == params->critlock) {

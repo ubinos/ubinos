@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2019 Sung Ho Park and CSOS
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -55,6 +55,7 @@ set_cache_default(UBINOS__UBICLIB__HEAP_DIR1_M                                  
 set_cache_default(UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT                           2           STRING "Free block list count for reverse heap")
 set_cache_default(UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE                      4           STRING "Free block list bitmap buffer size for reverse heap")
 
+set_cache_default(UBINOS__UBICLIB__HEAP_DEFAULT_DIR                             0           STRING "Default Heap direction [0 | 1]")
 
 ########
 

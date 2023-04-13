@@ -120,7 +120,7 @@ extern "C" {
 #else
     // definitions for group system and buddy systems
     #define HEAP_G_TAG_A_______BITSIZE  (1)                         // available
-    #define HEAP_G_TAG__D______BITSIZE  (1)                         / direction
+    #define HEAP_G_TAG__D______BITSIZE  (1)                         // direction
     #define HEAP_G_TAG___G_____BITSIZE  (1)                         // is group system or buddy system
 
     #define HEAP_G_TAG____K____BITSIZE  (5)                         // level

@@ -211,7 +211,7 @@ void * _malloc_r(struct _reent * reent_ptr, size_t size)
     {
         ubiclib_heap_comp_init();
     }
-    return _heap_allocate_block(_ubiclib_heap, 0, SIZETOUINT(size));
+    return _heap_allocate_block(_ubiclib_heap, UBINOS__UBICLIB__HEAP_DEFAULT_DIR, SIZETOUINT(size));
 }
 
 void _free_r(struct _reent * reent_ptr, void * ptr)

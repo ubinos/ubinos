@@ -26,6 +26,7 @@ int appmain(int argc, char *argv[])
             22, 23, 24, // first fit
             25, 26, 27, // next fit
             28, 29, 30, // pure group system
+            31, 32, 33, // best fit with reverse direction
     };
     int cilen = sizeof(ci) / sizeof(int);
     unsigned int fblcount;
@@ -61,6 +62,7 @@ int appmain(int argc, char *argv[])
         // group system
         if (ci[i] == 10) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP;
+            params.dir = 0;
             params.m = 64;
             fblcount = heap_group_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -74,6 +76,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 11) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP;
+            params.dir = 0;
             params.m = 64;
             fblcount = heap_group_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -87,6 +90,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 12) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP;
+            params.dir = 0;
             params.m = 64;
             fblcount = heap_group_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -102,6 +106,7 @@ int appmain(int argc, char *argv[])
         // binary buddy system
         else if (ci[i] == 13) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BBUDDY;
+            params.dir = 0;
             params.m = 2;
             fblcount = heap_pgroup_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -115,6 +120,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 14) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BBUDDY;
+            params.dir = 0;
             params.m = 2;
             fblcount = heap_pgroup_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -128,6 +134,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 15) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BBUDDY;
+            params.dir = 0;
             params.m = 2;
             fblcount = heap_pgroup_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -143,6 +150,7 @@ int appmain(int argc, char *argv[])
         // weighted buddy system
         else if (ci[i] == 16) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY;
+            params.dir = 0;
             params.m = 2;
             fblcount = heap_wbuddy_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -156,6 +164,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 17) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY;
+            params.dir = 0;
             params.m = 2;
             fblcount = heap_wbuddy_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -170,6 +179,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 18) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__WBUDDY;
+            params.dir = 0;
             params.m = 2;
             fblcount = heap_wbuddy_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -185,6 +195,7 @@ int appmain(int argc, char *argv[])
         // best fit
         else if (ci[i] == 19) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -198,6 +209,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 20) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -211,6 +223,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 21) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -223,9 +236,54 @@ int appmain(int argc, char *argv[])
             printf("BEST, Uniform, Normal, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
         }
 
+        // best fit
+        else if (ci[i] == 31) {
+            params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
+            params.dir = 1;
+            params.m = 2;
+            fblcount = 1;
+
+            params.lifetime_type = UBICLIB_TEST_HEAPTEST_LIFETIME_TYPE__UNIFORM;
+            params.size_type = UBICLIB_TEST_HEAPTEST_SIZE_TYPE__UNIFORM;
+            params.lifetime_p = &ubiclib_test_heaptest_urx1_a[0];
+            params.size_p = &ubiclib_test_heaptest_urx2_a[0];
+
+            printf("\n");
+            printf("BEST (Reverse), Uniform, Uniform, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+        }
+        else if (ci[i] == 32) {
+            params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
+            params.dir = 1;
+            params.m = 2;
+            fblcount = 1;
+
+            params.lifetime_type = UBICLIB_TEST_HEAPTEST_LIFETIME_TYPE__UNIFORM;
+            params.size_type = UBICLIB_TEST_HEAPTEST_SIZE_TYPE__EXPONENTIAL;
+            params.lifetime_p = &ubiclib_test_heaptest_urx1_a[0];
+            params.size_p = &ubiclib_test_heaptest_erx2_a[0];
+
+            printf("\n");
+            printf("BEST (Reverse), Uniform, Exponential, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+        }
+        else if (ci[i] == 33) {
+            params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__BESTFIT;
+            params.dir = 1;
+            params.m = 2;
+            fblcount = 1;
+
+            params.lifetime_type = UBICLIB_TEST_HEAPTEST_LIFETIME_TYPE__UNIFORM;
+            params.size_type = UBICLIB_TEST_HEAPTEST_SIZE_TYPE__NORMAL;
+            params.lifetime_p = &ubiclib_test_heaptest_urx1_a[0];
+            params.size_p = &ubiclib_test_heaptest_nrx2_a[0];
+
+            printf("\n");
+            printf("BEST (Reverse), Uniform, Normal, %u, %u, %u\n", params.heapsize, fblcount, bitmap_getmemsize(fblcount));
+        }
+
         // first fit
         else if (ci[i] == 22) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__FIRSTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -239,6 +297,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 23) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__FIRSTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -252,6 +311,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 24) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__FIRSTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -267,6 +327,7 @@ int appmain(int argc, char *argv[])
         // next fit
         else if (ci[i] == 25) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__NEXTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -280,6 +341,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 26) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__NEXTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -293,6 +355,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 27) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__NEXTFIT;
+            params.dir = 0;
             params.m = 2;
             fblcount = 1;
 
@@ -308,6 +371,7 @@ int appmain(int argc, char *argv[])
         // pure group system
         else if (ci[i] == 28) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP;
+            params.dir = 0;
             params.m = 64;
             fblcount = heap_pgroup_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -321,6 +385,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 29) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP;
+            params.dir = 0;
             params.m = 64;
             fblcount = heap_pgroup_calc_fblcount_raw(params.heapsize, params.m);
 
@@ -334,6 +399,7 @@ int appmain(int argc, char *argv[])
         }
         else if (ci[i] == 30) {
             params.algorithm_type = UBINOS__UBICLIB__HEAP_ALGORITHM__PGROUP;
+            params.dir = 0;
             params.m = 64;
             fblcount = heap_pgroup_calc_fblcount_raw(params.heapsize, params.m);
 

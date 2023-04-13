@@ -121,27 +121,7 @@ int ubiclib_heap_comp_init_reent(void)
     return 0;
 }
 
-void * mallocn(size_t size)
-{
-    return _heap_allocate_block(_ubiclib_heap, 0, SIZETOUINT(size));
-}
-
-void * mallocr(size_t size)
-{
-    return _heap_allocate_block(_ubiclib_heap, 1, SIZETOUINT(size));
-}
-
 #else /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
-
-void * mallocn(size_t size)
-{
-    return malloc(size);
-}
-
-void * mallocr(size_t size)
-{
-    return malloc(size);
-}
 
 #endif /* (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1) */
 
@@ -717,24 +697,9 @@ int heap_delete(heap_pt * heap_p)
     return r2;
 }
 
-void * heap_malloc(heap_pt heap, unsigned int size)
+void * heap_malloc(heap_pt heap, unsigned int size, int dir)
 {
-    if (0 == bsp_ubik_isrt()) {
-        return _heap_allocate_block((_heap_pt) heap, 0, size);
-    }
-    else {
-        return _heap_allocate_block((_heap_pt) heap, 1, size);
-    }
-}
-
-void * heap_mallocn(heap_pt heap, unsigned int size)
-{
-    return _heap_allocate_block((_heap_pt) heap, 0, size);
-}
-
-void * heap_mallocr(heap_pt heap, unsigned int size)
-{
-    return _heap_allocate_block((_heap_pt) heap, 1, size);
+    return _heap_allocate_block((_heap_pt) heap, dir, size);
 }
 
 int heap_free(heap_pt heap, void * ptr)
@@ -1686,7 +1651,7 @@ int heap_printheapinfo(heap_pt _heap)
 
         bx = _heap_blocklist_head(&(region->abl));
         while(bx != NULL) {
-            _print_block(heap, 0, bx, log2m);
+            _print_block(heap, region->dir, bx, log2m);
             bx = _heap_blocklist_next(bx);
         }
 
@@ -1697,7 +1662,7 @@ int heap_printheapinfo(heap_pt _heap)
                 printf("region 0 fbl %4d count: %4u\n", i, fbl->count);
                 bx = _heap_blocklist_head(fbl);
                 while(bx != NULL) {
-                    _print_block(heap, 0, bx, log2m);
+                    _print_block(heap, region->dir, bx, log2m);
                     bx = _heap_blocklist_next(bx);
                 }
             }

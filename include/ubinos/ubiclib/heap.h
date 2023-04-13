@@ -46,7 +46,7 @@ typedef _heap_tip_t * heap_pt;
 
 /*!
  * 힙 컴포넌트를 초기화하는 함수<br>
- * 
+ *
  * 이 함수는 시스템 시작시  bsp 컴포넌트의 main 함수에서 자동적으로 호출됩니다.<br>
  *
  * @return	  0: 성공<br>
@@ -139,39 +139,13 @@ int heap_delete(heap_pt * heap_p);
  *
  * @param	size				요청 크기<br>
  *
- * @return	할당된 메모리 블록의 주소<br>
- * 			<br>
- * 			NULL: 오류<br>
- */
-void * heap_malloc(heap_pt heap, unsigned int size);
-
-/*!
- * 정방향으로 메모리 블록을 할당하는 함수<br>
- *
- * @param	heap				대상 힙<br>
- * 								NULL이면 기본 힙<br>
- *
- * @param	size				요청 크기<br>
+ * @param	dir					힙 성장 방향<br>
  *
  * @return	할당된 메모리 블록의 주소<br>
  * 			<br>
  * 			NULL: 오류<br>
  */
-void * heap_mallocn(heap_pt heap, unsigned int size);
-
-/*!
- * 역방향으로 메모리 블록을 할당하는 함수<br>
- *
- * @param	heap				대상 힙<br>
- * 								NULL이면 기본 힙<br>
- *
- * @param	size				요청 크기<br>
- *
- * @return	할당된 메모리 블록의 주소<br>
- * 			<br>
- * 			NULL: 오류<br>
- */
-void * heap_mallocr(heap_pt heap, unsigned int size);
+void * heap_malloc(heap_pt heap, unsigned int size, int dir);
 
 /*!
  * 메모리 블록을 해제하는 함수<br>
@@ -271,28 +245,6 @@ int heap_checkblockboundaryall(heap_pt heap);
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
 int heap_getblocksize(heap_pt heap, void * ptr, unsigned int * size_p);
-
-/*!
- * 기본 힙에서 정방향으로 메모리 블록을 할당하는 함수<br>
- *
- * @param	size				요청 크기<br>
- *
- * @return	할당된 메모리 블록의 주소<br>
- * 			<br>
- * 			NULL: 오류<br>
- */
-void * mallocn(size_t size);
-
-/*!
- * 기본 힙에서 역방향으로 메모리 블록을 할당하는 함수<br>
- *
- * @param	size				요청 크기<br>
- *
- * @return	할당된 메모리 블록의 주소<br>
- * 			<br>
- * 			NULL: 오류<br>
- */
-void * mallocr(size_t size);
 
 /*!
  * 힙의 크기를 돌려주는 함수<br>

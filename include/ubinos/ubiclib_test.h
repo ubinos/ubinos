@@ -50,6 +50,7 @@ typedef struct _ubiclib_test_heaptest_param_t
     unsigned int blockcheck;
     unsigned int skipfirsfull;
 
+    int dir;
     unsigned int algorithm_type;
     unsigned int m;
     unsigned int lifetime_type;
