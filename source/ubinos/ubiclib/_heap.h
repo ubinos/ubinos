@@ -401,7 +401,7 @@ typedef struct {
 
     unsigned int        dregs_size; //total size of blocks that cannot be used because they are smaller than the minimum allocation size
 
-    edlist_t            abl;
+    edlist_t            abl; // allocated block list
 
     unsigned int        acount_max;
     unsigned int        asize;

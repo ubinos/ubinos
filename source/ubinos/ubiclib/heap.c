@@ -1631,22 +1631,22 @@ int heap_printheapinfo(heap_pt _heap)
         log2m = region->log2m;
 
         printf("---------\n");
-        printf("dir %d\n", region->dir);
-        printf("algorithm %d\n", region->algorithm);
-        printf("m %d\n", region->m);
+        printf("addr        0x%08x (%10u)\n", region->addr, region->addr);
+        printf("end         0x%08x (%10u)\n", region->end, region->end);
+        printf("size        0x%08x (%10u)\n", region->size, region->size);
+        printf("limit       0x%08x (%10u)\n", region->limit, region->limit);
+        printf("---------\n");
+        printf("dir         %d\n", region->dir);
+        printf("algorithm   %d\n", region->algorithm);
+        printf("m           %d\n", region->m);
+        printf("size_min    0x%08x (%10u)\n", region->size_min, region->size_min);
+        printf("---------\n");
         printf("fbl count %d\n", region->fblcount);
         printf("fbl offset %d\n", region->fbloffset);
         printf("fbl size %d\n", sizeof(edlist_t) * region->fblcount);
         printf("fbl bitmap bit size %d\n", region->fblbm->bitsize);
         printf("fbl bitmap memory size %d bytes\n", bitmap_getmemsize(region->fblbm->bitsize));
         printf("fbl bitmap buffer size %d bytes\n", region->fblbm->map_bytesize);
-        printf("fbl count %d\n", region->fblcount);
-        printf("---------\n");
-        printf("size_min 0x%08x (%10u)\n", region->size_min, region->size_min);
-        printf("size     0x%08x (%10u)\n", region->size, region->size);
-        printf("addr     0x%08x (%10u)\n", region->addr, region->addr);
-        printf("end      0x%08x (%10u)\n", region->end, region->end);
-        printf("limit    0x%08x (%10u)\n", region->limit, region->limit);
         printf("---------\n");
 
         bx = _heap_blocklist_head(&(region->abl));
