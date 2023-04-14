@@ -49,7 +49,7 @@ const mem_layout_region _mem_layout[MEM_LAYOUT_REGION_COUNT + 1] = {
     {0x20010000, 8, (POWER_RAM_POWER_S0POWER_On << POWER_RAM_POWER_S0POWER_Pos)}, // 16
     {0x20018000, 8, (POWER_RAM_POWER_S1POWER_On << POWER_RAM_POWER_S1POWER_Pos)}, // 17
     {0x20020000, 8, (POWER_RAM_POWER_S2POWER_On << POWER_RAM_POWER_S2POWER_Pos)}, // 18
-    {0x20018000, 8, (POWER_RAM_POWER_S3POWER_On << POWER_RAM_POWER_S3POWER_Pos)}, // 19
+    {0x20028000, 8, (POWER_RAM_POWER_S3POWER_On << POWER_RAM_POWER_S3POWER_Pos)}, // 19
     {0x20030000, 8, (POWER_RAM_POWER_S4POWER_On << POWER_RAM_POWER_S4POWER_Pos)}, // 20
     {0x20038000, 8, (POWER_RAM_POWER_S5POWER_On << POWER_RAM_POWER_S5POWER_Pos)}, // 21
     {0x20040000, 0, 0}, // end address
@@ -105,15 +105,11 @@ int _heap_power_off_unused_area(unsigned int nomal_resign_end, unsigned int reve
         _mem_layout_region_on[ni] = 0;
     }
 
-    for (ri = MEM_LAYOUT_REGION_COUNT - 1; ri >= ni; ri--) {
+    for (ri = MEM_LAYOUT_REGION_COUNT - 1; ri >= 0; ri--) {
         if (_mem_layout[ri + 1].addr <= reverse_resign_addr) {
             break;
         }
         _mem_layout_region_on[ri] = 1;
-    }
-
-    for (; ri >= ni; ri--) {
-        _mem_layout_region_on[ri] = 0;
     }
 
     for (int i = 0; i < MEM_LAYOUT_REGION_COUNT; i++) {
