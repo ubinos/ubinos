@@ -195,6 +195,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
     heap->rsize_max = 0;
 
     heap->enable_dmpm = enable_dmpm;
+    heap->region_dir_on[0] = 1;
+    heap->region_dir_on[1] = 1;
 
     switch (algorithm0) {
 
@@ -332,7 +334,7 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
     if (heap->enable_dmpm) {
-        _heap_power_off_unused_area(NULL, heap->region[0].end, heap->region[1].addr);
+        _heap_power_off_unused_area(heap, heap->region[0].end, heap->region[1].addr);
     }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 
@@ -372,6 +374,16 @@ void * _heap_allocate_block(_heap_pt heap, unsigned int size, int dir)
 
     if (0 >= size) {
         logme("size is wrong");
+        goto end0;
+    }
+
+    if ((0 != dir) && (1 != dir)) {
+        logme("dir is wrong");
+        goto end0;
+    }
+
+    if (1 != heap->region_dir_on[dir]) {
+        logme("region is off");
         goto end0;
     }
 
@@ -422,6 +434,12 @@ int _heap_release_block(_heap_pt heap, void * ptr)
     if (0 != dir && 1 != dir) {
         logme("ptr is wrong");
         r2 = -3;
+        goto end0;
+    }
+
+    if (1 != heap->region_dir_on[dir]) {
+        logme("region is off");
+        r2 = -1;
         goto end0;
     }
 
@@ -705,6 +723,112 @@ void * heap_malloc(heap_pt heap, unsigned int size, int dir)
 int heap_free(heap_pt heap, void * ptr)
 {
     return _heap_release_block((_heap_pt) heap, ptr);
+}
+
+int heap_power_off(heap_pt _heap, int dir)
+{
+#if (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1))
+    int r = 0;
+    _heap_pt heap = NULL;
+
+    if (NULL == _heap)
+    {
+        heap = _ubiclib_heap;
+    }
+    else
+    {
+        heap = (_heap_pt) _heap;
+    }
+
+    if (NULL == heap) {
+        logme("heap is NULL");
+        r = -2;
+        goto end0;
+    }
+
+    if (0 != dir && 1 != dir) {
+        logme("dir is wrong");
+        r = -3;
+        goto end0;
+    }
+
+    if (heap->enable_dmpm == 0) {
+        logme("dmpm is diabled");
+        r = -1;
+        goto end0;
+    }
+
+    if (heap->region_dir_on[dir] == 1)
+    {
+        heap->region_dir_on[dir] = 0;
+        r = _heap_save_block_infos(heap, dir);
+        ubi_assert(r == 0);
+        r = _heap_power_off_unused_area(heap, heap->region[0].end, heap->region[1].addr);
+        ubi_assert(r == 0);
+    }
+    else
+    {
+        r = 0;
+    }
+
+end0:
+    return r;
+#else /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
+    return -1;
+#endif /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
+}
+
+int heap_power_on(heap_pt _heap, int dir)
+{
+#if (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1))
+    int r = 0;
+    _heap_pt heap = NULL;
+
+    if (NULL == _heap)
+    {
+        heap = _ubiclib_heap;
+    }
+    else
+    {
+        heap = (_heap_pt) _heap;
+    }
+
+    if (NULL == heap) {
+        logme("heap is NULL");
+        r = -2;
+        goto end0;
+    }
+
+    if (0 != dir && 1 != dir) {
+        logme("dir is wrong");
+        r = -3;
+        goto end0;
+    }
+
+    if (heap->enable_dmpm == 0) {
+        logme("dmpm is diabled");
+        r = -1;
+        goto end0;
+    }
+
+    if (heap->region_dir_on[dir] == 0)
+    {
+        heap->region_dir_on[dir] = 1;
+        r = _heap_power_off_unused_area(heap, heap->region[0].end, heap->region[1].addr);
+        ubi_assert(r == 0);
+        r = _heap_restore_block_infos(heap, dir);
+        ubi_assert(r == 0);
+    }
+    else
+    {
+        r = 0;
+    }
+
+end0:
+    return r;
+#else /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
+    return -1;
+#endif /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
 }
 
 int heap_checkblockboundary(heap_pt _heap, void * ptr)
@@ -1599,7 +1723,7 @@ int heap_printheapinfo(heap_pt _heap)
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
     if (heap->enable_dmpm == 1) {
         printf("\n");
-        printf("power :");
+        printf("power : ");
         _heap_print_power_infos(NULL);
         printf("\n");
     }
@@ -1625,6 +1749,11 @@ int heap_printheapinfo(heap_pt _heap)
         _heap_block_pt bx = 0;
         edlist_pt fbl;
         unsigned int log2m/*, m, maskm, min*/;
+
+        if (heap->region_dir_on[dir] == 0)
+        {
+            continue;
+        }
 
         printf("\n");
         region = &heap->region[dir];

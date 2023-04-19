@@ -429,6 +429,7 @@ typedef struct __heap_t {
     unsigned int        rsize_max;
 
     unsigned char       enable_dmpm; // enable dynamic memory power management
+    unsigned char       region_dir_on[2]; // heap region direction on/off, 0: normal direction, 1: reverse direction
     _heap_region_t      region[2]; // heap region array, 0: normal direction, 1: reverse direction
 
     void * (* allocate_block_afp[2]) (struct __heap_t *, unsigned int); // allocate block function pointer array, 0: normal direction, 1: reverse direction
@@ -668,6 +669,9 @@ int _heap_release_block(_heap_pt heap, void * ptr);
 
 int _heap_power_off_unused_area(_heap_pt heap, unsigned int nomal_resign_end, unsigned int reverse_resign_addr);
 int _heap_print_power_infos(_heap_pt heap);
+
+int _heap_save_block_infos(_heap_pt hea, int dir);
+int _heap_restore_block_infos(_heap_pt heap, int dir);
 
 extern _heap_pt _ubiclib_heap;
 

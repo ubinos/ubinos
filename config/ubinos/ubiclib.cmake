@@ -31,6 +31,7 @@ set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP                                 
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK                  FALSE   BOOL "Exclude heap boundary check feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_INTERMEDIATE_DATA_CHECK         FALSE   BOOL "Exclude heap intermediate data check feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM                            TRUE    BOOL "Exclude dynamic memory power management feature")
+set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF                 TRUE    BOOL "Exclude direction on/off of dynamic memory power management feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK         TRUE    BOOL "Exclude memory ready check of dynamic memory power management feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_LOGMD                           FALSE   BOOL "Exclude heap debug log message feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_PRINTHEAPINFO                   FALSE   BOOL "Exclude heap print heap information function")
@@ -56,6 +57,7 @@ set_cache_default(UBINOS__UBICLIB__HEAP_DIR1_FBLCOUNT                           
 set_cache_default(UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE                      4           STRING "Free block list bitmap buffer size for reverse heap")
 
 set_cache_default(UBINOS__UBICLIB__HEAP_DEFAULT_DIR                             0           STRING "Default Heap direction [0 | 1]")
+set_cache_default(UBINOS__UBICLIB__HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX         100         STRING "Maximum number of heap blocks for direction on/off of dynamic memory power management feature")
 
 ########
 

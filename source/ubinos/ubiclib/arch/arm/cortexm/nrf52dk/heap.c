@@ -80,20 +80,40 @@ uint8_t _mem_layout_region_on[MEM_LAYOUT_REGION_COUNT] = {
     0, // 21
 };
 
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)
+
+_heap_block_t _mem_layout_block_infos[UBINOS__UBICLIB__HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX];
+
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1) */
+
 int _heap_power_off_unused_area(_heap_pt heap, unsigned int nomal_resign_end, unsigned int reverse_resign_addr) {
     int r = 0;
     int ni, ri;
 
-    assert(heap == NULL);
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+    if (NULL == heap) {
+        logme("heap is NULL");
+        bsp_abortsystem();
+    }
 
     assert(nomal_resign_end <= reverse_resign_addr);
 
     logmfd("nomal_resign_end = 0x%08x,  reverse_resign_addr = 0x%08x", nomal_resign_end, reverse_resign_addr);
 
     for (int i = 0; i < MEM_LAYOUT_REGION_COUNT; i++) {
-        _mem_layout_region_on[i] = 0;
+        if (heap->addr > _mem_layout[i].addr)
+        {
+            _mem_layout_region_on[i] = 1;
+        }
+        else
+        {
+            _mem_layout_region_on[i] = 0;
+        }
     }
 
+    if (heap->region_dir_on[0])
     {
         for (ni = 0; ni < MEM_LAYOUT_REGION_COUNT; ni++) {
             if (nomal_resign_end <= _mem_layout[ni].addr) {
@@ -103,6 +123,7 @@ int _heap_power_off_unused_area(_heap_pt heap, unsigned int nomal_resign_end, un
         }
     }
 
+    if (heap->region_dir_on[1])
     {
         for (ri = MEM_LAYOUT_REGION_COUNT - 1; ri >= 0; ri--) {
             if (_mem_layout[ri + 1].addr <= reverse_resign_addr) {
@@ -131,7 +152,17 @@ int _heap_power_off_unused_area(_heap_pt heap, unsigned int nomal_resign_end, un
 int _heap_print_power_infos(_heap_pt heap) {
     int r = 0;
 
-    assert(heap == NULL);
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+    if (NULL == heap) {
+        logme("heap is NULL");
+        bsp_abortsystem();
+    }
+
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)
+    printf("(%d, %d) ", heap->region_dir_on[0], heap->region_dir_on[1]);
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1) */
 
     for (int i = 0; i < MEM_LAYOUT_REGION_COUNT; i++) {
         printf(" %d", _mem_layout_region_on[i]);
@@ -140,9 +171,121 @@ int _heap_print_power_infos(_heap_pt heap) {
     return r;
 }
 
-#else
+int _heap_save_block_infos(_heap_pt heap, int dir)
+{
+    int r = 0;
 
-#error "Unsupported UBINOS__BSP__BOARD_MODEL"
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+    if (NULL == heap) {
+        logme("heap is NULL");
+        bsp_abortsystem();
+    }
+
+    if (0 != dir && 1 != dir) {
+        logme("dir is wrong");
+        bsp_abortsystem();
+    }
+
+    unsigned int idx;
+    _heap_region_pt region;
+    _heap_block_pt bx = 0;
+    edlist_pt fbl;
+
+    idx = 0;
+
+    region = &heap->region[dir];
+
+    bx = _heap_blocklist_head(&(region->abl));
+    while(bx != NULL) {
+        _mem_layout_block_infos[idx++] = *bx;
+        if (idx >= UBINOS__UBICLIB__HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX)
+        {
+            logmfe("block count is larger than HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX");
+            bsp_abortsystem();
+        }
+        bx = _heap_blocklist_next(bx);
+    }
+
+    for (unsigned int i = 0; i < region->fblcount; i++) {
+        fbl = &region->fbl_ap[i];
+        if (fbl->count != 0) {
+            bx = _heap_blocklist_head(fbl);
+            while(bx != NULL) {
+                _mem_layout_block_infos[idx++] = *bx;
+                if (idx >= UBINOS__UBICLIB__HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX)
+                {
+                    logmfe("block count is larger than HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX");
+                    bsp_abortsystem();
+                }
+                bx = _heap_blocklist_next(bx);
+            }
+        }
+    }
+
+    return r;
+}
+
+int _heap_restore_block_infos(_heap_pt heap, int dir)
+{
+    int r = 0;
+
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+    if (NULL == heap) {
+        logme("heap is NULL");
+        bsp_abortsystem();
+    }
+
+    if (0 != dir && 1 != dir) {
+        logme("dir is wrong");
+        bsp_abortsystem();
+    }
+
+    unsigned int idx;
+    _heap_region_pt region;
+    _heap_block_pt bx = 0;
+    edlist_pt fbl;
+    unsigned int log2m/*, m, maskm, min*/;
+
+    idx = 0;
+
+    region = &heap->region[dir];
+    log2m = region->log2m;
+
+    bx = _heap_blocklist_head(&(region->abl));
+    while(bx != NULL) {
+        *bx = _mem_layout_block_infos[idx++];
+        _block_set_tag(bx, bx->tag, log2m);
+        if (idx >= UBINOS__UBICLIB__HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX)
+        {
+            logmfe("block count is larger than HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX");
+            bsp_abortsystem();
+        }
+        bx = _heap_blocklist_next(bx);
+    }
+
+    for (unsigned int i = 0; i < region->fblcount; i++) {
+        fbl = &region->fbl_ap[i];
+        if (fbl->count != 0) {
+            bx = _heap_blocklist_head(fbl);
+            while(bx != NULL) {
+                *bx = _mem_layout_block_infos[idx++];
+                _block_set_tag(bx, bx->tag, log2m);
+                if (idx >= UBINOS__UBICLIB__HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX)
+                {
+                    logmfe("block count is larger than HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX");
+                    bsp_abortsystem();
+                }
+                bx = _heap_blocklist_next(bx);
+            }
+        }
+    }
+
+    return r;
+}
 
 #endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__ARDUINONANO33BLE) */
 

@@ -163,6 +163,34 @@ void * heap_malloc(heap_pt heap, unsigned int size, int dir);
 int heap_free(heap_pt heap, void * ptr);
 
 /*!
+ * 지정한 성장 방향의 힙 메모리의 전원을 끄는 함수 (현재는 기본 힙만 지원함)<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	dir					힙 성장 방향<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ */
+int heap_power_off(heap_pt heap, int dir);
+
+/*!
+ * 지정한 성장 방향의 힙 메모리의 전원을 키는 함수 (현재는 기본 힙만 지원함)<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	dir					힙 성장 방향<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ */
+int heap_power_on(heap_pt heap, int dir);
+
+/*!
  * 메모리 블록의 경계 영역이 오염되었는지 여부를 검사하는 함수<br>
  *
  * @param	heap				대상 힙<br>
