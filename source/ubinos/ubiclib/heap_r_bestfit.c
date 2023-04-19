@@ -128,7 +128,7 @@ _heap_block_pt _heap_r_bestfit_expand(_heap_pt heap, unsigned int asize)
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
     if (heap->enable_dmpm) {
-        _heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+        _heap_power_off_unused_area(NULL, heap->region[0].end, heap->region[1].addr);
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK == 1)
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK == 1)
         unsigned int * first_addr = (unsigned int * ) (heap->region[1].addr);
@@ -222,7 +222,7 @@ int _heap_r_bestfit_reduce(_heap_pt heap)
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
     if (heap->enable_dmpm) {
-        _heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+        _heap_power_off_unused_area(NULL, heap->region[0].end, heap->region[1].addr);
     }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 

@@ -266,7 +266,7 @@ _heap_block_pt _heap_n_wbuddy_expand(_heap_pt heap, unsigned int asize)
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
     if (heap->enable_dmpm) {
-        _heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+        _heap_power_off_unused_area(NULL, heap->region[0].end, heap->region[1].addr);
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK == 1)
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK == 1)
         unsigned int * last_addr = (unsigned int * ) (heap->region[0].end - INT_SIZE);

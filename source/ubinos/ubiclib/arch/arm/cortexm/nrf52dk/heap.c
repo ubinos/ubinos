@@ -80,30 +80,36 @@ uint8_t _mem_layout_region_on[MEM_LAYOUT_REGION_COUNT] = {
     0, // 21
 };
 
-int _heap_power_off_unused_area(unsigned int nomal_resign_end, unsigned int reverse_resign_addr) {
+int _heap_power_off_unused_area(_heap_pt heap, unsigned int nomal_resign_end, unsigned int reverse_resign_addr) {
     int r = 0;
     int ni, ri;
+
+    assert(heap == NULL);
 
     assert(nomal_resign_end <= reverse_resign_addr);
 
     logmfd("nomal_resign_end = 0x%08x,  reverse_resign_addr = 0x%08x", nomal_resign_end, reverse_resign_addr);
 
-    for (ni = 0; ni < MEM_LAYOUT_REGION_COUNT; ni++) {
-        if (nomal_resign_end <= _mem_layout[ni].addr) {
-            break;
-        }
-        _mem_layout_region_on[ni] = 1;
+    for (int i = 0; i < MEM_LAYOUT_REGION_COUNT; i++) {
+        _mem_layout_region_on[i] = 0;
     }
 
-    for (; ni < MEM_LAYOUT_REGION_COUNT; ni++) {
-        _mem_layout_region_on[ni] = 0;
+    {
+        for (ni = 0; ni < MEM_LAYOUT_REGION_COUNT; ni++) {
+            if (nomal_resign_end <= _mem_layout[ni].addr) {
+                break;
+            }
+            _mem_layout_region_on[ni] = 1;
+        }
     }
 
-    for (ri = MEM_LAYOUT_REGION_COUNT - 1; ri >= 0; ri--) {
-        if (_mem_layout[ri + 1].addr <= reverse_resign_addr) {
-            break;
+    {
+        for (ri = MEM_LAYOUT_REGION_COUNT - 1; ri >= 0; ri--) {
+            if (_mem_layout[ri + 1].addr <= reverse_resign_addr) {
+                break;
+            }
+            _mem_layout_region_on[ri] = 1;
         }
-        _mem_layout_region_on[ri] = 1;
     }
 
     for (int i = 0; i < MEM_LAYOUT_REGION_COUNT; i++) {
@@ -122,8 +128,10 @@ int _heap_power_off_unused_area(unsigned int nomal_resign_end, unsigned int reve
     return r;
 }
 
-int _heap_print_power_info(void) {
+int _heap_print_power_infos(_heap_pt heap) {
     int r = 0;
+
+    assert(heap == NULL);
 
     for (int i = 0; i < MEM_LAYOUT_REGION_COUNT; i++) {
         printf(" %d", _mem_layout_region_on[i]);

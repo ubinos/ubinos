@@ -663,11 +663,11 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
                    int algorithm1, int locktype1, unsigned int m1,
                    unsigned int fblcount1, edlist_pt fbl1_p, bitmap_pt fblbm1    );
 
-void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size);
+void * _heap_allocate_block(_heap_pt heap, unsigned int size, int dir);
 int _heap_release_block(_heap_pt heap, void * ptr);
 
-int _heap_power_off_unused_area(unsigned int nomal_resign_end, unsigned int reverse_resign_addr);
-int _heap_print_power_info(void);
+int _heap_power_off_unused_area(_heap_pt heap, unsigned int nomal_resign_end, unsigned int reverse_resign_addr);
+int _heap_print_power_infos(_heap_pt heap);
 
 extern _heap_pt _ubiclib_heap;
 

@@ -332,7 +332,7 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
     if (heap->enable_dmpm) {
-        _heap_power_off_unused_area(heap->region[0].end, heap->region[1].addr);
+        _heap_power_off_unused_area(NULL, heap->region[0].end, heap->region[1].addr);
     }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 
@@ -345,7 +345,7 @@ end0:
 }
 
 
-void * _heap_allocate_block(_heap_pt heap, int dir, unsigned int size)
+void * _heap_allocate_block(_heap_pt heap, unsigned int size, int dir)
 {
     register void * ptr = NULL;
 
@@ -699,7 +699,7 @@ int heap_delete(heap_pt * heap_p)
 
 void * heap_malloc(heap_pt heap, unsigned int size, int dir)
 {
-    return _heap_allocate_block((_heap_pt) heap, dir, size);
+    return _heap_allocate_block((_heap_pt) heap, size, dir);
 }
 
 int heap_free(heap_pt heap, void * ptr)
@@ -1600,7 +1600,7 @@ int heap_printheapinfo(heap_pt _heap)
     if (heap->enable_dmpm == 1) {
         printf("\n");
         printf("power :");
-        _heap_print_power_info();
+        _heap_print_power_infos(NULL);
         printf("\n");
     }
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
