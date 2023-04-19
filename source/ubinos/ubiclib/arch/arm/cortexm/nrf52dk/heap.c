@@ -19,13 +19,13 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__HEAP
 
+#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__ARDUINONANO33BLE)
+
 typedef struct _mem_layout_region {
     unsigned int addr;
     uint8_t number;
     uint32_t control_bit;
 } mem_layout_region;
-
-#if (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__ARDUINONANO33BLE)
 
 #define MEM_LAYOUT_REGION_COUNT 22
 
@@ -80,12 +80,6 @@ uint8_t _mem_layout_region_on[MEM_LAYOUT_REGION_COUNT] = {
     0, // 21
 };
 
-#else
-
-#error "Unsupported UBINOS__BSP__BOARD_MODEL"
-
-#endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__ARDUINONANO33BLE) */
-
 int _heap_power_off_unused_area(unsigned int nomal_resign_end, unsigned int reverse_resign_addr) {
     int r = 0;
     int ni, ri;
@@ -137,6 +131,12 @@ int _heap_print_power_info(void) {
 
     return r;
 }
+
+#else
+
+#error "Unsupported UBINOS__BSP__BOARD_MODEL"
+
+#endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__ARDUINONANO33BLE) */
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) */
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
