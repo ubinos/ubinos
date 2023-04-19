@@ -909,6 +909,11 @@ int heap_checkblockboundaryall(heap_pt _heap)
         region = &heap->region[i];
         log2m = region->log2m;
 
+        if (heap->region_dir_on[i] == 0)
+        {
+            continue;
+        }
+
         if (0 == bsp_ubik_iscrit()) {
             switch(region->locktype) {
             case UBINOS__UBICLIB__HEAP_LOCK_TYPE__NONE:
