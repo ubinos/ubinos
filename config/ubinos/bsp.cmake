@@ -170,7 +170,7 @@ set_cache_default(UBINOS__BSP__NRF52_NRF52840_XXAA                              
 
 set_cache_default(UBINOS__BSP__USE_SOFTFLOAT                                    FALSE   BOOL "Use soft float")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT                         FALSE   BOOL "")
-set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_NAME                            ""      STRING "[S132 | S140]")
+set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_NAME                            "blank" STRING "[blank | S132 | S140]")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION                 ""      STRING "[7]")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            ""      PATH "nRF52 softdevice file")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_INCLUDE_DIR                     ""      PATH "nRF52 softdevice include directory")
@@ -555,7 +555,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
         endif()
 
     elseif(UBINOS__BSP__CPU_MODEL STREQUAL "STM32H747XI")
-    
+
         if(UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M7")
             set(_tmp_all_flags "${_tmp_all_flags} -DCORE_CM7")
         elseif(UBINOS__BSP__CPU_TYPE STREQUAL "CORTEX_M4")
@@ -731,7 +731,7 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
     set(_tmp_all_flags "${_tmp_all_flags} -g3")
     set(_tmp_all_flags "${_tmp_all_flags} -Wall -Werror -fmessage-length=0")
-    
+
     set(_tmp_all_flags "${_tmp_all_flags} -D_GNU_SOURCE")
 
 elseif(UBINOS__BSP__CPU_ARCH STREQUAL "LOCAL")
