@@ -130,6 +130,12 @@ int _heap_r_group_release_block(_heap_pt heap, void * ptr)
     return 0;
 }
 
+void * _heap_r_group_resize_block(_heap_pt heap, void * ptr, unsigned int size)
+{
+    bsp_abortsystem();
+    return 0;
+}
+
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP == 1) */
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */

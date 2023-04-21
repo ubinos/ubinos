@@ -434,6 +434,7 @@ typedef struct __heap_t {
 
     void * (* allocate_block_afp[2]) (struct __heap_t *, unsigned int); // allocate block function pointer array, 0: normal direction, 1: reverse direction
     int    (*  release_block_afp[2]) (struct __heap_t *, void *); // release block function pointer array, 0: normal direction, 1: reverse direction
+    void * (*  resize_block_afp[2])  (struct __heap_t *, void *, unsigned int); // resize block function pointer array, 0: normal direction, 1: reverse direction
 } _heap_t;
 
 typedef _heap_t * _heap_pt;
@@ -666,6 +667,7 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
 
 void * _heap_allocate_block(_heap_pt heap, unsigned int size, int dir);
 int _heap_release_block(_heap_pt heap, void * ptr);
+void * _heap_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
 int _heap_power_off_unused_area(_heap_pt heap, unsigned int nomal_resign_end, unsigned int reverse_resign_addr);
 int _heap_print_power_infos(_heap_pt heap);
@@ -757,6 +759,7 @@ _heap_block_pt _heap_n_group_combine_block(_heap_pt heap, _heap_block_pt block, 
 _heap_block_pt _heap_n_group_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize);
         void * _heap_n_group_allocate_block(_heap_pt heap, unsigned int size);
            int _heap_n_group_release_block(_heap_pt heap, void * ptr);
+        void * _heap_n_group_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
            int _heap_r_group_init_region(
                  _heap_pt heap, unsigned int addr, unsigned int size, int locktype,
@@ -769,6 +772,7 @@ _heap_block_pt _heap_r_group_combine_block(_heap_pt heap, _heap_block_pt block, 
 _heap_block_pt _heap_r_group_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize);
         void * _heap_r_group_allocate_block(_heap_pt heap, unsigned int size);
            int _heap_r_group_release_block(_heap_pt heap, void * ptr);
+        void * _heap_r_group_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP == 1) */
 
@@ -786,6 +790,7 @@ _heap_block_pt _heap_n_bestfit_combine_block(_heap_pt heap, _heap_block_pt block
 _heap_block_pt _heap_n_bestfit_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize);
         void * _heap_n_bestfit_allocate_block(_heap_pt heap, unsigned int size);
            int _heap_n_bestfit_release_block(_heap_pt heap, void * ptr);
+        void * _heap_n_bestfit_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
            int _heap_r_bestfit_init_region(
                  _heap_pt heap, unsigned int addr, unsigned int size, int locktype,
@@ -798,6 +803,7 @@ _heap_block_pt _heap_r_bestfit_combine_block(_heap_pt heap, _heap_block_pt block
 _heap_block_pt _heap_r_bestfit_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize);
         void * _heap_r_bestfit_allocate_block(_heap_pt heap, unsigned int size);
            int _heap_r_bestfit_release_block(_heap_pt heap, void * ptr);
+        void * _heap_r_bestfit_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */
 
@@ -815,6 +821,7 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
 _heap_block_pt _heap_n_pgroup_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize);
         void * _heap_n_pgroup_allocate_block(_heap_pt heap, unsigned int size);
            int _heap_n_pgroup_release_block(_heap_pt heap, void * ptr);
+        void * _heap_n_pgroup_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
            int _heap_r_pgroup_init_region(
                  _heap_pt heap, unsigned int addr, unsigned int size, int locktype,
@@ -827,6 +834,7 @@ _heap_block_pt _heap_r_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
 _heap_block_pt _heap_r_pgroup_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize);
         void * _heap_r_pgroup_allocate_block(_heap_pt heap, unsigned int size);
            int _heap_r_pgroup_release_block(_heap_pt heap, void * ptr);
+        void * _heap_r_pgroup_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1) */
 
@@ -844,6 +852,7 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
 _heap_block_pt _heap_n_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize);
         void * _heap_n_wbuddy_allocate_block(_heap_pt heap, unsigned int size);
            int _heap_n_wbuddy_release_block(_heap_pt heap, void * ptr);
+        void * _heap_n_wbuddy_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
            int _heap_r_wbuddy_init_region(
                  _heap_pt heap, unsigned int addr, unsigned int size, int locktype,
@@ -856,6 +865,7 @@ _heap_block_pt _heap_r_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
 _heap_block_pt _heap_r_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, unsigned int asize);
         void * _heap_r_wbuddy_allocate_block(_heap_pt heap, unsigned int size);
            int _heap_r_wbuddy_release_block(_heap_pt heap, void * ptr);
+        void * _heap_r_wbuddy_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1) */
 

@@ -997,6 +997,12 @@ end0:
     return r2;
 }
 
+void * _heap_n_wbuddy_resize_block(_heap_pt heap, void * ptr, unsigned int size)
+{
+    bsp_abortsystem();
+    return NULL;
+}
+
 unsigned int heap_wbuddy_calc_fblcount(unsigned int size, unsigned int m) {
     unsigned int k, w;
     unsigned int fbln;

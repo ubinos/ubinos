@@ -995,6 +995,12 @@ end0:
     return r2;
 }
 
+void * _heap_n_group_resize_block(_heap_pt heap, void * ptr, unsigned int size)
+{
+    bsp_abortsystem();
+    return NULL;
+}
+
 unsigned int heap_group_calc_fblcount(unsigned int size, unsigned int m) {
     unsigned int log2m;
     unsigned int k, w, t;

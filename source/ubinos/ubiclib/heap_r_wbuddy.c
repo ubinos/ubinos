@@ -132,6 +132,12 @@ int _heap_r_wbuddy_release_block(_heap_pt heap, void * ptr)
     return 0;
 }
 
+void * _heap_r_wbuddy_resize_block(_heap_pt heap, void * ptr, unsigned int size)
+{
+    bsp_abortsystem();
+    return 0;
+}
+
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1) */
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */

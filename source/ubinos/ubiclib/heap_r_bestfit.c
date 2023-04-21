@@ -689,6 +689,12 @@ end0:
     return r2;
 }
 
+void * _heap_r_bestfit_resize_block(_heap_pt heap, void * ptr, unsigned int size)
+{
+    bsp_abortsystem();
+    return NULL;
+}
+
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */

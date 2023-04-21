@@ -209,7 +209,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
         }
         heap->allocate_block_afp[0] = *_heap_n_group_allocate_block;
         heap->release_block_afp[0]  = *_heap_n_group_release_block;
-        heap->region[0].algorithm     = algorithm0;
+        heap->resize_block_afp[0]   = *_heap_n_group_resize_block;
+        heap->region[0].algorithm   = algorithm0;
         break;
 
     #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP == 1) */
@@ -225,7 +226,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
         }
         heap->allocate_block_afp[0] = *_heap_n_bestfit_allocate_block;
         heap->release_block_afp[0]  = *_heap_n_bestfit_release_block;
-        heap->region[0].algorithm     = algorithm0;
+        heap->resize_block_afp[0]   = *_heap_n_bestfit_resize_block;
+        heap->region[0].algorithm   = algorithm0;
         break;
 
     #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */
@@ -240,7 +242,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
         }
         heap->allocate_block_afp[0] = *_heap_n_pgroup_allocate_block;
         heap->release_block_afp[0]  = *_heap_n_pgroup_release_block;
-        heap->region[0].algorithm     = algorithm0;
+        heap->resize_block_afp[0]   = *_heap_n_pgroup_resize_block;
+        heap->region[0].algorithm   = algorithm0;
         break;
 
     #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1) */
@@ -254,7 +257,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
         }
         heap->allocate_block_afp[0] = *_heap_n_wbuddy_allocate_block;
         heap->release_block_afp[0]  = *_heap_n_wbuddy_release_block;
-        heap->region[0].algorithm     = algorithm0;
+        heap->resize_block_afp[0]   = *_heap_n_wbuddy_resize_block;
+        heap->region[0].algorithm   = algorithm0;
         break;
 
     #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1) */
@@ -276,7 +280,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
         }
         heap->allocate_block_afp[1] = *_heap_r_group_allocate_block;
         heap->release_block_afp[1]  = *_heap_r_group_release_block;
-        heap->region[1].algorithm     = algorithm1;
+        heap->resize_block_afp[1]   = *_heap_r_group_resize_block;
+        heap->region[1].algorithm   = algorithm1;
         break;
 
     #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__GROUP == 1) */
@@ -292,7 +297,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
         }
         heap->allocate_block_afp[1] = *_heap_r_bestfit_allocate_block;
         heap->release_block_afp[1]  = *_heap_r_bestfit_release_block;
-        heap->region[1].algorithm     = algorithm1;
+        heap->resize_block_afp[1]   = *_heap_r_bestfit_resize_block;
+        heap->region[1].algorithm   = algorithm1;
         break;
 
     #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */
@@ -307,7 +313,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
         }
         heap->allocate_block_afp[1] = *_heap_r_pgroup_allocate_block;
         heap->release_block_afp[1]  = *_heap_r_pgroup_release_block;
-        heap->region[1].algorithm     = algorithm1;
+        heap->resize_block_afp[1]   = *_heap_r_pgroup_resize_block;
+        heap->region[1].algorithm   = algorithm1;
         break;
 
     #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__PGROUP == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BBUDDY == 1) */
@@ -321,7 +328,8 @@ int _heap_init( _heap_pt heap, unsigned int addr, unsigned int size, int enable_
         }
         heap->allocate_block_afp[1] = *_heap_r_wbuddy_allocate_block;
         heap->release_block_afp[1]  = *_heap_r_wbuddy_release_block;
-        heap->region[1].algorithm     = algorithm1;
+        heap->resize_block_afp[1]   = *_heap_r_wbuddy_resize_block;
+        heap->region[1].algorithm   = algorithm1;
         break;
 
     #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1) */
@@ -449,6 +457,55 @@ end0:
     heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, result %d", bsp_task_getcur(), heap, dir, r2);
 
     return r2;
+}
+
+void * _heap_resize_block(_heap_pt heap, void * ptr, unsigned int size)
+{
+    register int dir = 0;
+
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+
+    heap_logmfd("0x%08x: called  : heap 0x%08x, ptr 0x%08x, size 0x%08x ", bsp_task_getcur(), heap, ptr, size);
+
+    if (NULL == heap) {
+        logme("heap is NULL");
+        goto end0;
+    }
+
+    if (OBJTYPE__UBICLIB_HEAP != heap->type) {
+        logme("heap type is not OBJTYPE__UBICLIB_HEAP");
+        goto end0;
+    }
+
+    if (1 != heap->valid) {
+        logme("heap is not valid");
+        goto end0;
+    }
+
+    if (NULL == ptr) {
+        logmi("ptr is NULL");
+        goto end0;
+    }
+
+    dir = _tag_to_d(_ptr_to_block_pt(ptr)->tag);
+    if (0 != dir && 1 != dir) {
+        logme("ptr is wrong");
+        goto end0;
+    }
+
+    if (1 != heap->region_dir_on[dir]) {
+        logme("region is off");
+        goto end0;
+    }
+
+    ptr = heap->resize_block_afp[dir](heap, ptr, size);
+
+end0:
+    heap_logmfd("0x%08x: return  : heap 0x%08x, dir %d, ptr 0x%08x", bsp_task_getcur(), heap, dir, ptr);
+
+    return ptr;
 }
 
 
@@ -723,6 +780,11 @@ void * heap_malloc(heap_pt heap, unsigned int size, int dir)
 int heap_free(heap_pt heap, void * ptr)
 {
     return _heap_release_block((_heap_pt) heap, ptr);
+}
+
+void * heap_resize(heap_pt heap, void * ptr, unsigned int size)
+{
+    return _heap_resize_block((_heap_pt) heap, ptr, size);
 }
 
 int heap_power_off(heap_pt _heap, int dir)

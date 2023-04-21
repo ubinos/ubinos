@@ -684,6 +684,147 @@ end0:
     return r2;
 }
 
+void * _heap_n_bestfit_resize_block(_heap_pt heap, void * ptr, unsigned int size)
+{
+    int r;
+    _heap_region_pt region;
+    _heap_block_pt b1;
+    unsigned int b1asize;
+    unsigned int asize, rsize;
+    unsigned int tag, tmp;
+
+    tmp = NULL;
+
+    b1 = _ptr_to_block_pt(ptr);
+
+    region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
+
+    if ((unsigned int) b1 != region->addr || (unsigned int) _block_pt_to_end_prt(b1, region->log2m) != region->end)
+    {
+        b1 = NULL;
+        goto end0;
+    }
+
+    _block_check_boundary_and_abort(b1, 0);
+
+    tag = b1->tag;
+
+    heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 0);
+
+    asize = _tag_to_asize(tag, 0);
+    rsize = b1->rsize;
+
+    switch(region->locktype) {
+    case UBINOS__UBICLIB__HEAP_LOCK_TYPE__NONE:
+        break;
+    case UBINOS__UBICLIB__HEAP_LOCK_TYPE__MUTEX:
+        if (NULL != region->mutex) {
+            r = bsp_mutex_lock(region->mutex);
+            if (0 != r) {
+                logme("fail at mutex_lock");
+                b1 = NULL;
+                goto end0;
+            }
+        }
+        break;
+    case UBINOS__UBICLIB__HEAP_LOCK_TYPE__CRITICAL:
+        bsp_ubik_entercrit();
+        break;
+    default:
+        logme("locktype is wrong");
+        b1 = NULL;
+        goto end0;
+    }
+
+    _heap_blocklist_remove(b1);
+
+    _tag_set_a(tag, 1);
+    _block_set_tag(b1, tag, 0);
+
+    _heap_n_bestfit_combine_block(heap, b1, 0);
+
+    region->asize -= asize;
+    region->rsize -= rsize;
+
+    _heap_n_bestfit_reduce(heap);
+
+    b1asize = _size_to_asize(size, region->min);
+    b1 = _heap_n_bestfit_expand(heap, b1asize);
+
+    if (NULL != b1) {
+        tag = b1->tag;
+        _tag_set_a(tag, 0);
+        _block_set_tag(b1, tag, 0);
+        _block_set_rsize(b1, size);
+        b1asize    = _tag_to_asize(tag, 0);
+
+        if (size > b1asize) {
+            logme("b1asize is wrong");
+            bsp_abortsystem();
+        }
+
+        _heap_blocklist_insertprev(&region->abl, NULL, b1);
+
+        if (region->acount_max < region->abl.count) {
+            region->acount_max = region->abl.count;
+        }
+        region->asize += b1asize;
+        if (region->asize_max < region->asize) {
+            region->asize_max = region->asize;
+        }
+        region->rsize += size;
+        if (region->rsize_max < region->rsize) {
+            region->rsize_max = region->rsize;
+        }
+
+        tmp = heap->region[0].abl.count + heap->region[1].abl.count;
+        if (heap->acount_max < tmp) {
+            heap->acount_max = tmp;
+        }
+        tmp = heap->region[0].asize + heap->region[1].asize;;
+        if (heap->asize_max < tmp) {
+            heap->asize_max = tmp;
+        }
+        tmp = heap->region[0].rsize + heap->region[1].rsize;;
+        if (heap->rsize_max < tmp) {
+            heap->rsize_max = tmp;
+        }
+    }
+
+//end1:
+    switch(region->locktype) {
+    case UBINOS__UBICLIB__HEAP_LOCK_TYPE__NONE:
+        break;
+    case UBINOS__UBICLIB__HEAP_LOCK_TYPE__MUTEX:
+        if (NULL != region->mutex) {
+            r = bsp_mutex_unlock(region->mutex);
+            if (0 != r) {
+                logme("fail at mutex_unlock");
+            }
+        }
+        break;
+    case UBINOS__UBICLIB__HEAP_LOCK_TYPE__CRITICAL:
+        bsp_ubik_exitcrit();
+        break;
+    }
+
+end0:
+    if (NULL == b1) {
+        tmp = 0;
+    }
+    else {
+        heap_logmfd_block(heap, _UBINOS__UBICLIB__HEAP_DIR, b1, 0);
+
+        tmp = (unsigned int) _block_pt_to_ptr(b1);
+        if (tmp != (unsigned int) ptr) {
+            logme("address is changed");
+            bsp_abortsystem();
+        }
+    }
+
+    return (void *) tmp;
+}
+
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__BESTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__FIRSTFIT == 1) || !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__NEXTFIT == 1) */
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
