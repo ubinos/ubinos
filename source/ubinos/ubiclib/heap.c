@@ -1055,6 +1055,150 @@ end0:
     return r2;
 }
 
+void * heap_get_addr(heap_pt _heap)
+{
+    _heap_pt heap = (_heap_pt) _heap;
+
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+
+    if (NULL == heap) {
+        logme("heap is NULL");
+        return NULL;
+    }
+
+    if (OBJTYPE__UBICLIB_HEAP != heap->type) {
+        logme("heap type is not OBJTYPE__UBICLIB_HEAP");
+        return NULL;
+    }
+
+    if (1 != heap->valid) {
+        logme("heap is not valid");
+        return NULL;
+    }
+
+    return (void *) heap->addr;
+}
+
+void * heap_get_end(heap_pt _heap)
+{
+    _heap_pt heap = (_heap_pt) _heap;
+
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+
+    if (NULL == heap) {
+        logme("heap is NULL");
+        return NULL;
+    }
+
+    if (OBJTYPE__UBICLIB_HEAP != heap->type) {
+        logme("heap type is not OBJTYPE__UBICLIB_HEAP");
+        return NULL;
+    }
+
+    if (1 != heap->valid) {
+        logme("heap is not valid");
+        return NULL;
+    }
+
+    return (void *) heap->end;
+}
+
+void * heap_get_first_allocated_block(heap_pt _heap, int dir)
+{
+    _heap_pt heap = NULL;
+    _heap_region_pt region;
+    _heap_block_pt bx = NULL;
+    unsigned int tmp;
+
+    if (NULL == _heap)
+    {
+        heap = _ubiclib_heap;
+    }
+    else
+    {
+        heap = (_heap_pt) _heap;
+    }
+
+    tmp = 0;
+    do
+    {
+        if (NULL == heap) {
+            logme("heap is NULL");
+            break;
+        }
+
+        if (0 != dir && 1 != dir) {
+            logme("dir is wrong");
+            break;
+        }
+
+        region = &heap->region[dir];
+
+        bx = _heap_blocklist_head(&(region->abl));
+
+        if (NULL == bx) {
+            break;
+        }
+        else {
+            heap_logmfd_block(heap, dir, bx, 0);
+            tmp = (unsigned int) _block_pt_to_ptr(bx);
+        }
+
+        break;
+    } while (1);
+
+    return (void *) tmp;
+}
+
+void * heap_get_next_allocated_block(heap_pt _heap, void * ptr)
+{
+    _heap_pt heap = NULL;
+    _heap_block_pt bx = NULL;
+    unsigned int tmp;
+
+    if (NULL == _heap)
+    {
+        heap = _ubiclib_heap;
+    }
+    else
+    {
+        heap = (_heap_pt) _heap;
+    }
+
+    tmp = 0;
+    do
+    {
+        if (NULL == heap) {
+            logme("heap is NULL");
+            break;
+        }
+
+        if (NULL == ptr) {
+            logme("ptr is NULL");
+            break;
+        }
+
+        bx = _ptr_to_block_pt(ptr);
+        bx = _heap_blocklist_next(bx);
+
+        if (NULL == bx) {
+            break;
+        }
+        else {
+            heap_logmfd_block(heap, _tag_to_d(bx->tag), bx, 0);
+            tmp = (unsigned int) _block_pt_to_ptr(bx);
+        }
+
+        break;
+    } while (1);
+
+    return (void *) tmp;
+}
+
 int heap_getblocksize(heap_pt _heap, void * ptr, unsigned int * size_p)
 {
     _heap_pt heap = (_heap_pt) _heap;
@@ -1118,6 +1262,40 @@ int heap_getsize(heap_pt _heap, unsigned int * size_p)
 
     return 0;
 }
+
+int heap_getexpandablesize(heap_pt _heap, unsigned int * size_p)
+{
+    _heap_pt heap = (_heap_pt) _heap;
+
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+
+    if (NULL == heap) {
+        logme("heap is NULL");
+        return -2;
+    }
+
+    if (OBJTYPE__UBICLIB_HEAP != heap->type) {
+        logme("heap type is not OBJTYPE__UBICLIB_HEAP");
+        return -2;
+    }
+
+    if (1 != heap->valid) {
+        logme("heap is not valid");
+        return -2;
+    }
+
+    if (NULL == size_p) {
+        logme("size_p is NULL");
+        return -3;
+    }
+
+    *size_p = heap->region[1].addr - heap->region[0].end;
+
+    return 0;
+}
+
 
 int heap_getrequestedsize(heap_pt _heap, unsigned int * size_p)
 {

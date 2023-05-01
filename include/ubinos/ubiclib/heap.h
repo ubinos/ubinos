@@ -274,6 +274,58 @@ int heap_checkblockboundary(heap_pt heap, void * ptr);
 int heap_checkblockboundaryall(heap_pt heap);
 
 /*!
+ * 힙 시작 주소를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @return	힙 시작 주소<br>
+ * 			<br>
+ * 			NULL: 오류<br>
+ */
+void * heap_get_addr(heap_pt heap);
+
+/*!
+ * 힙 끝 주소를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @return	힙 끝 주소<br>
+ * 			<br>
+ * 			NULL: 오류<br>
+ */
+void * heap_get_end(heap_pt heap);
+
+/*!
+ * 첫 번째 할당된 블록 주소를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	dir					힙 성장 방향<br>
+ *
+ * @return	첫 번째 할당된 메모리 블록의 주소<br>
+ * 			<br>
+ * 			NULL: 오류<br>
+ */
+void * heap_get_first_allocated_block(heap_pt heap, int dir);
+
+/*!
+ * 대상 믈록 다음의 할당된 블록 주소를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	ptr					대상 메모리 블록의 주소<br>
+ *
+ * @return	대상 믈록 다음의 할당된 메모리 블록의 주소<br>
+ * 			<br>
+ * 			NULL: 오류<br>
+ */
+void * heap_get_next_allocated_block(heap_pt heap, void * ptr);
+
+/*!
  * 메모리 블록의 크기를 돌려주는 함수<br>
  *
  * @param	heap				대상 힙<br>
@@ -304,6 +356,21 @@ int heap_getblocksize(heap_pt heap, void * ptr, unsigned int * size_p);
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
 int heap_getsize(heap_pt heap, unsigned int * size_p);
+
+/*!
+ * 힙의 확장 가능 크기를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	size_p				확장 가능 크기를 저장할 변수의 주소<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ */
+int heap_getexpandablesize(heap_pt heap, unsigned int * size_p);
 
 /*!
  * 힙의 메모리 블록들의 요청 크기의 총 합을 돌려주는 함수<br>
