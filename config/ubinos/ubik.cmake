@@ -121,7 +121,8 @@ endif(UBINOS__UBIK__TICK_TYPE STREQUAL "RTC")
 set(_tmp_all_flags "")
 
 if(INCLUDE__UBINOS__UBIK)
-	set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_PRESENT")
+	set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_PRESENT") # Deprecated. It is replaced by UBINOS_UBIK_PRESENT
+	set(_tmp_all_flags "${_tmp_all_flags} -DUBINOS_UBIK_PRESENT")
 endif()
 
 if(UBINOS__UBIK__TICK_TYPE STREQUAL "SYSTICK")
