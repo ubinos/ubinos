@@ -164,7 +164,7 @@ int _heap_n_bestfit_reduce(_heap_pt heap)
 {
     int r;
     _heap_region_pt region;
-    unsigned int size_min;
+    // unsigned int size_min;
     _heap_block_pt b1;
     unsigned int b1asize;
     unsigned int tag, addr, end, size;
@@ -178,14 +178,18 @@ int _heap_n_bestfit_reduce(_heap_pt heap)
         goto end0;
     }
 
-    size_min = region->size_min;
+    // size_min = region->size_min;
 
     addr = region->addr;
     end = region->end;
     size = region->size;
 
     for (;;) {
-        if (size_min >= size) {
+        // if (size_min >= size) {
+        //     break;
+        // }
+
+        if (0 == size) {
             break;
         }
 
@@ -202,8 +206,6 @@ int _heap_n_bestfit_reduce(_heap_pt heap)
 
         end -= b1asize;
         size -= b1asize;
-
-        break;
     }
 
     if (size == region->size) {
@@ -215,10 +217,10 @@ int _heap_n_bestfit_reduce(_heap_pt heap)
     region->end = end;
     region->size = size;
 
-    if (size_min > size) {
-        b1 = _heap_n_bestfit_expand(heap, size_min - size);
-        _heap_n_bestfit_combine_block(heap, b1, 1);
-    }
+    // if (size_min > size) {
+    //     b1 = _heap_n_bestfit_expand(heap, size_min - size);
+    //     _heap_n_bestfit_combine_block(heap, b1, 1);
+    // }
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1)
     if (heap->enable_dmpm) {
@@ -690,7 +692,7 @@ void * _heap_n_bestfit_resize_block(_heap_pt heap, void * ptr, unsigned int size
     _heap_region_pt region;
     _heap_block_pt b1;
     unsigned int b1asize;
-    unsigned int asize, rsize;
+    unsigned int asize, rsize, expandable_size;
     unsigned int tag, tmp;
 
     tmp = NULL;
@@ -713,6 +715,15 @@ void * _heap_n_bestfit_resize_block(_heap_pt heap, void * ptr, unsigned int size
 
     asize = _tag_to_asize(tag, 0);
     rsize = b1->rsize;
+
+    r = heap_getexpandablesize((heap_pt) heap, &expandable_size);
+    ubi_assert(r == 0);
+
+    if (rsize + expandable_size < size)
+    {
+        b1 = NULL;
+        goto end0;
+    }
 
     switch(region->locktype) {
     case UBINOS__UBICLIB__HEAP_LOCK_TYPE__NONE:
