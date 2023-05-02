@@ -23,7 +23,7 @@ extern "C"
 #include <ubinos_config.h>
 #include <ubinos/type.h>
 
-#if !defined(__cplusplus) || (!defined(ARDUINO) && (INCLUDE__ARDUINOCORE_API != 1) && (INCLUDE__ARDUINOCORE_MBED != 1) && (INCLUDE__ARDUINOCORE_STM32 != 1))
+#if !defined(__cplusplus)
 
 #ifndef min
 #define min(a,b) \
@@ -38,7 +38,7 @@ extern "C"
      _a > _b ? _a : _b; })
 #endif
 
-#endif /* !defined(__cplusplus) || (!defined(ARDUINO) && (INCLUDE__ARDUINOCORE_API != 1) && (INCLUDE__ARDUINOCORE_MBED != 1) && (INCLUDE__ARDUINOCORE_STM32 != 1)) */
+#endif /* !defined(__cplusplus) */
 
 /*!
  * 부호 없는 정수 지수승 연산을 수행하는 함수
