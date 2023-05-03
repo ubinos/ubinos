@@ -254,7 +254,7 @@ extern "C" {
 
     #define BOUNDARY_SIZE                    INT_SIZE
 
-    typedef    struct __heap_block_t {
+    typedef struct __attribute__((packed, aligned(1))) __heap_block_t {
         unsigned int    boundary;
         unsigned int    tag;
         struct {
@@ -263,12 +263,18 @@ extern "C" {
             edlist_pt                list;
         }                heap_blocklist_link;
         unsigned int    rsize;
+#if (UBINOS__UBICLIB__HEAP_ALIGNMENT == INT_SIZE)
+#elif (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
+        unsigned int    reserved;
+#else
+    #error "Unspuuorted UBINOS__UBICLIB__HEAP_ALIGNMENT"
+#endif
     } _heap_block_t;
 
     typedef _heap_block_t * _heap_block_pt;
 
-    #define HEAP_BLOCK_HEADER_SIZE        (MEM_ALIGN(sizeof(_heap_block_t)))
-    #define HEAP_BLOCK_OVERHEAD            (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE + HEAP_TAG_SIZE + BOUNDARY_SIZE)
+    #define HEAP_BLOCK_HEADER_SIZE (sizeof(_heap_block_t))
+    #define HEAP_BLOCK_OVERHEAD (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE + HEAP_TAG_SIZE + BOUNDARY_SIZE)
 
     #define _set_header_boundary(block)                                                                                                                 \
         (*((unsigned int *) ((unsigned int) (block)))                                                        = HEAP_BOUNDARY_PATTERN)
@@ -320,20 +326,28 @@ extern "C" {
 
     #define BOUNDARY_SIZE                    0
 
-    typedef    struct __heap_block_t {
+    typedef struct __attribute__((packed, aligned(1))) __heap_block_t {
         unsigned int    tag;
         struct {
             struct __heap_block_t *    prev;
             struct __heap_block_t *    next;
             edlist_pt                list;
         }                heap_blocklist_link;
+#if (UBINOS__UBICLIB__HEAP_ALIGNMENT == INT_SIZE)
+#elif (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
+        unsigned int    reserved;
+        unsigned int    reserved;
+        unsigned int    reserved;
+#else
+    #error "Unspuuorted UBINOS__UBICLIB__HEAP_ALIGNMENT"
+#endif
         unsigned int    rsize;
     } _heap_block_t;
 
 
     typedef _heap_block_t * _heap_block_pt;
 
-    #define HEAP_BLOCK_HEADER_SIZE (MEM_ALIGN(sizeof(_heap_block_t)))
+    #define HEAP_BLOCK_HEADER_SIZE (sizeof(_heap_block_t))
     #define HEAP_BLOCK_OVERHEAD (HEAP_BLOCK_HEADER_SIZE + BOUNDARY_SIZE + HEAP_TAG_SIZE + BOUNDARY_SIZE)
 
     #define _set_header_boundary(block)
@@ -439,8 +453,13 @@ typedef struct __heap_t {
 
 typedef _heap_t * _heap_pt;
 
-
+#if (UBINOS__UBICLIB__HEAP_ALIGNMENT == INT_SIZE)
 #define    _size_to_asize(size, min)        (MEM_ALIGN(max(((size) + HEAP_BLOCK_OVERHEAD), min)))
+#elif (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
+#define    _size_to_asize(size, min)        (MEM_ALIGN_16(max(((size) + HEAP_BLOCK_OVERHEAD), min)))
+#else
+    #error "Unspuuorted UBINOS__UBICLIB__HEAP_ALIGNMENT"
+#endif
 
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_INTERMEDIATE_DATA_CHECK == 1)
     #define _kwt_check(k, w, t, log2m, m) {                                                                         \

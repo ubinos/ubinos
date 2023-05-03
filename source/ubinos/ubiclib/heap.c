@@ -2060,7 +2060,7 @@ int heap_printheapinfo(heap_pt _heap)
         for (i=0; i<region->fblcount; i++) {
             fbl = &region->fbl_ap[i];
             if (fbl->count != 0) {
-                printf("region 0 fbl %4d count: %4u\n", i, fbl->count);
+                printf("region %d fbl %4d count: %4u\n", dir, i, fbl->count);
                 bx = _heap_blocklist_head(fbl);
                 while(bx != NULL) {
                     _print_block(heap, region->dir, bx, log2m);

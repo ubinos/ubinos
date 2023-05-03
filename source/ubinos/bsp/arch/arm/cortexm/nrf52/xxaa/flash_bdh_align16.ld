@@ -1,4 +1,4 @@
-/* Linker script for Nordic Semiconductor nRF devices bootloader
+/* Linker script for Nordic Semiconductor nRF devices with 16 byte aligned bi-directional heap (bdh)
  *
  * Version: Sourcery G++ 4.5-1
  * Support: https://support.codesourcery.com/GNUToolchain/
@@ -22,11 +22,8 @@ MEMORY
 {
     FLASH (rx) : ORIGIN = <FLASH_ORIGIN>, LENGTH = <FLASH_LENGTH>
     FLASH2 (rx) : ORIGIN = <FLASH2_ORIGIN>, LENGTH = <FLASH2_LENGTH>
-    FLASH3 (rx) : ORIGIN = <FLASH3_ORIGIN>, LENGTH = <FLASH3_LENGTH>
     RAM (rwx) : ORIGIN = <RAM_ORIGIN>, LENGTH = <RAM_LENGTH>
     RAM2 (rwx) : ORIGIN = <RAM2_ORIGIN>, LENGTH = <RAM2_LENGTH>
-    uicr_bootloader_start_address (r) : ORIGIN = 0x10001014, LENGTH = 0x4
-    uicr_mbr_params_page (r) : ORIGIN = 0x10001018, LENGTH = 0x4
 }
 
 /* Linker script to place sections and symbol values. Should be used together
@@ -57,7 +54,7 @@ MEMORY
  *   __StackTopTemp
  *   __stack
  *
- *   for boot loader
+ *   for bi-directional heap
  *
  */
 
@@ -180,12 +177,6 @@ SECTIONS
         KEEP(*(SORT(.log_backends*)))
         PROVIDE(__stop_log_backends = .);
     } > FLASH
-    .dfu_trans :
-    {
-        PROVIDE(__start_dfu_trans = .);
-        KEEP(*(SORT(.dfu_trans*)))
-        PROVIDE(__stop_dfu_trans = .);
-    } > FLASH
 
     .ARM.extab :
     {
@@ -202,37 +193,10 @@ SECTIONS
     __text_end__ = .;
     __etext = .;
 
-    . = ALIGN(4);
-    .mbr_params_page(NOLOAD) :
+    UNINIT_FIXED_LOC (NOLOAD) :
     {
-        PROVIDE(__start_mbr_params_page = .);
-        KEEP(*(SORT(.mbr_params_page*)))
-        PROVIDE(__stop_mbr_params_page = .);
-    } > FLASH2
-
-    . = ALIGN(4);
-    .bootloader_settings_page(NOLOAD) :
-    {
-        PROVIDE(__start_bootloader_settings_page = .);
-        KEEP(*(SORT(.bootloader_settings_page*)))
-        PROVIDE(__stop_bootloader_settings_page = .);
-    } > FLASH3
-
-    . = ALIGN(4);
-    .uicr_bootloader_start_address(NOLOAD) :
-    {
-        PROVIDE(__start_uicr_bootloader_start_address = .);
-        KEEP(*(SORT(.uicr_bootloader_start_address*)))
-        PROVIDE(__stop_uicr_bootloader_start_address = .);
-    } > uicr_bootloader_start_address
-
-    . = ALIGN(4);
-    .uicr_mbr_params_page(NOLOAD) :
-    {
-        PROVIDE(__start_uicr_mbr_params_page = .);
-        KEEP(*(SORT(.uicr_mbr_params_page*)))
-        PROVIDE(__stop_uicr_mbr_params_page = .);
-    } > uicr_mbr_params_page
+        *(UNINIT_FIXED_LOC)
+    } >FLASH2
 }
 
 SECTIONS
@@ -328,18 +292,7 @@ SECTIONS
         KEEP(*(.stack*))
     }
 
-    .heap __bss_end__ (COPY):
-    {
-        . = ALIGN(4);
-        __HeapBase = .;
-        PROVIDE(__heap_base = .);
-        . = ORIGIN(RAM) + LENGTH(RAM) - SIZEOF(.stack_dummy);
-        . = ALIGN(4);
-        __HeapLimit = .;
-        PROVIDE(__heap_limit = .);
-    } > RAM
-
-    .stack __HeapLimit (COPY):
+    .stack __bss_end__ (COPY):
     {
         . = ALIGN(8);
         __StackLimit = .;
@@ -348,6 +301,17 @@ SECTIONS
         . = ALIGN(8);
         __StackTop = .;
         PROVIDE(__stack = .);
+    } > RAM
+
+    .heap __stack (COPY):
+    {
+        . = ALIGN(16);
+        __HeapBase = .;
+        PROVIDE(__heap_base = .);
+        . = ORIGIN(RAM) + LENGTH(RAM);
+        . = ALIGN(16);
+        __HeapLimit = .;
+        PROVIDE(__heap_limit = .);
     } > RAM
 
     /* Remove information from the standard libraries */
@@ -366,10 +330,7 @@ SECTIONS
     __StackTopTemp = ORIGIN(RAM) + LENGTH(RAM);
 
     __start_ot_flash_data = ORIGIN(FLASH2);
-    __stop_ot_flash_data = ORIGIN(FLASH3) + LENGTH(FLASH3);
-
-    /* Check if data + heap + stack exceeds limit */
-    ASSERT(__StackLimit >= __HeapLimit, "region overflowed with stack")
+    __stop_ot_flash_data = ORIGIN(FLASH2) + LENGTH(FLASH2);
 
     /* Check if text sections + data exceeds FLASH limit */
     DataInitFlashUsed = __bss_start__ - __data_start__;
@@ -386,9 +347,6 @@ SECTIONS
     __flash2_start__                = ORIGIN(FLASH2);
     __flash2_size__                 = LENGTH(FLASH2);
     __flash2_usage__                = LENGTH(FLASH2);
-    __flash3_start__                = ORIGIN(FLASH3);
-    __flash3_size__                 = LENGTH(FLASH3);
-    __flash3_usage__                = LENGTH(FLASH3);
     __ram2_start__                  = ORIGIN(RAM2);
     __ram2_size__                   = LENGTH(RAM2);
     __ram2_static_usage__           = 0;

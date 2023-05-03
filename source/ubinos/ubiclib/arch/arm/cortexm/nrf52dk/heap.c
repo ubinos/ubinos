@@ -80,11 +80,11 @@ uint8_t _mem_layout_region_on[MEM_LAYOUT_REGION_COUNT] = {
     0, // 21
 };
 
-#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)
+#if (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1))
 
 _heap_block_t _mem_layout_block_infos[UBINOS__UBICLIB__HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX];
 
-#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1) */
+#endif /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
 
 int _heap_power_off_unused_area(_heap_pt heap, unsigned int nomal_resign_end, unsigned int reverse_resign_addr) {
     int r = 0;
@@ -173,6 +173,7 @@ int _heap_print_power_infos(_heap_pt heap) {
 
 int _heap_save_block_infos(_heap_pt heap, int dir)
 {
+#if (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1))
     int r = 0;
 
     if (NULL == heap) {
@@ -225,10 +226,14 @@ int _heap_save_block_infos(_heap_pt heap, int dir)
     }
 
     return r;
+#else /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
+    return -1;
+#endif /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
 }
 
 int _heap_restore_block_infos(_heap_pt heap, int dir)
 {
+#if (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1))
     int r = 0;
 
     if (NULL == heap) {
@@ -285,6 +290,9 @@ int _heap_restore_block_infos(_heap_pt heap, int dir)
     }
 
     return r;
+#else /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
+    return -1;
+#endif /* (!(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM == 1) && !(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF == 1)) */
 }
 
 #endif /* (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DK) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__NRF52840DONGLE) || (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__ARDUINONANO33BLE) */

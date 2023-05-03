@@ -109,6 +109,10 @@ typedef __SIZE_TYPE__ size_t;
 /*! 메모리 정렬 매크로 */
 #define MEM_ALIGN(a) ((((unsigned int) (a)) + MEM_ALIGNMASK) & (~MEM_ALIGNMASK))
 
+#define MEM_ALIGNMASK_16 (16 - 1)
+
+#define MEM_ALIGN_16(a) ((((unsigned int) (a)) + MEM_ALIGNMASK_16) & (~MEM_ALIGNMASK_16))
+
 #elif (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__LOCAL)
 
 #ifndef NULL

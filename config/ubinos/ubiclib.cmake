@@ -59,6 +59,8 @@ set_cache_default(UBINOS__UBICLIB__HEAP_DIR1_FBLBM_BUFSIZE                      
 set_cache_default(UBINOS__UBICLIB__HEAP_DEFAULT_DIR                             0           STRING "Default Heap direction [0 | 1]")
 set_cache_default(UBINOS__UBICLIB__HEAP_DMPM_DIR_ON_OFF_BLOCK_COUNT_MAX         100         STRING "Maximum number of heap blocks for direction on/off of dynamic memory power management feature")
 
+set_cache_default(UBINOS__UBICLIB__HEAP_ALIGNMENT                               INT_SIZE    STRING "Heap alignment [INT_SIZE | 16]")
+
 ########
 
 

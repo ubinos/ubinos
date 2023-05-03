@@ -1,4 +1,4 @@
-/* Linker script for Nordic Semiconductor nRF devices
+/* Linker script for Nordic Semiconductor nRF devices with bi-directional heap (bdh)
  *
  * Version: Sourcery G++ 4.5-1
  * Support: https://support.codesourcery.com/GNUToolchain/
