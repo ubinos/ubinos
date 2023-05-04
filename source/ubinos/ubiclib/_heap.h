@@ -255,21 +255,25 @@ extern "C" {
     #define BOUNDARY_SIZE                    INT_SIZE
 
     typedef struct __attribute__((packed, aligned(1))) __heap_block_t {
-        unsigned int    boundary;
-        unsigned int    tag;
+        unsigned int    boundary;               // 4 (header boundary)
+        unsigned int    tag;                    // 8
         struct {
-            struct __heap_block_t *    prev;
-            struct __heap_block_t *    next;
-            edlist_pt                list;
+            struct __heap_block_t *    prev;    // 12
+            struct __heap_block_t *    next;    // 16
+            edlist_pt                list;      // 20
         }                heap_blocklist_link;
-        unsigned int    rsize;
+        unsigned int    rsize;                  // 24
 #if (UBINOS__UBICLIB__HEAP_ALIGNMENT == INT_SIZE)
 #elif (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
-        unsigned int    reserved;
+#if (INT_SIZE != 4)
+    #error "Unsupported UBINOS__UBICLIB__HEAP_ALIGNMENT and INT_SIZE"
+#endif
+        unsigned int    reserved;               // 28
 #else
     #error "Unspuuorted UBINOS__UBICLIB__HEAP_ALIGNMENT"
 #endif
     } _heap_block_t;
+                                                // 32 (top boundary)
 
     typedef _heap_block_t * _heap_block_pt;
 
@@ -327,21 +331,24 @@ extern "C" {
     #define BOUNDARY_SIZE                    0
 
     typedef struct __attribute__((packed, aligned(1))) __heap_block_t {
-        unsigned int    tag;
+        unsigned int    tag;                        // 4
         struct {
-            struct __heap_block_t *    prev;
-            struct __heap_block_t *    next;
-            edlist_pt                list;
+            struct __heap_block_t *    prev;        // 8
+            struct __heap_block_t *    next;        // 12
+            edlist_pt                list;          // 16
         }                heap_blocklist_link;
+        unsigned int    rsize;                      // 20
 #if (UBINOS__UBICLIB__HEAP_ALIGNMENT == INT_SIZE)
 #elif (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
-        unsigned int    reserved;
-        unsigned int    reserved;
-        unsigned int    reserved;
+#if (INT_SIZE != 4)
+    #error "Unsupported UBINOS__UBICLIB__HEAP_ALIGNMENT and INT_SIZE"
+#endif
+        unsigned int    reserved;                   // 24
+        unsigned int    reserved2;                  // 28
+        unsigned int    reserved3;                  // 32
 #else
     #error "Unspuuorted UBINOS__UBICLIB__HEAP_ALIGNMENT"
 #endif
-        unsigned int    rsize;
     } _heap_block_t;
 
 
