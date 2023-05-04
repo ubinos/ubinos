@@ -30,6 +30,7 @@ set_cache_default(UBINOS__UBICLIB__EXCLUDE_MATH_EXT                             
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP                                 TRUE    BOOL "Exclude heap functions")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK                  FALSE   BOOL "Exclude heap boundary check feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_INTERMEDIATE_DATA_CHECK         FALSE   BOOL "Exclude heap intermediate data check feature")
+set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG                            TRUE    BOOL "Exclude heap flag feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM                            TRUE    BOOL "Exclude dynamic memory power management feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_DIR_ON_OFF                 TRUE    BOOL "Exclude direction on/off of dynamic memory power management feature")
 set_cache_default(UBINOS__UBICLIB__EXCLUDE_HEAP_DMPM_MEMORY_READY_CHECK         TRUE    BOOL "Exclude memory ready check of dynamic memory power management feature")

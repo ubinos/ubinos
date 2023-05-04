@@ -231,7 +231,7 @@ size_t _malloc_usable_size_r(struct _reent * reent_ptr, void * ptr)
     {
         ubiclib_heap_comp_init();
     }
-    heap_getblocksize(NULL, ptr, &size);
+    heap_getblock_usable_size(NULL, ptr, &size);
 
     return size;
 }

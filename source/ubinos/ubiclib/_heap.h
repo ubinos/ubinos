@@ -250,6 +250,16 @@ extern "C" {
     (((unsigned int) (asize) >> HEAP_L_BLOCK_ASIZE_OFFSET  ) & HEAP_L_TAG_ASIZE_MASK  )    )
 
 
+#if (UBINOS__UBICLIB__HEAP_ALIGNMENT == INT_SIZE)
+
+#elif (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
+    #if !(INT_SIZE == 4)
+        #error "Unsupported UBINOS__UBICLIB__HEAP_ALIGNMENT and INT_SIZE"
+    #endif /* !(INT_SIZE == 4) */
+#else
+    #error "Unspuuorted UBINOS__UBICLIB__HEAP_ALIGNMENT"
+#endif /* (UBINOS__UBICLIB__HEAP_ALIGNMENT == ...) */
+
 #if !(UBINOS__UBICLIB__EXCLUDE_HEAP_BOUNDARY_CHECK == 1)
 
     #define BOUNDARY_SIZE                    INT_SIZE
@@ -263,15 +273,15 @@ extern "C" {
             edlist_pt                list;      // 20
         }                heap_blocklist_link;
         unsigned int    rsize;                  // 24
-#if (UBINOS__UBICLIB__HEAP_ALIGNMENT == INT_SIZE)
-#elif (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
-#if (INT_SIZE != 4)
-    #error "Unsupported UBINOS__UBICLIB__HEAP_ALIGNMENT and INT_SIZE"
-#endif
-        unsigned int    reserved;               // 28
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1)
+        unsigned int    flags;                  // 28
+    #if (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
+    #endif
 #else
-    #error "Unspuuorted UBINOS__UBICLIB__HEAP_ALIGNMENT"
-#endif
+    #if (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
+        unsigned int    reserved1;              // 28
+    #endif
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1) */
     } _heap_block_t;
                                                 // 32 (top boundary)
 
@@ -331,24 +341,26 @@ extern "C" {
     #define BOUNDARY_SIZE                    0
 
     typedef struct __attribute__((packed, aligned(1))) __heap_block_t {
-        unsigned int    tag;                        // 4
+        unsigned int    tag;                    // 4
         struct {
-            struct __heap_block_t *    prev;        // 8
-            struct __heap_block_t *    next;        // 12
-            edlist_pt                list;          // 16
+            struct __heap_block_t *    prev;    // 8
+            struct __heap_block_t *    next;    // 12
+            edlist_pt                list;      // 16
         }                heap_blocklist_link;
-        unsigned int    rsize;                      // 20
-#if (UBINOS__UBICLIB__HEAP_ALIGNMENT == INT_SIZE)
-#elif (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
-#if (INT_SIZE != 4)
-    #error "Unsupported UBINOS__UBICLIB__HEAP_ALIGNMENT and INT_SIZE"
-#endif
-        unsigned int    reserved;                   // 24
-        unsigned int    reserved2;                  // 28
-        unsigned int    reserved3;                  // 32
+        unsigned int    rsize;                  // 20
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1)
+        unsigned int    flags;                  // 24
+    #if (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
+        unsigned int    reserved1;              // 28
+        unsigned int    reserved2;              // 32
+    #endif
 #else
-    #error "Unspuuorted UBINOS__UBICLIB__HEAP_ALIGNMENT"
-#endif
+    #if (UBINOS__UBICLIB__HEAP_ALIGNMENT == 16)
+        unsigned int    reserved1;              // 24
+        unsigned int    reserved2;              // 28
+        unsigned int    reserved3;              // 32
+    #endif
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1) */
     } _heap_block_t;
 
 
@@ -762,12 +774,20 @@ extern _heap_pt _ubiclib_heap;
             _tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,                                                                                                      \
             _tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),                                                                             \
             ix                                                                                                        )
-
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1)
+#define heap_logmfd_block(heap, dir, block, log2m)                                                                                                                                          \
+    heap_logmfd("0x%08x:         : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, flags 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u",                                   \
+            bsp_task_getcur(), heap, dir, block, (((unsigned int) block - (unsigned int) heap->region[dir].addr)) , _block_pt_to_end_ptr(block, log2m), _tag_to_asize(block->tag, log2m),   \
+            block->flags,                                                                                                                                                                   \
+            _tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,                                                                                                      \
+            _tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag)    )
+#else
 #define heap_logmfd_block(heap, dir, block, log2m)                                                                                                                                          \
     heap_logmfd("0x%08x:         : heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u",                                                 \
             bsp_task_getcur(), heap, dir, block, (((unsigned int) block - (unsigned int) heap->region[dir].addr)) , _block_pt_to_end_ptr(block, log2m), _tag_to_asize(block->tag, log2m),   \
             _tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag) & 0x3,                                                                                                      \
             _tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag)    )
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1) */
 
 #endif
 

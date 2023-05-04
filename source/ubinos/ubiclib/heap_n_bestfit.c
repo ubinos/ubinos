@@ -548,6 +548,9 @@ void * _heap_n_bestfit_allocate_block(_heap_pt heap, unsigned int size)
             bsp_abortsystem();
         }
 
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1)
+        b1->flags = 0;
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1) */
         _heap_blocklist_insertprev(&region->abl, NULL, b1);
 
         if (region->acount_max < region->abl.count) {
@@ -651,6 +654,9 @@ int _heap_n_bestfit_release_block(_heap_pt heap, void * ptr)
     }
 
     _heap_blocklist_remove(b1);
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1)
+    b1->flags = 0;
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1) */
 
     _tag_set_a(tag, 1);
     _block_set_tag(b1, tag, 0);

@@ -1133,6 +1133,122 @@ int heap_get_block_overhead(heap_pt _heap)
     return HEAP_BLOCK_OVERHEAD;
 }
 
+int heap_set_flag(heap_pt _heap, void * ptr, int flag_no, int flag)
+{
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1)
+    _heap_pt heap = NULL;
+    _heap_block_pt bx = NULL;
+    int r;
+
+    if (NULL == _heap)
+    {
+        heap = _ubiclib_heap;
+    }
+    else
+    {
+        heap = (_heap_pt) _heap;
+    }
+
+    r = -1;
+    do
+    {
+        if (NULL == heap) {
+            logme("heap is NULL");
+            break;
+        }
+
+        if (NULL == ptr) {
+            logme("ptr is NULL");
+            break;
+        }
+
+        if (INT_SIZE * 8 <= flag_no) {
+            logme("flag_no is wrong");
+            break;
+        }
+
+        if (0 != flag && 1 != flag) {
+            logme("flag is wrong");
+            break;
+        }
+
+        bx = _ptr_to_block_pt(ptr);
+
+        if (NULL == bx) {
+            break;
+        }
+        else {
+            if (flag == 0)
+            {
+                bx->flags &= ~(((unsigned int) 0x1) << flag_no);
+            }
+            else
+            {
+                bx->flags |=  (((unsigned int) 0x1) << flag_no);
+            }
+            r = 0;
+        }
+
+        break;
+    } while (1);
+
+    return r;
+#else
+    return -1;
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1) */
+}
+
+int heap_get_flag(heap_pt _heap, void * ptr, int flag_no)
+{
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1)
+    _heap_pt heap = NULL;
+    _heap_block_pt bx = NULL;
+    int r;
+
+    if (NULL == _heap)
+    {
+        heap = _ubiclib_heap;
+    }
+    else
+    {
+        heap = (_heap_pt) _heap;
+    }
+
+    r = -1;
+    do
+    {
+        if (NULL == heap) {
+            logme("heap is NULL");
+            break;
+        }
+
+        if (NULL == ptr) {
+            logme("ptr is NULL");
+            break;
+        }
+
+        if (INT_SIZE * 8 <= flag_no) {
+            logme("flag_no is wrong");
+            break;
+        }
+
+        bx = _ptr_to_block_pt(ptr);
+
+        if (NULL == bx) {
+            break;
+        }
+        else {
+            r = (bx->flags >> flag_no) & ((unsigned int) 0x1);
+        }
+
+        break;
+    } while (1);
+
+    return r;
+#else
+    return -1;
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_FLAG == 1) */
+}
 
 void * heap_get_first_allocated_block(heap_pt _heap, int dir)
 {
@@ -1171,7 +1287,52 @@ void * heap_get_first_allocated_block(heap_pt _heap, int dir)
             break;
         }
         else {
-            heap_logmfd_block(heap, dir, bx, 0);
+            tmp = (unsigned int) _block_pt_to_ptr(bx);
+        }
+
+        break;
+    } while (1);
+
+    return (void *) tmp;
+}
+
+void * heap_get_last_allocated_block(heap_pt _heap, int dir)
+{
+    _heap_pt heap = NULL;
+    _heap_region_pt region;
+    _heap_block_pt bx = NULL;
+    unsigned int tmp;
+
+    if (NULL == _heap)
+    {
+        heap = _ubiclib_heap;
+    }
+    else
+    {
+        heap = (_heap_pt) _heap;
+    }
+
+    tmp = 0;
+    do
+    {
+        if (NULL == heap) {
+            logme("heap is NULL");
+            break;
+        }
+
+        if (0 != dir && 1 != dir) {
+            logme("dir is wrong");
+            break;
+        }
+
+        region = &heap->region[dir];
+
+        bx = _heap_blocklist_tail(&(region->abl));
+
+        if (NULL == bx) {
+            break;
+        }
+        else {
             tmp = (unsigned int) _block_pt_to_ptr(bx);
         }
 
@@ -1216,7 +1377,50 @@ void * heap_get_next_allocated_block(heap_pt _heap, void * ptr)
             break;
         }
         else {
-            heap_logmfd_block(heap, _tag_to_d(bx->tag), bx, 0);
+            tmp = (unsigned int) _block_pt_to_ptr(bx);
+        }
+
+        break;
+    } while (1);
+
+    return (void *) tmp;
+}
+
+void * heap_get_prev_allocated_block(heap_pt _heap, void * ptr)
+{
+    _heap_pt heap = NULL;
+    _heap_block_pt bx = NULL;
+    unsigned int tmp;
+
+    if (NULL == _heap)
+    {
+        heap = _ubiclib_heap;
+    }
+    else
+    {
+        heap = (_heap_pt) _heap;
+    }
+
+    tmp = 0;
+    do
+    {
+        if (NULL == heap) {
+            logme("heap is NULL");
+            break;
+        }
+
+        if (NULL == ptr) {
+            logme("ptr is NULL");
+            break;
+        }
+
+        bx = _ptr_to_block_pt(ptr);
+        bx = _heap_blocklist_prev(bx);
+
+        if (NULL == bx) {
+            break;
+        }
+        else {
             tmp = (unsigned int) _block_pt_to_ptr(bx);
         }
 
@@ -1227,6 +1431,37 @@ void * heap_get_next_allocated_block(heap_pt _heap, void * ptr)
 }
 
 int heap_getblocksize(heap_pt _heap, void * ptr, unsigned int * size_p)
+{
+    _heap_pt heap = (_heap_pt) _heap;
+
+    _heap_block_pt block;
+    unsigned int log2m;
+
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+
+    if (NULL == ptr) {
+        logme("ptr is NULL");
+        return -2;
+    }
+
+    if (NULL == size_p) {
+        logme("size_p is NULL");
+        return -3;
+    }
+
+    block = _ptr_to_block_pt(ptr);
+    log2m = heap->region[_tag_to_d(block->tag)].log2m;
+
+    _block_check_boundary_and_abort(block, log2m);
+
+    *size_p = block->rsize;
+
+    return 0;
+}
+
+int heap_getblock_usable_size(heap_pt _heap, void * ptr, unsigned int * size_p)
 {
     _heap_pt heap = (_heap_pt) _heap;
 

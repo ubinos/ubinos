@@ -32,6 +32,14 @@ extern "C"
 /*! 지원하지 않는 기능임 */
 #define	HEAP_ERR__UNSUPPORTED			-24
 
+
+/*! TensorFlow Lite persistent buffer */
+#define	HEAP_FLAG_NO__TFL_PERSISTENT	0
+/*! TensorFlow Lite temp buffer */
+#define	HEAP_FLAG_NO__TFL_TEMP			1
+/*! TensorFlow Lite resizable buffer */
+#define	HEAP_FLAG_NO__TFL_RESIZABLE		2
+
 /*! API용 힙 구조체 정의 */
 typedef struct __heap_tip_t
 {
@@ -310,32 +318,94 @@ void * heap_get_end(heap_pt heap);
 int heap_get_block_overhead(heap_pt heap);
 
 /*!
- * 첫 번째 할당된 블록 주소를 돌려주는 함수<br>
- *
- * @param	heap				대상 힙<br>
- * 								NULL이면 기본 힙<br>
- *
- * @param	dir					힙 성장 방향<br>
- *
- * @return	첫 번째 할당된 메모리 블록의 주소<br>
- * 			<br>
- * 			NULL: 오류<br>
- */
-void * heap_get_first_allocated_block(heap_pt heap, int dir);
-
-/*!
- * 대상 믈록 다음의 할당된 블록 주소를 돌려주는 함수<br>
+ * 대상 블록의 flag 정보를 설정하는 함수<br>
  *
  * @param	heap				대상 힙<br>
  * 								NULL이면 기본 힙<br>
  *
  * @param	ptr					대상 메모리 블록의 주소<br>
  *
- * @return	대상 믈록 다음의 할당된 메모리 블록의 주소<br>
+ * @param	flag_no				flag 번호<br>
+ *
+ * @param	flag				flag 값 [0 | 1]<br>
+ *
+ * @return	0: 성공<br>
+ * 			<br>
+ * 			-1: 오류<br>
+ */
+int heap_set_flag(heap_pt heap, void * ptr, int flag_no, int flag);
+
+/*!
+ * 대상 블록의 flag 정보를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	ptr					대상 메모리 블록의 주소<br>
+ *
+ * @param	flag_no				flag 번호<br>
+ *
+ * @return	0, 1: 대상 블록의 flag 정보<br>
+ * 			<br>
+ * 			-1: 오류<br>
+ */
+int heap_get_flag(heap_pt heap, void * ptr, int flag_no);
+
+/*!
+ * 할당된 첫 번째 메모리 블록 주소를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	dir					힙 성장 방향<br>
+ *
+ * @return	할당된 첫 번째 메모리 블록의 주소<br>
+ * 			<br>
+ * 			NULL: 오류<br>
+ */
+void * heap_get_first_allocated_block(heap_pt heap, int dir);
+
+/*!
+ * 할당된 마지막 메모리 블록 주소를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	dir					힙 성장 방향<br>
+ *
+ * @return	할당된 마지막 메모리 블록의 주소<br>
+ * 			<br>
+ * 			NULL: 오류<br>
+ */
+void * heap_get_last_allocated_block(heap_pt heap, int dir);
+
+/*!
+ * 대상 메모리 블록 다음 할당된 메모리 블록 주소를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	ptr					대상 메모리 블록의 주소<br>
+ *
+ * @return	대상 블록 다음 할당된 메모리 블록의 주소<br>
  * 			<br>
  * 			NULL: 오류<br>
  */
 void * heap_get_next_allocated_block(heap_pt heap, void * ptr);
+
+/*!
+ * 대상 메모리 블록 이전 할당된 메모리 블록 주소를 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	ptr					대상 메모리 블록의 주소<br>
+ *
+ * @return	대상 블록 이전 할당된 메모리 블록의 주소<br>
+ * 			<br>
+ * 			NULL: 오류<br>
+ */
+void * heap_get_prev_allocated_block(heap_pt heap, void * ptr);
 
 /*!
  * 메모리 블록의 크기를 돌려주는 함수<br>
@@ -353,6 +423,23 @@ void * heap_get_next_allocated_block(heap_pt heap, void * ptr);
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
 int heap_getblocksize(heap_pt heap, void * ptr, unsigned int * size_p);
+
+/*!
+ * 메모리 블록의 사용 가능한 할당된 실제 크기 돌려주는 함수<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	ptr					대상 메모리 블록의 주소<br>
+ *
+ * @param	size_p				사용 가능한 할당된 실제 크기를 저장할 변수의 주소<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ */
+int heap_getblock_usable_size(heap_pt heap, void * ptr, unsigned int * size_p);
 
 /*!
  * 힙의 크기를 돌려주는 함수<br>
