@@ -260,7 +260,7 @@ _heap_block_pt _heap_r_bestfit_combine_block(_heap_pt heap, _heap_block_pt block
         tag = b1->tag;
         asize = _tag_to_asize(tag, 0);
 
-        if (end != (unsigned int) _block_pt_to_end_prt(b1, 0)) {
+        if (end != (unsigned int) _block_pt_to_end_ptr(b1, 0)) {
             b2 = _block_pt_to_lower_block_pt(b1, 0);
             tag = b2->tag;
 
@@ -706,7 +706,7 @@ void * _heap_r_bestfit_resize_block(_heap_pt heap, void * ptr, unsigned int size
 
     region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    if ((unsigned int) b1 != region->addr || (unsigned int) _block_pt_to_end_prt(b1, region->log2m) != region->end)
+    if ((unsigned int) b1 != region->addr || (unsigned int) _block_pt_to_end_ptr(b1, region->log2m) != region->end)
     {
         b1 = NULL;
         goto end0;

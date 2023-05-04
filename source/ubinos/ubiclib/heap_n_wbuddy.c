@@ -396,7 +396,7 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
                 flag = 1;
             }
         }
-        else if (HEAP_GTYPE_W1 == b1g && 1 == b1b && end != (unsigned int) _block_pt_to_end_prt(b1, 1)) {
+        else if (HEAP_GTYPE_W1 == b1g && 1 == b1b && end != (unsigned int) _block_pt_to_end_ptr(b1, 1)) {
             b2 = _block_pt_to_lower_block_pt(b1, 1);
             tag = b2->tag;
             _wbuddy_tag_to_kw(tag, b2k, b2b);
@@ -433,7 +433,7 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
                     flag = 1;
                 }
             }
-            else if (HEAP_GTYPE_W1 == b2g && 1 == b2b && b1k == b2k + 1 && end != (unsigned int) _block_pt_to_end_prt(b2, 1)) {
+            else if (HEAP_GTYPE_W1 == b2g && 1 == b2b && b1k == b2k + 1 && end != (unsigned int) _block_pt_to_end_ptr(b2, 1)) {
                 b3 = _block_pt_to_lower_block_pt(b2, 1);
                 tag = b3->tag;
                 _wbuddy_tag_to_kw(tag, b3k, b3b);
@@ -462,7 +462,7 @@ _heap_block_pt _heap_n_wbuddy_combine_block(_heap_pt heap, _heap_block_pt block,
                 }
             }
         }
-        else if (HEAP_GTYPE_W3 == b1g && 3 == b1b && end != (unsigned int) _block_pt_to_end_prt(b1, 1)) {
+        else if (HEAP_GTYPE_W3 == b1g && 3 == b1b && end != (unsigned int) _block_pt_to_end_ptr(b1, 1)) {
             b2 = _block_pt_to_lower_block_pt(b1, 1);
             tag = b2->tag;
             _wbuddy_tag_to_kw(tag, b2k, b2b);

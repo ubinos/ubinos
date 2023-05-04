@@ -476,7 +476,7 @@ _heap_block_pt _heap_n_pgroup_combine_block(_heap_pt heap, _heap_block_pt block,
             }
         }
 
-        if (1 == endflag || region->end == (unsigned int) _block_pt_to_end_prt(b1, log2m)) {
+        if (1 == endflag || region->end == (unsigned int) _block_pt_to_end_ptr(b1, log2m)) {
             break;
         }
 

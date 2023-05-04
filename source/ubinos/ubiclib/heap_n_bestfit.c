@@ -282,7 +282,7 @@ _heap_block_pt _heap_n_bestfit_combine_block(_heap_pt heap, _heap_block_pt block
             }
         }
 
-        if (1 == endflag || region->end == (unsigned int) _block_pt_to_end_prt(b1, 0)) {
+        if (1 == endflag || region->end == (unsigned int) _block_pt_to_end_ptr(b1, 0)) {
             break;
         }
 
@@ -701,7 +701,7 @@ void * _heap_n_bestfit_resize_block(_heap_pt heap, void * ptr, unsigned int size
 
     region = &heap->region[_UBINOS__UBICLIB__HEAP_DIR];
 
-    if ((unsigned int) b1 != region->addr || (unsigned int) _block_pt_to_end_prt(b1, region->log2m) != region->end)
+    if ((unsigned int) b1 != region->addr || (unsigned int) _block_pt_to_end_ptr(b1, region->log2m) != region->end)
     {
         b1 = NULL;
         goto end0;

@@ -2005,14 +2005,14 @@ int heap_printheapinfo(heap_pt _heap)
         /////////////////////
     #define _print_block(heap, dir, block, log2m)                                                                                                                                                           \
         printf( "heap 0x%08x, dir %d, block 0x%08x (0x%08x, 0x%08x), asize 0x%08x, %d %d %d, k %4u, b %4u, l %4u, r %4u, <%4u>, (0x%08x, 0x%08x, 0x%08x, 0x%08x)\n",                                        \
-                (unsigned int) heap, dir, (unsigned int) block, (unsigned int)_block_pt_to_ptr(block), (unsigned int)_block_pt_to_end_prt(block, log2m), (unsigned int)_tag_to_asize(block->tag, log2m),    \
+                (unsigned int) heap, dir, (unsigned int) block, (unsigned int)_block_pt_to_ptr(block), (unsigned int)_block_pt_to_end_ptr(block, log2m), (unsigned int)_tag_to_asize(block->tag, log2m),    \
                 _tag_to_a(block->tag), _tag_to_d(block->tag), _tag_to_g(block->tag)&0x3,                                                                                                                    \
                 _tag_to_g_k(block->tag), _tag_to_g_b(block->tag), _tag_to_g_l(block->tag), _tag_to_g_r(block->tag),                                                                                         \
                 (((unsigned int) _block_pt_to_ptr(block) - (unsigned int) heap->region[0].addr) >> _tag_to_g_k(block->tag)) & 0x3,                                                                          \
                  (unsigned int) (block)                            - (unsigned int) heap->region[0].addr,                                                                                                   \
-                 (unsigned int) _block_pt_to_end_prt(block, log2m) - (unsigned int) heap->region[0].addr,                                                                                                   \
+                 (unsigned int) _block_pt_to_end_ptr(block, log2m) - (unsigned int) heap->region[0].addr,                                                                                                   \
                 ((unsigned int) (block)                            - (unsigned int) heap->region[0].addr) % (0x1 << (_tag_to_g_k(block->tag) + 2)),                                                         \
-                ((unsigned int) _block_pt_to_end_prt(block, log2m) - (unsigned int) heap->region[0].addr) % (0x1 << (_tag_to_g_k(block->tag) + 2))                                                          \
+                ((unsigned int) _block_pt_to_end_ptr(block, log2m) - (unsigned int) heap->region[0].addr) % (0x1 << (_tag_to_g_k(block->tag) + 2))                                                          \
         )
 
     for (int dir = 0; dir < 2; dir++) {
