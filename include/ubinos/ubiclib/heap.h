@@ -306,6 +306,18 @@ void * heap_get_addr(heap_pt heap);
 void * heap_get_end(heap_pt heap);
 
 /*!
+ * 메모리 블록의 실제 크기 최소값 돌려주는 함수 (해드 등의 오버해드 포함)<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @return	메모리 블록의 실제 크기 최소값<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ */
+int heap_get_block_allocated_size_min(heap_pt heap);
+
+/*!
  * 힙 블록 오버헤드 크기를 돌려주는 함수<br>
  *
  * @param	heap				대상 힙<br>

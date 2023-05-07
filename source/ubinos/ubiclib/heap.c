@@ -1107,6 +1107,33 @@ void * heap_get_end(heap_pt _heap)
     return (void *) heap->end;
 }
 
+
+int heap_get_block_allocated_size_min(heap_pt _heap)
+{
+    _heap_pt heap = (_heap_pt) _heap;
+
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+
+    if (NULL == heap) {
+        logme("heap is NULL");
+        return -1;
+    }
+
+    if (OBJTYPE__UBICLIB_HEAP != heap->type) {
+        logme("heap type is not OBJTYPE__UBICLIB_HEAP");
+        return -1;
+    }
+
+    if (1 != heap->valid) {
+        logme("heap is not valid");
+        return -1;
+    }
+
+    return HEAP_BLOCK_ASIZE_MIN;
+}
+
 int heap_get_block_overhead(heap_pt _heap)
 {
     _heap_pt heap = (_heap_pt) _heap;
@@ -1522,7 +1549,6 @@ int heap_getblock_allocated_size(heap_pt _heap, void * ptr, unsigned int * size_
 
     return 0;
 }
-
 
 int heap_getsize(heap_pt _heap, unsigned int * size_p)
 {
