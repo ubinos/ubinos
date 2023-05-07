@@ -1492,6 +1492,38 @@ int heap_getblock_usable_size(heap_pt _heap, void * ptr, unsigned int * size_p)
     return 0;
 }
 
+int heap_getblock_allocated_size(heap_pt _heap, void * ptr, unsigned int * size_p)
+{
+    _heap_pt heap = (_heap_pt) _heap;
+
+    _heap_block_pt block;
+    unsigned int log2m;
+
+    if (NULL == heap) {
+        heap = _ubiclib_heap;
+    }
+
+    if (NULL == ptr) {
+        logme("ptr is NULL");
+        return -2;
+    }
+
+    if (NULL == size_p) {
+        logme("size_p is NULL");
+        return -3;
+    }
+
+    block = _ptr_to_block_pt(ptr);
+    log2m = heap->region[_tag_to_d(block->tag)].log2m;
+
+    _block_check_boundary_and_abort(block, log2m);
+
+    *size_p = _tag_to_asize(block->tag, log2m);
+
+    return 0;
+}
+
+
 int heap_getsize(heap_pt _heap, unsigned int * size_p)
 {
     _heap_pt heap = (_heap_pt) _heap;

@@ -408,7 +408,7 @@ void * heap_get_next_allocated_block(heap_pt heap, void * ptr);
 void * heap_get_prev_allocated_block(heap_pt heap, void * ptr);
 
 /*!
- * 메모리 블록의 크기를 돌려주는 함수<br>
+ * 메모리 블록의 크기를 돌려주는 함수 (할당 시 요청한 크기)<br>
  *
  * @param	heap				대상 힙<br>
  * 								NULL이면 기본 힙<br>
@@ -425,14 +425,14 @@ void * heap_get_prev_allocated_block(heap_pt heap, void * ptr);
 int heap_getblocksize(heap_pt heap, void * ptr, unsigned int * size_p);
 
 /*!
- * 메모리 블록의 사용 가능한 할당된 실제 크기 돌려주는 함수<br>
+ * 메모리 블록의 사용 가능한 크기 돌려주는 함수 (할당 시 요청한 크기 보다 크거나 같음)<br>
  *
  * @param	heap				대상 힙<br>
  * 								NULL이면 기본 힙<br>
  *
  * @param	ptr					대상 메모리 블록의 주소<br>
  *
- * @param	size_p				사용 가능한 할당된 실제 크기를 저장할 변수의 주소<br>
+ * @param	size_p				사용 가능한 크기를 저장할 변수의 주소<br>
  *
  * @return	  0: 성공<br>
  * 			<br>
@@ -440,6 +440,23 @@ int heap_getblocksize(heap_pt heap, void * ptr, unsigned int * size_p);
  * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
  */
 int heap_getblock_usable_size(heap_pt heap, void * ptr, unsigned int * size_p);
+
+/*!
+ * 메모리 블록의 실제 크기 돌려주는 함수 (해드 등의 오버해드 포함)<br>
+ *
+ * @param	heap				대상 힙<br>
+ * 								NULL이면 기본 힙<br>
+ *
+ * @param	ptr					대상 메모리 블록의 주소<br>
+ *
+ * @param	size_p				실제 크기를 저장할 변수의 주소<br>
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ * 			 -n: n-1 번째 매개변수가 잘못되었음<br>
+ */
+int heap_getblock_allocated_size(heap_pt heap, void * ptr, unsigned int * size_p);
 
 /*!
  * 힙의 크기를 돌려주는 함수<br>
