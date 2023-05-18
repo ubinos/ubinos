@@ -29,7 +29,7 @@
 #define USARTx_RX_GPIO_CLK_ENABLE()   LL_APB2_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOA)
 #define USARTx_RX_PIN                 LL_GPIO_PIN_3
 #define USARTx_RX_GPIO_PORT           GPIOA
-#define USARTx_SET_RX_GPIO_AF() 
+#define USARTx_SET_RX_GPIO_AF()
 
 #define APB_Div 2
 
@@ -317,6 +317,11 @@ int dtty_kbhit(void)
 }
 
 int dtty_flush(void)
+{
+    return 0;
+}
+
+int dtty_isr_write_process(void)
 {
     return 0;
 }

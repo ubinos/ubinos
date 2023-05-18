@@ -132,7 +132,7 @@ int dtty_kbhit(void);
  * 디버깅 터미널에 문자열을 출력하는 함수
  *
  * "\0" 이전까지 또는 출력할 문자열의 최대 크기까지 출력한다.
- * 
+ *
  * @param	str		출력할 문자열
  *
  * @param	max		출력할 문자열의 최대 크기
@@ -204,6 +204,17 @@ int dtty_setautocr(int autocr);
  *            1: auto carriage return on<br>
  */
 int dtty_getautocr();
+
+/*!
+ * ISR내에서 또는 critical section 내에서 수행한 디버깅 터미널 출력을 처리하는 함수
+ *
+ * 이 함수는 UBINOS__UBIK__EXCLUDE_IDLETASK_DTTY_ISR_WRITE 가 FALSE 일 경우 idle task 에서 자동 호출된다.
+ *
+ * @return	  0: 성공<br>
+ * 			<br>
+ * 			 -1: 오류<br>
+ */
+int dtty_isr_write_process(void);
 
 #ifdef	__cplusplus
 }

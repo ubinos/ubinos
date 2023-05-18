@@ -1608,6 +1608,10 @@ void _task_idlefunc(void * arg) {
 		}
 #endif
 
+#if !(UBINOS__UBIK__EXCLUDE_IDLETASK_DTTY_ISR_WRITE == 1)
+		dtty_isr_write_process();
+#endif /* !(UBINOS__UBIK__EXCLUDE_IDLETASK_DTTY_ISR_WRITE == 1) */
+
 #if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
 #if (UBINOS__UBIK__TICK_RTC_SLEEP_IDLE == 1)
 		_ubik_idle_cpu_sleep();
