@@ -65,6 +65,15 @@ void bsp_abortsystem(void) {
 #endif
 }
 
+void bsp_resetsystem(void) {
+    AT91C_BASE_RSTC->RSTC_RCR = AT91C_RSTC_KEY |
+                                AT91C_RSTC_PERRST |
+                                AT91C_RSTC_EXTRST |
+                                AT91C_RSTC_PROCRST;
+
+    while (AT91C_BASE_RSTC->RSTC_RSR & AT91C_RSTC_SRCMP);
+}
+
 void bsp_enableintr(void) {
     ARM_INTERRUPT_ENABLE();
 }

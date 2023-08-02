@@ -70,6 +70,10 @@ void bsp_abortsystem(void) {
 #endif
 }
 
+void bsp_resetsystem(void) {
+    NVIC_SystemReset();
+}
+
 void bsp_enableintr(void) {
     ARM_INTERRUPT_ENABLE();
 }

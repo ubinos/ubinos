@@ -149,6 +149,11 @@ void bsp_disableintr(void);
 void bsp_abortsystem(void);
 
 /*!
+ * 시스템을 리셋시키는 함수
+ */
+void bsp_resetsystem(void);
+
+/*!
  * 스택 영역 크기를 돌려주는 함수
  *
  * @param	type	스택 영역 종류<br>

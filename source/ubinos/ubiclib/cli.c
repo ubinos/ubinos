@@ -39,6 +39,7 @@ cli_helphookfunc_ft _cli_helphookfunc = NULL;
 static int cli_rootfunc(char *str, int len, void *arg);
 
 static int cli_cmdfunc__help(char *str, int len, void *arg);
+static int cli_cmdfunc__reset(char *str, int len, void *arg);
 static int cli_cmdfunc__set(char *str, int len, void *arg);
 static int cli_cmdfunc__show(char *str, int len, void *arg);
 
@@ -157,6 +158,16 @@ static int cli_rootfunc(char *str, int len, void *arg)
     tmplen = len;
 
     do {
+        cmd = "reset";
+        cmdlen = strlen(cmd);
+        if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
+            printf("\n");
+            r = cli_cmdfunc__reset(tmpstr, tmplen, arg);
+
+            r = 0;
+            break;
+        }
+
         cmd = "set ";
         cmdlen = strlen(cmd);
         if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0) {
@@ -259,6 +270,8 @@ static int cli_cmdfunc__help(char *str, int len, void *arg)
 {
     printf("\n");
     printf("h                                       : help\n");
+    printf("\n");
+    printf("reset                                   : reset system\n");
 #if (UBINOS__UBICLIB__USE_MALLOC_RETARGETING == 1)
     printf("\n");
     printf("mi                                      : memory information\n");
@@ -305,6 +318,13 @@ static int cli_cmdfunc__help(char *str, int len, void *arg)
     printf("date [MMDDhhmm[YYYY][.ss]]              : print or set the system date and time\n");
 #endif
     printf("\n");
+    return 0;
+}
+
+static int cli_cmdfunc__reset(char *str, int len, void *arg)
+{
+    bsp_resetsystem();
+
     return 0;
 }
 
