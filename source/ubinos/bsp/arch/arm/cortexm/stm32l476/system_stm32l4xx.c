@@ -355,10 +355,6 @@ __WEAK void SystemInit2(void)
 	LL_FLASH_DisableDataCache();
 #endif /* (UBINOS__BSP__USE_DCACHE == 1) */
 
-	SystemClock_Config();
-
-	SystemCoreClockUpdate();
-
 #if (STM32CUBEL4__USE_HAL_DRIVER == 1)
 	#if (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC)
 	/* Use systick as time base source and configure 1ms tick (default clock after Reset is HSI) */
@@ -373,18 +369,14 @@ __WEAK void SystemInit2(void)
 		#endif /* (STM32CUBEL4__USE_HAL_WITH_UBINOS_TICK == 1) */
 	#endif /* (UBINOS__UBIK__TICK_TYPE == UBINOS__UBIK__TICK_TYPE__RTC) */
 #endif /* (STM32CUBEL4__USE_HAL_DRIVER == 1) */
+
+	SystemClock_Config();
+
+	SystemCoreClockUpdate();
 }
 
 #endif /* ((UBINOS__BSP__STM32_STM32L475 == 1) || (UBINOS__BSP__STM32_STM32L476 == 1)) */
 #endif /* (INCLUDE__UBINOS__BSP == 1) */
-
-/**
-  * @}
-  */
-
-/**
-  * @}
-  */
 
 /**
   * @}
