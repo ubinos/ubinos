@@ -24,7 +24,7 @@
   *            HCLK(Hz)                       = 80000000
   *            AHB Prescaler                  = 1
   *            APB1 Prescaler                 = 1
-  *            APB2 Prescaler                 = 2
+  *            APB2 Prescaler                 = 1
   *            HSE Frequency(Hz)              = 8000000
   *            PLL_M                          = 1
   *            PLL_N                          = 20
@@ -60,7 +60,7 @@ __WEAK void SystemClock_Config(void)
 
   /* Set APB1 & APB2 prescaler*/
   LL_RCC_SetAPB1Prescaler(LL_RCC_APB1_DIV_1);
-  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_2);
+  LL_RCC_SetAPB2Prescaler(LL_RCC_APB2_DIV_1);
 
   /* Set systick to 1ms in using frequency set to 80MHz */
   /* This frequency can be calculated through LL RCC macro */
