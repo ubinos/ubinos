@@ -275,7 +275,7 @@ set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"            
 
 set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               FALSE   BOOL "")
 
-set_cache_default(UBINOS__BSP__STM32_RCC_TYPE                 "HSE"            STRING "[HSE | LSE_MSR]")
+set_cache_default(UBINOS__BSP__STM32_RCC_TYPE                 "HSE"            STRING "[ HSE | MSI | LSE_MSI]")
 
 set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1 | 2 | 3]")
 
@@ -541,7 +541,9 @@ if(UBINOS__BSP__CPU_ARCH STREQUAL "ARM")
 
             set(_tmp_all_flags "${_tmp_all_flags} -DUSB_USE_HSE_CLOCK") # #define USB_USE_HSE_CLOCK  */ /* Use HSE as clock source for USB
 
-        elseif(UBINOS__BSP__STM32_RCC_TYPE STREQUAL "LSE_MSR")
+        elseif(UBINOS__BSP__STM32_RCC_TYPE STREQUAL "MSI")
+
+        elseif(UBINOS__BSP__STM32_RCC_TYPE STREQUAL "LSE_MSI")
 
             set(_tmp_all_flags "${_tmp_all_flags} -DUSB_USE_LSE_MSI_CLOCK") # Use MSI clock automatically trimmed by LSE as USB clock
 
