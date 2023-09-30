@@ -32,18 +32,6 @@ else
 _LIBRARY_DIR             = $(realpath $(LIBRARY_DIR))
 endif
 
-ifeq ($(strip $(DEBUG_SERVER_SERIAL)),)
-_DEBUG_SERVER_SERIAL     = ""
-else
-_DEBUG_SERVER_SERIAL     = $(DEBUG_SERVER_SERIAL)
-endif
-
-ifeq ($(strip $(DEBUG_SERVER_PORT)),)
-_DEBUG_SERVER_PORT       = ""
-else
-_DEBUG_SERVER_PORT       = $(DEBUG_SERVER_PORT)
-endif
-
 ###############################################################################
 
 ifeq ($(strip $(UBINOS_DIR)),)
@@ -115,10 +103,21 @@ _PRECMD                 = :
 else
 _PRECMD                 = $(PRECMD)
 endif
+
 ifeq ($(strip $(COMPILER_LAUNCHER)),)
-_COMPILER_LAUNCHER     = ""
+_COMPILER_LAUNCHER      = ""
 else
-_COMPILER_LAUNCHER     = $(COMPILER_LAUNCHER)
+_COMPILER_LAUNCHER      = $(COMPILER_LAUNCHER)
+endif
+ifeq ($(strip $(DEBUG_SERVER_SERIAL)),)
+_DEBUG_SERVER_SERIAL    = ""
+else
+_DEBUG_SERVER_SERIAL    = $(DEBUG_SERVER_SERIAL)
+endif
+ifeq ($(strip $(DEBUG_SERVER_PORT)),)
+_DEBUG_SERVER_PORT      = ""
+else
+_DEBUG_SERVER_PORT      = $(DEBUG_SERVER_PORT)
 endif
 
 ###############################################################################
@@ -127,13 +126,18 @@ _CMAKE_OPTION           = -G "Unix Makefiles"
 _CMAKE_OPTION          += -D PROJECT_CONFIG_NAME=$(_CONFIG_NAME)
 _CMAKE_OPTION          += -D PROJECT_CONFIG_DIR="$(_CONFIG_DIR)"
 _CMAKE_OPTION          += -D PROJECT_LIBRARY_DIR="$(_LIBRARY_DIR)"
-_CMAKE_OPTION          += -D UBINOS__BSP__DEBUG_SERVER_SERIAL="$(_DEBUG_SERVER_SERIAL)"
-_CMAKE_OPTION          += -D UBINOS__BSP__DEBUG_SERVER_PORT="$(_DEBUG_SERVER_PORT)"
-
-ifeq ($(strip $(_COMPILER_LAUNCHER)),)
+ifeq ($(strip $(_COMPILER_LAUNCHER)),"")
 else
 _CMAKE_OPTION          += -D CMAKE_C_COMPILER_LAUNCHER=$(_COMPILER_LAUNCHER)
 _CMAKE_OPTION          += -D CMAKE_CXX_COMPILER_LAUNCHER=$(_COMPILER_LAUNCHER)
+endif
+ifeq ($(strip $(_DEBUG_SERVER_SERIAL)),"")
+else
+_CMAKE_OPTION          += -D UBINOS__BSP__DEBUG_SERVER_SERIAL="$(_DEBUG_SERVER_SERIAL)"
+endif
+ifeq ($(strip $(_DEBUG_SERVER_PORT)),"")
+else
+_CMAKE_OPTION          += -D UBINOS__BSP__DEBUG_SERVER_PORT="$(_DEBUG_SERVER_PORT)"
 endif
 
 ###############################################################################
@@ -190,6 +194,8 @@ common-help:
 	@echo "JOBS                         = $(_JOBS)"
 	@echo "PRECMD                       = $(_PRECMD)"
 	@echo "COMPILER_LAUNCHER            = $(COMPILER_LAUNCHER)"
+	@echo "DEBUG_SERVER_SERIAL          = $(DEBUG_SERVER_SERIAL)"
+	@echo "DEBUG_SERVER_PORT            = $(DEBUG_SERVER_PORT)"
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
