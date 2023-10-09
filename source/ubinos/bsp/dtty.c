@@ -163,17 +163,17 @@ int dtty_putc(int ch)
     return 0;
 }
 
-int dtty_kbhit(void)
-{
-    return 0;
-}
-
 int dtty_flush(void)
 {
     return 0;
 }
 
-void dtty_isr_write_process(void *arg)
+int dtty_kbhit(void)
+{
+    return 0;
+}
+
+void dtty_write_process(void *arg)
 {
 }
 

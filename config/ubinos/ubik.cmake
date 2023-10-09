@@ -26,7 +26,7 @@ set_cache_default(UBINOS__UBIK__EXCLUDE_KERNEL_MONITORING                       
 set_cache_default(UBINOS__UBIK__EXCLUDE_TASK_MONITORING                         FALSE   BOOL "Exclude task monitoring feature")
 set_cache_default(UBINOS__UBIK__EXCLUDE_TASK_PRIORITY_INHERITANCE               FALSE   BOOL "Exclude task priority inheritance feature")
 set_cache_default(UBINOS__UBIK__EXCLUDE_IDLETASK_GARBAGECOLLECT                 FALSE   BOOL "Exclude idle task garbage collect feature")
-set_cache_default(UBINOS__UBIK__EXCLUDE_IDLETASK_DTTY_ISR_WRITE                 TRUE    BOOL "Exclude idle task dtty isr write feature")
+set_cache_default(UBINOS__UBIK__EXCLUDE_IDLETASK_DTTY_WRITE                     FALSE   BOOL "Exclude idle task dtty write feature")
 set_cache_default(UBINOS__UBIK__EXCLUDE_IDLETASK_HOOKFUNC                       FALSE   BOOL "Exclude idle task hook function")
 set_cache_default(UBINOS__UBIK__EXCLUDE_CONDV                                   FALSE   BOOL "Exclude condition variable")
 set_cache_default(UBINOS__UBIK__EXCLUDE_MSGQ                                    FALSE   BOOL "Exclude message queue")

@@ -206,13 +206,13 @@ int dtty_setautocr(int autocr);
 int dtty_getautocr();
 
 /*!
- * ISR내에서 또는 critical section 내에서 수행한 디버깅 터미널 출력을 처리하는 함수
+ * 디버깅 터미널 출력을 처리하는 함수
  *
- * 이 함수는 UBINOS__UBIK__EXCLUDE_IDLETASK_DTTY_ISR_WRITE 가 FALSE 일 경우 idle task 에서 자동 호출된다.
+ * 이 함수는 UBINOS__UBIK__EXCLUDE_IDLETASK_DTTY_WRITE 가 FALSE 일 경우 idle task 에서 자동 호출된다.
  *
  * @param	arg: NULL<br>
  */
-void dtty_isr_write_process(void *arg);
+void dtty_write_process(void *arg);
 
 #ifdef	__cplusplus
 }
