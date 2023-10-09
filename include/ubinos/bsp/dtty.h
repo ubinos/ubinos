@@ -210,11 +210,9 @@ int dtty_getautocr();
  *
  * 이 함수는 UBINOS__UBIK__EXCLUDE_IDLETASK_DTTY_ISR_WRITE 가 FALSE 일 경우 idle task 에서 자동 호출된다.
  *
- * @return	  0: 성공<br>
- * 			<br>
- * 			 -1: 오류<br>
+ * @param	arg: NULL<br>
  */
-int dtty_isr_write_process(void);
+void dtty_isr_write_process(void *arg);
 
 #ifdef	__cplusplus
 }

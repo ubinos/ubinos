@@ -173,9 +173,8 @@ int dtty_flush(void)
     return 0;
 }
 
-int dtty_isr_write_process(void)
+void dtty_isr_write_process(void *arg)
 {
-    return 0;
 }
 
 #endif /* (UBINOS__BSP__USE_DTTY == ...) */
