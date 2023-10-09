@@ -23,7 +23,7 @@ extern "C"
 #include <ubinos_config.h>
 #include <ubinos/type.h>
 
-/*! 단순환형버퍼 형 정의 */
+/*! 단순환형버퍼 형 정의 (저장할 수 있는 최대 크기는 size -1) */
 typedef struct _cbuf_t
 {
     uint32_t head; /*!< Head index */
@@ -89,7 +89,7 @@ ubi_err_t cbuf_delete(cbuf_pt * cbuf_p);
 ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t * buf, uint32_t len, uint32_t * written_p);
 
 /*!
- * 단순환형버퍼에서 자료를 읽는 함수
+ * 단순환형버퍼에서 자료를 읽는 함수 (읽어온 자료는 삭제됨)
  *
  * @param   cbuf        대상 단순환형버퍼 포인터
  *
@@ -102,6 +102,21 @@ ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t * buf, uint32_t len, uint32_t *
  * @return  오류 번호
  */
 ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p);
+
+/*!
+ * 단순환형버퍼의 자료를 보는 함수 (본 자료는 삭제되지 않음)
+ *
+ * @param   cbuf        대상 단순환형버퍼 포인터
+ *
+ * @param   buf         읽은 자료를 저장할 버퍼
+ *
+ * @param   size        읽을 자료 크기
+ *
+ * @param   read_p      읽은 자료 크기를 저장할 변수의 주소 (NULL이면 무시)
+ *
+ * @return  오류 번호
+ */
+ubi_err_t cbuf_view(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p);
 
 /*!
  * 단순환형버퍼의 자료를 모두 지우는 함수
@@ -120,6 +135,15 @@ ubi_err_t cbuf_clear(cbuf_pt cbuf);
  * @return  사용된 길이
  */
 uint32_t cbuf_get_len(cbuf_pt cbuf);
+
+/*!
+ * 단순환형버퍼에 빈 공간 길이를 돌려주는 함수
+ *
+ * @param   cbuf        대상 단순환형버퍼 포인터
+ *
+ * @return  사용된 길이
+ */
+uint32_t cbuf_get_empty_len(cbuf_pt cbuf);
 
 /*!
  * 단순환형버퍼가 가득 차있는지 여부를 돌려주는 함수
@@ -165,6 +189,17 @@ uint32_t cbuf_get_contig_len(cbuf_pt cbuf);
  * @return  빈 공간 중 연속된 영역의 길이
  */
 uint32_t cbuf_get_contig_empty_len(cbuf_pt cbuf);
+
+/*!
+ * 단순환형버퍼의 head 주소를 정렬하는 함수 (비어 있을 때만 정렬됨)
+ *
+ * @param   cbuf        대상 단순환형버퍼 포인터
+ *
+ * @param   align       정렬 단위
+ *
+ * @return  정렬 수행 여부
+ */
+uint8_t cbuf_align_head(cbuf_pt cbuf, uint8_t align);
 
 #ifdef __cplusplus
 }

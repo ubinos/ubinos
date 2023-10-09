@@ -15,6 +15,8 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
+static ubi_err_t cbuf_read_advan(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p, uint8_t reserve);
+
 ubi_err_t cbuf_create(cbuf_pt *cbuf_p, uint32_t size)
 {
     ubi_err_t ubi_err;
@@ -138,7 +140,7 @@ ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t *buf, uint32_t len, uint32_t *w
     return ubi_err;
 }
 
-ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p)
+static ubi_err_t cbuf_read_advan(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p, uint8_t reserve)
 {
     ubi_err_t ubi_err;
     uint32_t head, tail, size;
@@ -190,7 +192,10 @@ ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p)
             }
         }
 
-        cbuf->head = (cbuf->head + len1 + len2) % size;
+        if (!reserve)
+        {
+            cbuf->head = (cbuf->head + len1 + len2) % size;
+        }
 
         if (read_p)
         {
@@ -208,6 +213,16 @@ ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p)
     } while (0);
 
     return ubi_err;
+}
+
+ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p)
+{
+    return cbuf_read_advan(cbuf, buf, len, read_p, 0);
+}
+
+ubi_err_t cbuf_view(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p)
+{
+    return cbuf_read_advan(cbuf, buf, len, read_p, 1);
 }
 
 ubi_err_t cbuf_clear(cbuf_pt cbuf)
@@ -239,6 +254,28 @@ uint32_t cbuf_get_len(cbuf_pt cbuf)
     }
 
     return len;
+}
+
+uint32_t cbuf_get_empty_len(cbuf_pt cbuf)
+{
+    uint32_t head, tail, size;
+    uint32_t len;
+    assert(cbuf != NULL);
+
+    head = cbuf->head;
+    tail = cbuf->tail;
+    size = cbuf->size;
+
+    if (head <= tail)
+    {
+        len = tail - head;
+    }
+    else
+    {
+        len = size - head + tail;
+    }
+
+    return size - len - 1;
 }
 
 uint8_t cbuf_is_full(cbuf_pt cbuf) {
@@ -320,6 +357,50 @@ uint32_t cbuf_get_contig_empty_len(cbuf_pt cbuf)
     }
 
     return contiglen;
+}
+
+uint8_t cbuf_align_head(cbuf_pt cbuf, uint8_t align)
+{
+    uint8_t aligned;
+    uint32_t head, tail, size;
+    uint32_t align_2;
+    uint32_t head_addr;
+    uint32_t head_addr_aligned;
+    uint32_t diff;
+    assert(cbuf != NULL);
+    assert(align > 0);
+
+    head = cbuf->head;
+    tail = cbuf->tail;
+    size = cbuf->size;
+    aligned = 0;
+    align_2 = align - 1;
+
+    if (head == tail)
+    {
+        head_addr = (uint32_t) &cbuf->buf[head];
+        head_addr_aligned = (head_addr + align_2) &  ~align_2;
+        diff = head_addr_aligned - head_addr;
+        if((head + diff) < size)
+        {
+            head = head + diff;
+            tail = head;
+        }
+        else
+        {
+            head_addr = (uint32_t) &cbuf->buf[0];
+            head_addr_aligned = (head_addr + align_2) &  ~align_2;
+            diff = head_addr_aligned - head_addr;
+            assert(diff < size);
+            head = diff;
+            tail = head;
+        }
+        cbuf->head = head;
+        cbuf->tail = tail;
+        aligned = 1;
+    }
+
+    return aligned;
 }
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_CBUF == 1) */
