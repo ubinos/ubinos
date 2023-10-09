@@ -1527,6 +1527,47 @@ unsigned int task_getdefaultstackdepth(void) {
 	return UBINOS__UBIK__TASK_STACK_DEPTH_DEFAULT;
 }
 
+
+int task_is_idle(task_pt _task)
+{
+	int r;
+	_task_pt task = (_task_pt) _task;
+
+	do
+	{
+		if (NULL == _task_cur) {
+			logmw("ubik is not initialized");
+			r = 0;
+			break;
+		}
+
+		if (NULL == task)
+		{
+			if (0 == _bsp_kernel_active)
+			{
+				logmw("ubik is not activated");
+				r = 0;
+				break;
+			}
+			else if (bsp_isintr())
+			{
+				logmw("in isr");
+				r = 0;
+				break;
+			}
+			else
+			{
+				task = _task_cur;
+			}
+		}
+
+		r = (OBJTYPE__UBIK_IDLETASK  == task->type ? 1 : 0);
+		break;
+	} while (1);
+
+	return r;
+}
+
 void _task_init(_task_pt task) {
 	task->type 					= OBJTYPE__UBIK_TASK;
 	task->valid					= 0;

@@ -1026,6 +1026,18 @@ int task_getstacksize(task_pt task, unsigned int * stacksize_p);
  */
 int task_getmaxstackusage(task_pt task, unsigned int * maxstackusage_p);
 
+/*!
+ * 해당 태스크가 아이들 태스크인지 여부를 돌려주는 함수
+ *
+ * @param	task			대상 태스크 포인터<br>
+ * 							NULL: 현재 태스크<br>
+ * 							<br>
+ *
+ * @return	  1: 아이들 태스크임<br>
+ * 			  0: 아이들 태스크가 아님<br>
+ */
+int task_is_idle(task_pt task);
+
 #ifdef	__cplusplus
 }
 #endif
