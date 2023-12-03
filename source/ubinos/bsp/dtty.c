@@ -15,6 +15,7 @@ int _g_bsp_dtty_init = 0;
 int _g_bsp_dtty_in_init = 0;
 int _g_bsp_dtty_echo = 0;
 int _g_bsp_dtty_autocr = 0; // auto carriage return
+char _g_bsp_dtty_gets_last_data = '\0';
 
 #if (UBINOS__BSP__CPU_TYPE == UBINOS__BSP__CPU_TYPE__ARM926EJ_S)
 #pragma GCC push_options
@@ -65,13 +66,24 @@ int dtty_gets(char *str, int max)
         return -3;
     }
 
-    for (i = 0; i < max; i++)
+    for (i = 0; i < max;)
     {
         r = dtty_getc(&str[i]);
-        if (0 != r || '\0' == str[i] || '\n' == str[i] || '\r' == str[i])
+        if (0 != r)
         {
             break;
         }
+        if ('\r' == _g_bsp_dtty_gets_last_data && '\n' == str[i])
+        {
+            _g_bsp_dtty_gets_last_data = str[i];
+            continue;
+        }
+        _g_bsp_dtty_gets_last_data = str[i];
+        if ('\0' == str[i] || '\n' == str[i] || '\r' == str[i])
+        {
+            break;
+        }
+        i++;
     }
     if (0 != i && max == i)
     {
