@@ -75,7 +75,7 @@ ubi_err_t ubidrv_uart_close(ubidrv_uart_t * uart);
  * UART 장치에서 문자를 입력받는 함수 (입력이 들어올 때까지 기다림)
  *
  * @param   fd          대상 장치 파일 디스크립터
- * 
+ *
  * @param   ch_p        입력받은 문자를 저장할 변수의 주소
  *
  * @return  오류 번호
@@ -83,10 +83,10 @@ ubi_err_t ubidrv_uart_close(ubidrv_uart_t * uart);
 ubi_err_t ubidrv_uart_getc(int fd, char *ch_p);
 
 /*!
- * UART 장치에서 문자를 입력받는 함수
+ * UART 장치에서 문자를 입력받는 함수 (입력이 들어올 때까지 기다리지 않음)
  *
  * @param   fd          대상 장치 파일 디스크립터
- * 
+ *
  * @param   ch_p        입력받은 문자를 저장할 변수의 주소
  *
  * @return  오류 번호
@@ -94,10 +94,25 @@ ubi_err_t ubidrv_uart_getc(int fd, char *ch_p);
 ubi_err_t ubidrv_uart_getc_unblocked(int fd, char *ch_p);
 
 /*!
+ * UART 장치에서 문자를 입력받는 함수  (입력이 들어올 때까지 최대 주어진 시간 만큼 기다림)
+ *
+ * @param   fd          대상 장치 파일 디스크립터
+ *
+ * @param   ch_p        입력받은 문자를 저장할 변수의 주소
+ *
+ * @param   timeoutms   기다릴 최대 시간
+ *
+ * @param   remain_timeoutms   (기다릴 최대 시간 - 기다린 시간) 값을 돌려줄 변수의 포인터
+ *
+ * @return  오류 번호
+ */
+ubi_err_t ubidrv_uart_getc_timedms(int fd, char *ch_p, uint32_t timeoutms, uint32_t *remain_timeoutms);
+
+/*!
  * UART 장치에서 문자를 출력하는 함수
  *
  * @param   fd          대상 장치 파일 디스크립터
- * 
+ *
  * @param   ch          출력할 문자
  *
  * @return  오류 번호
@@ -117,9 +132,9 @@ ubi_err_t ubidrv_uart_flush(int fd);
  * UART 장치에 문자열을 출력하는 함수 (NULL도 출력함)
  *
  * @param   fd          대상 장치 파일 디스크립터
- * 
+ *
  * @param   str         출력할 문자열이 저장된 버퍼
- * 
+ *
  * @param   len         출력할 문자열의 크기
  *
  * @return  오류 번호
@@ -142,9 +157,9 @@ int ubidrv_uart_kbhit(int fd);
  * "\0" 이전까지 또는 출력할 문자열의 최대 크기까지 출력한다.
  *
  * @param   fd          대상 장치 파일 디스크립터
- * 
+ *
  * @param   str         출력할 문자열이 저장된 버퍼
- * 
+ *
  * @param   max         출력할 문자열의 최대 크기
  *
  * @return  오류 번호
@@ -156,11 +171,11 @@ int ubidrv_uart_puts(int fd, const char *str, int max);
  *
  * "\n", "\r", 또는 "\0" 이 입력되거나 최대 크기보다 작을 때까지 입력받는다.
  * 입력받은 "\n", "\r"은 퍼버에 저장되지 않는다.
- * 
+ *
  * @param   fd          대상 장치 파일 디스크립터
- * 
+ *
  * @param   str         입력받은 문자열을 저장할 버퍼
- * 
+ *
  * @param   max         입력받을 문자열의 최대 크기
  *
  * @return  오류 번호
@@ -169,7 +184,7 @@ int ubidrv_uart_gets(int fd, char *str, int max);
 
 /*!
  * UART 장치 에코 설정 함수
- * 
+ *
  * @param   fd          대상 장치 파일 디스크립터
  *
  * @param   echo        0: echo off<br>
@@ -180,8 +195,8 @@ int ubidrv_uart_gets(int fd, char *str, int max);
 ubi_err_t ubidrv_uart_setecho(int fd, int echo);
 
 /*!
- * 디버깅 터미널 에코 설정을 돌려주는 함수
- * 
+ * UART 장치 에코 설정을 돌려주는 함수
+ *
  * @param   fd          대상 장치 파일 디스크립터
  *
  * @return  1: echo on<br>
@@ -193,9 +208,9 @@ int ubidrv_uart_getecho(int fd);
  * UART 장치 자동 캐리지 리턴 설정 함수
  *
  * 디버깅 터미널에 "\n" 출력시 그 앞에 "\r"을 자동 출력하는 기능 활성화 여부를 설정한다.
- * 
+ *
  * @param   fd          대상 장치 파일 디스크립터
- * 
+ *
  * @param   autocr      0: auto carriage return off<br>
  *                      1: auto carriage return on<br>
  *
@@ -204,8 +219,8 @@ int ubidrv_uart_getecho(int fd);
 ubi_err_t ubidrv_uart_setautocr(int fd, int autocr);
 
 /*!
- * 디버깅 터미널 자동 캐리지 리턴 설정을 돌려주는 함수
- * 
+ * UART 장치 자동 캐리지 리턴 설정을 돌려주는 함수
+ *
  * @param   fd          대상 장치 파일 디스크립터
  *
  * @return  0: auto carriage return off<br>
