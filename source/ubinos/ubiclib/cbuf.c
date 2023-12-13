@@ -15,11 +15,11 @@
 #undef LOGM_CATEGORY
 #define LOGM_CATEGORY LOGM_CATEGORY__UBICLIB
 
-static ubi_err_t cbuf_read_advan(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p, uint8_t reserve);
+static ubi_st_t cbuf_read_advan(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p, uint8_t reserve);
 
-ubi_err_t cbuf_create(cbuf_pt *cbuf_p, uint32_t size)
+ubi_st_t cbuf_create(cbuf_pt *cbuf_p, uint32_t size)
 {
-    ubi_err_t ubi_err;
+    ubi_st_t ubi_st;
     cbuf_pt cbuf;
     assert(cbuf_p != NULL);
     assert(size > 0);
@@ -30,7 +30,7 @@ ubi_err_t cbuf_create(cbuf_pt *cbuf_p, uint32_t size)
         if (cbuf == NULL)
         {
             logme("no memory");
-            ubi_err = UBI_ERR_NO_MEM;
+            ubi_st = UBI_ST_ERR_NO_MEM;
             break;
         }
 
@@ -41,13 +41,13 @@ ubi_err_t cbuf_create(cbuf_pt *cbuf_p, uint32_t size)
 
         *cbuf_p = cbuf;
 
-        ubi_err = UBI_ERR_OK;
+        ubi_st = UBI_ST_OK;
     } while (0);
 
-    return ubi_err;
+    return ubi_st;
 }
 
-ubi_err_t cbuf_delete(cbuf_pt *cbuf_p)
+ubi_st_t cbuf_delete(cbuf_pt *cbuf_p)
 {
     assert(cbuf_p != NULL);
     assert(*cbuf_p != NULL);
@@ -55,12 +55,12 @@ ubi_err_t cbuf_delete(cbuf_pt *cbuf_p)
     free(*cbuf_p);
     *cbuf_p = NULL;
 
-    return UBI_ERR_OK;
+    return UBI_ST_OK;
 }
 
-ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t *buf, uint32_t len, uint32_t *written_p)
+ubi_st_t cbuf_write(cbuf_pt cbuf, const uint8_t *buf, uint32_t len, uint32_t *written_p)
 {
-    ubi_err_t ubi_err;
+    ubi_st_t ubi_st;
     uint32_t head, tail, size;
     uint32_t size1, size2;
     uint32_t offset1, offset2;
@@ -79,7 +79,7 @@ ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t *buf, uint32_t len, uint32_t *w
             {
                 *written_p = 0;
             }
-            ubi_err = UBI_ERR_OK;
+            ubi_st = UBI_ST_OK;
             break;
         }
 
@@ -129,20 +129,20 @@ ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t *buf, uint32_t len, uint32_t *w
 
         if (len != (len1 + len2))
         {
-            ubi_err = UBI_ERR_BUF_FULL;
+            ubi_st = UBI_ST_ERR_BUF_FULL;
         }
         else
         {
-            ubi_err = UBI_ERR_OK;
+            ubi_st = UBI_ST_OK;
         }
     } while (0);
 
-    return ubi_err;
+    return ubi_st;
 }
 
-static ubi_err_t cbuf_read_advan(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p, uint8_t reserve)
+static ubi_st_t cbuf_read_advan(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p, uint8_t reserve)
 {
-    ubi_err_t ubi_err;
+    ubi_st_t ubi_st;
     uint32_t head, tail, size;
     uint32_t offset1, offset2;
     uint32_t len1, len2;
@@ -161,7 +161,7 @@ static ubi_err_t cbuf_read_advan(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint3
             {
                 *read_p = 0;
             }
-            ubi_err = UBI_ERR_OK;
+            ubi_st = UBI_ST_OK;
             break;
         }
 
@@ -204,28 +204,28 @@ static ubi_err_t cbuf_read_advan(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint3
 
         if (len != (len1 + len2))
         {
-            ubi_err = UBI_ERR_BUF_EMPTY;
+            ubi_st = UBI_ST_ERR_BUF_EMPTY;
         }
         else
         {
-            ubi_err = UBI_ERR_OK;
+            ubi_st = UBI_ST_OK;
         }
     } while (0);
 
-    return ubi_err;
+    return ubi_st;
 }
 
-ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p)
+ubi_st_t cbuf_read(cbuf_pt cbuf, uint8_t *buf, uint32_t len, uint32_t *read_p)
 {
     return cbuf_read_advan(cbuf, buf, len, read_p, 0);
 }
 
-ubi_err_t cbuf_view(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p)
+ubi_st_t cbuf_view(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p)
 {
     return cbuf_read_advan(cbuf, buf, len, read_p, 1);
 }
 
-ubi_err_t cbuf_clear(cbuf_pt cbuf)
+ubi_st_t cbuf_clear(cbuf_pt cbuf)
 {
     assert(cbuf != NULL);
 

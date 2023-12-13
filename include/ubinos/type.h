@@ -136,53 +136,84 @@ typedef __SIZE_TYPE__ size_t;
 
 #include <ubinos/objtype.h>
 
-/*! ubinos error code  */
+/*! ubinos status code  */
 typedef enum {
-    UBI_ERR_OK                  =   0, /*!< No error */
-    UBI_ERR_ERROR               =   1, /*!< Error */
+    UBI_ST_OK                       =   0, /*!< No error */
+    UBI_ST_ERR                      =   1, /*!< Error */
+    UBI_ST_BUSY                     =   2, /*!< Busy */
+    UBI_ST_TIMEOUT                  =   3, /*!< Timeout */
+    UBI_ST_CANCEL                   =   4, /*!< Canceled (normal) */
+    UBI_ST_CANCEL_2                 =   5, /*!< Canceled (type 2) */
 
-    UBI_ERR_UNKNOWN             =   2, /*!< Unknown error */
-    UBI_ERR_TIMEOUT             =   3, /*!< Timeout */
-    UBI_ERR_NULL                =   4, /*!< Null pointer */
-    UBI_ERR_BUSY                =   5, /*!< Busy */
-    UBI_ERR_NO_MEM              =   6, /*!< No memory */
-    UBI_ERR_BUF_FULL            =   7, /*!< Buffer full */
-    UBI_ERR_BUF_EMPTY           =   8, /*!< Buffer empty */
-    UBI_ERR_NOT_FOUND           =   9, /*!< Not found */
-    UBI_ERR_NOT_SUPPORTED       =  10, /*!< Not supported */
-    UBI_ERR_INVALID_PARAM       =  11, /*!< Invalid parameter */
-    UBI_ERR_INVALID_DATA        =  12, /*!< Invalid data */
-    UBI_ERR_INVALID_LENGTH      =  13, /*!< Invalid length */
-    UBI_ERR_INVALID_ADDR        =  14, /*!< Invalid address */
-    UBI_ERR_INVALID_STATE       =  15, /*!< Invalid state */
-    UBI_ERR_CANCEL              =  16, /*!< Canceled (normal) */
-    UBI_ERR_INIT                =  17, /*!< Initialization error  */
-    UBI_ERR_RESET               =  18, /*!< Reset error  */
-    UBI_ERR_IO                  =  19, /*!< IO error  */
-    UBI_ERR_TX                  =  20, /*!< TX error  */
-    UBI_ERR_RX                  =  21, /*!< RX error  */
-    UBI_ERR_PACKET              =  22, /*!< Packet error  */
+    UBI_ST_ERR_UNKNOWN              =  10, /*!< Unknown error */
+    UBI_ST_ERR_NULL                 =  11, /*!< Null pointer error */
+    UBI_ST_ERR_NO_MEM               =  12, /*!< No memory error */
+    UBI_ST_ERR_BUF_FULL             =  13, /*!< Buffer full error */
+    UBI_ST_ERR_BUF_EMPTY            =  14, /*!< Buffer empty error */
+    UBI_ST_ERR_NOT_FOUND            =  15, /*!< Not found error */
+    UBI_ST_ERR_NOT_SUPPORTED        =  16, /*!< Not supported error */
+    UBI_ST_ERR_INVALID_PARAM        =  17, /*!< Invalid parameter error */
+    UBI_ST_ERR_INVALID_DATA         =  18, /*!< Invalid data error */
+    UBI_ST_ERR_INVALID_LENGTH       =  19, /*!< Invalid length error */
+    UBI_ST_ERR_INVALID_ADDR         =  20, /*!< Invalid address error */
+    UBI_ST_ERR_INVALID_STATE        =  21, /*!< Invalid state error */
+    UBI_ST_ERR_INIT                 =  22, /*!< Initialization error */
+    UBI_ST_ERR_RESET                =  23, /*!< Reset error  */
+    UBI_ST_ERR_IO                   =  24, /*!< IO error */
+    UBI_ST_ERR_TX                   =  25, /*!< TX error */
+    UBI_ST_ERR_RX                   =  26, /*!< RX error */
+    UBI_ST_ERR_PACKET               =  27, /*!< Packet error */
+    UBI_ST_ERR_HEAP                 =  28, /*!< Heap error */
+    UBI_ST_ERR_BUS                  =  29, /*!< Bus error */
+    UBI_ST_ERR_OVERFLOW             =  30, /*!< Overflow error */
+    UBI_ST_ERR_UNDERFLOW            =  31, /*!< Underflow error */
+} ubi_st_t;
 
-    UBI_ERR_HEAP                = 100, /*!< Heap error */
-    UBI_ERR_BUS                 = 101, /*!< Bus error */
-    UBI_ERR_CANCEL_2            = 102, /*!< Canceled (type 2) */
+#define ubi_assert(__expr) assert(__expr)
 
-    UBI_ERR_BUS_INIT            = 200, /*!< Bus initialization error  */
-    UBI_ERR_BUS_RESET           = 201, /*!< Bus reset error  */
-    UBI_ERR_BUS_IO              = 202, /*!< Bus IO error  */
-    UBI_ERR_BUS_TX              = 203, /*!< Bus TX error  */
-    UBI_ERR_BUS_RX              = 204, /*!< Bus RX error  */
-} ubi_err_t;
-
-#define ubi_assert(__e) assert(__e)
-
-#define ubi_assert_ok(__ubi_err) ubi_assert(__ubi_err == UBI_ERR_OK)
+#define ubi_assert_ok(__ubi_st) ubi_assert(__ubi_st == UBI_ST_OK)
 #define ubi_assert_not_null(__ptr) ubi_assert((void *) __ptr != NULL)
 
 #define ubi_unused(__var) do { (void) __var; } while(0)
 
 /* Deprecated */
-#define UBI_ERR_INTERNAL UBI_ERR_ERROR
+#define UBI_ERR_INTERNAL UBI_ST_ERR
+
+#define ubi_err_t ubi_st_t
+
+#define UBI_ERR_OK                      UBI_ST_OK
+#define UBI_ERR_ERROR                   UBI_ST_ERR
+#define UBI_ERR_BUSY                    UBI_ST_BUSY
+#define UBI_ERR_TIMEOUT                 UBI_ST_TIMEOUT
+#define UBI_ERR_CANCEL                  UBI_ST_CANCEL
+#define UBI_ERR_CANCEL_2                UBI_ST_CANCEL_2
+
+#define UBI_ERR_UNKNOWN                 UBI_ST_ERR_UNKNOWN
+#define UBI_ERR_NULL                    UBI_ST_ERR_NULL
+#define UBI_ERR_NO_MEM                  UBI_ST_ERR_NO_MEM
+#define UBI_ERR_BUF_FULL                UBI_ST_ERR_BUF_FULL
+#define UBI_ERR_BUF_EMPTY               UBI_ST_ERR_BUF_EMPTY
+#define UBI_ERR_NOT_FOUND               UBI_ST_ERR_NOT_FOUND
+#define UBI_ERR_NOT_SUPPORTED           UBI_ST_ERR_NOT_SUPPORTED
+#define UBI_ERR_INVALID_PARAM           UBI_ST_ERR_INVALID_PARAM
+#define UBI_ERR_INVALID_DATA            UBI_ST_ERR_INVALID_DATA
+#define UBI_ERR_INVALID_LENGTH          UBI_ST_ERR_INVALID_LENGTH
+#define UBI_ERR_INVALID_ADDR            UBI_ST_ERR_INVALID_ADDR
+#define UBI_ERR_INVALID_STATE           UBI_ST_ERR_INVALID_STATE
+#define UBI_ERR_INIT                    UBI_ST_ERR_INIT
+#define UBI_ERR_RESET                   UBI_ST_ERR_RESET
+#define UBI_ERR_IO                      UBI_ST_ERR_IO
+#define UBI_ERR_TX                      UBI_ST_ERR_TX
+#define UBI_ERR_RX                      UBI_ST_ERR_RX
+#define UBI_ERR_PACKET                  UBI_ST_ERR_PACKET
+#define UBI_ERR_HEAP                    UBI_ST_ERR_HEAP
+#define UBI_ERR_BUS                     UBI_ST_ERR_BUS
+
+#define UBI_ERR_BUS_INIT                UBI_ST_ERR_INIT
+#define UBI_ERR_BUS_RESET               UBI_ST_ERR_RESET
+#define UBI_ERR_BUS_IO                  UBI_ST_ERR_IO
+#define UBI_ERR_BUS_TX                  UBI_ST_ERR_TX
+#define UBI_ERR_BUS_RX                  UBI_ST_ERR_RX
 
 #endif /* __ASSEMBLY__ */
 

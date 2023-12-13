@@ -59,9 +59,9 @@ typedef cbuf_t * cbuf_pt;
  *
  * @param   size    버퍼 크기
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t cbuf_create(cbuf_pt * cbuf_p, uint32_t size);
+ubi_st_t cbuf_create(cbuf_pt * cbuf_p, uint32_t size);
 
 /*!
  * 동적으로 단순환형버퍼를 제거하는 함수
@@ -69,9 +69,9 @@ ubi_err_t cbuf_create(cbuf_pt * cbuf_p, uint32_t size);
  * @param   cbuf_p  제거할 단순환형버퍼의 주소가 저장된 포인터의 주소<br>
  *                  제거에 성공하면 *cbuf_p는 NULL이 됨
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t cbuf_delete(cbuf_pt * cbuf_p);
+ubi_st_t cbuf_delete(cbuf_pt * cbuf_p);
 
 /*!
  * 단순환형버퍼에 자료를 쓰는 함수
@@ -84,9 +84,9 @@ ubi_err_t cbuf_delete(cbuf_pt * cbuf_p);
  *
  * @param   written_p   쓴 자료 길이를 저장할 변수의 주소 (NULL이면 무시)
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t * buf, uint32_t len, uint32_t * written_p);
+ubi_st_t cbuf_write(cbuf_pt cbuf, const uint8_t * buf, uint32_t len, uint32_t * written_p);
 
 /*!
  * 단순환형버퍼에서 자료를 읽는 함수 (읽어온 자료는 삭제됨)
@@ -99,9 +99,9 @@ ubi_err_t cbuf_write(cbuf_pt cbuf, const uint8_t * buf, uint32_t len, uint32_t *
  *
  * @param   read_p      읽은 자료 크기를 저장할 변수의 주소 (NULL이면 무시)
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p);
+ubi_st_t cbuf_read(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p);
 
 /*!
  * 단순환형버퍼의 자료를 보는 함수 (본 자료는 삭제되지 않음)
@@ -114,18 +114,18 @@ ubi_err_t cbuf_read(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p
  *
  * @param   read_p      읽은 자료 크기를 저장할 변수의 주소 (NULL이면 무시)
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t cbuf_view(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p);
+ubi_st_t cbuf_view(cbuf_pt cbuf, uint8_t * buf, uint32_t len, uint32_t * read_p);
 
 /*!
  * 단순환형버퍼의 자료를 모두 지우는 함수
  *
  * @param   cbuf        대상 단순환형버퍼 포인터
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t cbuf_clear(cbuf_pt cbuf);
+ubi_st_t cbuf_clear(cbuf_pt cbuf);
 
 /*!
  * 단순환형버퍼에 들어있는 자료의 길이를 돌려주는 함수
