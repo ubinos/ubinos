@@ -58,18 +58,18 @@ typedef struct _ubidrv_uart_t
  *
  * @param   uart        대상 장치
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_open(ubidrv_uart_t * uart);
+ubi_st_t ubidrv_uart_open(ubidrv_uart_t * uart);
 
 /*!
  * UART 장치를 닫는 함수
  *
  * @param   uart        대상 장치
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_close(ubidrv_uart_t * uart);
+ubi_st_t ubidrv_uart_close(ubidrv_uart_t * uart);
 
 /*!
  * UART 장치에서 문자를 입력받는 함수 (입력이 들어올 때까지 기다림)
@@ -78,9 +78,9 @@ ubi_err_t ubidrv_uart_close(ubidrv_uart_t * uart);
  *
  * @param   ch_p        입력받은 문자를 저장할 변수의 주소
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_getc(int fd, char *ch_p);
+ubi_st_t ubidrv_uart_getc(int fd, char *ch_p);
 
 /*!
  * UART 장치에서 문자를 입력받는 함수 (입력이 들어올 때까지 기다리지 않음)
@@ -89,9 +89,9 @@ ubi_err_t ubidrv_uart_getc(int fd, char *ch_p);
  *
  * @param   ch_p        입력받은 문자를 저장할 변수의 주소
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_getc_unblocked(int fd, char *ch_p);
+ubi_st_t ubidrv_uart_getc_unblocked(int fd, char *ch_p);
 
 /*!
  * UART 장치에서 문자를 입력받는 함수  (입력이 들어올 때까지 최대 주어진 시간 만큼 기다림)
@@ -104,9 +104,9 @@ ubi_err_t ubidrv_uart_getc_unblocked(int fd, char *ch_p);
  *
  * @param   remain_timeoutms   (기다릴 최대 시간 - 기다린 시간) 값을 돌려줄 변수의 포인터
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_getc_timedms(int fd, char *ch_p, uint32_t timeoutms, uint32_t *remain_timeoutms);
+ubi_st_t ubidrv_uart_getc_timedms(int fd, char *ch_p, uint32_t timeoutms, uint32_t *remain_timeoutms);
 
 /*!
  * UART 장치에서 문자를 출력하는 함수
@@ -115,18 +115,18 @@ ubi_err_t ubidrv_uart_getc_timedms(int fd, char *ch_p, uint32_t timeoutms, uint3
  *
  * @param   ch          출력할 문자
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_putc(int fd, int ch);
+ubi_st_t ubidrv_uart_putc(int fd, int ch);
 
 /*!
  * UART 장치 출력 버퍼에 저장된 내용을 모두 출력하는 함수
  *
  * @param   fd          대상 장치 파일 디스크립터
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_flush(int fd);
+ubi_st_t ubidrv_uart_flush(int fd);
 
 /*!
  * UART 장치에 문자열을 출력하는 함수 (NULL도 출력함)
@@ -137,7 +137,7 @@ ubi_err_t ubidrv_uart_flush(int fd);
  *
  * @param   len         출력할 문자열의 크기
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
 int ubidrv_uart_putn(int fd, const char *str, int len);
 
@@ -162,7 +162,7 @@ int ubidrv_uart_kbhit(int fd);
  *
  * @param   max         출력할 문자열의 최대 크기
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
 int ubidrv_uart_puts(int fd, const char *str, int max);
 
@@ -178,7 +178,7 @@ int ubidrv_uart_puts(int fd, const char *str, int max);
  *
  * @param   max         입력받을 문자열의 최대 크기
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
 int ubidrv_uart_gets(int fd, char *str, int max);
 
@@ -190,9 +190,9 @@ int ubidrv_uart_gets(int fd, char *str, int max);
  * @param   echo        0: echo off<br>
  *                      1: echo on<br>
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_setecho(int fd, int echo);
+ubi_st_t ubidrv_uart_setecho(int fd, int echo);
 
 /*!
  * UART 장치 에코 설정을 돌려주는 함수
@@ -214,9 +214,9 @@ int ubidrv_uart_getecho(int fd);
  * @param   autocr      0: auto carriage return off<br>
  *                      1: auto carriage return on<br>
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t ubidrv_uart_setautocr(int fd, int autocr);
+ubi_st_t ubidrv_uart_setautocr(int fd, int autocr);
 
 /*!
  * UART 장치 자동 캐리지 리턴 설정을 돌려주는 함수

@@ -31,9 +31,9 @@ extern "C"
  *
  * @param   size        지울 길이
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t nvmem_erase(uint8_t *addr, size_t size);
+ubi_st_t nvmem_erase(uint8_t *addr, size_t size);
 
 /*!
  * 비휘발성 메모리에 자료를 갱신하는 함수
@@ -44,9 +44,9 @@ ubi_err_t nvmem_erase(uint8_t *addr, size_t size);
  *
  * @param   size        자료 길이
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t nvmem_update(uint8_t *addr, const uint8_t *buf, size_t size);
+ubi_st_t nvmem_update(uint8_t *addr, const uint8_t *buf, size_t size);
 
 /*!
  * 비휘발성 메모리에서 자료를 읽는 함수
@@ -57,9 +57,9 @@ ubi_err_t nvmem_update(uint8_t *addr, const uint8_t *buf, size_t size);
  *
  * @param   size        자료 길이
  *
- * @return  오류 번호
+ * @return  상태 번호
  */
-ubi_err_t nvmem_read(const uint8_t *addr, uint8_t *buf, size_t size);
+ubi_st_t nvmem_read(const uint8_t *addr, uint8_t *buf, size_t size);
 
 #ifdef __cplusplus
 }
