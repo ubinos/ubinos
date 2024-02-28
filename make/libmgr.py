@@ -224,18 +224,7 @@ class libmgr(tk.Tk):
         self.tv.column(4, width=280)
 
         self.update_config_items()
-        for conf in self.config_items:
-            self.tv.insert(parent='', index=conf["index"], iid=conf["index"],  values=(conf["index"], conf["name"], conf["url"], conf["installed"]))
-
         self.update_selection()
-
-    def update_selection(self):
-        if self.config_items[self.config_item_idx]["installed"] != "X":
-            self.clone_button.config(state=tk.DISABLED)
-        else:
-            self.clone_button.config(state=tk.NORMAL)
-        self.tv.selection_set(self.config_item_idx)
-        self.tv.see(self.config_item_idx)
 
     def update_config_items(self):
         index = 0
@@ -243,6 +232,8 @@ class libmgr(tk.Tk):
         config_info_dir = os.path.join(lib_dir, self.config_info_rel_dir)
         config_info = self.load_config_info(os.path.join(config_info_dir, config_file_name))
 
+        self.config_items = []
+        
         for info in config_info:
             lib_path = os.path.join(lib_dir, info["name"])
             lib_state = "X"
@@ -253,10 +244,22 @@ class libmgr(tk.Tk):
 
         self.config_len = index
 
+        self.tv.delete(*self.tv.get_children())
+        for conf in self.config_items:
+            self.tv.insert(parent='', index=conf["index"], iid=conf["index"],  values=(conf["index"], conf["name"], conf["url"], conf["installed"]))
+
         if debug_level >= 3:
             for conf in self.config_items:
                 print(conf)
             print("")
+
+    def update_selection(self):
+        if self.config_items[self.config_item_idx]["installed"] != "X":
+            self.clone_button.config(state=tk.DISABLED)
+        else:
+            self.clone_button.config(state=tk.NORMAL)
+        self.tv.selection_set(self.config_item_idx)
+        self.tv.see(self.config_item_idx)
 
     def load_config_info(self, config_file_path):
         try:
@@ -511,9 +514,7 @@ class libmgr(tk.Tk):
 
     def key_pressed(self, event):
         # print(event.keysym)
-        if event.keysym == "Return":
-            self.press_select()
-        elif event.keysym == "Escape":
+        if event.keysym == "Escape":
             self.quit()
         elif event.keysym == "Up":
             if self.config_item_idx > 0:
@@ -549,11 +550,17 @@ class libmgr(tk.Tk):
             selection = self.config_items[self.config_item_idx]
             target_dir = os.path.join(lib_dir, selection["name"])
             self.git_commands = []
-            self.git_commands.append("git submodule add" + " " + selection["url"] + " " + target_dir)
+            # self.git_commands.append("pwd")
+            # self.git_commands.append("ls -alsF" + " " + target_dir)
+            self.git_commands.append("git submodule add -f" + " " + selection["url"] + " " + target_dir)
             self.git_commands.append("git submodule status" + " " + target_dir)
             self.clone_dialog = clone_dialog(self)
             self.clone_dialog.set_command(self.git_commands)
             self.clone_dialog.grab_set()
+
+# git submodule deinit -f ../library/siminsungho.github.io
+# git rm -f ../library/siminsungho.github.io
+# git config -f ../.gitmodules --remove-section submodule.siminsungho.github.io
 
     def press_clone_dialog_cancel(self):
         self.clone_dialog.destroy()
@@ -569,6 +576,9 @@ class libmgr(tk.Tk):
                     message="Install failed",
                 )
                 break
+
+        self.update_config_items()
+        self.update_selection()
 
         if result:
             messagebox.showinfo(
