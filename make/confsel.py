@@ -51,6 +51,7 @@ def file_open(fname, mode):
         return open(fname, mode, encoding="UTF-8")
     else:
         return open(fname, mode)
+
 class clone_dialog(tk.Toplevel):
 
     src_config_dir = "../app"
@@ -65,7 +66,7 @@ class clone_dialog(tk.Toplevel):
 
         self.parent = parent
 
-        self.title('Ubinos config cloner')
+        self.title('Ubinos config copier')
 
         set_geometry_center(self, 1100, 500)
 
@@ -224,7 +225,7 @@ class confsel(tk.Tk):
         cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
         select_button = tk.Button(frame_bt, text="Select", command=self.press_select)
         select_button.pack(side=tk.RIGHT, padx=10, pady=0)
-        clone_button = tk.Button(frame_bt, text="Clone", command=self.press_clone)
+        clone_button = tk.Button(frame_bt, text="Copy", command=self.press_clone)
         clone_button.pack(side=tk.LEFT, padx=10, pady=0)
 
         self.tv.heading(1, text="Index")
@@ -613,7 +614,7 @@ class confsel(tk.Tk):
     def press_clone(self):
         if self.config_len > 0:
             if debug_level >= 1:
-                print("Clone config\n")
+                print("Copy config\n")
                 self.print_selection()
 
             self.clone_dialog = clone_dialog(self)
@@ -627,16 +628,16 @@ class confsel(tk.Tk):
         result, message = self.clone_config(self.make_file_name, self.clone_dialog.src_config_dir, self.clone_dialog.src_config_file_name, self.clone_dialog.dst_config_dir, self.clone_dialog.dst_config_name_base)
         if result:
             messagebox.showinfo(
-                title='Clone result',
-                message="Clone succeeded",
+                title='Copy result',
+                message="Copy succeeded",
             )
             self.clone_dialog.destroy()
             self.deiconify()
             self.quit()
         else:
             messagebox.showinfo(
-                title='Clone result',
-                message="Clone failed",
+                title='Copy result',
+                message="Copy failed",
                 detail=message
             )
 
