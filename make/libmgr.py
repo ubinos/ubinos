@@ -105,6 +105,8 @@ class clone_dialog(tk.Toplevel):
         self.text.config(state=tk.NORMAL)
         self.text.delete(1.0, tk.END)
         self.text.insert(tk.END, self.text_var)
+        last_line_index = self.text.index("end-1c linestart")
+        self.text.see(last_line_index)
         self.text.config(state=tk.DISABLED)
 
 class libmgr(tk.Tk):
@@ -520,14 +522,23 @@ class libmgr(tk.Tk):
             )
 
     def run_git_command(self):
-        self.git_cmd = ["git", "status"]
+        self.git_cmd = "git status"
         self.git_result = ""
         result = False
+        self.clone_dialog.text_var = self.git_cmd + "\n"
+        self.clone_dialog.update_items()
         try:
-            self.git_result = subprocess.run(self.git_cmd, capture_output=True, text=True)
-            self.clone_dialog.text_var = self.git_result
-            self.clone_dialog.update_items()
-            result = True
+            process = subprocess.Popen(self.git_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
+            for line in process.stdout:
+                self.clone_dialog.text_var = self.clone_dialog.text_var + line
+                self.clone_dialog.update_items()
+            for line in process.stderr:
+                self.clone_dialog.text_var = self.clone_dialog.text_var + line
+                self.clone_dialog.update_items()
+            process.wait()
+
+            if process.returncode == 0:
+                result = True
         except Exception as e:
             print('Exception occurred.', e, self.git_cmd)
 
