@@ -16,6 +16,7 @@ import json
 import copy
 import pathlib
 import shutil
+import subprocess
 
 from tkinter import ttk
 from tkinter import Toplevel
@@ -54,19 +55,12 @@ def file_open(fname, mode):
 
 class clone_dialog(tk.Toplevel):
 
-    src_config_dir = "../app"
-    src_config_file_name = "myapp"
-    dst_config_dir = "../app"
-    dst_config_name_base = "myapp_2"
-    src_file_paths = []
-    dst_file_paths = []
-
     def __init__(self, parent):
         super().__init__(parent)
 
         self.parent = parent
 
-        self.title('Ubinos config cloner')
+        self.title('Ubinos library installer')
 
         set_geometry_center(self, 1100, 500)
 
@@ -76,55 +70,26 @@ class clone_dialog(tk.Toplevel):
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
-        self.variables = dict()
-        self.variables['source'] = tk.StringVar(value = "source")
-        self.variables['destination'] = tk.StringVar(value = "destination")
-        self.variables['destination'].trace("w", lambda name, index, mode, var=self.variables['destination']: self.dst_config_name_base_callback(var))
+        self.text_var = ""
 
-        frame_tv = tk.Frame(self)
-        frame_tv.grid(row=0, column=0, sticky="nsew")
-        frame_tv.rowconfigure(0, weight=1)
-        frame_tv.columnconfigure(0, weight=10)
-        frame_tv.columnconfigure(1, weight=1)
-        frame_tv.columnconfigure(2, weight=10)
+        frame_text = tk.Frame(self)
+        frame_text.grid(row=0, column=0, sticky="nsew")
+        frame_text.rowconfigure(0, weight=1)
+        frame_text.columnconfigure(0, weight=1)
 
-        frame_tvl = tk.Frame(frame_tv)
-        frame_tvl.grid(row=0, column=0, sticky="nsew")
-        frame_tvl.rowconfigure(0, weight=1)
-        frame_tvl.columnconfigure(0, weight=1)
+        frame_text = tk.Frame(frame_text)
+        frame_text.grid(row=0, column=0, sticky="nsew")
+        frame_text.rowconfigure(0, weight=1)
+        frame_text.columnconfigure(0, weight=1)
 
-        self.tvl = ttk.Treeview(frame_tvl, columns=(1), show="headings", selectmode="browse")
-        self.tvl.grid(row=0, column=0, sticky="nsew")
-        self.tvl.heading(1, text="Source")
+        self.text = tk.Text(frame_text)
+        self.text.grid(row=0, column=0, sticky="nsew")
+        self.text.config(state=tk.DISABLED)
 
-        sbl = tk.Scrollbar(frame_tvl, orient=tk.VERTICAL)
-        sbl.grid(row=0, column=1, sticky="ns")
-        self.tvl.config(yscrollcommand=sbl.set)
-        sbl.config(command=self.tvl.yview)
-
-        source_entry = ttk.Entry(frame_tvl, textvariable=self.variables['source'])
-        source_entry.grid(row=1, column=0, columnspan=2, sticky="ew")
-        source_entry.configure(state="disabled")
-
-        arrow_label = tk.Label(frame_tv, text=">")
-        arrow_label.grid(row=0, column=1)
-
-        frame_tvr = tk.Frame(frame_tv)
-        frame_tvr.grid(row=0, column=2, sticky="nsew")
-        frame_tvr.rowconfigure(0, weight=1)
-        frame_tvr.columnconfigure(0, weight=1)
-
-        self.tvr = ttk.Treeview(frame_tvr, columns=(1), show="headings", selectmode="browse")
-        self.tvr.grid(row=0, column=0, sticky="nsew")
-        self.tvr.heading(1, text="Destination")
-
-        sbr = tk.Scrollbar(frame_tvr, orient=tk.VERTICAL)
-        sbr.grid(row=0, column=1, sticky="ns")
-        self.tvr.config(yscrollcommand=sbr.set)
-        sbr.config(command=self.tvr.yview)
-
-        destination_entry = ttk.Entry(frame_tvr, textvariable=self.variables['destination'])
-        destination_entry.grid(row=1, column=0, columnspan=2, sticky="ew")
+        sb = tk.Scrollbar(frame_text, orient=tk.VERTICAL)
+        sb.grid(row=0, column=1, sticky="ns")
+        self.text.config(yscrollcommand=sb.set)
+        sb.config(command=self.text.yview)
 
         frame_bt = tk.Frame(self)
         frame_bt.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
@@ -136,40 +101,11 @@ class clone_dialog(tk.Toplevel):
 
         self.update_items(True)
 
-    def dst_config_name_base_callback(self, var):
-        self.dst_config_name_base = var.get()
-        self.update_items()
-
     def update_items(self, init=False):
-            if init:
-                selection = self.parent.config_items[self.parent.config_item_idx]
-                self.src_config_dir = selection["dir"]
-                self.src_config_file_name = selection["file_name"]
-                src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
-                self.src_config_name_base = src_config_name_base
-                self.dst_config_name_base = src_config_name_base + "_2"
-
-                self.variables['source'].set(self.src_config_name_base)
-                self.variables['destination'].set(self.dst_config_name_base)
-
-            src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
-
-            if debug_level >= 2:
-                print(src_file_paths)
-                print(dst_file_paths)
-
-            self.src_file_paths = src_file_paths
-            self.dst_file_paths = dst_file_paths
-
-            for row in self.tvl.get_children():
-                self.tvl.delete(row)
-            for row in self.tvr.get_children():
-                self.tvr.delete(row)
-
-            for idx, file_path in enumerate(src_file_paths):
-                self.tvl.insert(parent='', index=idx, iid=idx, values=(file_path))
-            for idx, file_path in enumerate(dst_file_paths):
-                self.tvr.insert(parent='', index=idx, iid=idx, values=(file_path))
+        self.text.config(state=tk.NORMAL)
+        self.text.delete(1.0, tk.END)
+        self.text.insert(tk.END, self.text_var)
+        self.text.config(state=tk.DISABLED)
 
 class libmgr(tk.Tk):
     config_info_keyword = "ubinos_config_info {"
@@ -274,8 +210,6 @@ class libmgr(tk.Tk):
             print("")
 
     def load_config_info(self, config_file_path):
-        config_info = None
-
         try:
             with file_open(config_file_path, 'r') as file:
                 config_info = json.load(file)
@@ -416,46 +350,13 @@ class libmgr(tk.Tk):
                             file.write(line)
                     file.close()
 
-    def get_clone_params(self, src_config_dir, src_config_file_name, dst_config_dir, dst_config_name_base):
-        src_config_file_path = os.path.join(src_config_dir, src_config_file_name)
-        src_config_info = self.load_config_info(src_config_file_path)
-        src_file_paths = []
+    def get_clone_params(self):
+        selection = self.config_items[self.config_item_idx]
+        src_url = selection["url"]
+        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+        dst_dir = os.path.join(lib_dir, selection["name"])
 
-        src_config_name_base = src_config_info["name_base"]
-
-        dst_config_file_name = src_config_file_name.replace(src_config_name_base, dst_config_name_base, 1)
-        dst_config_name = os.path.splitext(dst_config_file_name)[0]
-        dst_config_file_path = os.path.join(dst_config_dir, dst_config_file_name)
-        dst_file_paths = []
-
-        src_file_paths.append(src_config_file_path)
-        dst_file_paths.append(dst_config_file_path)
-
-        if "include_files" in src_config_info:
-            for idx, src_file_name in enumerate(src_config_info["include_files"]):
-                dst_file_name = src_file_name.replace(src_config_name_base, dst_config_name_base, 1)
-                src_file_paths.append(os.path.join(src_config_dir, src_file_name))
-                dst_file_paths.append(os.path.join(dst_config_dir, dst_file_name))
-
-        cmake_include_file_names = self.get_cmake_include_file_names(src_config_dir, src_config_file_name)
-        for src_file_name in cmake_include_file_names:
-            dst_file_name = src_file_name.replace(src_config_name_base, dst_config_name_base, 1)
-            src_file_paths.append(os.path.join(src_config_dir, src_file_name))
-            dst_file_paths.append(os.path.join(dst_config_dir, dst_file_name))
-
-        if src_config_info is not None and "app" in src_config_info and src_config_info["app"]:
-            src_config_app_path = os.path.join(src_config_dir, src_config_name_base)
-            dst_config_app_path = os.path.join(dst_config_dir, dst_config_name_base)
-            if os.path.exists(src_config_app_path):
-                src_file_paths.append(src_config_app_path + "/")
-                dst_file_paths.append(dst_config_app_path + "/")
-
-        for idx in range(len(src_file_paths)):
-            src_file_paths[idx] = pathlib.Path(src_file_paths[idx]).as_posix()
-        for idx in range(len(dst_file_paths)):
-            dst_file_paths[idx] = pathlib.Path(dst_file_paths[idx]).as_posix()
-
-        return src_file_paths, dst_file_paths, src_config_name_base, dst_config_name
+        return src_url, dst_dir
 
     def check_clone_dst_file_paths(self, dst_file_paths):
         is_valid = True
@@ -603,21 +504,34 @@ class libmgr(tk.Tk):
         self.deiconify()
 
     def press_clone_dialog_ok(self):
-        result, message = self.clone_config(self.make_file_name, self.clone_dialog.src_config_dir, self.clone_dialog.src_config_file_name, self.clone_dialog.dst_config_dir, self.clone_dialog.dst_config_name_base)
+        result = self.run_git_command()
         if result:
             messagebox.showinfo(
                 title='Install result',
                 message="Install succeeded",
             )
-            self.clone_dialog.destroy()
-            self.deiconify()
-            self.quit()
+            # self.clone_dialog.destroy()
+            # self.deiconify()
+            # self.quit()
         else:
             messagebox.showinfo(
                 title='Install result',
                 message="Install failed",
-                detail=message
             )
+
+    def run_git_command(self):
+        self.git_cmd = ["git", "status"]
+        self.git_result = ""
+        result = False
+        try:
+            self.git_result = subprocess.run(self.git_cmd, capture_output=True, text=True)
+            self.clone_dialog.text_var = self.git_result
+            self.clone_dialog.update_items()
+            result = True
+        except Exception as e:
+            print('Exception occurred.', e, self.git_cmd)
+
+        return result
 
 if __name__ == '__main__':
     if 3 > len(sys.argv):
