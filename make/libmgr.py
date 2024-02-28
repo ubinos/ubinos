@@ -67,32 +67,57 @@ class clone_dialog(tk.Toplevel):
         self.transient(self.parent)
         self.protocol("WM_DELETE_WINDOW", self.parent.press_clone_dialog_cancel)
 
-        self.rowconfigure(0, weight=1)
+        self.rowconfigure(0, weight=3)
+        self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
 
-        self.text_var = ""
+        ##
+        self.command_text_var = ""
 
-        frame_text = tk.Frame(self)
-        frame_text.grid(row=0, column=0, sticky="nsew")
-        frame_text.rowconfigure(0, weight=1)
-        frame_text.columnconfigure(0, weight=1)
+        frame_command_text = tk.Frame(self)
+        frame_command_text.grid(row=0, column=0, sticky="nsew")
+        frame_command_text.rowconfigure(0, weight=1)
+        frame_command_text.columnconfigure(0, weight=1)
 
-        frame_text = tk.Frame(frame_text)
-        frame_text.grid(row=0, column=0, sticky="nsew")
-        frame_text.rowconfigure(0, weight=1)
-        frame_text.columnconfigure(0, weight=1)
+        frame_command_text = tk.Frame(frame_command_text)
+        frame_command_text.grid(row=0, column=0, sticky="nsew")
+        frame_command_text.rowconfigure(0, weight=1)
+        frame_command_text.columnconfigure(0, weight=1)
 
-        self.text = tk.Text(frame_text)
-        self.text.grid(row=0, column=0, sticky="nsew")
-        self.text.config(state=tk.DISABLED)
+        self.command_text = tk.Text(frame_command_text)
+        self.command_text.grid(row=0, column=0, sticky="nsew")
+        self.command_text.config(state=tk.DISABLED)
 
-        sb = tk.Scrollbar(frame_text, orient=tk.VERTICAL)
+        sb = tk.Scrollbar(frame_command_text, orient=tk.VERTICAL)
         sb.grid(row=0, column=1, sticky="ns")
-        self.text.config(yscrollcommand=sb.set)
-        sb.config(command=self.text.yview)
+        self.command_text.config(yscrollcommand=sb.set)
+        sb.config(command=self.command_text.yview)
 
+        ##
+        self.result_text_var = ""
+
+        frame_result_text = tk.Frame(self)
+        frame_result_text.grid(row=1, column=0, sticky="nsew")
+        frame_result_text.rowconfigure(1, weight=1)
+        frame_result_text.columnconfigure(0, weight=1)
+
+        frame_result_text = tk.Frame(frame_result_text)
+        frame_result_text.grid(row=1, column=0, sticky="nsew")
+        frame_result_text.rowconfigure(1, weight=1)
+        frame_result_text.columnconfigure(0, weight=1)
+
+        self.result_text = tk.Text(frame_result_text)
+        self.result_text.grid(row=1, column=0, sticky="nsew")
+        self.result_text.config(state=tk.DISABLED)
+
+        sb = tk.Scrollbar(frame_result_text, orient=tk.VERTICAL)
+        sb.grid(row=1, column=1, sticky="ns")
+        self.result_text.config(yscrollcommand=sb.set)
+        sb.config(command=self.result_text.yview)
+
+        ##
         frame_bt = tk.Frame(self)
-        frame_bt.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
+        frame_bt.grid(row=2, column=0, sticky="nsew", padx=10, pady=20)
 
         cancel_button = tk.Button(frame_bt, text="Cancel", command=self.parent.press_clone_dialog_cancel)
         cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
@@ -102,12 +127,32 @@ class clone_dialog(tk.Toplevel):
         self.update_items(True)
 
     def update_items(self, init=False):
-        self.text.config(state=tk.NORMAL)
-        self.text.delete(1.0, tk.END)
-        self.text.insert(tk.END, self.text_var)
-        last_line_index = self.text.index("end-1c linestart")
-        self.text.see(last_line_index)
-        self.text.config(state=tk.DISABLED)
+        self.command_text.config(state=tk.NORMAL)
+        self.command_text.delete(1.0, tk.END)
+        self.command_text.insert(tk.END, self.command_text_var)
+        last_line_index = self.command_text.index("end-1c linestart")
+        self.command_text.see(last_line_index)
+        self.command_text.config(state=tk.DISABLED)
+
+        self.result_text.config(state=tk.NORMAL)
+        self.result_text.delete(1.0, tk.END)
+        self.result_text.insert(tk.END, self.result_text_var)
+        last_line_index = self.result_text.index("end-1c linestart")
+        self.result_text.see(last_line_index)
+        self.result_text.config(state=tk.DISABLED)
+
+    def set_command(self, commands):
+        for cmd in commands:
+            self.command_text_var += (cmd + "\n")
+        self.update_items()
+
+    def clear_result(self):
+        self.result_text_var = ""
+        self.update_items()
+
+    def append_result(self, result):
+        self.result_text_var += result
+        self.update_items()
 
 class libmgr(tk.Tk):
     config_info_keyword = "ubinos_config_info {"
@@ -116,10 +161,13 @@ class libmgr(tk.Tk):
     prj_dir_base = ".."
     lib_rel_dir = "library"
     make_file_name = "Makefile"
+    config_info_rel_dir = "ubinos/make"
 
     config_items = []
     config_item_idx = 0
     config_item_len = 0
+
+    git_commands = []
 
     def __init__(self, prj_dir_base, lib_rel_dir):
         super().__init__()
@@ -192,9 +240,8 @@ class libmgr(tk.Tk):
     def update_config_items(self):
         index = 0
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-        script_path = os.path.dirname(os.path.abspath(__file__))
-
-        config_info = self.load_config_info(os.path.join(script_path, config_file_name))
+        config_info_dir = os.path.join(lib_dir, self.config_info_rel_dir)
+        config_info = self.load_config_info(os.path.join(config_info_dir, config_file_name))
 
         for info in config_info:
             lib_path = os.path.join(lib_dir, info["name"])
@@ -498,7 +545,14 @@ class libmgr(tk.Tk):
                 print("Install library\n")
                 self.print_selection()
 
+            lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+            selection = self.config_items[self.config_item_idx]
+            target_dir = os.path.join(lib_dir, selection["name"])
+            self.git_commands = []
+            self.git_commands.append("git submodule add" + " " + selection["url"] + " " + target_dir)
+            self.git_commands.append("git submodule status" + " " + target_dir)
             self.clone_dialog = clone_dialog(self)
+            self.clone_dialog.set_command(self.git_commands)
             self.clone_dialog.grab_set()
 
     def press_clone_dialog_cancel(self):
@@ -506,41 +560,43 @@ class libmgr(tk.Tk):
         self.deiconify()
 
     def press_clone_dialog_ok(self):
-        result = self.run_git_command()
+        result = False
+        for cmd in self.git_commands:
+            result = self.run_git_command(cmd)
+            if not result:
+                messagebox.showinfo(
+                    title='Install result',
+                    message="Install failed",
+                )
+                break
+
         if result:
             messagebox.showinfo(
                 title='Install result',
                 message="Install succeeded",
             )
-            # self.clone_dialog.destroy()
+            self.clone_dialog.destroy()
             # self.deiconify()
             # self.quit()
-        else:
-            messagebox.showinfo(
-                title='Install result',
-                message="Install failed",
-            )
 
-    def run_git_command(self):
-        self.git_cmd = "git status"
-        self.git_result = ""
+    def run_git_command(self, command):
         result = False
-        self.clone_dialog.text_var = self.git_cmd + "\n"
+        self.clone_dialog.append_result(command + "\n")
         self.clone_dialog.update_items()
         try:
-            process = subprocess.Popen(self.git_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
+            process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
             for line in process.stdout:
-                self.clone_dialog.text_var = self.clone_dialog.text_var + line
+                self.clone_dialog.append_result(line)
                 self.clone_dialog.update_items()
             for line in process.stderr:
-                self.clone_dialog.text_var = self.clone_dialog.text_var + line
+                self.clone_dialog.append_result(line)
                 self.clone_dialog.update_items()
             process.wait()
 
             if process.returncode == 0:
                 result = True
         except Exception as e:
-            print('Exception occurred.', e, self.git_cmd)
+            print('Exception occurred.', e, command)
 
         return result
 
