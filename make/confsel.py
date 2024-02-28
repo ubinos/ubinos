@@ -141,35 +141,35 @@ class clone_dialog(tk.Toplevel):
         self.update_items()
 
     def update_items(self, init=False):
-            if init:
-                selection = self.parent.config_items[self.parent.config_item_idx]
-                self.src_config_dir = selection["dir"]
-                self.src_config_file_name = selection["file_name"]
-                src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
-                self.src_config_name_base = src_config_name_base
-                self.dst_config_name_base = src_config_name_base + "_2"
-
-                self.variables['source'].set(self.src_config_name_base)
-                self.variables['destination'].set(self.dst_config_name_base)
-
+        if init:
+            selection = self.parent.config_items[self.parent.config_item_idx]
+            self.src_config_dir = selection["dir"]
+            self.src_config_file_name = selection["file_name"]
             src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
+            self.src_config_name_base = src_config_name_base
+            self.dst_config_name_base = src_config_name_base + "_2"
 
-            if debug_level >= 2:
-                print(src_file_paths)
-                print(dst_file_paths)
+            self.variables['source'].set(self.src_config_name_base)
+            self.variables['destination'].set(self.dst_config_name_base)
 
-            self.src_file_paths = src_file_paths
-            self.dst_file_paths = dst_file_paths
+        src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
 
-            for row in self.tvl.get_children():
-                self.tvl.delete(row)
-            for row in self.tvr.get_children():
-                self.tvr.delete(row)
+        if debug_level >= 2:
+            print(src_file_paths)
+            print(dst_file_paths)
 
-            for idx, file_path in enumerate(src_file_paths):
-                self.tvl.insert(parent='', index=idx, iid=idx, values=(file_path))
-            for idx, file_path in enumerate(dst_file_paths):
-                self.tvr.insert(parent='', index=idx, iid=idx, values=(file_path))
+        self.src_file_paths = src_file_paths
+        self.dst_file_paths = dst_file_paths
+
+        for row in self.tvl.get_children():
+            self.tvl.delete(row)
+        for row in self.tvr.get_children():
+            self.tvr.delete(row)
+
+        for idx, file_path in enumerate(src_file_paths):
+            self.tvl.insert(parent='', index=idx, iid=idx, values=(file_path))
+        for idx, file_path in enumerate(dst_file_paths):
+            self.tvr.insert(parent='', index=idx, iid=idx, values=(file_path))
 
 class confsel(tk.Tk):
     config_info_keyword = "ubinos_config_info {"
