@@ -60,12 +60,12 @@ class clone_dialog(tk.Toplevel):
 
         self.parent = parent
 
-        self.title('Ubinos library installer')
+        self.title('Ubinos library command')
 
         set_geometry_center(self, 1100, 500)
 
         self.transient(self.parent)
-        self.protocol("WM_DELETE_WINDOW", self.parent.press_clone_dialog_cancel)
+        self.protocol("WM_DELETE_WINDOW", self.parent.press_install_dialog_cancel)
 
         self.rowconfigure(0, weight=3)
         self.rowconfigure(1, weight=1)
@@ -119,10 +119,10 @@ class clone_dialog(tk.Toplevel):
         frame_bt = tk.Frame(self)
         frame_bt.grid(row=2, column=0, sticky="nsew", padx=10, pady=20)
 
-        cancel_button = tk.Button(frame_bt, text="Cancel", command=self.parent.press_clone_dialog_cancel)
-        cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
-        ok_button = tk.Button(frame_bt, text="Ok", command=self.parent.press_clone_dialog_ok)
-        ok_button.pack(side=tk.RIGHT, padx=10, pady=0)
+        self.cancel_button = tk.Button(frame_bt, text="Close", command=self.parent.press_install_dialog_cancel)
+        self.cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
+        self.ok_button = tk.Button(frame_bt, text="Run", command=self.parent.press_install_dialog_ok)
+        self.ok_button.pack(side=tk.RIGHT, padx=10, pady=0)
 
         self.update_items(True)
 
@@ -153,6 +153,9 @@ class clone_dialog(tk.Toplevel):
     def append_result(self, result):
         self.result_text_var += result
         self.update_items()
+
+    def disalbe_run(self):
+        self.ok_button.config(state=tk.DISABLED)
 
 class libmgr(tk.Tk):
     config_info_keyword = "ubinos_config_info {"
@@ -207,12 +210,13 @@ class libmgr(tk.Tk):
         frame_bt = tk.Frame(self)
         frame_bt.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
 
+        self.install_button = tk.Button(frame_bt, text="Install", command=self.press_install)
+        self.install_button.pack(side=tk.LEFT, padx=10, pady=0)
+        self.uninstall_button = tk.Button(frame_bt, text="Uninstall", command=self.press_uninstall)
+        self.uninstall_button.pack(side=tk.LEFT, padx=10, pady=0)
+
         self.cancel_button = tk.Button(frame_bt, text="Cancel", command=quit)
         self.cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
-        self.select_button = tk.Button(frame_bt, text="Select", command=self.press_select)
-        self.select_button.pack(side=tk.RIGHT, padx=10, pady=0)
-        self.clone_button = tk.Button(frame_bt, text="Install", command=self.press_clone)
-        self.clone_button.pack(side=tk.LEFT, padx=10, pady=0)
 
         self.tv.heading(1, text="Index")
         self.tv.column(1, width=50)
@@ -254,10 +258,15 @@ class libmgr(tk.Tk):
             print("")
 
     def update_selection(self):
-        if self.config_items[self.config_item_idx]["installed"] != "X":
-            self.clone_button.config(state=tk.DISABLED)
+        if self.config_items[self.config_item_idx]["name"] == "ubinos":
+            self.install_button.config(state=tk.DISABLED)
+            self.uninstall_button.config(state=tk.DISABLED)
+        elif self.config_items[self.config_item_idx]["installed"] != "X":
+            self.install_button.config(state=tk.DISABLED)
+            self.uninstall_button.config(state=tk.NORMAL)
         else:
-            self.clone_button.config(state=tk.NORMAL)
+            self.install_button.config(state=tk.NORMAL)
+            self.uninstall_button.config(state=tk.DISABLED)
         self.tv.selection_set(self.config_item_idx)
         self.tv.see(self.config_item_idx)
 
@@ -529,18 +538,7 @@ class libmgr(tk.Tk):
                 if debug_level >= 2:
                     self.print_selection()
 
-    def press_select(self):
-        if self.config_len > 0:
-            if debug_level >= 1:
-                print("Select config\n")
-                self.print_selection()
-
-            selection = self.config_items[self.config_item_idx]
-            self.select_config(self.make_file_name, selection["dir"], selection["name"])
-
-        self.quit()
-
-    def press_clone(self):
+    def press_install(self):
         if self.config_len > 0:
             if debug_level >= 1:
                 print("Install library\n")
@@ -550,30 +548,45 @@ class libmgr(tk.Tk):
             selection = self.config_items[self.config_item_idx]
             target_dir = os.path.join(lib_dir, selection["name"])
             self.git_commands = []
-            # self.git_commands.append("pwd")
-            # self.git_commands.append("ls -alsF" + " " + target_dir)
-            self.git_commands.append("git submodule add -f" + " " + selection["url"] + " " + target_dir)
-            self.git_commands.append("git submodule status" + " " + target_dir)
+            self.git_commands.append("git submodule add -f " + selection["url"] + " " + target_dir)
+            # self.git_commands.append("git submodule status " + target_dir)
             self.clone_dialog = clone_dialog(self)
+            self.clone_dialog.title("Install library commands")
             self.clone_dialog.set_command(self.git_commands)
             self.clone_dialog.grab_set()
 
-# git submodule deinit -f ../library/siminsungho.github.io
-# git rm -f ../library/siminsungho.github.io
-# git config -f ../.gitmodules --remove-section submodule.siminsungho.github.io
+    def press_uninstall(self):
+        if self.config_len > 0:
+            if debug_level >= 1:
+                print("Uninstall library\n")
+                self.print_selection()
 
-    def press_clone_dialog_cancel(self):
+            lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+            selection = self.config_items[self.config_item_idx]
+            target_dir = os.path.join(lib_dir, selection["name"])
+            self.git_commands = []
+            self.git_commands.append("git submodule deinit -f " + target_dir)
+            self.git_commands.append("git rm -f " + target_dir)
+            # self.git_commands.append("git config -f " + os.path.join(self.prj_dir_base, ".gitmodules") 
+            #                          + " --remove-section submodule." 
+            #                          + os.path.basename(target_dir))
+            self.clone_dialog = clone_dialog(self)
+            self.clone_dialog.title("Uninstall library commands")
+            self.clone_dialog.set_command(self.git_commands)
+            self.clone_dialog.grab_set()
+
+    def press_install_dialog_cancel(self):
         self.clone_dialog.destroy()
         self.deiconify()
 
-    def press_clone_dialog_ok(self):
+    def press_install_dialog_ok(self):
         result = False
         for cmd in self.git_commands:
             result = self.run_git_command(cmd)
             if not result:
                 messagebox.showinfo(
-                    title='Install result',
-                    message="Install failed",
+                    title='Result',
+                    message="Failed",
                 )
                 break
 
@@ -582,12 +595,14 @@ class libmgr(tk.Tk):
 
         if result:
             messagebox.showinfo(
-                title='Install result',
-                message="Install succeeded",
+                title='Result',
+                message="Succeeded",
             )
-            self.clone_dialog.destroy()
+            # self.clone_dialog.destroy()
             # self.deiconify()
             # self.quit()
+
+        self.clone_dialog.disalbe_run()
 
     def run_git_command(self, command):
         result = False
