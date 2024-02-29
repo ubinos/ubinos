@@ -119,10 +119,10 @@ class clone_dialog(tk.Toplevel):
         frame_bt = tk.Frame(self)
         frame_bt.grid(row=2, column=0, sticky="nsew", padx=10, pady=20)
 
+        self.ok_button = tk.Button(frame_bt, text="Run", command=self.parent.press_install_dialog_ok)
+        self.ok_button.pack(side=tk.LEFT, padx=10, pady=0)
         self.cancel_button = tk.Button(frame_bt, text="Close", command=self.parent.press_install_dialog_cancel)
         self.cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
-        self.ok_button = tk.Button(frame_bt, text="Run", command=self.parent.press_install_dialog_ok)
-        self.ok_button.pack(side=tk.RIGHT, padx=10, pady=0)
 
         self.update_items(True)
 
@@ -198,7 +198,7 @@ class libmgr(tk.Tk):
         frame_tv.rowconfigure(0, weight=1)
         frame_tv.columnconfigure(0, weight=1)
 
-        self.tv = ttk.Treeview(frame_tv, columns=(1, 2, 3, 4), show="headings", selectmode="browse")
+        self.tv = ttk.Treeview(frame_tv, columns=(1, 2, 3, 4, 5), show="headings", selectmode="browse")
         self.tv.grid(row=0, column=0, sticky="nsew")
 
         sb = tk.Scrollbar(frame_tv, orient=tk.VERTICAL)
@@ -224,8 +224,10 @@ class libmgr(tk.Tk):
         self.tv.column(2, width=200)
         self.tv.heading(3, text="URL")
         self.tv.column(3, width=450)
-        self.tv.heading(4, text="installed")
-        self.tv.column(4, width=280)
+        self.tv.heading(4, text="Branch")
+        self.tv.column(4, width=160)
+        self.tv.heading(5, text="Installed")
+        self.tv.column(5, width=80)
 
         self.update_config_items()
         self.update_selection()
@@ -243,14 +245,14 @@ class libmgr(tk.Tk):
             lib_state = "X"
             if os.path.exists(lib_path) and os.path.isdir(lib_path):
                 lib_state = "O"
-            self.config_items.append({"index": index, "name": info["name"], "url": info["url"], "installed": lib_state})
+            self.config_items.append({"index": index, "name": info["name"], "url": info["url"], "branch": info["branch"], "installed": lib_state})
             index += 1
 
         self.config_len = index
 
         self.tv.delete(*self.tv.get_children())
         for conf in self.config_items:
-            self.tv.insert(parent='', index=conf["index"], iid=conf["index"],  values=(conf["index"], conf["name"], conf["url"], conf["installed"]))
+            self.tv.insert(parent='', index=conf["index"], iid=conf["index"],  values=(conf["index"], conf["name"], conf["url"], conf["branch"], conf["installed"]))
 
         if debug_level >= 3:
             for conf in self.config_items:
@@ -549,6 +551,7 @@ class libmgr(tk.Tk):
             target_dir = os.path.join(lib_dir, selection["name"])
             self.git_commands = []
             self.git_commands.append("git submodule add -f " + selection["url"] + " " + target_dir)
+            self.git_commands.append("cd "  + target_dir + "; git checkout -f " + selection["branch"])
             # self.git_commands.append("git submodule status " + target_dir)
             self.clone_dialog = clone_dialog(self)
             self.clone_dialog.title("Install library commands")
@@ -564,8 +567,10 @@ class libmgr(tk.Tk):
             lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
             selection = self.config_items[self.config_item_idx]
             target_dir = os.path.join(lib_dir, selection["name"])
+            git_dir = os.path.join(self.prj_dir_base, ".git", "modules", selection["name"])
             self.git_commands = []
             self.git_commands.append("git submodule deinit -f " + target_dir)
+            self.git_commands.append("rm -rf " + git_dir)
             self.git_commands.append("git rm -f " + target_dir)
             # self.git_commands.append("git config -f " + os.path.join(self.prj_dir_base, ".gitmodules") 
             #                          + " --remove-section submodule." 

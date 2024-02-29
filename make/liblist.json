@@ -1,15 +1,29 @@
 [
     {
         "name": "ubinos",
-        "url": "https://github.com/ubinos/ubinos.git"
+        "url": "https://github.com/ubinos/ubinos.git",
+        "branch": "ubinos-main"
     },
     {
         "name": "seggerrtt",
-        "url": "https://github.com/ubinos/seggerrtt.git"
+        "url": "https://github.com/ubinos/seggerrtt.git",
+        "branch": "ubinos-main"
+    },
+    {
+        "name": "ubinos.github.io",
+        "url": "https://github.com/siminsungho/ubinos.github.io.git",
+        "branch": "ubinos-main"
+    },
+    {
+        "name": "googletest_wrapper",
+        "url": "https://github.com/siminsungho/googletest_wrapper.git",
+        "branch": "ubinos-main"
     },
     {
         "name": "siminsungho.github.io",
-        "url": "https://github.com/siminsungho/siminsungho.github.io.git"
+        "url": "https://github.com/siminsungho/siminsungho.github.io.git",
+        "branch": "ubinos-main"
     }
+
 ]
   
