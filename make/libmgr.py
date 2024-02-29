@@ -214,6 +214,8 @@ class libmgr(tk.Tk):
         self.install_button.pack(side=tk.LEFT, padx=10, pady=0)
         self.uninstall_button = tk.Button(frame_bt, text="Uninstall", command=self.press_uninstall)
         self.uninstall_button.pack(side=tk.LEFT, padx=10, pady=0)
+        self.check_button = tk.Button(frame_bt, text="Check for updates", command=self.press_check)
+        self.check_button.pack(side=tk.LEFT, padx=10, pady=0)
 
         self.cancel_button = tk.Button(frame_bt, text="Cancel", command=quit)
         self.cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
@@ -263,12 +265,15 @@ class libmgr(tk.Tk):
         if self.config_items[self.config_item_idx]["name"] == "ubinos":
             self.install_button.config(state=tk.DISABLED)
             self.uninstall_button.config(state=tk.DISABLED)
+            self.check_button.config(state=tk.NORMAL)
         elif self.config_items[self.config_item_idx]["installed"] != "X":
             self.install_button.config(state=tk.DISABLED)
             self.uninstall_button.config(state=tk.NORMAL)
+            self.check_button.config(state=tk.NORMAL)
         else:
             self.install_button.config(state=tk.NORMAL)
             self.uninstall_button.config(state=tk.DISABLED)
+            self.check_button.config(state=tk.DISABLED)
         self.tv.selection_set(self.config_item_idx)
         self.tv.see(self.config_item_idx)
 
@@ -577,6 +582,23 @@ class libmgr(tk.Tk):
             #                          + os.path.basename(target_dir))
             self.clone_dialog = clone_dialog(self)
             self.clone_dialog.title("Uninstall library commands")
+            self.clone_dialog.set_command(self.git_commands)
+            self.clone_dialog.grab_set()
+
+    def press_check(self):
+        if self.config_len > 0:
+            if debug_level >= 1:
+                print("Check for library updates\n")
+                self.print_selection()
+
+            lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+            selection = self.config_items[self.config_item_idx]
+            target_dir = os.path.join(lib_dir, selection["name"])
+            git_dir = os.path.join(self.prj_dir_base, ".git", "modules", selection["name"])
+            self.git_commands = []
+            self.git_commands.append("cd "  + target_dir + "; git fetch" + "; git status")
+            self.clone_dialog = clone_dialog(self)
+            self.clone_dialog.title("Check for library updates commands")
             self.clone_dialog.set_command(self.git_commands)
             self.clone_dialog.grab_set()
 
