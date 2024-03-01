@@ -24,6 +24,10 @@ from tkinter import messagebox
 
 debug_level = 1
 
+true_string = "O"
+false_string = "X"
+unknown_string = "-"
+
 def print_help():
     print("===============================================================================")
     print("Usage:")
@@ -31,8 +35,10 @@ def print_help():
     print("===============================================================================")
 
 def set_geometry_center(win, width, height):
-    screen_width = win.winfo_screenwidth()
-    screen_height = win.winfo_screenheight()
+    # screen_width = win.winfo_screenwidth()
+    # screen_height = win.winfo_screenheight()
+    screen_width = win.winfo_screenwidth() // 2
+    screen_height = win.winfo_screenheight() // 2
     x_cordinate = (screen_width  // 2) - (width  // 2)
     y_cordinate = (screen_height // 2) - (height // 2)
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
@@ -192,22 +198,17 @@ class run_dialog(tk.Toplevel):
         self.update_buttons()
 
 class libmgr(tk.Tk):
-    prj_dir_base = ".."
-    lib_rel_dir = "library"
-    lib_list_file_name = "liblist.json"
-    lib_list_file_rel_dir = os.path.join(lib_rel_dir, "ubinos", "make")
-
-    lib_items = []
-    lib_item_idx = 0
-    lib_item_len = 0
-
-    git_commands = []
-
     def __init__(self, prj_dir_base, lib_rel_dir):
         super().__init__()
 
-        self.prj_dir_base = prj_dir_base
-        self.lib_rel_dir = lib_rel_dir
+        self.prj_dir_base = ".."
+        self.lib_rel_dir = "library"
+        self.lib_list_file_name = "liblist.json"
+        self.lib_list_file_rel_dir = os.path.join(lib_rel_dir, "ubinos", "make")
+
+        self.lib_items = []
+        self.lib_item_idx = 0
+        self.git_commands = []
 
         if debug_level >= 1:
             print("Ubinos library manager")
@@ -261,53 +262,74 @@ class libmgr(tk.Tk):
         frame_bt.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
 
         self.install_button = tk.Button(frame_bt, text="Install", command=self.press_install)
-        self.install_button.pack(side=tk.LEFT, padx=10, pady=0)
+        self.install_button.pack(side=tk.LEFT, padx=4, pady=0)
 
         self.uninstall_button = tk.Button(frame_bt, text="Uninstall", command=self.press_uninstall)
-        self.uninstall_button.pack(side=tk.LEFT, padx=10, pady=0)
+        self.uninstall_button.pack(side=tk.LEFT, padx=4, pady=0)
 
-        self.check_button = tk.Button(frame_bt, text="Check for updates", command=self.press_check)
-        self.check_button.pack(side=tk.LEFT, padx=10, pady=0)
+        self.check_button = tk.Button(frame_bt, text="Reset", command=self.press_reset)
+        self.check_button.pack(side=tk.LEFT, padx=4, pady=0)
 
-        self.close_button = tk.Button(frame_bt, text="Cancel", command=quit)
-        self.close_button.pack(side=tk.RIGHT, padx=10, pady=0)
+        self.check_button = tk.Button(frame_bt, text="Check for update", command=self.press_check)
+        self.check_button.pack(side=tk.LEFT, padx=4, pady=0)
+
+        self.check_button = tk.Button(frame_bt, text="Update", command=self.press_update)
+        self.check_button.pack(side=tk.LEFT, padx=4, pady=0)
+
+        self.close_button = tk.Button(frame_bt, text="Close", command=quit)
+        self.close_button.pack(side=tk.RIGHT, padx=4, pady=0)
 
         self.update_lib_items()
-        self.update_selection()
 
     def update_lib_items(self):
-        index = 0
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
         lib_list_file_path = os.path.join(self.prj_dir_base, self.lib_list_file_rel_dir, self.lib_list_file_name)
         lib_list = self.load_lib_list(lib_list_file_path)
 
         self.lib_items = []
         
-        for info in lib_list:
-            lib_path = os.path.join(lib_dir, info["name"])
-            lib_state = "X"
-            if os.path.exists(lib_path) and os.path.isdir(lib_path):
-                lib_state = "O"
-            self.lib_items.append({"index": index, "name": info["name"], "url": info["url"], "branch": info["branch"], "installed": lib_state})
-            index += 1
+        for i, lib_info in enumerate(lib_list):
+            lib_path = os.path.join(lib_dir, lib_info["name"])
+            lib_installed = unknown_string
+            lib_local_branch = unknown_string
+            lib_modified = unknown_string
+            lib_updatable = unknown_string
 
-        self.config_len = index
+            if os.path.exists(lib_path) and os.path.isdir(lib_path):
+                lib_installed = true_string
+                lib_local_branch = self.git_local_branch(lib_info["name"])
+                if lib_local_branch != unknown_string:
+                    if self.git_check_modified(lib_info["name"]):
+                        lib_modified = true_string
+                    else:
+                        lib_modified = false_string
+                    
+                    if self.git_check_updatable(lib_info["name"]):
+                        lib_updatable = true_string
+                    else:
+                        lib_updatable = false_string
+            else:
+                lib_installed = false_string
+
+            self.lib_items.append({"index": i, "name": lib_info["name"], "url": lib_info["url"], "default_branch": lib_info["branch"], "installed": lib_installed, "local_branch": lib_local_branch, "modified": lib_modified, "updatable": lib_updatable})
 
         self.tv.delete(*self.tv.get_children())
-        for conf in self.lib_items:
-            self.tv.insert(parent='', index=conf["index"], iid=conf["index"],  values=(conf["index"], conf["name"], conf["url"], conf["branch"], conf["installed"]))
+        for lib_item in self.lib_items:
+            self.tv.insert(parent='', index=lib_item["index"], iid=lib_item["index"],  values=(lib_item["index"], lib_item["name"], lib_item["url"], lib_item["default_branch"], lib_item["installed"], lib_item["local_branch"], lib_item["modified"], lib_item["updatable"]))
 
         if debug_level >= 3:
-            for conf in self.lib_items:
-                print(conf)
+            for lib in self.lib_items:
+                print(lib)
             print("")
+
+        self.update_selection()
 
     def update_selection(self):
         if self.lib_items[self.lib_item_idx]["name"] == "ubinos":
             self.install_button.config(state=tk.DISABLED)
             self.uninstall_button.config(state=tk.DISABLED)
             self.check_button.config(state=tk.NORMAL)
-        elif self.lib_items[self.lib_item_idx]["installed"] != "X":
+        elif self.lib_items[self.lib_item_idx]["installed"] != false_string:
             self.install_button.config(state=tk.DISABLED)
             self.uninstall_button.config(state=tk.NORMAL)
             self.check_button.config(state=tk.NORMAL)
@@ -318,14 +340,13 @@ class libmgr(tk.Tk):
         self.tv.selection_set(self.lib_item_idx)
         self.tv.see(self.lib_item_idx)
 
-    def load_lib_list(self, config_file_path):
+    def load_lib_list(self, file_path):
         try:
-            with file_open(config_file_path, 'r') as file:
+            with file_open(file_path, 'r') as file:
                 lib_list = json.load(file)
                 return lib_list
         except Exception as e:
-            print('Exception occurred.', e, config_file_path)
-
+            print('Exception occurred.', e)
 
     def print_selection(self):
         selection = self.lib_items[self.lib_item_idx]
@@ -351,14 +372,14 @@ class libmgr(tk.Tk):
                 if debug_level >= 2:
                     self.print_selection()
         elif event.keysym == "Down":
-            if self.lib_item_idx < (self.config_len - 1):
+            if self.lib_item_idx < (len(self.lib_items) - 1):
                 self.lib_item_idx += 1
                 self.update_selection()
                 if debug_level >= 2:
                     self.print_selection()
 
     def press_install(self):
-        if self.config_len > 0:
+        if len(self.lib_items) > 0:
             if debug_level >= 1:
                 print("Install library\n")
                 self.print_selection()
@@ -368,15 +389,14 @@ class libmgr(tk.Tk):
             target_dir = os.path.join(lib_dir, selection["name"])
             self.git_commands = []
             self.git_commands.append("git submodule add -f " + selection["url"] + " " + target_dir)
-            self.git_commands.append("cd "  + target_dir + "; git checkout -f " + selection["branch"])
-            # self.git_commands.append("git submodule status " + target_dir)
+            self.git_commands.append("cd "  + target_dir + "; git checkout -f " + selection["local_branch"])
             self.run_dialog = run_dialog(self)
             self.run_dialog.title("Install library commands")
             self.run_dialog.set_command(self.git_commands)
             self.run_dialog.grab_set()
 
     def press_uninstall(self):
-        if self.config_len > 0:
+        if len(self.lib_items) > 0:
             if debug_level >= 1:
                 print("Uninstall library\n")
                 self.print_selection()
@@ -397,22 +417,14 @@ class libmgr(tk.Tk):
             self.run_dialog.set_command(self.git_commands)
             self.run_dialog.grab_set()
 
-    def press_check(self):
-        if self.config_len > 0:
-            if debug_level >= 1:
-                print("Check for library updates\n")
-                self.print_selection()
+    def press_reset(self):
+        pass
 
-            lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-            selection = self.lib_items[self.lib_item_idx]
-            target_dir = os.path.join(lib_dir, selection["name"])
-            git_dir = os.path.join(self.prj_dir_base, ".git", "modules", selection["name"])
-            self.git_commands = []
-            self.git_commands.append("cd "  + target_dir + "; git fetch" + "; git status")
-            self.run_dialog = run_dialog(self)
-            self.run_dialog.title("Check for library updates commands")
-            self.run_dialog.set_command(self.git_commands)
-            self.run_dialog.grab_set()
+    def press_check(self):
+        pass
+
+    def press_update(self):
+        pass
 
     def press_run_dialog_close(self):
         self.run_dialog.destroy()
@@ -423,7 +435,7 @@ class libmgr(tk.Tk):
         self.run_dialog.set_running(True)
 
         for cmd in self.git_commands:
-            result = self.run_git_command(cmd)
+            result = self.run_git_command_with_dialog(cmd)
             if not result:
                 messagebox.showinfo(
                     title='Result',
@@ -444,9 +456,8 @@ class libmgr(tk.Tk):
         self.run_dialog.set_runable(False)
 
         self.update_lib_items()
-        self.update_selection()
 
-    def run_git_command(self, command):
+    def run_git_command_with_dialog(self, command):
         result = False
         self.run_dialog.clear_result()
         self.run_dialog.append_result(command + "\n")
@@ -461,9 +472,66 @@ class libmgr(tk.Tk):
             if process.returncode == 0:
                 result = True
         except Exception as e:
-            print('Exception occurred.', e, command)
+            print('Exception occurred.', e)
         
         return result
+
+    def run_git_command(self, directory, command):
+        result = None
+
+        try:
+            result = subprocess.run(command, cwd=directory, capture_output=True, text=True, check=True)
+        except Exception as e:
+            print('Exception occurred.', e)
+        
+        return result
+
+    def git_check_updatable(self, name):
+        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+        target_dir = os.path.join(lib_dir, name)
+        git_command = ["git", "fetch"]
+        result = self.run_git_command(target_dir, git_command)
+        if debug_level >= 1:
+            print(result)
+        
+        local_branch = self.git_local_branch(name)
+        if local_branch == "HEAD":
+            return False
+        
+        git_command = ['git', 'log', f'{local_branch}..origin/{local_branch}']
+        result = self.run_git_command(target_dir, git_command)
+        if debug_level >= 1:
+            print(result)
+
+        if result != None and result.stdout.strip():
+            return True
+        else:
+            return False
+
+    def git_check_modified(self, name):
+        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+        target_dir = os.path.join(lib_dir, name)
+        git_command = ["git", "status", "--porcelain"]
+        result = self.run_git_command(target_dir, git_command)
+        if debug_level >= 1:
+            print(result)
+        
+        if result != None and result.stdout.strip():
+            return True
+        else:
+            return False
+
+    def git_local_branch(self, name):
+        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+        target_dir = os.path.join(lib_dir, name)
+        git_command = ['git', 'rev-parse', '--abbrev-ref', 'HEAD']
+        result = self.run_git_command(target_dir, git_command)
+        if debug_level >= 1:
+            print(result)
+        if result != None:
+            return result.stdout.strip()
+        else:
+            return unknown_string
 
 if __name__ == '__main__':
     if 3 > len(sys.argv):
