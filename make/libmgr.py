@@ -248,19 +248,17 @@ class libmgr(tk.Tk):
         self.tv.heading(1, text="No.") # Index
         self.tv.column(1, width=20)
         self.tv.heading(2, text="Name")
-        self.tv.column(2, width=180)
+        self.tv.column(2, width=200)
         self.tv.heading(3, text="URL")
-        self.tv.column(3, width=370)
-        self.tv.heading(4, text="Default branch")
+        self.tv.column(3, width=600)
+        self.tv.heading(4, text="Branch")
         self.tv.column(4, width=100)
         self.tv.heading(5, text="I", anchor=tk.CENTER) # Installed
         self.tv.column(5, width=20, anchor=tk.CENTER)
-        self.tv.heading(6, text="Local branch")
-        self.tv.column(6, width=100)
-        self.tv.heading(7, text="M", anchor=tk.CENTER) # Modified
+        self.tv.heading(6, text="M", anchor=tk.CENTER) # Modified
+        self.tv.column(6, width=20, anchor=tk.CENTER)
+        self.tv.heading(7, text="U", anchor=tk.CENTER) # Updatable
         self.tv.column(7, width=20, anchor=tk.CENTER)
-        self.tv.heading(8, text="U", anchor=tk.CENTER) # Updatable
-        self.tv.column(8, width=20, anchor=tk.CENTER)
 
         ##
         frame_bt = tk.Frame(self)
@@ -325,8 +323,8 @@ class libmgr(tk.Tk):
                                    "url": lib_info["url"], 
                                    "local_url": lib_local_url, 
                                    "branch": lib_info["branch"], 
-                                   "installed": lib_installed, 
                                    "local_branch": lib_local_branch, 
+                                   "installed": lib_installed, 
                                    "modified": lib_modified, 
                                    "updatable": lib_updatable})
 
@@ -335,9 +333,8 @@ class libmgr(tk.Tk):
             self.tv.insert(parent='', index=lib_item["index"], iid=lib_item["index"],  values=(lib_item["index"], 
                             lib_item["name"], 
                             lib_item["local_url"] if lib_item["local_url"] != unknown_string else lib_item["url"], 
-                            lib_item["branch"], 
+                            lib_item["local_branch"] if lib_item["local_branch"] != unknown_string else lib_item["branch"], 
                             lib_item["installed"], 
-                            lib_item["local_branch"], 
                             lib_item["modified"], 
                             lib_item["updatable"]))
 
