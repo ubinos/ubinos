@@ -37,10 +37,10 @@ def print_help():
     print("===============================================================================")
 
 def set_geometry_center(win, width, height):
-    screen_width = win.winfo_screenwidth()
-    screen_height = win.winfo_screenheight()
-    # screen_width = win.winfo_screenwidth() // 2
-    # screen_height = win.winfo_screenheight() // 2
+    # screen_width = win.winfo_screenwidth()
+    # screen_height = win.winfo_screenheight()
+    screen_width = win.winfo_screenwidth() // 2
+    screen_height = win.winfo_screenheight() // 2
     x_cordinate = (screen_width  // 2) - (width  // 2)
     y_cordinate = (screen_height // 2) - (height // 2)
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
@@ -299,11 +299,13 @@ class libmgr(tk.Tk):
             lib_local_branch = unknown_string
             lib_modified = unknown_string
             lib_updatable = unknown_string
+            lib_local_url = unknown_string
 
             if os.path.exists(lib_path) and os.path.isdir(lib_path):
                 lib_installed = true_string
                 lib_local_branch = self.git_local_branch(lib_info["name"])
                 if lib_local_branch != unknown_string:
+                    lib_local_url = self.git_local_urls(lib_info["name"])[0]
                     if self.git_check_modified(lib_info["name"]):
                         lib_modified = true_string
                     else:
@@ -318,11 +320,26 @@ class libmgr(tk.Tk):
             else:
                 lib_installed = false_string
 
-            self.lib_items.append({"index": i, "name": lib_info["name"], "url": lib_info["url"], "branch": lib_info["branch"], "installed": lib_installed, "local_branch": lib_local_branch, "modified": lib_modified, "updatable": lib_updatable})
+            self.lib_items.append({"index": i, 
+                                   "name": lib_info["name"], 
+                                   "url": lib_info["url"], 
+                                   "local_url": lib_local_url, 
+                                   "branch": lib_info["branch"], 
+                                   "installed": lib_installed, 
+                                   "local_branch": lib_local_branch, 
+                                   "modified": lib_modified, 
+                                   "updatable": lib_updatable})
 
         self.tv.delete(*self.tv.get_children())
         for lib_item in self.lib_items:
-            self.tv.insert(parent='', index=lib_item["index"], iid=lib_item["index"],  values=(lib_item["index"], lib_item["name"], lib_item["url"], lib_item["branch"], lib_item["installed"], lib_item["local_branch"], lib_item["modified"], lib_item["updatable"]))
+            self.tv.insert(parent='', index=lib_item["index"], iid=lib_item["index"],  values=(lib_item["index"], 
+                            lib_item["name"], 
+                            lib_item["local_url"] if lib_item["local_url"] != unknown_string else lib_item["url"], 
+                            lib_item["branch"], 
+                            lib_item["installed"], 
+                            lib_item["local_branch"], 
+                            lib_item["modified"], 
+                            lib_item["updatable"]))
 
         if debug_level >= 3:
             for lib in self.lib_items:
@@ -409,11 +426,11 @@ class libmgr(tk.Tk):
             selection = self.lib_items[self.lib_item_idx]
             target_dir = os.path.join(lib_dir, selection["name"])
             source_url = selection["url"]
-            local_branch = selection["local_branch"]
+            source_branch = selection["branch"]
             self.run_command_type = "install"
             self.git_commands = []
             self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
-            self.git_commands.append(f"cd {target_dir}; git checkout -f {local_branch}")
+            self.git_commands.append(f"cd {target_dir}; git checkout -f {source_branch}")
             self.run_dialog = run_dialog(self)
             self.run_dialog.title("Install library commands")
             self.run_dialog.set_command(self.git_commands)
@@ -614,6 +631,25 @@ class libmgr(tk.Tk):
             print(result)
         if result != None:
             return result.stdout.strip()
+        else:
+            return unknown_string
+
+    def git_local_urls(self, name):
+        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+        target_dir = os.path.join(lib_dir, name)
+        git_command = ["git", "remote", "-v"]
+        result = self.run_git_command(target_dir, git_command)
+        if debug_level >= 1:
+            print(result)
+        if result != None:
+            output_lines = result.stdout.splitlines()
+            remote_urls = []
+            for line in output_lines:
+                parts = line.split()
+                if len(parts) >= 2:
+                    remote_urls.append(parts[1])
+
+            return remote_urls
         else:
             return unknown_string
 
