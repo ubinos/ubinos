@@ -224,12 +224,13 @@ class libmgr(tk.Tk):
 
         self.bind('<Key>', self.key_pressed)
 
+        ##
         frame_tv = tk.Frame(self)
         frame_tv.grid(row=0, column=0, sticky="nsew")
         frame_tv.rowconfigure(0, weight=1)
         frame_tv.columnconfigure(0, weight=1)
 
-        self.tv = ttk.Treeview(frame_tv, columns=(1, 2, 3, 4, 5), show="headings", selectmode="browse")
+        self.tv = ttk.Treeview(frame_tv, columns=(1, 2, 3, 4, 5, 6, 7, 8), show="headings", selectmode="browse")
         self.tv.grid(row=0, column=0, sticky="nsew")
 
         sb = tk.Scrollbar(frame_tv, orient=tk.VERTICAL)
@@ -238,29 +239,38 @@ class libmgr(tk.Tk):
         sb.config(command=self.tv.yview)
         self.tv.bind('<ButtonRelease-1>', self.select_item)
 
+        self.tv.heading(1, text="No.") # Index
+        self.tv.column(1, width=20)
+        self.tv.heading(2, text="Name")
+        self.tv.column(2, width=180)
+        self.tv.heading(3, text="URL")
+        self.tv.column(3, width=370)
+        self.tv.heading(4, text="Default branch")
+        self.tv.column(4, width=100)
+        self.tv.heading(5, text="I", anchor=tk.CENTER) # Installed
+        self.tv.column(5, width=20, anchor=tk.CENTER)
+        self.tv.heading(6, text="Local branch")
+        self.tv.column(6, width=100)
+        self.tv.heading(7, text="M", anchor=tk.CENTER) # Modified
+        self.tv.column(7, width=20, anchor=tk.CENTER)
+        self.tv.heading(8, text="U", anchor=tk.CENTER) # Updatable
+        self.tv.column(8, width=20, anchor=tk.CENTER)
+
+        ##
         frame_bt = tk.Frame(self)
         frame_bt.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
 
         self.install_button = tk.Button(frame_bt, text="Install", command=self.press_install)
         self.install_button.pack(side=tk.LEFT, padx=10, pady=0)
+
         self.uninstall_button = tk.Button(frame_bt, text="Uninstall", command=self.press_uninstall)
         self.uninstall_button.pack(side=tk.LEFT, padx=10, pady=0)
+
         self.check_button = tk.Button(frame_bt, text="Check for updates", command=self.press_check)
         self.check_button.pack(side=tk.LEFT, padx=10, pady=0)
 
         self.close_button = tk.Button(frame_bt, text="Cancel", command=quit)
         self.close_button.pack(side=tk.RIGHT, padx=10, pady=0)
-
-        self.tv.heading(1, text="Index")
-        self.tv.column(1, width=50)
-        self.tv.heading(2, text="Name")
-        self.tv.column(2, width=200)
-        self.tv.heading(3, text="URL")
-        self.tv.column(3, width=450)
-        self.tv.heading(4, text="Branch")
-        self.tv.column(4, width=160)
-        self.tv.heading(5, text="Installed")
-        self.tv.column(5, width=80)
 
         self.update_lib_items()
         self.update_selection()
