@@ -24,16 +24,6 @@ from tkinter import messagebox
 
 debug_level = 1
 
-config_file_name = "liblist.json"
-
-# config_name_base
-# config_name_variation
-# config_name = <config_name_base>__<config_name_variation>
-# config_extension
-# config_file_name = <config_name>.<config_extension>
-# config_dir
-# config_file_path = <config_dir>/<config_file_name>
-
 def print_help():
     print("===============================================================================")
     print("Usage:")
@@ -43,8 +33,17 @@ def print_help():
 def set_geometry_center(win, width, height):
     screen_width = win.winfo_screenwidth()
     screen_height = win.winfo_screenheight()
-    x_cordinate = int((screen_width/2) - (width/2))
-    y_cordinate = int((screen_height/2) - (height/2))
+    x_cordinate = (screen_width  // 2) - (width  // 2)
+    y_cordinate = (screen_height // 2) - (height // 2)
+    win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
+
+def set_dialog_geometry_center(parent, win, width, height):
+    parent_width = parent.winfo_width()
+    parent_height = parent.winfo_height()
+    parent_x = parent.winfo_x()
+    parent_y = parent.winfo_y()
+    x_cordinate = (parent_width  // 2) - (width  // 2) + parent_x
+    y_cordinate = (parent_height // 2) - (height // 2) + parent_y
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
 
 def file_open(fname, mode):
@@ -53,23 +52,28 @@ def file_open(fname, mode):
     else:
         return open(fname, mode)
 
-class clone_dialog(tk.Toplevel):
+class run_dialog(tk.Toplevel):
 
     def __init__(self, parent):
         super().__init__(parent)
 
         self.parent = parent
+        
+        self.runable = True
+        self.running = False
 
         self.title('Ubinos library command')
-
-        set_geometry_center(self, 1100, 500)
+        
+        set_dialog_geometry_center(parent, self, 1100, 500)
 
         self.transient(self.parent)
-        self.protocol("WM_DELETE_WINDOW", self.parent.press_install_dialog_cancel)
+        self.protocol("WM_DELETE_WINDOW", self.close)
 
         self.rowconfigure(0, weight=3)
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
+
+        self.bind('<Key>', self.key_pressed)
 
         ##
         self.command_text_var = ""
@@ -119,14 +123,27 @@ class clone_dialog(tk.Toplevel):
         frame_bt = tk.Frame(self)
         frame_bt.grid(row=2, column=0, sticky="nsew", padx=10, pady=20)
 
-        self.ok_button = tk.Button(frame_bt, text="Run", command=self.parent.press_install_dialog_ok)
-        self.ok_button.pack(side=tk.LEFT, padx=10, pady=0)
-        self.cancel_button = tk.Button(frame_bt, text="Close", command=self.parent.press_install_dialog_cancel)
-        self.cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
+        self.run_button = tk.Button(frame_bt, text="Run", command=self.parent.press_run_dialog_run)
+        self.run_button.pack(side=tk.LEFT, padx=10, pady=0)
+        
+        self.close_button = tk.Button(frame_bt, text="Close", command=self.parent.press_run_dialog_close)
+        self.close_button.pack(side=tk.RIGHT, padx=10, pady=0)
 
-        self.update_items(True)
+        ##
+        self.update_command_text(True)
+        self.update_result_text(True)
+        self.update_buttons(True)
 
-    def update_items(self, init=False):
+    def key_pressed(self, event):
+        # print(event.keysym)
+        if event.keysym == "Escape":
+            self.close()
+
+    def close(self):
+        if not self.running:
+            self.parent.press_run_dialog_close()
+
+    def update_command_text(self, init=False):
         self.command_text.config(state=tk.NORMAL)
         self.command_text.delete(1.0, tk.END)
         self.command_text.insert(tk.END, self.command_text_var)
@@ -134,6 +151,7 @@ class clone_dialog(tk.Toplevel):
         self.command_text.see(last_line_index)
         self.command_text.config(state=tk.DISABLED)
 
+    def update_result_text(self, init=False):
         self.result_text.config(state=tk.NORMAL)
         self.result_text.delete(1.0, tk.END)
         self.result_text.insert(tk.END, self.result_text_var)
@@ -141,34 +159,47 @@ class clone_dialog(tk.Toplevel):
         self.result_text.see(last_line_index)
         self.result_text.config(state=tk.DISABLED)
 
+    def update_buttons(self, init=False):
+        if not self.runable or self.running:
+            self.run_button.config(state=tk.DISABLED)
+        else:
+            self.run_button.config(state=tk.NORMAL)
+
+        if self.running:
+            self.close_button.config(state=tk.DISABLED)
+        else:
+            self.close_button.config(state=tk.NORMAL)
+
     def set_command(self, commands):
         for cmd in commands:
             self.command_text_var += (cmd + "\n")
-        self.update_items()
+        self.update_command_text()
 
     def clear_result(self):
         self.result_text_var = ""
-        self.update_items()
+        self.update_result_text()
 
     def append_result(self, result):
         self.result_text_var += result
-        self.update_items()
+        self.update_result_text()
 
-    def disalbe_run(self):
-        self.ok_button.config(state=tk.DISABLED)
+    def set_runable(self, runable):
+        self.runable = runable
+        self.update_buttons()
+
+    def set_running(self, running):
+        self.running = running
+        self.update_buttons()
 
 class libmgr(tk.Tk):
-    config_info_keyword = "ubinos_config_info {"
-    cmake_inclucde_file_keyword = "include(${CMAKE_CURRENT_LIST_DIR}/"
-    config_dir_names = ["app", "config"]
     prj_dir_base = ".."
     lib_rel_dir = "library"
-    make_file_name = "Makefile"
-    config_info_rel_dir = "ubinos/make"
+    lib_list_file_name = "liblist.json"
+    lib_list_file_rel_dir = os.path.join(lib_rel_dir, "ubinos", "make")
 
-    config_items = []
-    config_item_idx = 0
-    config_item_len = 0
+    lib_items = []
+    lib_item_idx = 0
+    lib_item_len = 0
 
     git_commands = []
 
@@ -217,8 +248,8 @@ class libmgr(tk.Tk):
         self.check_button = tk.Button(frame_bt, text="Check for updates", command=self.press_check)
         self.check_button.pack(side=tk.LEFT, padx=10, pady=0)
 
-        self.cancel_button = tk.Button(frame_bt, text="Cancel", command=quit)
-        self.cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
+        self.close_button = tk.Button(frame_bt, text="Cancel", command=quit)
+        self.close_button.pack(side=tk.RIGHT, padx=10, pady=0)
 
         self.tv.heading(1, text="Index")
         self.tv.column(1, width=50)
@@ -231,42 +262,42 @@ class libmgr(tk.Tk):
         self.tv.heading(5, text="Installed")
         self.tv.column(5, width=80)
 
-        self.update_config_items()
+        self.update_lib_items()
         self.update_selection()
 
-    def update_config_items(self):
+    def update_lib_items(self):
         index = 0
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-        config_info_dir = os.path.join(lib_dir, self.config_info_rel_dir)
-        config_info = self.load_config_info(os.path.join(config_info_dir, config_file_name))
+        lib_list_file_path = os.path.join(self.prj_dir_base, self.lib_list_file_rel_dir, self.lib_list_file_name)
+        lib_list = self.load_lib_list(lib_list_file_path)
 
-        self.config_items = []
+        self.lib_items = []
         
-        for info in config_info:
+        for info in lib_list:
             lib_path = os.path.join(lib_dir, info["name"])
             lib_state = "X"
             if os.path.exists(lib_path) and os.path.isdir(lib_path):
                 lib_state = "O"
-            self.config_items.append({"index": index, "name": info["name"], "url": info["url"], "branch": info["branch"], "installed": lib_state})
+            self.lib_items.append({"index": index, "name": info["name"], "url": info["url"], "branch": info["branch"], "installed": lib_state})
             index += 1
 
         self.config_len = index
 
         self.tv.delete(*self.tv.get_children())
-        for conf in self.config_items:
+        for conf in self.lib_items:
             self.tv.insert(parent='', index=conf["index"], iid=conf["index"],  values=(conf["index"], conf["name"], conf["url"], conf["branch"], conf["installed"]))
 
         if debug_level >= 3:
-            for conf in self.config_items:
+            for conf in self.lib_items:
                 print(conf)
             print("")
 
     def update_selection(self):
-        if self.config_items[self.config_item_idx]["name"] == "ubinos":
+        if self.lib_items[self.lib_item_idx]["name"] == "ubinos":
             self.install_button.config(state=tk.DISABLED)
             self.uninstall_button.config(state=tk.DISABLED)
             self.check_button.config(state=tk.NORMAL)
-        elif self.config_items[self.config_item_idx]["installed"] != "X":
+        elif self.lib_items[self.lib_item_idx]["installed"] != "X":
             self.install_button.config(state=tk.DISABLED)
             self.uninstall_button.config(state=tk.NORMAL)
             self.check_button.config(state=tk.NORMAL)
@@ -274,27 +305,27 @@ class libmgr(tk.Tk):
             self.install_button.config(state=tk.NORMAL)
             self.uninstall_button.config(state=tk.DISABLED)
             self.check_button.config(state=tk.DISABLED)
-        self.tv.selection_set(self.config_item_idx)
-        self.tv.see(self.config_item_idx)
+        self.tv.selection_set(self.lib_item_idx)
+        self.tv.see(self.lib_item_idx)
 
-    def load_config_info(self, config_file_path):
+    def load_lib_list(self, config_file_path):
         try:
             with file_open(config_file_path, 'r') as file:
-                config_info = json.load(file)
-                return config_info
+                lib_list = json.load(file)
+                return lib_list
         except Exception as e:
             print('Exception occurred.', e, config_file_path)
 
 
     def print_selection(self):
-        selection = self.config_items[self.config_item_idx]
+        selection = self.lib_items[self.lib_item_idx]
         print(selection)
         print("")
 
     def select_item(self, event):
         item = self.tv.focus()
         if item != '':
-            self.config_item_idx = int(item)
+            self.lib_item_idx = int(item)
             self.update_selection()
             if debug_level >= 2:
                 self.print_selection()
@@ -304,14 +335,14 @@ class libmgr(tk.Tk):
         if event.keysym == "Escape":
             self.quit()
         elif event.keysym == "Up":
-            if self.config_item_idx > 0:
-                self.config_item_idx -= 1
+            if self.lib_item_idx > 0:
+                self.lib_item_idx -= 1
                 self.update_selection()
                 if debug_level >= 2:
                     self.print_selection()
         elif event.keysym == "Down":
-            if self.config_item_idx < (self.config_len - 1):
-                self.config_item_idx += 1
+            if self.lib_item_idx < (self.config_len - 1):
+                self.lib_item_idx += 1
                 self.update_selection()
                 if debug_level >= 2:
                     self.print_selection()
@@ -323,16 +354,16 @@ class libmgr(tk.Tk):
                 self.print_selection()
 
             lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-            selection = self.config_items[self.config_item_idx]
+            selection = self.lib_items[self.lib_item_idx]
             target_dir = os.path.join(lib_dir, selection["name"])
             self.git_commands = []
             self.git_commands.append("git submodule add -f " + selection["url"] + " " + target_dir)
             self.git_commands.append("cd "  + target_dir + "; git checkout -f " + selection["branch"])
             # self.git_commands.append("git submodule status " + target_dir)
-            self.clone_dialog = clone_dialog(self)
-            self.clone_dialog.title("Install library commands")
-            self.clone_dialog.set_command(self.git_commands)
-            self.clone_dialog.grab_set()
+            self.run_dialog = run_dialog(self)
+            self.run_dialog.title("Install library commands")
+            self.run_dialog.set_command(self.git_commands)
+            self.run_dialog.grab_set()
 
     def press_uninstall(self):
         if self.config_len > 0:
@@ -341,7 +372,7 @@ class libmgr(tk.Tk):
                 self.print_selection()
 
             lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-            selection = self.config_items[self.config_item_idx]
+            selection = self.lib_items[self.lib_item_idx]
             target_dir = os.path.join(lib_dir, selection["name"])
             git_dir = os.path.join(self.prj_dir_base, ".git", "modules", selection["name"])
             self.git_commands = []
@@ -351,10 +382,10 @@ class libmgr(tk.Tk):
             # self.git_commands.append("git config -f " + os.path.join(self.prj_dir_base, ".gitmodules") 
             #                          + " --remove-section submodule." 
             #                          + os.path.basename(target_dir))
-            self.clone_dialog = clone_dialog(self)
-            self.clone_dialog.title("Uninstall library commands")
-            self.clone_dialog.set_command(self.git_commands)
-            self.clone_dialog.grab_set()
+            self.run_dialog = run_dialog(self)
+            self.run_dialog.title("Uninstall library commands")
+            self.run_dialog.set_command(self.git_commands)
+            self.run_dialog.grab_set()
 
     def press_check(self):
         if self.config_len > 0:
@@ -363,22 +394,24 @@ class libmgr(tk.Tk):
                 self.print_selection()
 
             lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-            selection = self.config_items[self.config_item_idx]
+            selection = self.lib_items[self.lib_item_idx]
             target_dir = os.path.join(lib_dir, selection["name"])
             git_dir = os.path.join(self.prj_dir_base, ".git", "modules", selection["name"])
             self.git_commands = []
             self.git_commands.append("cd "  + target_dir + "; git fetch" + "; git status")
-            self.clone_dialog = clone_dialog(self)
-            self.clone_dialog.title("Check for library updates commands")
-            self.clone_dialog.set_command(self.git_commands)
-            self.clone_dialog.grab_set()
+            self.run_dialog = run_dialog(self)
+            self.run_dialog.title("Check for library updates commands")
+            self.run_dialog.set_command(self.git_commands)
+            self.run_dialog.grab_set()
 
-    def press_install_dialog_cancel(self):
-        self.clone_dialog.destroy()
+    def press_run_dialog_close(self):
+        self.run_dialog.destroy()
         self.deiconify()
 
-    def press_install_dialog_ok(self):
+    def press_run_dialog_run(self):
         result = False
+        self.run_dialog.set_running(True)
+
         for cmd in self.git_commands:
             result = self.run_git_command(cmd)
             if not result:
@@ -388,39 +421,38 @@ class libmgr(tk.Tk):
                 )
                 break
 
-        self.update_config_items()
-        self.update_selection()
-
         if result:
             messagebox.showinfo(
                 title='Result',
                 message="Succeeded",
             )
-            # self.clone_dialog.destroy()
+            # self.run_dialog.destroy()
             # self.deiconify()
             # self.quit()
 
-        self.clone_dialog.disalbe_run()
+        self.run_dialog.set_running(False)
+        self.run_dialog.set_runable(False)
+
+        self.update_lib_items()
+        self.update_selection()
 
     def run_git_command(self, command):
         result = False
-        self.clone_dialog.append_result(command + "\n")
-        self.clone_dialog.update_items()
+        self.run_dialog.clear_result()
+        self.run_dialog.append_result(command + "\n")
         try:
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
             for line in process.stdout:
-                self.clone_dialog.append_result(line)
-                self.clone_dialog.update_items()
+                self.run_dialog.append_result(line)
             for line in process.stderr:
-                self.clone_dialog.append_result(line)
-                self.clone_dialog.update_items()
+                self.run_dialog.append_result(line)
             process.wait()
 
             if process.returncode == 0:
                 result = True
         except Exception as e:
             print('Exception occurred.', e, command)
-
+        
         return result
 
 if __name__ == '__main__':
