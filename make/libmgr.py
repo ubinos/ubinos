@@ -22,6 +22,8 @@ from tkinter import ttk
 from tkinter import Toplevel
 from tkinter import messagebox
 
+from ttkwidgets import CheckboxTreeview
+
 from collections import Counter
 
 debug_level = 1
@@ -50,8 +52,8 @@ def set_dialog_geometry_center(parent, win, width, height):
     parent_height = parent.winfo_height()
     parent_x = parent.winfo_x()
     parent_y = parent.winfo_y()
-    x_cordinate = (parent_width  // 2) - (width  // 2) + parent_x
-    y_cordinate = (parent_height // 2) - (height // 2) + parent_y
+    x_cordinate = (parent_width  // 2) - (width  // 2) + parent_x - 10
+    y_cordinate = (parent_height // 2) - (height // 2) + parent_y - 40
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
 
 def file_open(fname, mode):
@@ -72,7 +74,7 @@ class run_dialog(tk.Toplevel):
 
         self.title('Ubinos library command')
         
-        set_dialog_geometry_center(parent, self, 1100, 500)
+        set_dialog_geometry_center(parent, self, 1100, 600)
 
         self.transient(self.parent)
         self.protocol("WM_DELETE_WINDOW", self.close)
@@ -207,10 +209,12 @@ class libmgr(tk.Tk):
         self.lib_rel_dir = "library"
         self.lib_list_file_name = "liblist.json"
         self.lib_list_file_rel_dir = os.path.join(lib_rel_dir, "ubinos", "make")
+        self.lib_custom_list_file_rel_dir = "make"
 
         self.lib_items = []
         self.lib_items_updatable = []
         self.lib_item_idx = 0
+        self.lib_item_idx_prev = 0
         self.git_commands = []
 
         self.run_command_type = ""
@@ -236,29 +240,33 @@ class libmgr(tk.Tk):
         frame_tv.rowconfigure(0, weight=1)
         frame_tv.columnconfigure(0, weight=1)
 
-        self.tv = ttk.Treeview(frame_tv, columns=(1, 2, 3, 4, 5, 6, 7, 8), show="headings", selectmode="browse")
+        self.tv = CheckboxTreeview(frame_tv)
+        self.tv["columns"] = ("Name", "URL", "Branch", "I", "M", "U")
+        self.tv.pack(fill="both", expand=True)
         self.tv.grid(row=0, column=0, sticky="nsew")
+        self.tv.tag_configure("checked", background="palegoldenrod")
 
         sb = tk.Scrollbar(frame_tv, orient=tk.VERTICAL)
         sb.grid(row=0, column=1, sticky="ns")
         self.tv.config(yscrollcommand=sb.set)
         sb.config(command=self.tv.yview)
-        self.tv.bind('<ButtonRelease-1>', self.select_item)
 
-        self.tv.heading(1, text="No.") # Index
-        self.tv.column(1, width=20)
-        self.tv.heading(2, text="Name")
-        self.tv.column(2, width=200)
-        self.tv.heading(3, text="URL")
-        self.tv.column(3, width=600)
-        self.tv.heading(4, text="Branch")
-        self.tv.column(4, width=100)
-        self.tv.heading(5, text="I", anchor=tk.CENTER) # Installed
-        self.tv.column(5, width=20, anchor=tk.CENTER)
-        self.tv.heading(6, text="M", anchor=tk.CENTER) # Modified
-        self.tv.column(6, width=20, anchor=tk.CENTER)
-        self.tv.heading(7, text="U", anchor=tk.CENTER) # Updatable
-        self.tv.column(7, width=20, anchor=tk.CENTER)
+        self.tv.bind('<ButtonRelease-1>', self.button_release_1)
+
+        self.tv.heading("#0", text="Index") # Index
+        self.tv.column("#0", width=80)
+        self.tv.heading("Name", text="Name")
+        self.tv.column("Name", width=200)
+        self.tv.heading("URL", text="URL")
+        self.tv.column("URL", width=530)
+        self.tv.heading("Branch", text="Branch")
+        self.tv.column("Branch", width=100)
+        self.tv.heading("I", text="I", anchor=tk.CENTER) # Installed
+        self.tv.column("I", width=20, anchor=tk.CENTER)
+        self.tv.heading("M", text="M", anchor=tk.CENTER) # Modified
+        self.tv.column("M", width=20, anchor=tk.CENTER)
+        self.tv.heading("U", text="U", anchor=tk.CENTER) # Updatable
+        self.tv.column("U", width=20, anchor=tk.CENTER)
 
         ##
         frame_bt = tk.Frame(self)
@@ -279,18 +287,23 @@ class libmgr(tk.Tk):
         self.close_button = tk.Button(frame_bt, text="Close", command=quit)
         self.close_button.pack(side=tk.RIGHT, padx=4, pady=0)
 
-        self.check_button = tk.Button(frame_bt, text="Check for update all", command=self.press_check)
-        self.check_button.pack(side=tk.RIGHT, padx=40, pady=0)
+        self.check_all_button = tk.Button(frame_bt, text="Check for update all", command=self.press_check)
+        self.check_all_button.pack(side=tk.RIGHT, padx=40, pady=0)
 
         self.update_lib_items()
 
     def update_lib_items(self):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+
         lib_list_file_path = os.path.join(self.prj_dir_base, self.lib_list_file_rel_dir, self.lib_list_file_name)
         lib_list = self.load_lib_list(lib_list_file_path)
 
+        lib_custom_list_file_path = os.path.join(self.prj_dir_base, self.lib_custom_list_file_rel_dir, self.lib_list_file_name)
+        if os.path.exists(lib_list_file_path):
+            lib_list_custom = self.load_lib_list(lib_custom_list_file_path)
+            lib_list += lib_list_custom
+
         self.lib_items = []
-        
         for i, lib_info in enumerate(lib_list):
             lib_path = os.path.join(lib_dir, lib_info["name"])
             lib_installed = unknown_string
@@ -330,13 +343,16 @@ class libmgr(tk.Tk):
 
         self.tv.delete(*self.tv.get_children())
         for lib_item in self.lib_items:
-            self.tv.insert(parent='', index=lib_item["index"], iid=lib_item["index"],  values=(lib_item["index"], 
-                            lib_item["name"], 
-                            lib_item["local_url"] if lib_item["local_url"] != unknown_string else lib_item["url"], 
-                            lib_item["local_branch"] if lib_item["local_branch"] != unknown_string else lib_item["branch"], 
-                            lib_item["installed"], 
-                            lib_item["modified"], 
-                            lib_item["updatable"]))
+            index = lib_item["index"]
+            self.tv.insert(parent="", index=lib_item["index"], iid=lib_item["index"],
+                            text=f"{index + 1}",
+                            values=(
+                                lib_item["name"], 
+                                lib_item["local_url"] if lib_item["local_url"] != unknown_string else lib_item["url"], 
+                                lib_item["local_branch"] if lib_item["local_branch"] != unknown_string else lib_item["branch"], 
+                                lib_item["installed"], 
+                                lib_item["modified"], 
+                                lib_item["updatable"]))
 
         if debug_level >= 3:
             for lib in self.lib_items:
@@ -346,34 +362,66 @@ class libmgr(tk.Tk):
         self.update_selection()
 
     def update_selection(self):
-        if self.lib_items[self.lib_item_idx]["name"] == "ubinos":
+        include_ubinos = False
+        include_installed = False
+        include_not_installed = False
+        include_modified = False
+        include_not_modified = False
+        include_updatable = False
+        include_not_updatable = False
+        checked_items = self.tv.get_checked()
+        for index in checked_items:
+            item = self.lib_items[int(index)]
+            if item["name"] == "ubinos":
+                include_ubinos = True
+
+            if item["installed"] == true_string:
+                include_installed = True
+            else:
+                include_not_installed = True
+
+            if item["modified"] == true_string:
+                include_modified = True
+            else:
+                include_not_modified = True
+
+            if item["updatable"] == true_string:
+                include_updatable = True
+            else:
+                include_not_updatable = True
+
+        if include_ubinos:
             self.install_button.config(state=tk.DISABLED)
             self.uninstall_button.config(state=tk.DISABLED)
         else:
-            if self.lib_items[self.lib_item_idx]["installed"] == true_string:
+            if include_installed and not include_not_installed:
                 self.install_button.config(state=tk.DISABLED)
                 self.uninstall_button.config(state=tk.NORMAL)
-            else:
+            elif include_not_installed and not include_installed:
                 self.install_button.config(state=tk.NORMAL)
                 self.uninstall_button.config(state=tk.DISABLED)
+            else:
+                self.install_button.config(state=tk.DISABLED)
+                self.uninstall_button.config(state=tk.DISABLED)
         
-        if self.lib_items[self.lib_item_idx]["modified"] == true_string:
+        if include_modified and not include_not_modified:
             self.reset_button.config(state=tk.NORMAL)
         else:
             self.reset_button.config(state=tk.DISABLED)
 
-        if self.lib_items[self.lib_item_idx]["updatable"] == true_string:
+        if include_updatable and not include_not_updatable:
             self.update_button.config(state=tk.NORMAL)
         else:
             self.update_button.config(state=tk.DISABLED)
 
-        if self.lib_items[self.lib_item_idx]["installed"] == true_string:
-            self.check_button.config(state=tk.NORMAL)
-        else:
-            self.check_button.config(state=tk.DISABLED)
+        self.check_all_button.config(state=tk.NORMAL)
 
-        self.tv.selection_set(self.lib_item_idx)
-        self.tv.see(self.lib_item_idx)
+        index = self.lib_item_idx_prev
+        self.tv.item(index, text=f"{index + 1}")
+        index = self.lib_item_idx
+        self.tv.item(index, text=f"{index + 1}<-")
+        self.tv.selection_set(index)
+        self.tv.see(index)
 
     def load_lib_list(self, file_path):
         try:
@@ -388,13 +436,17 @@ class libmgr(tk.Tk):
         print(selection)
         print("")
 
-    def select_item(self, event):
+    def select_item(self, index):
+        self.lib_item_idx_prev = self.lib_item_idx
+        self.lib_item_idx = index
+        self.update_selection()
+        if debug_level >= 2:
+            self.print_selection()
+
+    def button_release_1(self, event):
         item = self.tv.focus()
         if item != '':
-            self.lib_item_idx = int(item)
-            self.update_selection()
-            if debug_level >= 2:
-                self.print_selection()
+            self.select_item(int(item))
 
     def key_pressed(self, event):
         # print(event.keysym)
@@ -402,16 +454,18 @@ class libmgr(tk.Tk):
             self.quit()
         elif event.keysym == "Up":
             if self.lib_item_idx > 0:
-                self.lib_item_idx -= 1
-                self.update_selection()
-                if debug_level >= 2:
-                    self.print_selection()
+                self.select_item(self.lib_item_idx - 1)
         elif event.keysym == "Down":
             if self.lib_item_idx < (len(self.lib_items) - 1):
-                self.lib_item_idx += 1
-                self.update_selection()
-                if debug_level >= 2:
-                    self.print_selection()
+                self.select_item(self.lib_item_idx + 1)
+        elif event.keysym == "space":
+            state = self.tv.item(self.lib_item_idx, "tag")[0]
+            if state == "checked":
+                state = "unchecked"
+            elif state == "unchecked":
+                state = "checked"
+            self.tv.change_state(self.lib_item_idx, state)
+            self.update_selection()
 
     def press_install(self):
         if len(self.lib_items) > 0:
@@ -419,19 +473,22 @@ class libmgr(tk.Tk):
                 print("Install library\n")
                 self.print_selection()
 
-            lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-            selection = self.lib_items[self.lib_item_idx]
-            target_dir = os.path.join(lib_dir, selection["name"])
-            source_url = selection["url"]
-            source_branch = selection["branch"]
-            self.run_command_type = "install"
-            self.git_commands = []
-            self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
-            self.git_commands.append(f"cd {target_dir}; git checkout -f {source_branch}")
-            self.run_dialog = run_dialog(self)
-            self.run_dialog.title("Install library commands")
-            self.run_dialog.set_command(self.git_commands)
-            self.run_dialog.grab_set()
+            checked_items = self.tv.get_checked()
+            if len(checked_items) > 0:
+                lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+                self.run_command_type = "install"
+                self.git_commands = []
+                for index in checked_items:
+                    selection = self.lib_items[int(index)]
+                    target_dir = os.path.join(lib_dir, selection["name"])
+                    source_url = selection["url"]
+                    source_branch = selection["branch"]
+                    self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
+                    self.git_commands.append(f"cd {target_dir}; git checkout -f {source_branch}")
+                self.run_dialog = run_dialog(self)
+                self.run_dialog.title("Install library commands")
+                self.run_dialog.set_command(self.git_commands)
+                self.run_dialog.grab_set()
 
     def press_uninstall(self):
         if len(self.lib_items) > 0:
@@ -439,22 +496,25 @@ class libmgr(tk.Tk):
                 print("Uninstall library\n")
                 self.print_selection()
 
-            lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-            selection = self.lib_items[self.lib_item_idx]
-            target_dir = os.path.join(lib_dir, selection["name"])
-            target_base_name = os.path.basename(target_dir)
-            git_dir = os.path.join(self.prj_dir_base, ".git", "modules", selection["name"])
-            dot_gitmodule_path = os.path.join(self.prj_dir_base, ".gitmodules")
-            self.run_command_type = "uninstall"
-            self.git_commands = []
-            self.git_commands.append(f"git submodule deinit -f {target_dir}")
-            self.git_commands.append(f"rm -rf {git_dir}")
-            self.git_commands.append(f"git rm -f {target_dir}")
-            # self.git_commands.append(f"git config -f {dot_gitmodule_path} --remove-section submodule.{target_base_name}")
-            self.run_dialog = run_dialog(self)
-            self.run_dialog.title("Uninstall library commands")
-            self.run_dialog.set_command(self.git_commands)
-            self.run_dialog.grab_set()
+            checked_items = self.tv.get_checked()
+            if len(checked_items) > 0:
+                lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+                self.run_command_type = "uninstall"
+                self.git_commands = []
+                for index in checked_items:
+                    selection = self.lib_items[int(index)]
+                    target_dir = os.path.join(lib_dir, selection["name"])
+                    target_base_name = os.path.basename(target_dir)
+                    git_dir = os.path.join(self.prj_dir_base, ".git", "modules", selection["name"])
+                    dot_gitmodule_path = os.path.join(self.prj_dir_base, ".gitmodules")
+                    self.git_commands.append(f"git submodule deinit -f {target_dir}")
+                    self.git_commands.append(f"rm -rf {git_dir}")
+                    self.git_commands.append(f"git rm -f {target_dir}")
+                    # self.git_commands.append(f"git config -f {dot_gitmodule_path} --remove-section submodule.{target_base_name}")
+                self.run_dialog = run_dialog(self)
+                self.run_dialog.title("Uninstall library commands")
+                self.run_dialog.set_command(self.git_commands)
+                self.run_dialog.grab_set()
 
     def press_reset(self):
         if len(self.lib_items) > 0:
@@ -462,17 +522,20 @@ class libmgr(tk.Tk):
                 print("Reset library\n")
                 self.print_selection()
 
-            lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-            selection = self.lib_items[self.lib_item_idx]
-            target_dir = os.path.join(lib_dir, selection["name"])
-            self.run_command_type = "reset"
-            self.git_commands = []
-            self.git_commands.append(f"cd {target_dir}; git reset --hard HEAD")
-            self.git_commands.append(f"cd {target_dir}; git clean -fd")
-            self.run_dialog = run_dialog(self)
-            self.run_dialog.title("Uninstall library commands")
-            self.run_dialog.set_command(self.git_commands)
-            self.run_dialog.grab_set()
+            checked_items = self.tv.get_checked()
+            if len(checked_items) > 0:
+                lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+                self.run_command_type = "reset"
+                self.git_commands = []
+                for index in checked_items:
+                    selection = self.lib_items[int(index)]
+                    target_dir = os.path.join(lib_dir, selection["name"])
+                    self.git_commands.append(f"cd {target_dir}; git reset --hard HEAD")
+                    self.git_commands.append(f"cd {target_dir}; git clean -fd")
+                self.run_dialog = run_dialog(self)
+                self.run_dialog.title("Uninstall library commands")
+                self.run_dialog.set_command(self.git_commands)
+                self.run_dialog.grab_set()
 
     def press_check(self):
         if len(self.lib_items) > 0:
@@ -497,16 +560,19 @@ class libmgr(tk.Tk):
                 print("Update library\n")
                 self.print_selection()
 
-            lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-            selection = self.lib_items[self.lib_item_idx]
-            target_dir = os.path.join(lib_dir, selection["name"])
-            self.run_command_type = "update"
-            self.git_commands = []
-            self.git_commands.append(f"cd {target_dir}; git pull")
-            self.run_dialog = run_dialog(self)
-            self.run_dialog.title("Uninstall library commands")
-            self.run_dialog.set_command(self.git_commands)
-            self.run_dialog.grab_set()
+            checked_items = self.tv.get_checked()
+            if len(checked_items) > 0:
+                lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+                self.run_command_type = "update"
+                self.git_commands = []
+                for index in checked_items:
+                    selection = self.lib_items[int(index)]
+                    target_dir = os.path.join(lib_dir, selection["name"])
+                    self.git_commands.append(f"cd {target_dir}; git pull")
+                self.run_dialog = run_dialog(self)
+                self.run_dialog.title("Uninstall library commands")
+                self.run_dialog.set_command(self.git_commands)
+                self.run_dialog.grab_set()
 
     def press_run_dialog_close(self):
         self.run_command_type = ""
@@ -516,6 +582,7 @@ class libmgr(tk.Tk):
     def press_run_dialog_run(self):
         result = False
         self.run_dialog.set_running(True)
+        self.run_dialog.clear_result()
 
         for cmd in self.git_commands:
             result = self.run_git_command_with_dialog(cmd)
@@ -544,7 +611,6 @@ class libmgr(tk.Tk):
 
     def run_git_command_with_dialog(self, command):
         result = False
-        self.run_dialog.clear_result()
         self.run_dialog.append_result(command + "\n")
         try:
             process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, bufsize=1, universal_newlines=True)
