@@ -547,7 +547,7 @@ class libmgr(tk.Tk):
             self.lib_items_updatable = []
             for lib_item in self.lib_items:
                 item_updatable = {"name": lib_item["name"], "url": lib_item["url"], "branch": lib_item["branch"]}
-                if self.git_check_updatable(lib_item["name"]):
+                if lib_item["installed"] == true_string and self.git_check_updatable(lib_item["name"]):
                     self.lib_items_updatable.append(item_updatable)
 
             if debug_level >= 1:
