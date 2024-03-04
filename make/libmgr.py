@@ -710,7 +710,13 @@ class libmgr(tk.Tk):
             for line in output_lines:
                 parts = line.split()
                 if len(parts) >= 2:
-                    remote_urls.append(parts[1])
+                    if (parts[0] == "origin"):
+                        remote_urls.append(parts[1])
+            for line in output_lines:
+                parts = line.split()
+                if len(parts) >= 2:
+                    if (parts[0] != "origin"):
+                        remote_urls.append(parts[1])
 
             return remote_urls
         else:
