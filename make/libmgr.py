@@ -160,6 +160,7 @@ class run_dialog(tk.Toplevel):
         last_line_index = self.command_text.index("end-1c linestart")
         self.command_text.see(last_line_index)
         self.command_text.config(state=tk.DISABLED)
+        self.update()
 
     def update_result_text(self, init=False):
         self.result_text.config(state=tk.NORMAL)
@@ -168,6 +169,7 @@ class run_dialog(tk.Toplevel):
         last_line_index = self.result_text.index("end-1c linestart")
         self.result_text.see(last_line_index)
         self.result_text.config(state=tk.DISABLED)
+        self.update()
 
     def update_buttons(self, init=False):
         if not self.runable or self.running:
@@ -179,6 +181,7 @@ class run_dialog(tk.Toplevel):
             self.close_button.config(state=tk.DISABLED)
         else:
             self.close_button.config(state=tk.NORMAL)
+        self.update()
 
     def set_command(self, commands):
         for cmd in commands:
