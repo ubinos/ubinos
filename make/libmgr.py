@@ -299,7 +299,7 @@ class libmgr(tk.Tk):
         lib_list = self.load_lib_list(lib_list_file_path)
 
         lib_custom_list_file_path = os.path.join(self.prj_dir_base, self.lib_custom_list_file_rel_dir, self.lib_list_file_name)
-        if os.path.exists(lib_list_file_path):
+        if os.path.exists(lib_custom_list_file_path):
             lib_list_custom = self.load_lib_list(lib_custom_list_file_path)
             lib_list += lib_list_custom
 

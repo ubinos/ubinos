@@ -205,6 +205,8 @@ common-help:
 	@echo ""
 	@echo "make help                    (show help)"
 	@echo ""
+	@echo "make xmgr                    (run project manager with GUI or new window)"
+	@echo ""
 	@echo "make xsel                    (run config selector with GUI or new window)"
 	@echo ""
 	@echo "make all                     (config and build)"
@@ -351,6 +353,15 @@ common-xconfig:
 common-menuconfig:
 	$(call begin_message)
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && ccmake .
+	$(call end_message)
+
+common-xmgr:
+	$(call begin_message)
+ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python  "$(_UBINOS_DIR)/make/libmgr.py" --lib-absolute .. $(_LIBRARY_DIR)
+else
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/libmgr.py" --lib-absolute .. $(_LIBRARY_DIR)
+endif
 	$(call end_message)
 
 common-xsel:
