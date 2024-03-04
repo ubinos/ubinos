@@ -667,7 +667,7 @@ class libmgr(tk.Tk):
         if debug_level >= 1:
             print(result)
         
-        if result.returncode == 0:
+        if result != None and result.returncode == 0:
             return True
         else:
             return False
