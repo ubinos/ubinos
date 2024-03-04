@@ -25,11 +25,6 @@
         "branch": "ubinos-main"
     },
     {
-        "name": "CMSIS-NN",
-        "url": "https://github.com/ubinos/CMSIS_5.git",
-        "branch": "ubinos-main"
-    },
-    {
         "name": "nrf5sdk_wrapper",
         "url": "https://github.com/ubinos/nrf5sdk_wrapper.git",
         "branch": "ubinos-main"
