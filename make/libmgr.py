@@ -485,7 +485,7 @@ class libmgr(tk.Tk):
                     source_url = selection["url"]
                     source_branch = selection["branch"]
                     self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
-                    self.git_commands.append(f"cd {target_dir}; git checkout -f {source_branch}")
+                    self.git_commands.append(f"cd {target_dir} && git checkout -f {source_branch}")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Install library commands")
                 self.run_dialog.set_command(self.git_commands)
@@ -531,8 +531,8 @@ class libmgr(tk.Tk):
                 for index in checked_items:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
-                    self.git_commands.append(f"cd {target_dir}; git reset --hard HEAD")
-                    self.git_commands.append(f"cd {target_dir}; git clean -fd")
+                    self.git_commands.append(f"cd {target_dir} && git reset --hard HEAD")
+                    self.git_commands.append(f"cd {target_dir} && git clean -fd")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Uninstall library commands")
                 self.run_dialog.set_command(self.git_commands)
@@ -569,7 +569,7 @@ class libmgr(tk.Tk):
                 for index in checked_items:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
-                    self.git_commands.append(f"cd {target_dir}; git pull")
+                    self.git_commands.append(f"cd {target_dir} && git pull")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Uninstall library commands")
                 self.run_dialog.set_command(self.git_commands)
