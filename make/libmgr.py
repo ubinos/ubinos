@@ -208,8 +208,8 @@ class libmgr(tk.Tk):
     def __init__(self, prj_dir_base, lib_rel_dir):
         super().__init__()
 
-        self.prj_dir_base = ".."
-        self.lib_rel_dir = "library"
+        self.prj_dir_base = prj_dir_base
+        self.lib_rel_dir = lib_rel_dir
         self.lib_list_file_name = "liblist.json"
         self.lib_list_file_rel_dir = os.path.join(lib_rel_dir, "ubinos", "make")
         self.lib_custom_list_file_rel_dir = "make"
