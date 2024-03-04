@@ -46,11 +46,21 @@ def set_geometry_center(win, width, height):
     y_cordinate = int((screen_height/2) - (height/2))
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
 
+def set_dialog_geometry_center(parent, win, width, height):
+    parent_width = parent.winfo_width()
+    parent_height = parent.winfo_height()
+    parent_x = parent.winfo_x()
+    parent_y = parent.winfo_y()
+    x_cordinate = (parent_width  // 2) - (width  // 2) + parent_x - 10
+    y_cordinate = (parent_height // 2) - (height // 2) + parent_y - 40
+    win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
+
 def file_open(fname, mode):
     if sys.version_info.major >= 3:
         return open(fname, mode, encoding="UTF-8")
     else:
         return open(fname, mode)
+
 class clone_dialog(tk.Toplevel):
 
     src_config_dir = "../app"
@@ -65,9 +75,9 @@ class clone_dialog(tk.Toplevel):
 
         self.parent = parent
 
-        self.title('Ubinos config cloner')
+        self.title('Ubinos config copier')
 
-        set_geometry_center(self, 1100, 500)
+        set_dialog_geometry_center(parent, self, 1100, 500)
 
         self.transient(self.parent)
         self.protocol("WM_DELETE_WINDOW", self.parent.press_clone_dialog_cancel)
@@ -140,35 +150,35 @@ class clone_dialog(tk.Toplevel):
         self.update_items()
 
     def update_items(self, init=False):
-            if init:
-                selection = self.parent.config_items[self.parent.config_item_idx]
-                self.src_config_dir = selection["dir"]
-                self.src_config_file_name = selection["file_name"]
-                src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
-                self.src_config_name_base = src_config_name_base
-                self.dst_config_name_base = src_config_name_base + "_2"
-
-                self.variables['source'].set(self.src_config_name_base)
-                self.variables['destination'].set(self.dst_config_name_base)
-
+        if init:
+            selection = self.parent.config_items[self.parent.config_item_idx]
+            self.src_config_dir = selection["dir"]
+            self.src_config_file_name = selection["file_name"]
             src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
+            self.src_config_name_base = src_config_name_base
+            self.dst_config_name_base = src_config_name_base + "_2"
 
-            if debug_level >= 2:
-                print(src_file_paths)
-                print(dst_file_paths)
+            self.variables['source'].set(self.src_config_name_base)
+            self.variables['destination'].set(self.dst_config_name_base)
 
-            self.src_file_paths = src_file_paths
-            self.dst_file_paths = dst_file_paths
+        src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.parent.get_clone_params(self.src_config_dir, self.src_config_file_name, self.dst_config_dir, self.dst_config_name_base)
 
-            for row in self.tvl.get_children():
-                self.tvl.delete(row)
-            for row in self.tvr.get_children():
-                self.tvr.delete(row)
+        if debug_level >= 2:
+            print(src_file_paths)
+            print(dst_file_paths)
 
-            for idx, file_path in enumerate(src_file_paths):
-                self.tvl.insert(parent='', index=idx, iid=idx, values=(file_path))
-            for idx, file_path in enumerate(dst_file_paths):
-                self.tvr.insert(parent='', index=idx, iid=idx, values=(file_path))
+        self.src_file_paths = src_file_paths
+        self.dst_file_paths = dst_file_paths
+
+        for row in self.tvl.get_children():
+            self.tvl.delete(row)
+        for row in self.tvr.get_children():
+            self.tvr.delete(row)
+
+        for idx, file_path in enumerate(src_file_paths):
+            self.tvl.insert(parent='', index=idx, iid=idx, values=(file_path))
+        for idx, file_path in enumerate(dst_file_paths):
+            self.tvr.insert(parent='', index=idx, iid=idx, values=(file_path))
 
 class confsel(tk.Tk):
     config_info_keyword = "ubinos_config_info {"
@@ -224,7 +234,7 @@ class confsel(tk.Tk):
         cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
         select_button = tk.Button(frame_bt, text="Select", command=self.press_select)
         select_button.pack(side=tk.RIGHT, padx=10, pady=0)
-        clone_button = tk.Button(frame_bt, text="Clone", command=self.press_clone)
+        clone_button = tk.Button(frame_bt, text="Copy", command=self.press_clone)
         clone_button.pack(side=tk.LEFT, padx=10, pady=0)
 
         self.tv.heading(1, text="Index")
@@ -613,7 +623,7 @@ class confsel(tk.Tk):
     def press_clone(self):
         if self.config_len > 0:
             if debug_level >= 1:
-                print("Clone config\n")
+                print("Copy config\n")
                 self.print_selection()
 
             self.clone_dialog = clone_dialog(self)
@@ -627,16 +637,16 @@ class confsel(tk.Tk):
         result, message = self.clone_config(self.make_file_name, self.clone_dialog.src_config_dir, self.clone_dialog.src_config_file_name, self.clone_dialog.dst_config_dir, self.clone_dialog.dst_config_name_base)
         if result:
             messagebox.showinfo(
-                title='Clone result',
-                message="Clone succeeded",
+                title='Copy result',
+                message="Copy succeeded",
             )
             self.clone_dialog.destroy()
             self.deiconify()
             self.quit()
         else:
             messagebox.showinfo(
-                title='Clone result',
-                message="Clone failed",
+                title='Copy result',
+                message="Copy failed",
                 detail=message
             )
 
