@@ -46,6 +46,15 @@ def set_geometry_center(win, width, height):
     y_cordinate = int((screen_height/2) - (height/2))
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
 
+def set_dialog_geometry_center(parent, win, width, height):
+    parent_width = parent.winfo_width()
+    parent_height = parent.winfo_height()
+    parent_x = parent.winfo_x()
+    parent_y = parent.winfo_y()
+    x_cordinate = (parent_width  // 2) - (width  // 2) + parent_x - 10
+    y_cordinate = (parent_height // 2) - (height // 2) + parent_y - 40
+    win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
+
 def file_open(fname, mode):
     if sys.version_info.major >= 3:
         return open(fname, mode, encoding="UTF-8")
@@ -68,7 +77,7 @@ class clone_dialog(tk.Toplevel):
 
         self.title('Ubinos config copier')
 
-        set_geometry_center(self, 1100, 500)
+        set_dialog_geometry_center(parent, self, 1100, 500)
 
         self.transient(self.parent)
         self.protocol("WM_DELETE_WINDOW", self.parent.press_clone_dialog_cancel)

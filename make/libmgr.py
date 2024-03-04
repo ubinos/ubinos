@@ -39,10 +39,10 @@ def print_help():
     print("===============================================================================")
 
 def set_geometry_center(win, width, height):
-    # screen_width = win.winfo_screenwidth()
-    # screen_height = win.winfo_screenheight()
-    screen_width = win.winfo_screenwidth() // 2
-    screen_height = win.winfo_screenheight() // 2
+    screen_width = win.winfo_screenwidth()
+    screen_height = win.winfo_screenheight()
+    # screen_width = win.winfo_screenwidth() // 2
+    # screen_height = win.winfo_screenheight() // 2
     x_cordinate = (screen_width  // 2) - (width  // 2)
     y_cordinate = (screen_height // 2) - (height // 2)
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
