@@ -240,11 +240,6 @@ common-help:
 	@echo "make xconfig                 (run config GUI using cmake-gui)"
 	@echo "make menuconfig              (run config TUI using ccmake)"
 	@echo ""
-	@echo "make upgrade                 (upgrade libraries listed in LIBRARY_UPGRADE_LIST)"
-	@echo "make upgradef                (upgrade libraries listed in LIBRARY_UPGRADE_LIST with force option)"
-	@echo "make upgradea                (upgrade all libraries)"
-	@echo "make upgradeaf               (upgrade all libraries with force option)"
-	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
 	@echo "make zbatch-<make target>    (do <make target> with all <config name> listed in batch.mk)"
@@ -371,28 +366,6 @@ ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
 else
 	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/confsel.py" --lib-absolute .. $(_LIBRARY_DIR)
 endif
-	$(call end_message)
-
-###############################################################################
-
-common-upgrade:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote --init $(_LIBRARY_UPGRADE_LIST)
-	$(call end_message)
-
-common-upgradef:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote --init -f $(_LIBRARY_UPGRADE_LIST)
-	$(call end_message)
-
-common-upgradea:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote --init
-	$(call end_message)
-
-common-upgradeaf:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_LIBRARY_DIR)" && git submodule update --remote --init -f
 	$(call end_message)
 
 ###############################################################################
