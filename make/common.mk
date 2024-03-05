@@ -80,14 +80,6 @@ endif
 
 ###############################################################################
 
-ifeq ($(strip $(LIBRARY_UPGRADE_LIST)),)
-_LIBRARY_UPGRADE_LIST   = ubinos
-else
-_LIBRARY_UPGRADE_LIST   = $(LIBRARY_UPGRADE_LIST)
-endif
-
-###############################################################################
-
 ifeq ($(strip $(SYSTEM_NAME)),)
 _SYSTEM_NAME            = $(shell python "$(_TOOLBOX)" system_name)
 else
@@ -183,10 +175,6 @@ common-help:
 	@echo ""
 	@echo "RESOURCE_DIR                 = $(_RESOURCE_DIR)"
 	@echo "MAKE_DIR                     = $(_MAKE_DIR)"
-	@echo ""
-	@echo "-------------------------------------------------------------------------------"
-	@echo ""
-	@echo "LIBRARY_UPGRADE_LIST         = $(_LIBRARY_UPGRADE_LIST)"
 	@echo ""
 	@echo "-------------------------------------------------------------------------------"
 	@echo ""
