@@ -11,28 +11,33 @@ import sys
 import multiprocessing
 import platform
 import shutil
+import json
+
+config_info_keyword = "ubinos_config_info {"
+config_info_make_dir_key = "make_dir"
 
 def print_help():
     print("===============================================================================")
     print("Usage:")
-    print("    %s system_name" % (sys.argv[0]))
-    print("    %s cpu_count" % (sys.argv[0]))
-    print("    %s get_start_command_for_cmake" % (sys.argv[0]))
-    print("    %s realpath <file name>" % (sys.argv[0]))
-    print("    %s is_existing_path <path name>" % (sys.argv[0]))
-    print("    %s is_removable_dir <output dir>" % (sys.argv[0]))
-    print("    %s which <executable file name>" % (sys.argv[0]))
-    print("    %s copy_file <src> <dst>"% (sys.argv[0]))
-    print("    %s getuid" % (sys.argv[0]))
-    print("    %s getgid" % (sys.argv[0]))
-    print("    %s is_python3" % (sys.argv[0]))
-    print("    %s refine_gdbscript <source file name> <destination file name> <app file name>" % (sys.argv[0]))
-    print("    %s refine_linkscript <source file name> <destination file name> <memory type> <origin> <length>" % (sys.argv[0]))
-    print("    %s parse_mapfile_get_value_gcc <source file name> <symbol>" % (sys.argv[0]))
-    print("    %s parse_mapfile_get_value_local_gcc <source file name> <symbol>" % (sys.argv[0]))
-    print("    %s parse_mapfile_get_value_local_llvm <source file name> <symbol>" % (sys.argv[0]))
-    print("    %s show_mapfile_info <source file name> <toolchain type>" % (sys.argv[0]))
-    print("    %s replace_string <source file name> <destination file name> <old string> <new string>" % (sys.argv[0]))
+    print("    python %s system_name" % (sys.argv[0]))
+    print("    python %s cpu_count" % (sys.argv[0]))
+    print("    python %s get_start_command_for_cmake" % (sys.argv[0]))
+    print("    python %s realpath <file name>" % (sys.argv[0]))
+    print("    python %s is_existing_path <path name>" % (sys.argv[0]))
+    print("    python %s is_removable_dir <output dir>" % (sys.argv[0]))
+    print("    python %s which <executable file name>" % (sys.argv[0]))
+    print("    python %s copy_file <src> <dst>"% (sys.argv[0]))
+    print("    python %s getuid" % (sys.argv[0]))
+    print("    python %s getgid" % (sys.argv[0]))
+    print("    python %s is_python3" % (sys.argv[0]))
+    print("    python %s refine_gdbscript <source file name> <destination file name> <app file name>" % (sys.argv[0]))
+    print("    python %s refine_linkscript <source file name> <destination file name> <memory type> <origin> <length>" % (sys.argv[0]))
+    print("    python %s parse_mapfile_get_value_gcc <source file name> <symbol>" % (sys.argv[0]))
+    print("    python %s parse_mapfile_get_value_local_gcc <source file name> <symbol>" % (sys.argv[0]))
+    print("    python %s parse_mapfile_get_value_local_llvm <source file name> <symbol>" % (sys.argv[0]))
+    print("    python %s show_mapfile_info <source file name> <toolchain type>" % (sys.argv[0]))
+    print("    python %s replace_string <source file name> <destination file name> <old string> <new string>" % (sys.argv[0]))
+    print("    python %s get_make_dir_from_config_file <config file name>" % (sys.argv[0]))
     print("===============================================================================")
 
 def system_name():
@@ -422,6 +427,29 @@ def show_mapfile_info(sfn, type):
     elif (type == "local_llvm"):
         show_mapfile_info_local_llvm(sfn)
 
+def get_make_dir_from_config_file(config_file_path):
+    config_info = None
+
+    with file_open(config_file_path, 'r') as file:
+        try:
+            lines = file.readlines()
+            for line in lines:
+                k_idx = line.find(config_info_keyword)
+                if k_idx > -1:
+                    k_len = len(config_info_keyword)
+                    config_info_string = line[k_idx + k_len - 1:]
+                    config_info = json.loads(config_info_string)
+                    break
+        except Exception as e:
+            print('Exception occurred.', e)
+
+        file.close()
+
+    if config_info != None and config_info_make_dir_key in config_info:
+        print(config_info[config_info_make_dir_key])
+    else:
+        print("")
+
 if __name__ == '__main__':
     if 2 > len(sys.argv):
         print_help()
@@ -522,6 +550,12 @@ if __name__ == '__main__':
                 oldstr = sys.argv[4]
                 newstr = sys.argv[5]
                 replace_string(sfn, dfn, oldstr, newstr)
+        elif "get_make_dir_from_config_file" == sys.argv[1]:
+            if 3 > len(sys.argv):
+                print_help()
+            else:
+                fname = sys.argv[2]
+                get_make_dir_from_config_file(fname)
         else:
             print_help()
 
