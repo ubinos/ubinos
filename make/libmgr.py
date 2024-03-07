@@ -339,7 +339,7 @@ class libmgr(tk.Tk):
                                    "name": lib_info["name"], 
                                    "url": lib_info["url"], 
                                    "local_url": lib_local_url, 
-                                   "branch": lib_info["branch"], 
+                                   "branch": lib_info["branch"] if "branch" in lib_info else "", 
                                    "local_branch": lib_local_branch, 
                                    "installed": lib_installed, 
                                    "modified": lib_modified, 
@@ -488,7 +488,8 @@ class libmgr(tk.Tk):
                     source_url = selection["url"]
                     source_branch = selection["branch"]
                     self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
-                    self.git_commands.append(f"cd {target_dir} && git checkout -f {source_branch}")
+                    if source_branch != "":
+                        self.git_commands.append(f"cd {target_dir} && git checkout -f {source_branch}")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Install library commands")
                 self.run_dialog.set_command(self.git_commands)
@@ -508,11 +509,11 @@ class libmgr(tk.Tk):
                 for index in checked_items:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
-                    target_base_name = os.path.basename(target_dir)
-                    git_dir = os.path.join(self.prj_dir_base, ".git", "modules", selection["name"])
-                    dot_gitmodule_path = os.path.join(self.prj_dir_base, ".gitmodules")
+                    dot_git_dir = os.path.join(self.prj_dir_base, ".git", "modules", self.lib_rel_dir, selection["name"])
+                    # dot_gitmodule_path = os.path.join(self.prj_dir_base, ".gitmodules")
+                    # target_base_name = os.path.basename(target_dir)
                     self.git_commands.append(f"git submodule deinit -f {target_dir}")
-                    self.git_commands.append(f"rm -rf {git_dir}")
+                    self.git_commands.append(f"rm -rf {dot_git_dir}")
                     self.git_commands.append(f"git rm -f {target_dir}")
                     # self.git_commands.append(f"git config -f {dot_gitmodule_path} --remove-section submodule.{target_base_name}")
                 self.run_dialog = run_dialog(self)
