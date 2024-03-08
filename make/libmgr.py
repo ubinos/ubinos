@@ -39,10 +39,10 @@ def print_help():
     print("===============================================================================")
 
 def set_geometry_center(win, width, height):
-    screen_width = win.winfo_screenwidth()
-    screen_height = win.winfo_screenheight()
-    # screen_width = win.winfo_screenwidth() // 2
-    # screen_height = win.winfo_screenheight() // 2
+    # screen_width = win.winfo_screenwidth()
+    # screen_height = win.winfo_screenheight()
+    screen_width = win.winfo_screenwidth() // 2
+    screen_height = win.winfo_screenheight() // 2
     x_cordinate = (screen_width  // 2) - (width  // 2)
     y_cordinate = (screen_height // 2) - (height // 2)
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
@@ -244,10 +244,11 @@ class libmgr(tk.Tk):
         frame_tv.columnconfigure(0, weight=1)
 
         self.tv = CheckboxTreeview(frame_tv)
-        self.tv["columns"] = ("Name", "URL", "Branch", "I", "M", "U")
+        self.tv["columns"] = ("I", "M", "U", "Name", "URL", "Branch")
         self.tv.pack(fill="both", expand=True)
         self.tv.grid(row=0, column=0, sticky="nsew")
-        self.tv.tag_configure("checked", background="palegoldenrod")
+        self.tv.tag_configure("selected", background="palegoldenrod")
+        self.tv.tag_configure("checked", foreground="red")
 
         sb = tk.Scrollbar(frame_tv, orient=tk.VERTICAL)
         sb.grid(row=0, column=1, sticky="ns")
@@ -257,19 +258,19 @@ class libmgr(tk.Tk):
         self.tv.bind('<ButtonRelease-1>', self.button_release_1)
 
         self.tv.heading("#0", text="Index") # Index
-        self.tv.column("#0", width=80)
-        self.tv.heading("Name", text="Name")
-        self.tv.column("Name", width=200)
-        self.tv.heading("URL", text="URL")
-        self.tv.column("URL", width=530)
-        self.tv.heading("Branch", text="Branch")
-        self.tv.column("Branch", width=100)
+        self.tv.column("#0", width=60)
         self.tv.heading("I", text="I", anchor=tk.CENTER) # Installed
         self.tv.column("I", width=20, anchor=tk.CENTER)
         self.tv.heading("M", text="M", anchor=tk.CENTER) # Modified
         self.tv.column("M", width=20, anchor=tk.CENTER)
         self.tv.heading("U", text="U", anchor=tk.CENTER) # Updatable
         self.tv.column("U", width=20, anchor=tk.CENTER)
+        self.tv.heading("Name", text="Name")
+        self.tv.column("Name", width=200)
+        self.tv.heading("URL", text="URL")
+        self.tv.column("URL", width=550)
+        self.tv.heading("Branch", text="Branch")
+        self.tv.column("Branch", width=100)
 
         ##
         frame_bt = tk.Frame(self)
@@ -335,15 +336,15 @@ class libmgr(tk.Tk):
             else:
                 lib_installed = false_string
 
-            self.lib_items.append({"index": i, 
-                                   "name": lib_info["name"], 
+            self.lib_items.append({"index": i,
+                                   "installed": lib_installed, 
+                                   "modified": lib_modified, 
+                                   "updatable": lib_updatable, 
+                                   "name": lib_info["name"],
                                    "url": lib_info["url"], 
                                    "local_url": lib_local_url, 
                                    "branch": lib_info["branch"] if "branch" in lib_info else "", 
-                                   "local_branch": lib_local_branch, 
-                                   "installed": lib_installed, 
-                                   "modified": lib_modified, 
-                                   "updatable": lib_updatable})
+                                   "local_branch": lib_local_branch})
 
         self.tv.delete(*self.tv.get_children())
         for lib_item in self.lib_items:
@@ -351,12 +352,12 @@ class libmgr(tk.Tk):
             self.tv.insert(parent="", index=lib_item["index"], iid=lib_item["index"],
                             text=f"{index + 1}",
                             values=(
-                                lib_item["name"], 
-                                lib_item["local_url"] if lib_item["local_url"] != unknown_string else lib_item["url"], 
-                                lib_item["local_branch"] if lib_item["local_branch"] != unknown_string else lib_item["branch"], 
                                 lib_item["installed"], 
                                 lib_item["modified"], 
-                                lib_item["updatable"]))
+                                lib_item["updatable"], 
+                                lib_item["name"], 
+                                lib_item["local_url"] if lib_item["local_url"] != unknown_string else lib_item["url"], 
+                                lib_item["local_branch"] if lib_item["local_branch"] != unknown_string else lib_item["branch"]))
 
         if debug_level >= 3:
             for lib in self.lib_items:
@@ -421,9 +422,14 @@ class libmgr(tk.Tk):
         self.check_all_button.config(state=tk.NORMAL)
 
         index = self.lib_item_idx_prev
-        self.tv.item(index, text=f"{index + 1}")
+        tags = self.tv.item(index, "tag")
+        if "selected" in tags:
+            self.tv.tag_del(index, "selected")
+
         index = self.lib_item_idx
-        self.tv.item(index, text=f"{index + 1}<-")
+        tags = self.tv.item(index, "tag")
+        if not "selected" in tags:
+            self.tv.tag_add(index, "selected")
         self.tv.selection_set(index)
         self.tv.see(index)
 
@@ -463,12 +469,13 @@ class libmgr(tk.Tk):
             if self.lib_item_idx < (len(self.lib_items) - 1):
                 self.select_item(self.lib_item_idx + 1)
         elif event.keysym == "space":
-            state = self.tv.item(self.lib_item_idx, "tag")[0]
-            if state == "checked":
-                state = "unchecked"
-            elif state == "unchecked":
-                state = "checked"
-            self.tv.change_state(self.lib_item_idx, state)
+            tags = self.tv.item(self.lib_item_idx, "tag")
+            if "checked" in tags:
+                self.tv.tag_del(self.lib_item_idx, "checked")
+                self.tv.tag_add(self.lib_item_idx, "unchecked")
+            elif "unchecked" in tags:
+                self.tv.tag_del(self.lib_item_idx, "unchecked")
+                self.tv.tag_add(self.lib_item_idx, "checked")
             self.update_selection()
 
     def press_install(self):
