@@ -55,6 +55,21 @@
         "branch": "ubinos-main"
     },
     {
+        "name": "STM32CubeL4_wrapper",
+        "url": "https://github.com/ubinos/STM32CubeL4_wrapper.git",
+        "branch": "ubinos-main"
+    },
+    {
+        "name": "STM32CubeL4_extension",
+        "url": "https://github.com/ubinos/STM32CubeL4_extension.git",
+        "branch": "ubinos-main"
+    },
+    {
+        "name": "STM32CubeL4_v01.15.00_lite",
+        "url": "https://github.com/ubinos/STM32CubeL4_v01.15.00_lite.git",
+        "branch": "ubinos-main"
+    },
+    {
         "name": "esp8266at",
         "url": "https://github.com/ubinos/esp8266at.git",
         "branch": "ubinos-main"
