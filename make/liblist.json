@@ -2,207 +2,206 @@
     {
         "name": "ubinos",
         "url": "https://github.com/ubinos/ubinos.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "seggerrtt_wrapper",
         "url": "https://github.com/ubinos/seggerrtt_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "seggerrtt",
         "url": "https://github.com/ubinos/seggerrtt.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "CMSIS_5_wrapper",
         "url": "https://github.com/ubinos/CMSIS_5_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "CMSIS_5",
         "url": "https://github.com/ubinos/CMSIS_5.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "nrf5sdk_wrapper",
         "url": "https://github.com/ubinos/nrf5sdk_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "nrf5sdk_extension",
         "url": "https://github.com/ubinos/nrf5sdk_extension.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "nrf5sdk_v17.00.00_lite",
         "url": "https://github.com/ubinos/nrf5sdk_v17.00.00_lite.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "stm32cubef2_wrapper",
         "url": "https://github.com/ubinos/stm32cubef2_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "stm32cubef2_extension",
         "url": "https://github.com/ubinos/stm32cubef2_extension.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "stm32cubef2_v01.09.00_lite",
         "url": "https://github.com/ubinos/stm32cubef2_v01.09.00_lite.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "STM32CubeL4_wrapper",
         "url": "https://github.com/ubinos/STM32CubeL4_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "STM32CubeL4_extension",
         "url": "https://github.com/ubinos/STM32CubeL4_extension.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "STM32CubeL4_v01.15.00_lite",
         "url": "https://github.com/ubinos/STM32CubeL4_v01.15.00_lite.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "esp8266at",
         "url": "https://github.com/ubinos/esp8266at.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "tflite-micro_wrapper",
         "url": "https://github.com/ubinos/tflite-micro_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "tflite-micro",
         "url": "https://github.com/ubinos/tflite-micro.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "googletest_wrapper",
         "url": "https://github.com/ubinos/googletest_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "googletest",
         "url": "https://github.com/ubinos/googletest.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "ArduinoCore-API_wrapper",
         "url": "https://github.com/ubinos/ArduinoCore-API_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "ArduinoCore-API",
         "url": "https://github.com/ubinos/ArduinoCore-API.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "Adafruit_BusIO_wrapper",
         "url": "https://github.com/ubinos/Adafruit_BusIO_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "Adafruit_BusIO",
         "url": "https://github.com/ubinos/Adafruit_BusIO.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "Adafruit_Sensor_wrapper",
         "url": "https://github.com/ubinos/Adafruit_Sensor_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "Adafruit_Sensor",
         "url": "https://github.com/ubinos/Adafruit_Sensor.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "Adafruit_BME280_Library_wrapper",
         "url": "https://github.com/ubinos/Adafruit_BME280_Library_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "Adafruit_BME280_Library",
         "url": "https://github.com/ubinos/Adafruit_BME280_Library.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "Arduino_LSM9DS1_wrapper",
         "url": "https://github.com/ubinos/Arduino_LSM9DS1_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "Arduino_LSM9DS1",
         "url": "https://github.com/ubinos/Arduino_LSM9DS1.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "DHT-sensor-library_wrapper",
         "url": "https://github.com/ubinos/DHT-sensor-library_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "DHT-sensor-library",
         "url": "https://github.com/ubinos/DHT-sensor-library.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "libcrc_wrapper",
         "url": "https://github.com/ubinos/libcrc_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "libcrc",
         "url": "https://github.com/ubinos/libcrc.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "jansson_wrapper",
         "url": "https://github.com/ubinos/jansson_wrapper.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "jansson",
         "url": "https://github.com/ubinos/jansson.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "flatbuffers",
         "url": "https://github.com/ubinos/flatbuffers.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "kissfft",
         "url": "https://github.com/ubinos/kissfft.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "gemmlowp",
         "url": "https://github.com/ubinos/gemmlowp.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "ruy",
         "url": "https://github.com/ubinos/ruy.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "mp_course_materials",
         "url": "https://github.com/ubinos-edu/mp_course_materials.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
         "name": "ece2_course_materials",
         "url": "https://github.com/ubinos-edu/ece2_course_materials.git",
-        "branch": "ubinos-main"
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     }
 ]
-  
