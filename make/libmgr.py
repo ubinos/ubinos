@@ -26,7 +26,7 @@ from ttkwidgets import CheckboxTreeview
 
 from collections import Counter
 
-debug_level = 3
+debug_level = 1
 
 true_string = "O"
 false_string = "X"
@@ -39,10 +39,10 @@ def print_help():
     print("===============================================================================")
 
 def set_geometry_center(win, width, height):
-    # screen_width = win.winfo_screenwidth()
-    # screen_height = win.winfo_screenheight()
-    screen_width = win.winfo_screenwidth() // 2
-    screen_height = win.winfo_screenheight() // 2
+    screen_width = win.winfo_screenwidth()
+    screen_height = win.winfo_screenheight()
+    # screen_width = win.winfo_screenwidth() // 2
+    # screen_height = win.winfo_screenheight() // 2
     x_cordinate = (screen_width  // 2) - (width  // 2)
     y_cordinate = (screen_height // 2) - (height // 2)
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
@@ -445,7 +445,7 @@ class libmgr(tk.Tk):
                 lib_list = json.load(file)
                 return lib_list
         except Exception as e:
-            print("Exception occurred.", e)
+            print(f"Exception occurred when reading {file_path} .", e)
 
     def get_exist_lib_list(self):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
