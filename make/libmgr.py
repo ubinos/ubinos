@@ -26,7 +26,7 @@ from ttkwidgets import CheckboxTreeview
 
 from collections import Counter
 
-debug_level = 1
+debug_level = 3
 
 true_string = "O"
 false_string = "X"
@@ -72,7 +72,7 @@ class run_dialog(tk.Toplevel):
         self.runable = True
         self.running = False
 
-        self.title('Ubinos library command')
+        self.title("Ubinos library command")
         
         set_dialog_geometry_center(parent, self, 1100, 600)
 
@@ -83,7 +83,7 @@ class run_dialog(tk.Toplevel):
         self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
 
-        self.bind('<Key>', self.key_pressed)
+        self.bind("<Key>", self.key_pressed)
 
         ##
         self.command_text_var = ""
@@ -212,7 +212,7 @@ class libmgr(tk.Tk):
         self.lib_rel_dir = lib_rel_dir
         self.lib_list_file_name = "liblist.json"
         self.lib_list_file_rel_dir = os.path.join(lib_rel_dir, "ubinos", "make")
-        self.lib_custom_list_file_rel_dir = "make"
+        self.custom_lib_list_file_rel_dir = "make"
 
         self.lib_items = []
         self.lib_items_updatable = []
@@ -228,14 +228,14 @@ class libmgr(tk.Tk):
             print("    library dir : %s" % self.lib_rel_dir)
             print("")
 
-        self.title('Ubinos library manager')
+        self.title("Ubinos library manager")
 
         set_geometry_center(self, 1000, 700)
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
 
-        self.bind('<Key>', self.key_pressed)
+        self.bind("<Key>", self.key_pressed)
 
         ##
         frame_tv = tk.Frame(self)
@@ -244,7 +244,7 @@ class libmgr(tk.Tk):
         frame_tv.columnconfigure(0, weight=1)
 
         self.tv = CheckboxTreeview(frame_tv)
-        self.tv["columns"] = ("I", "M", "U", "Name", "URL", "Branch")
+        self.tv["columns"] = ("I", "M", "U", "Name", "URL", "Branch", "L")
         self.tv.pack(fill="both", expand=True)
         self.tv.grid(row=0, column=0, sticky="nsew")
         self.tv.tag_configure("selected", background="palegoldenrod")
@@ -255,7 +255,7 @@ class libmgr(tk.Tk):
         self.tv.config(yscrollcommand=sb.set)
         sb.config(command=self.tv.yview)
 
-        self.tv.bind('<ButtonRelease-1>', self.button_release_1)
+        self.tv.bind("<ButtonRelease-1>", self.button_release_1)
 
         self.tv.heading("#0", text="Index") # Index
         self.tv.column("#0", width=60)
@@ -268,9 +268,11 @@ class libmgr(tk.Tk):
         self.tv.heading("Name", text="Name")
         self.tv.column("Name", width=200)
         self.tv.heading("URL", text="URL")
-        self.tv.column("URL", width=550)
+        self.tv.column("URL", width=530)
         self.tv.heading("Branch", text="Branch")
         self.tv.column("Branch", width=100)
+        self.tv.heading("L", text="L", anchor=tk.CENTER) # Listed
+        self.tv.column("L", width=20, anchor=tk.CENTER)
 
         ##
         frame_bt = tk.Frame(self)
@@ -296,68 +298,73 @@ class libmgr(tk.Tk):
 
         self.update_lib_items()
 
+        self.get_exist_lib_list()
+
     def update_lib_items(self):
+        temp_lib_items = []
+        
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
 
+        exist_lib_list = self.get_exist_lib_list()
+        for lib in exist_lib_list:
+            if not "upstreams" in lib:
+                lib["upstreams"] = []
+            if not "installed" in lib:
+                lib["installed"] = true_string
+            if not "modified" in lib:
+                lib["modified"] = self.git_check_modified(lib["name"])
+            if not "updatable" in lib:
+                lib["updatable"] = self.get_updatable(lib)
+            if not "listed" in lib:
+                lib["listed"] = false_string
+            temp_lib_items.append(lib)
+        
         lib_list_file_path = os.path.join(self.prj_dir_base, self.lib_list_file_rel_dir, self.lib_list_file_name)
         lib_list = self.load_lib_list(lib_list_file_path)
-
-        lib_custom_list_file_path = os.path.join(self.prj_dir_base, self.lib_custom_list_file_rel_dir, self.lib_list_file_name)
-        if os.path.exists(lib_custom_list_file_path):
-            lib_list_custom = self.load_lib_list(lib_custom_list_file_path)
+        custom_lib_list_file_path = os.path.join(self.prj_dir_base, self.custom_lib_list_file_rel_dir, self.lib_list_file_name)
+        if os.path.exists(custom_lib_list_file_path):
+            lib_list_custom = self.load_lib_list(custom_lib_list_file_path)
             if lib_list_custom != None:
                 lib_list += lib_list_custom
-
-        self.lib_items = []
-        for i, lib_info in enumerate(lib_list):
-            lib_path = os.path.join(lib_dir, lib_info["name"])
-            lib_installed = unknown_string
-            lib_local_branch = unknown_string
-            lib_modified = unknown_string
-            lib_updatable = unknown_string
-            lib_local_url = unknown_string
-
-            if os.path.exists(lib_path) and os.path.isdir(lib_path):
-                lib_installed = true_string
-                lib_local_branch = self.git_local_branch(lib_info["name"])
-                if lib_local_branch != unknown_string:
-                    lib_local_url = self.git_local_urls(lib_info["name"])[0]
-                    if self.git_check_modified(lib_info["name"]):
-                        lib_modified = true_string
-                    else:
-                        lib_modified = false_string
-                        if lib_local_branch == "HEAD":
-                            if self.git_checkout_branch(lib_info["name"], lib_info["branch"]):
-                                lib_local_branch = self.git_local_branch(lib_info["name"])
-
-                    for item_updatable in self.lib_items_updatable:
-                        if item_updatable["name"] == lib_info["name"] and item_updatable["url"] == lib_info["url"] and item_updatable["branch"] == lib_info["branch"]:
-                            lib_updatable = true_string
+        for lib in lib_list:
+            is_exist = False
+            for lib_item in temp_lib_items:
+                if self.is_equal_lib(lib, lib_item):
+                    lib_item["listed"] = true_string
+                    is_exist = True
+                    break
+            if is_exist:
+                continue
             else:
-                lib_installed = false_string
-
-            self.lib_items.append({"index": i,
-                                   "installed": lib_installed, 
-                                   "modified": lib_modified, 
-                                   "updatable": lib_updatable, 
-                                   "name": lib_info["name"],
-                                   "url": lib_info["url"], 
-                                   "local_url": lib_local_url, 
-                                   "branch": lib_info["branch"] if "branch" in lib_info else "", 
-                                   "local_branch": lib_local_branch})
+                if not "upstreams" in lib:
+                    lib["upstreams"] = []
+                if not "installed" in lib:
+                    lib["installed"] = false_string
+                if not "modified" in lib:
+                    lib["modified"] = unknown_string
+                if not "updatable" in lib:
+                    lib["updatable"] = unknown_string
+                if not "listed" in lib:
+                    lib["listed"] = true_string
+                temp_lib_items.append(lib)
+        
+        self.lib_items = sorted(temp_lib_items, key=lambda x: x["name"])
 
         self.tv.delete(*self.tv.get_children())
-        for lib_item in self.lib_items:
-            index = lib_item["index"]
-            self.tv.insert(parent="", index=lib_item["index"], iid=lib_item["index"],
+        for index, lib_item in enumerate(self.lib_items):
+            lib_item["index"] = index
+            self.tv.insert(parent="", index=index, iid=index,
                             text=f"{index + 1}",
                             values=(
                                 lib_item["installed"], 
                                 lib_item["modified"], 
                                 lib_item["updatable"], 
                                 lib_item["name"], 
-                                lib_item["local_url"] if lib_item["local_url"] != unknown_string else lib_item["url"], 
-                                lib_item["local_branch"] if lib_item["local_branch"] != unknown_string else lib_item["branch"]))
+                                lib_item["url"], 
+                                lib_item["branch"],
+                                lib_item["listed"] 
+                                )
+                            )
 
         if debug_level >= 3:
             for lib in self.lib_items:
@@ -374,8 +381,9 @@ class libmgr(tk.Tk):
         include_not_modified = False
         include_updatable = False
         include_not_updatable = False
-        checked_items = self.tv.get_checked()
-        for index in checked_items:
+        checked_items_indexs = self.tv.get_checked()
+        
+        for index in checked_items_indexs:
             item = self.lib_items[int(index)]
             if item["name"] == "ubinos":
                 include_ubinos = True
@@ -435,11 +443,68 @@ class libmgr(tk.Tk):
 
     def load_lib_list(self, file_path):
         try:
-            with file_open(file_path, 'r') as file:
+            with file_open(file_path, "r") as file:
                 lib_list = json.load(file)
                 return lib_list
         except Exception as e:
-            print('Exception occurred.', e)
+            print("Exception occurred.", e)
+
+    def get_exist_lib_list(self):
+        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+        exist_lib_list = []
+        for name in os.listdir(lib_dir):
+            if os.path.isdir(os.path.join(lib_dir, name)):
+                url, upstreams = self.git_local_url(name)
+                branch = self.git_local_branch(name)
+                lib = {
+                    "name": name,
+                    "url": url,
+                    "branch": branch,
+                    "upstreams": upstreams
+                    }
+                if debug_level >= 3:
+                    print(lib)
+                exist_lib_list.append(lib)
+        return exist_lib_list
+    
+    def is_equal_lib(self, lib1, lib2):
+        if lib1["name"] == lib2["name"] and lib1["url"] == lib2["url"] and lib1["branch"] == lib2["branch"]:
+            return True
+        else:
+            return False
+        
+    def is_checked_multiple(self):
+        checked_items_indexs = self.tv.get_checked()
+        multiple_check_items = []
+        for idx1 in checked_items_indexs:
+            itm1 = self.lib_items[int(idx1)]
+            for idx2 in checked_items_indexs:
+                itm2 = self.lib_items[int(idx2)]
+                if idx1 != idx2 and itm1["name"] == itm2["name"]:
+                    if not itm1["name"] in multiple_check_items:
+                        multiple_check_items.append(itm1["name"])
+
+        if len(multiple_check_items) > 0:
+            message = "Libraries with the same name were checked multiple times.\n"
+            for i, name in enumerate(multiple_check_items):
+                if i == 0:
+                    message += f"({name}"
+                else:
+                    message += f", {name}"
+            message += ")"
+            messagebox.showinfo(
+                title="Error",
+                message=message,
+            )
+            return True
+        else:
+            return False
+
+    def get_updatable(self, lib):
+        for item in self.lib_items_updatable:
+            if self.is_equal_lib(lib, item):
+                return item["updatable"]
+        return unknown_string
 
     def print_selection(self):
         selection = self.lib_items[self.lib_item_idx]
@@ -450,12 +515,12 @@ class libmgr(tk.Tk):
         self.lib_item_idx_prev = self.lib_item_idx
         self.lib_item_idx = index
         self.update_selection()
-        if debug_level >= 2:
+        if debug_level >= 3:
             self.print_selection()
 
     def button_release_1(self, event):
         item = self.tv.focus()
-        if item != '':
+        if item != "":
             self.select_item(int(item))
 
     def key_pressed(self, event):
@@ -484,12 +549,15 @@ class libmgr(tk.Tk):
                 print("Install library\n")
                 self.print_selection()
 
-            checked_items = self.tv.get_checked()
-            if len(checked_items) > 0:
+            if self.is_checked_multiple():
+                return
+
+            checked_items_indexs = self.tv.get_checked()
+            if len(checked_items_indexs) > 0:
                 lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
                 self.run_command_type = "install"
                 self.git_commands = []
-                for index in checked_items:
+                for index in checked_items_indexs:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
                     source_url = selection["url"]
@@ -508,12 +576,15 @@ class libmgr(tk.Tk):
                 print("Uninstall library\n")
                 self.print_selection()
 
-            checked_items = self.tv.get_checked()
-            if len(checked_items) > 0:
+            if self.is_checked_multiple():
+                return
+
+            checked_items_indexs = self.tv.get_checked()
+            if len(checked_items_indexs) > 0:
                 lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
                 self.run_command_type = "uninstall"
                 self.git_commands = []
-                for index in checked_items:
+                for index in checked_items_indexs:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
                     dot_git_dir = os.path.join(self.prj_dir_base, ".git", "modules", self.lib_rel_dir, selection["name"])
@@ -534,12 +605,15 @@ class libmgr(tk.Tk):
                 print("Reset library\n")
                 self.print_selection()
 
-            checked_items = self.tv.get_checked()
-            if len(checked_items) > 0:
+            if self.is_checked_multiple():
+                return
+
+            checked_items_indexs = self.tv.get_checked()
+            if len(checked_items_indexs) > 0:
                 lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
                 self.run_command_type = "reset"
                 self.git_commands = []
-                for index in checked_items:
+                for index in checked_items_indexs:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
                     self.git_commands.append(f"cd {target_dir} && git reset --hard HEAD")
@@ -557,11 +631,17 @@ class libmgr(tk.Tk):
 
             self.lib_items_updatable = []
             for lib_item in self.lib_items:
-                item_updatable = {"name": lib_item["name"], "url": lib_item["url"], "branch": lib_item["branch"]}
-                if lib_item["installed"] == true_string and self.git_check_updatable(lib_item["name"]):
+                if lib_item["installed"] == true_string:
+                    item_updatable = {"name": lib_item["name"], "url": lib_item["url"], "branch": lib_item["branch"]}
+                    if debug_level >= 2:
+                        print(item_updatable)
+                    if self.git_check_updatable(lib_item["name"]):
+                        item_updatable["updatable"] = true_string
+                    else:
+                        item_updatable["updatable"] = false_string
                     self.lib_items_updatable.append(item_updatable)
 
-            if debug_level >= 1:
+            if debug_level >= 2:
                 print(self.lib_items_updatable)
 
             self.update_lib_items()
@@ -572,12 +652,15 @@ class libmgr(tk.Tk):
                 print("Update library\n")
                 self.print_selection()
 
-            checked_items = self.tv.get_checked()
-            if len(checked_items) > 0:
+            if self.is_checked_multiple():
+                return
+
+            checked_items_indexs = self.tv.get_checked()
+            if len(checked_items_indexs) > 0:
                 lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
                 self.run_command_type = "update"
                 self.git_commands = []
-                for index in checked_items:
+                for index in checked_items_indexs:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
                     self.git_commands.append(f"cd {target_dir} && git pull")
@@ -600,14 +683,14 @@ class libmgr(tk.Tk):
             result = self.run_git_command_with_dialog(cmd)
             if not result:
                 messagebox.showinfo(
-                    title='Result',
+                    title="Result",
                     message="Failed",
                 )
                 break
 
         if result:
             messagebox.showinfo(
-                title='Result',
+                title="Result",
                 message="Succeeded",
             )
 
@@ -635,7 +718,7 @@ class libmgr(tk.Tk):
             if process.returncode == 0:
                 result = True
         except Exception as e:
-            print('Exception occurred.', e)
+            print("Exception occurred.", e)
         
         return result
 
@@ -645,96 +728,97 @@ class libmgr(tk.Tk):
         try:
             result = subprocess.run(command, cwd=directory, capture_output=True, text=True, check=True)
         except Exception as e:
-            print('Exception occurred.', e)
+            print("Exception occurred.", e)
         
         return result
-
-    def git_check_updatable(self, name):
-        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-        target_dir = os.path.join(lib_dir, name)
-        git_command = ["git", "fetch"]
-        result = self.run_git_command(target_dir, git_command)
-        if debug_level >= 1:
-            print(result)
-        
-        local_branch = self.git_local_branch(name)
-        if local_branch == "HEAD":
-            return False
-        
-        git_command = ['git', 'log', f'{local_branch}..origin/{local_branch}']
-        result = self.run_git_command(target_dir, git_command)
-        if debug_level >= 1:
-            print(result)
-
-        if result != None and result.stdout.strip():
-            return True
-        else:
-            return False
 
     def git_checkout_branch(self, name, branch):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
         target_dir = os.path.join(lib_dir, name)
-        git_command = ["git", "checkout", "-f", branch]
-        result = self.run_git_command(target_dir, git_command)
-        if debug_level >= 1:
-            print(result)
-        
-        if result != None and result.returncode == 0:
-            return True
-        else:
-            return False
+        if os.path.exists(os.path.join(target_dir, ".git")):
+            git_command = ["git", "checkout", "-f", branch]
+            result = self.run_git_command(target_dir, git_command)
+            if debug_level >= 2:
+                print(result)
+            
+            if result != None and result.returncode == 0:
+                return True
+        return False
+
+    def git_check_updatable(self, name):
+        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
+        target_dir = os.path.join(lib_dir, name)
+        if os.path.exists(os.path.join(target_dir, ".git")):
+            git_command = ["git", "fetch"]
+            result = self.run_git_command(target_dir, git_command)
+            if debug_level >= 2:
+                print(result)
+            
+            local_branch = self.git_local_branch(name)
+            if local_branch == "HEAD":
+                return False
+            
+            git_command = ["git", "log", f"{local_branch}..origin/{local_branch}"]
+            result = self.run_git_command(target_dir, git_command)
+            if debug_level >= 2:
+                print(result)
+
+            if result != None and result.stdout.strip():
+                return True
+            else:
+                return False
 
     def git_check_modified(self, name):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
         target_dir = os.path.join(lib_dir, name)
-        git_command = ["git", "status", "--porcelain"]
-        result = self.run_git_command(target_dir, git_command)
-        if debug_level >= 1:
-            print(result)
-        
-        if result != None and result.stdout.strip():
-            return True
-        else:
-            return False
+        if os.path.exists(os.path.join(target_dir, ".git")):
+            git_command = ["git", "status", "--porcelain"]
+            result = self.run_git_command(target_dir, git_command)
+            if debug_level >= 2:
+                print(result)
+            if result != None and result.stdout.strip():
+                return true_string
+            else:
+                return false_string
+        return unknown_string
 
     def git_local_branch(self, name):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
         target_dir = os.path.join(lib_dir, name)
-        git_command = ['git', 'rev-parse', '--abbrev-ref', 'HEAD']
-        result = self.run_git_command(target_dir, git_command)
-        if debug_level >= 1:
-            print(result)
-        if result != None:
-            return result.stdout.strip()
-        else:
-            return unknown_string
+        if os.path.exists(os.path.join(target_dir, ".git")):
+            git_command = ["git", "rev-parse", "--abbrev-ref", "HEAD"]
+            result = self.run_git_command(target_dir, git_command)
+            if debug_level >= 2:
+                print(result)
+            if result != None:
+                return result.stdout.strip()
+        return unknown_string
 
-    def git_local_urls(self, name):
+    def git_local_url(self, name):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
         target_dir = os.path.join(lib_dir, name)
-        git_command = ["git", "remote", "-v"]
-        result = self.run_git_command(target_dir, git_command)
-        if debug_level >= 1:
-            print(result)
-        if result != None:
-            output_lines = result.stdout.splitlines()
-            remote_urls = []
-            for line in output_lines:
-                parts = line.split()
-                if len(parts) >= 2:
-                    if (parts[0] == "origin"):
-                        remote_urls.append(parts[1])
-            for line in output_lines:
-                parts = line.split()
-                if len(parts) >= 2:
-                    if (parts[0] != "origin"):
-                        remote_urls.append(parts[1])
+        url = unknown_string
+        upstreams = []
+        if os.path.exists(os.path.join(target_dir, ".git")):
+            git_command = ["git", "remote", "-v"]
+            result = self.run_git_command(target_dir, git_command)
+            if debug_level >= 2:
+                print(result)
+            if result != None:
+                output_lines = result.stdout.splitlines()
+                for line in output_lines:
+                    parts = line.split()
+                    if len(parts) >= 2:
+                        if (parts[0] == "origin" and parts[2] == "(fetch)"):
+                            url = parts[1]
+                for line in output_lines:
+                    parts = line.split()
+                    if len(parts) >= 2:
+                        if (parts[0] != "origin" and parts[2] == "(fetch)"):
+                            upstreams.append([parts[0], parts[1]])
+        return url, upstreams
 
-            return remote_urls
-        else:
-            return unknown_string
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     if 3 > len(sys.argv):
         print_help()
     else:
