@@ -303,8 +303,6 @@ class libmgr(tk.Tk):
     def update_lib_items(self):
         temp_lib_items = []
         
-        lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
-
         exist_lib_list = self.get_exist_lib_list()
         for lib in exist_lib_list:
             if not "upstreams" in lib:
@@ -565,6 +563,10 @@ class libmgr(tk.Tk):
                     self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
                     if source_branch != "":
                         self.git_commands.append(f"cd {target_dir} && git checkout -f {source_branch}")
+                    for upstream in selection["upstreams"]:
+                        uname = upstream[0]
+                        uurl = upstream[1]
+                        self.git_commands.append(f"cd {target_dir} && git remote add {uname} {uurl}")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Install library commands")
                 self.run_dialog.set_command(self.git_commands)
