@@ -562,8 +562,8 @@ class libmgr(tk.Tk):
                     source_branch = selection["branch"]
                     self.git_commands.append(f"git submodule add -f -b {source_branch} {source_url} {target_dir}")
                     for upstream in selection["upstreams"]:
-                        uname = upstream[0]
-                        uurl = upstream[1]
+                        uname = upstream["name"]
+                        uurl = upstream["url"]
                         self.git_commands.append(f"cd {target_dir} && git remote add {uname} {uurl}")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Install library commands")
