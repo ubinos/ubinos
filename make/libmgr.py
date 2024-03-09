@@ -346,7 +346,7 @@ class libmgr(tk.Tk):
                     lib["listed"] = true_string
                 temp_lib_items.append(lib)
         
-        self.lib_items = sorted(temp_lib_items, key=lambda x: x["name"])
+        self.lib_items = sorted(temp_lib_items, key=lambda x: (x["name"], x["url"], x["branch"]))
 
         self.tv.delete(*self.tv.get_children())
         for index, lib_item in enumerate(self.lib_items):
@@ -560,9 +560,7 @@ class libmgr(tk.Tk):
                     target_dir = os.path.join(lib_dir, selection["name"])
                     source_url = selection["url"]
                     source_branch = selection["branch"]
-                    self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
-                    if source_branch != "":
-                        self.git_commands.append(f"cd {target_dir} && git checkout -f {source_branch}")
+                    self.git_commands.append(f"git submodule add -f -b {source_branch} {source_url} {target_dir}")
                     for upstream in selection["upstreams"]:
                         uname = upstream[0]
                         uurl = upstream[1]
