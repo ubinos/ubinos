@@ -391,6 +391,12 @@ class libmgr(tk.Tk):
         self.update_selection()
 
     def update_selection(self):
+        lib_items_last_index = len(self.lib_items) - 1
+        if self.lib_item_idx > lib_items_last_index:
+            self.lib_item_idx = lib_items_last_index
+        if self.lib_item_idx_prev > lib_items_last_index:
+            self.lib_item_idx_prev = lib_items_last_index
+
         include_modified = False
         include_not_modified = False
         include_installable = False
