@@ -222,7 +222,8 @@ class libmgr(tk.Tk):
 
         set_geometry_center(self, 1000, 700)
 
-        self.rowconfigure(0, weight=1)
+        self.rowconfigure(0, weight=3)
+        self.rowconfigure(1, weight=1)
         self.columnconfigure(0, weight=1)
 
         self.bind("<Key>", self.key_pressed)
@@ -260,7 +261,7 @@ class libmgr(tk.Tk):
         self.tv.heading("Name", text="Name")
         self.tv.column("Name", width=200)
         self.tv.heading("URL", text="URL")
-        self.tv.column("URL", width=510)
+        self.tv.column("URL", width=500)
         self.tv.heading("T", text="T", anchor=tk.CENTER) # Updatable
         self.tv.column("T", width=20, anchor=tk.CENTER)
         self.tv.heading("B/T/C", text="B/T/C")
@@ -268,9 +269,24 @@ class libmgr(tk.Tk):
         self.tv.heading("L", text="L", anchor=tk.CENTER) # Listed
         self.tv.column("L", width=20, anchor=tk.CENTER)
 
+        #
+        frame_description_text = tk.Frame(self)
+        frame_description_text.grid(row=1, column=0, sticky="nsew")
+        frame_description_text.rowconfigure(0, weight=1)
+        frame_description_text.columnconfigure(0, weight=1)
+
+        self.description_text = tk.Text(frame_description_text, height=1)
+        self.description_text.grid(row=0, column=0, sticky="nsew")
+        self.description_text.config(state=tk.DISABLED)
+
+        sb = tk.Scrollbar(frame_description_text, orient=tk.VERTICAL)
+        sb.grid(row=0, column=1, sticky="ns")
+        self.description_text.config(yscrollcommand=sb.set)
+        sb.config(command=self.description_text.yview)
+
         ##
         frame_bt = tk.Frame(self)
-        frame_bt.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
+        frame_bt.grid(row=2, column=0, sticky="nsew", padx=10, pady=20)
 
         self.install_button = tk.Button(frame_bt, text="Install", command=self.press_install)
         self.install_button.pack(side=tk.LEFT, padx=4, pady=0)
@@ -320,18 +336,22 @@ class libmgr(tk.Tk):
             lib_list_custom = self.load_lib_list(custom_lib_list_file_path)
             if lib_list_custom != None:
                 lib_list += lib_list_custom
+        
         for lib in lib_list:
             is_exist = False
-            for lib_item in exist_lib_items:
-                if self.is_equal_lib(lib, lib_item):
-                    lib_item["listed"] = true_string
-                    is_exist = True
+            if not "upstreams" in lib:
+                lib["upstreams"] = []
+            if not "description" in lib:
+                lib["description"] = ""
+            for exist_lib in exist_lib_items:
+                if self.is_equal_lib(lib, exist_lib):
+                    exist_lib["listed"] = true_string
+                    exist_lib["description"] = lib["description"]
+                    is_exist = True                    
                     break
             if is_exist:
                 continue
             else:
-                if not "upstreams" in lib:
-                    lib["upstreams"] = []
                 lib["installed"] = false_string
                 lib["modified"] = unknown_string
                 lib["listed"] = true_string
@@ -464,6 +484,12 @@ class libmgr(tk.Tk):
         self.tv.selection_set(index)
         self.tv.see(index)
 
+        self.description_text.config(state=tk.NORMAL)
+        self.description_text.delete(1.0, tk.END)
+        self.description_text.insert(tk.END, self.lib_items[self.lib_item_idx]["description"])
+        self.description_text.config(state=tk.DISABLED)
+        self.update()
+
     def load_lib_list(self, file_path):
         try:
             with file_open(file_path, "r") as file:
@@ -483,7 +509,8 @@ class libmgr(tk.Tk):
                     "name": name,
                     "url": url,
                     "branch_tag_commit": {"type": btc_type, "name": btc_name},
-                    "upstreams": upstreams
+                    "upstreams": upstreams,
+                    "description": ""
                     }
                 if debug_level >= 3:
                     print(lib)
