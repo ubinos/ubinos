@@ -79,8 +79,8 @@ class run_dialog(tk.Toplevel):
         self.transient(self.parent)
         self.protocol("WM_DELETE_WINDOW", self.close)
 
-        self.rowconfigure(0, weight=3)
-        self.rowconfigure(1, weight=1)
+        self.rowconfigure(0, weight=1)
+        self.rowconfigure(1, weight=2)
         self.columnconfigure(0, weight=1)
 
         self.bind("<Key>", self.key_pressed)
@@ -93,7 +93,7 @@ class run_dialog(tk.Toplevel):
         frame_command_text.rowconfigure(0, weight=1)
         frame_command_text.columnconfigure(0, weight=1)
 
-        self.command_text = tk.Text(frame_command_text)
+        self.command_text = tk.Text(frame_command_text, height=1)
         self.command_text.grid(row=0, column=0, sticky="nsew")
         self.command_text.config(state=tk.DISABLED)
 
@@ -107,15 +107,15 @@ class run_dialog(tk.Toplevel):
 
         frame_result_text = tk.Frame(self)
         frame_result_text.grid(row=1, column=0, sticky="nsew")
-        frame_result_text.rowconfigure(1, weight=1)
+        frame_result_text.rowconfigure(0, weight=1)
         frame_result_text.columnconfigure(0, weight=1)
 
-        self.result_text = tk.Text(frame_result_text)
-        self.result_text.grid(row=1, column=0, sticky="nsew")
+        self.result_text = tk.Text(frame_result_text, height=1)
+        self.result_text.grid(row=0, column=0, sticky="nsew")
         self.result_text.config(state=tk.DISABLED)
 
         sb = tk.Scrollbar(frame_result_text, orient=tk.VERTICAL)
-        sb.grid(row=1, column=1, sticky="ns")
+        sb.grid(row=0, column=1, sticky="ns")
         self.result_text.config(yscrollcommand=sb.set)
         sb.config(command=self.result_text.yview)
 
