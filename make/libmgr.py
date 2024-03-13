@@ -790,7 +790,8 @@ class libmgr(tk.Tk):
         try:
             if debug_level >= 3:
                 new_env = os.environ.copy()
-                new_env["GIT_TRACE"] = "1"
+                # new_env["GIT_TRACE"] = "1"
+                # new_env["GIT_SSH_COMMAND"] = "ssh -vvv"
                 process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                         bufsize=1, universal_newlines=True, env=new_env)
             else:
