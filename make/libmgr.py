@@ -1,7 +1,7 @@
 #! /usr/bin/python
 
 #
-# Copyright (c) 2019 Sung Ho Park and CSOS
+# Copyright (c) 2024 Sung Ho Park and CSOS
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -329,7 +329,7 @@ class libmgr(tk.Tk):
             lib["installed"] = true_string
             lib["modified"] = self.git_check_modified(lib["name"])
             lib["listed"] = false_string
-            lib["uninstallable"] = true_string if (lib["name"] != "ubinos" and self.is_git_repo(lib["name"])) else false_string
+            lib["uninstallable"] = true_string if lib["name"] != "ubinos" else false_string
             lib["installable"] = false_string
             lib["switchable"] = false_string
             lib["updatable"] = self.get_updatable(lib)
@@ -620,8 +620,13 @@ class libmgr(tk.Tk):
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
                     source_url = selection["url"]
-                    source_btc = selection["branch_tag_commit"]["name"]
-                    self.git_commands.append(f"git submodule add -f -b {source_btc} {source_url} {target_dir}")
+                    source_btc_name = selection["branch_tag_commit"]["name"]
+                    source_btc_type = selection["branch_tag_commit"]["type"]
+                    if source_btc_type == "branch":
+                        self.git_commands.append(f"git submodule add -f -b {source_btc_name} {source_url} {target_dir}")
+                    else:
+                        self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
+                        self.git_commands.append(f"cd {target_dir} && git checkout -f {source_btc_name}")
                     for upstream in selection["upstreams"]:
                         uname = upstream["name"]
                         uurl = upstream["url"]
@@ -651,9 +656,13 @@ class libmgr(tk.Tk):
                     dot_git_dir = os.path.join(self.prj_dir_base, ".git", "modules", self.lib_rel_dir, selection["name"])
                     # dot_gitmodule_path = os.path.join(self.prj_dir_base, ".gitmodules")
                     # target_base_name = os.path.basename(target_dir)
-                    self.git_commands.append(f"git submodule deinit -f {target_dir}")
-                    self.git_commands.append(f"rm -rf {dot_git_dir}")
-                    self.git_commands.append(f"git rm -f {target_dir}")
+                    if  self.is_git_repo(selection["name"]):
+                        self.git_commands.append(f"git submodule deinit -f {target_dir}")
+                        self.git_commands.append(f"rm -rf {dot_git_dir}")
+                        self.git_commands.append(f"git rm -f {target_dir}")
+                    else:
+                        self.git_commands.append(f"rm -rf {dot_git_dir}")
+                        self.git_commands.append(f"rm -rf {target_dir}")
                     # self.git_commands.append(f"git config -f {dot_gitmodule_path} --remove-section submodule.{target_base_name}")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Uninstall library commands")
@@ -677,8 +686,8 @@ class libmgr(tk.Tk):
                 for index in checked_items_indexs:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
-                    source_btc = selection["branch_tag_commit"]["name"]
-                    self.git_commands.append(f"cd {target_dir} && git checkout -f {source_btc}")
+                    source_btc_name = selection["branch_tag_commit"]["name"]
+                    self.git_commands.append(f"cd {target_dir} && git checkout -f {source_btc_name}")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Switch library commands")
                 self.run_dialog.set_command(self.git_commands)
