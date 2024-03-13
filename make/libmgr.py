@@ -790,8 +790,7 @@ class libmgr(tk.Tk):
         try:
             if debug_level >= 3:
                 new_env = os.environ.copy()
-                new_env["GIT_TRACE"]="1"
-                # new_env["GIT_SSH_COMMAND"]="ssh -i \\Users\\siminsungho\\.ssh\\id_rsa"
+                new_env["GIT_TRACE"] = "1"
                 process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
                                         bufsize=1, universal_newlines=True, env=new_env)
             else:
@@ -852,11 +851,11 @@ class libmgr(tk.Tk):
             if debug_level >= 2:
                 print(result)
             
-            local_branch = self.git_local_branch_tag_commit(name)
-            if local_branch == "HEAD":
+            btc_name, btc_type = self.git_local_branch_tag_commit(name)
+            if btc_type != "branch":
                 return False
             
-            git_command = ["git", "log", f"{local_branch}..origin/{local_branch}"]
+            git_command = ["git", "log", f"{btc_name}..origin/{btc_name}"]
             result = self.run_git_command(target_dir, git_command)
             if debug_level >= 2:
                 print(result)
