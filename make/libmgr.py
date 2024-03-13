@@ -788,8 +788,15 @@ class libmgr(tk.Tk):
         result = False
         self.run_dialog.append_result(command + "\n")
         try:
-            process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                                       bufsize=1, universal_newlines=True)
+            if debug_level >= 3:
+                new_env = os.environ.copy()
+                new_env["GIT_TRACE"]="1"
+                # new_env["GIT_SSH_COMMAND"]="ssh -i \\Users\\siminsungho\\.ssh\\id_rsa"
+                process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                        bufsize=1, universal_newlines=True, env=new_env)
+            else:
+                process = subprocess.Popen(command, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE,
+                                        bufsize=1, universal_newlines=True)
             for line in process.stdout:
                 self.run_dialog.append_result(line)
             for line in process.stderr:
