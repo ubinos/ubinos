@@ -285,8 +285,15 @@ class libmgr(tk.Tk):
         sb.config(command=self.description_text.yview)
 
         ##
+        frame_labels = tk.Frame(self)
+        frame_labels.grid(row=2, column=0, sticky="nsew", padx=10, pady=10)
+
+        self.labels = tk.Label(frame_labels, text="I: Installed,  M: Modified,  U: Updatable,  S: Switchable,  T: Type of B/T/C (Branch/Tag/Commit),  B/T/C: B/T/C Name,  L: Listed in liblist.json")
+        self.labels.pack(side=tk.LEFT, padx=4, pady=0)
+
+        ##
         frame_bt = tk.Frame(self)
-        frame_bt.grid(row=2, column=0, sticky="nsew", padx=10, pady=20)
+        frame_bt.grid(row=3, column=0, sticky="nsew", padx=10, pady=10)
 
         self.install_button = tk.Button(frame_bt, text="Install", command=self.press_install)
         self.install_button.pack(side=tk.LEFT, padx=4, pady=0)
