@@ -498,12 +498,13 @@ class libmgr(tk.Tk):
         self.update()
 
     def load_lib_list(self, file_path):
+        lib_list = []
         try:
             with file_open(file_path, "r") as file:
                 lib_list = json.load(file)
-                return lib_list
         except Exception as e:
             print(f"Exception occurred when reading {file_path} .", e)
+        return lib_list
 
     def get_exist_lib_list(self):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
