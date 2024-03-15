@@ -210,6 +210,8 @@ class libmgr(tk.Tk):
         self.lib_item_idx_prev = 0
         self.git_commands = []
 
+        self.hide_checkbutton_value = tk.StringVar(value=false_string)
+
         self.run_command_type = ""
 
         if debug_level >= 1:
@@ -292,28 +294,40 @@ class libmgr(tk.Tk):
         self.labels.pack(side=tk.LEFT, padx=4, pady=0)
 
         ##
-        frame_bt = tk.Frame(self)
-        frame_bt.grid(row=3, column=0, sticky="nsew", padx=10, pady=10)
+        frame_bt1 = tk.Frame(self)
+        frame_bt1.grid(row=3, column=0, sticky="nsew", padx=10, pady=10)
 
-        self.install_button = tk.Button(frame_bt, text="Install", command=self.press_install)
+        self.hide_checkbutton = ttk.Checkbutton(frame_bt1, 
+                                                text="Hide ubinos default library list",
+                                                command=self.hide_checkbutton_changed,
+                                                variable=self.hide_checkbutton_value,
+                                                onvalue=true_string,
+                                                offvalue=false_string)
+        self.hide_checkbutton.pack(side=tk.LEFT, padx=4, pady=0)
+
+        ##
+        frame_bt2 = tk.Frame(self)
+        frame_bt2.grid(row=4, column=0, sticky="nsew", padx=10, pady=10)
+
+        self.install_button = tk.Button(frame_bt2, text="Install", command=self.press_install)
         self.install_button.pack(side=tk.LEFT, padx=4, pady=0)
 
-        self.uninstall_button = tk.Button(frame_bt, text="Uninstall", command=self.press_uninstall)
+        self.uninstall_button = tk.Button(frame_bt2, text="Uninstall", command=self.press_uninstall)
         self.uninstall_button.pack(side=tk.LEFT, padx=4, pady=0)
 
-        self.reset_button = tk.Button(frame_bt, text="Reset", command=self.press_reset)
+        self.reset_button = tk.Button(frame_bt2, text="Reset", command=self.press_reset)
         self.reset_button.pack(side=tk.LEFT, padx=4, pady=0)
 
-        self.update_button = tk.Button(frame_bt, text="Update", command=self.press_update)
+        self.update_button = tk.Button(frame_bt2, text="Update", command=self.press_update)
         self.update_button.pack(side=tk.LEFT, padx=4, pady=0)
 
-        self.switch_button = tk.Button(frame_bt, text="switch", command=self.press_switch)
+        self.switch_button = tk.Button(frame_bt2, text="switch", command=self.press_switch)
         self.switch_button.pack(side=tk.LEFT, padx=4, pady=0)
 
-        self.close_button = tk.Button(frame_bt, text="Close", command=quit)
+        self.close_button = tk.Button(frame_bt2, text="Close", command=quit)
         self.close_button.pack(side=tk.RIGHT, padx=4, pady=0)
 
-        self.check_all_button = tk.Button(frame_bt, text="Check for update all", command=self.press_check)
+        self.check_all_button = tk.Button(frame_bt2, text="Check for update all", command=self.press_check)
         self.check_all_button.pack(side=tk.RIGHT, padx=40, pady=0)
 
         self.update_lib_items()
@@ -335,8 +349,11 @@ class libmgr(tk.Tk):
             lib["updatable"] = self.get_updatable(lib)
             exist_lib_items.append(lib)
         
-        lib_list_file_path = os.path.join(self.prj_dir_base, self.lib_list_file_rel_dir, self.lib_list_file_name)
-        lib_list = self.load_lib_list(lib_list_file_path)
+        lib_list = []
+        hide_checkbutton_value_string = self.hide_checkbutton_value.get()
+        if hide_checkbutton_value_string != true_string:
+            lib_list_file_path = os.path.join(self.prj_dir_base, self.lib_list_file_rel_dir, self.lib_list_file_name)
+            lib_list = self.load_lib_list(lib_list_file_path)
         custom_lib_list_file_path = os.path.join(self.prj_dir_base, self.custom_lib_list_file_rel_dir, 
                                                  self.lib_list_file_name)
         if os.path.exists(custom_lib_list_file_path):
@@ -602,6 +619,9 @@ class libmgr(tk.Tk):
                 self.tv.tag_del(self.lib_item_idx, "unchecked")
                 self.tv.tag_add(self.lib_item_idx, "checked")
             self.update_selection()
+
+    def hide_checkbutton_changed(self):
+        self.update_lib_items()
 
     def press_install(self):
         if len(self.lib_items) > 0:
