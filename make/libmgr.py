@@ -605,9 +605,11 @@ class libmgr(tk.Tk):
         if event.keysym == "Escape":
             self.quit()
         elif event.keysym == "Up":
+            self.tv.focus_set()
             if self.lib_item_idx > 0:
                 self.select_item(self.lib_item_idx - 1)
         elif event.keysym == "Down":
+            self.tv.focus_set()
             if self.lib_item_idx < (len(self.lib_items) - 1):
                 self.select_item(self.lib_item_idx + 1)
         elif event.keysym == "space":
