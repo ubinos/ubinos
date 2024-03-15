@@ -237,7 +237,7 @@ class libmgr(tk.Tk):
         frame_tv.columnconfigure(0, weight=1)
 
         self.tv = CheckboxTreeview(frame_tv)
-        self.tv["columns"] = ("I", "M", "U", "S", "Name", "URL", "T", "B/T/C", "L")
+        self.tv["columns"] = ("I", "M", "U", "S", "L", "Name", "URL", "Branch", "Tag", "Commit")
         self.tv.pack(fill="both", expand=True)
         self.tv.grid(row=0, column=0, sticky="nsew")
         self.tv.tag_configure("selected", background="palegoldenrod")
@@ -260,16 +260,18 @@ class libmgr(tk.Tk):
         self.tv.column("U", width=20, anchor=tk.CENTER)
         self.tv.heading("S", text="S", anchor=tk.CENTER) # Switchable
         self.tv.column("S", width=20, anchor=tk.CENTER)
+        self.tv.heading("L", text="L", anchor=tk.CENTER) # Listed
+        self.tv.column("L", width=20, anchor=tk.CENTER)
         self.tv.heading("Name", text="Name")
         self.tv.column("Name", width=200)
         self.tv.heading("URL", text="URL")
-        self.tv.column("URL", width=500)
-        self.tv.heading("T", text="T", anchor=tk.CENTER) # Updatable
-        self.tv.column("T", width=20, anchor=tk.CENTER)
-        self.tv.heading("B/T/C", text="B/T/C")
-        self.tv.column("B/T/C", width=100)
-        self.tv.heading("L", text="L", anchor=tk.CENTER) # Listed
-        self.tv.column("L", width=20, anchor=tk.CENTER)
+        self.tv.column("URL", width=370)
+        self.tv.heading("Branch", text="Branch")
+        self.tv.column("Branch", width=100)
+        self.tv.heading("Tag", text="Tag")
+        self.tv.column("Tag", width=80)
+        self.tv.heading("Commit", text="Commit")
+        self.tv.column("Commit", width=70)
 
         #
         frame_description_text = tk.Frame(self)
@@ -290,7 +292,7 @@ class libmgr(tk.Tk):
         frame_labels = tk.Frame(self)
         frame_labels.grid(row=2, column=0, sticky="nsew", padx=10, pady=10)
 
-        self.labels = tk.Label(frame_labels, text="I: Installed,  M: Modified,  U: Updatable,  S: Switchable,  T: Type of B/T/C (Branch/Tag/Commit),  B/T/C: B/T/C Name,  L: Listed in liblist.json")
+        self.labels = tk.Label(frame_labels, text="I: Installed,  M: Modified,  U: Updatable,  S: Switchable,  L: Listed in liblist.json,  O: True,  X: False,  -: Unknown")
         self.labels.pack(side=tk.LEFT, padx=4, pady=0)
 
         ##
@@ -340,6 +342,8 @@ class libmgr(tk.Tk):
         for lib in exist_lib_list:
             if not "upstreams" in lib:
                 lib["upstreams"] = []
+            if not "description" in lib:
+                lib["description"] = ""
             lib["installed"] = true_string
             lib["modified"] = self.git_check_modified(lib["name"])
             lib["listed"] = false_string
@@ -361,12 +365,27 @@ class libmgr(tk.Tk):
             if lib_list_custom != None:
                 lib_list += lib_list_custom
         
-        for lib in lib_list:
+        for item in lib_list:
             is_exist = False
-            if not "upstreams" in lib:
-                lib["upstreams"] = []
-            if not "description" in lib:
-                lib["description"] = ""
+            lib = {}
+            lib["name"] = item["name"]
+            lib["url"] = item["url"]
+            lib["branch"] = ""
+            lib["tag"] = ""
+            lib["commit"] = ""
+            lib["upstreams"] = []
+            lib["description"] = ""
+            if item["branch_tag_commit"]["type"] == "branch":
+                lib["branch"] = item["branch_tag_commit"]["name"]
+            elif item["branch_tag_commit"]["type"] == "tag":
+                lib["tag"] = item["branch_tag_commit"]["name"]
+            elif item["branch_tag_commit"]["type"] == "commit":
+                lib["commit"] = item["branch_tag_commit"]["name"]
+            if "upstreams" in item:
+                lib["upstreams"] = item["upstreams"]
+            if "description" in item:
+                lib["description"] = item["description"]
+ 
             for exist_lib in exist_lib_items:
                 if self.is_equal_lib(lib, exist_lib):
                     exist_lib["listed"] = true_string
@@ -388,14 +407,14 @@ class libmgr(tk.Tk):
                 lib["switchable"] = false_string
                 for eitm in exist_lib_items:
                     if (eitm["name"] == lib["name"] and eitm["url"] == lib["url"]):
-                        if (eitm["installed"] == true_string and eitm["branch_tag_commit"]["type"] != unknown_string):
+                        if (eitm["installed"] == true_string and eitm["branch"] != ""):
                             lib["switchable"] = true_string
                 lib["updatable"] = unknown_string
                 temp_lib_items.append(lib)
         
         temp_lib_items += exist_lib_items
         self.lib_items = sorted(temp_lib_items, key=lambda x: 
-                                (x["name"], x["url"], x["branch_tag_commit"]["type"], x["branch_tag_commit"]["name"]))
+                                (x["name"], x["url"], x["branch"], x["tag"], x["commit"]))
 
         self.tv.delete(*self.tv.get_children())
         for index, lib_item in enumerate(self.lib_items):
@@ -407,11 +426,12 @@ class libmgr(tk.Tk):
                                 lib_item["modified"], 
                                 lib_item["updatable"], 
                                 lib_item["switchable"], 
+                                lib_item["listed"],
                                 lib_item["name"], 
                                 lib_item["url"], 
-                                lib_item["branch_tag_commit"]["type"][0].upper(),
-                                lib_item["branch_tag_commit"]["name"],
-                                lib_item["listed"] 
+                                lib_item["branch"],
+                                lib_item["tag"],
+                                lib_item["commit"]
                                 )
                             )
 
@@ -529,11 +549,13 @@ class libmgr(tk.Tk):
         for name in os.listdir(lib_dir):
             if os.path.isdir(os.path.join(lib_dir, name)):
                 url, upstreams = self.git_local_url(name)
-                btc_name, btc_type = self.git_local_branch_tag_commit(name)
+                branch, tag, commit = self.git_local_branch_tag_commit(name)
                 lib = {
                     "name": name,
                     "url": url,
-                    "branch_tag_commit": {"type": btc_type, "name": btc_name},
+                    "branch": branch,
+                    "tag": tag,
+                    "commit": commit,
                     "upstreams": upstreams,
                     "description": ""
                     }
@@ -543,12 +565,15 @@ class libmgr(tk.Tk):
         return exist_lib_list
     
     def is_equal_lib(self, lib1, lib2):
-        if (lib1["name"] == lib2["name"] and lib1["url"] == lib2["url"] and 
-            lib1["branch_tag_commit"]["type"] == lib2["branch_tag_commit"]["type"] and 
-            lib1["branch_tag_commit"]["name"] == lib2["branch_tag_commit"]["name"]):
-            return True
-        else:
-            return False
+        equal = False
+        if lib1["name"] == lib2["name"] and lib1["url"] == lib2["url"]:
+            if lib1["branch"] != "" or lib2["branch"] != "":
+                if lib1["branch"] == lib2["branch"]:
+                    equal = True
+            else:
+                if lib1["tag"] == lib2["tag"] or lib1["commit"] == lib2["commit"]:
+                    equal = True
+        return equal
         
     def is_checked_multiple(self):
         checked_items_indexs = self.tv.get_checked()
@@ -643,13 +668,19 @@ class libmgr(tk.Tk):
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
                     source_url = selection["url"]
-                    source_btc_name = selection["branch_tag_commit"]["name"]
-                    source_btc_type = selection["branch_tag_commit"]["type"]
-                    if source_btc_type == "branch":
-                        self.git_commands.append(f"git submodule add -f -b {source_btc_name} {source_url} {target_dir}")
+                    source_branch = selection["branch"]
+                    source_tag = selection["branch"]
+                    source_commit = selection["commit"]
+                    if source_branch != "":
+                        self.git_commands.append(f"git submodule add -f -b {source_branch} {source_url} {target_dir}")
+                    elif source_tag != "":
+                        self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
+                        self.git_commands.append(f"cd {target_dir} && git checkout -f {source_tag}")
+                    elif source_commit != "":
+                        self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
+                        self.git_commands.append(f"cd {target_dir} && git checkout -f {source_commit}")
                     else:
                         self.git_commands.append(f"git submodule add -f {source_url} {target_dir}")
-                        self.git_commands.append(f"cd {target_dir} && git checkout -f {source_btc_name}")
                     for upstream in selection["upstreams"]:
                         uname = upstream["name"]
                         uurl = upstream["url"]
@@ -709,8 +740,15 @@ class libmgr(tk.Tk):
                 for index in checked_items_indexs:
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
-                    source_btc_name = selection["branch_tag_commit"]["name"]
-                    self.git_commands.append(f"cd {target_dir} && git checkout -f {source_btc_name}")
+                    source_btc_name = ""
+                    if selection["branch"] != "":
+                        source_btc_name = selection["branch"]
+                    if selection["tag"] != "":
+                        source_btc_name = selection["tag"]
+                    if selection["commit"] != "":
+                        source_btc_name = selection["commit"]
+                    if source_btc_name != "":
+                        self.git_commands.append(f"cd {target_dir} && git checkout -f {source_btc_name}")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Switch library commands")
                 self.run_dialog.set_command(self.git_commands)
@@ -750,8 +788,7 @@ class libmgr(tk.Tk):
             for lib_item in self.lib_items:
                 if lib_item["installed"] == true_string:
                     item_updatable = {"name": lib_item["name"], "url": lib_item["url"], 
-                                      "branch_tag_commit": {"type": lib_item["branch_tag_commit"]["type"], 
-                                                            "name": lib_item["branch_tag_commit"]["name"]}}
+                                      "branch": lib_item["branch"], "tag": lib_item["tag"], "commit": lib_item["commit"]}
                     if debug_level >= 2:
                         print(item_updatable)
                     if self.git_check_updatable(lib_item["name"]):
@@ -891,11 +928,11 @@ class libmgr(tk.Tk):
             if debug_level >= 2:
                 print(result)
             
-            btc_name, btc_type = self.git_local_branch_tag_commit(name)
-            if btc_type != "branch":
+            branch, _, _ = self.git_local_branch_tag_commit(name)
+            if branch != "":
                 return False
             
-            git_command = ["git", "log", f"{btc_name}..origin/{btc_name}"]
+            git_command = ["git", "log", f"{branch}..origin/{branch}"]
             result = self.run_git_command(target_dir, git_command)
             if debug_level >= 2:
                 print(result)
@@ -922,37 +959,36 @@ class libmgr(tk.Tk):
     def git_local_branch_tag_commit(self, name):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
         target_dir = os.path.join(lib_dir, name)
-        btc_name = unknown_string
-        btc_type = unknown_string
+        branch = ""
+        tag = ""
+        commit = ""
         if self.is_git_repo(name):
             git_command = ["git", "symbolic-ref", "--quiet", "HEAD"]
             result = self.run_git_command(target_dir, git_command)
             if debug_level >= 2:
                 print(result)
             if result != None and result.returncode == 0:
-                btc_type = "branch"
                 git_command = ["git", "rev-parse", "--abbrev-ref", "HEAD"]
                 result = self.run_git_command(target_dir, git_command)
                 if debug_level >= 2:
                     print(result)
-                btc_name = result.stdout.strip()
-            else:
-                git_command = ["git", "describe", "--exact-match", "--tags", "HEAD"]
-                result = self.run_git_command(target_dir, git_command)
-                if debug_level >= 2:
-                    print(result)
-                if result != None and result.returncode == 0:
-                    btc_type = "tag"
-                    btc_name = btc_name = result.stdout.strip()
-                else:
-                    git_command = ["git", "rev-parse", "--verify", "HEAD"]
-                    result = self.run_git_command(target_dir, git_command)
-                    if debug_level >= 2:
-                        print(result)
-                    if result != None and result.returncode == 0:
-                        btc_type = "commit"
-                        btc_name = result.stdout.strip()
-        return btc_name, btc_type
+                branch = result.stdout.strip()
+
+            git_command = ["git", "describe", "--exact-match", "--tags", "HEAD"]
+            result = self.run_git_command(target_dir, git_command)
+            if debug_level >= 2:
+                print(result)
+            if result != None and result.returncode == 0:
+                tag = result.stdout.strip()
+
+            git_command = ["git", "rev-parse", "--verify", "HEAD"]
+            result = self.run_git_command(target_dir, git_command)
+            if debug_level >= 2:
+                print(result)
+            if result != None and result.returncode == 0:
+                commit = result.stdout.strip()
+
+        return branch, tag, commit
 
     def git_local_url(self, name):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
