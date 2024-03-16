@@ -407,7 +407,7 @@ class libmgr(tk.Tk):
                 lib["switchable"] = false_string
                 for eitm in exist_lib_items:
                     if (eitm["name"] == lib["name"] and eitm["url"] == lib["url"]):
-                        if (eitm["installed"] == true_string and eitm["branch"] != ""):
+                        if (eitm["installed"] == true_string):
                             lib["switchable"] = true_string
                 lib["updatable"] = unknown_string
                 temp_lib_items.append(lib)
@@ -571,7 +571,9 @@ class libmgr(tk.Tk):
                 if lib1["branch"] == lib2["branch"]:
                     equal = True
             else:
-                if lib1["tag"] == lib2["tag"] or lib1["commit"] == lib2["commit"]:
+                if lib1["tag"] != "" and lib1["tag"] == lib2["tag"]:
+                    equal = True
+                if lib1["commit"] != "" and lib1["commit"] == lib2["commit"]:
                     equal = True
         return equal
         
