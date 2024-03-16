@@ -800,6 +800,11 @@ class libmgr(tk.Tk):
             if debug_level >= 2:
                 print(self.lib_items_updatable)
 
+            messagebox.showinfo(
+                title="Result",
+                message="Done",
+            )            
+
             self.update_lib_items()
 
     def press_update(self):
