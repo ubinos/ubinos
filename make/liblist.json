@@ -15,16 +15,6 @@
         "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
-        "name": "CMSIS_5_wrapper",
-        "url": "https://github.com/ubinos/CMSIS_5_wrapper.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
-        "name": "CMSIS_5",
-        "url": "https://github.com/ubinos/CMSIS_5.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
         "name": "nrf5sdk_wrapper",
         "url": "https://github.com/ubinos/nrf5sdk_wrapper.git",
         "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
@@ -55,21 +45,6 @@
         "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
-        "name": "STM32CubeL4_wrapper",
-        "url": "https://github.com/ubinos/STM32CubeL4_wrapper.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
-        "name": "STM32CubeL4_extension",
-        "url": "https://github.com/ubinos/STM32CubeL4_extension.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
-        "name": "STM32CubeL4_v01.15.00_lite",
-        "url": "https://github.com/ubinos/STM32CubeL4_v01.15.00_lite.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
         "name": "esp8266at",
         "url": "https://github.com/ubinos/esp8266at.git",
         "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
@@ -95,64 +70,106 @@
         "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
     },
     {
-        "name": "ArduinoCore-API_wrapper",
-        "url": "https://github.com/ubinos/ArduinoCore-API_wrapper.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
-        "name": "ArduinoCore-API",
-        "url": "https://github.com/ubinos/ArduinoCore-API.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
-        "name": "Adafruit_BusIO_wrapper",
-        "url": "https://github.com/ubinos/Adafruit_BusIO_wrapper.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
-        "name": "Adafruit_BusIO",
-        "url": "https://github.com/ubinos/Adafruit_BusIO.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
-        "name": "Adafruit_Sensor_wrapper",
-        "url": "https://github.com/ubinos/Adafruit_Sensor_wrapper.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
-    },
-    {
-        "name": "Adafruit_Sensor",
-        "url": "https://github.com/ubinos/Adafruit_Sensor.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "name": "Adafruit_BME280_Library",
+        "url": "https://github.com/ubinos/Adafruit_BME280_Library.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "This is a library for the Adafruit BME280 Humidity, Barometric Pressure + Temp sensor\n\nDesigned specifically to work with the Adafruit BME280 Breakout\n * http://www.adafruit.com/products/2652\n\nAdafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!"
     },
     {
         "name": "Adafruit_BME280_Library_wrapper",
         "url": "https://github.com/ubinos/Adafruit_BME280_Library_wrapper.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Adafruit-GFX-Library를 ubinos framework에서 사용할 수 있게 해주는 wrapper입니다."
     },
     {
-        "name": "Adafruit_BME280_Library",
-        "url": "https://github.com/ubinos/Adafruit_BME280_Library.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "name": "Adafruit_BusIO",
+        "url": "https://github.com/ubinos/Adafruit_BusIO.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "This is a helper libary to abstract away I2C & SPI transactions and registers\n\nAdafruit invests time and resources providing this open source code, please support Adafruit and open-source hardware by purchasing products from Adafruit!\n\nMIT license, all text above must be included in any redistribution"
     },
     {
-        "name": "Arduino_LSM9DS1_wrapper",
-        "url": "https://github.com/ubinos/Arduino_LSM9DS1_wrapper.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "name": "Adafruit_BusIO_wrapper",
+        "url": "https://github.com/ubinos/Adafruit_BusIO_wrapper.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Adafruit_BusIO를 ubinos framework에서 사용할 수 있게 해주는 wrapper입니다."
+    },
+    {
+        "name": "Adafruit_Sensor",
+        "url": "https://github.com/ubinos/Adafruit_Sensor.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Adafruit Unified Sensor Driver"
+    },
+    {
+        "name": "Adafruit_Sensor_wrapper",
+        "url": "https://github.com/ubinos/Adafruit_Sensor_wrapper.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Adafruit_Sensor를 ubinos framework에서 사용할 수 있게 해주는 wrapper입니다."
+    },
+    {
+        "name": "ArduinoCore-API",
+        "url": "https://github.com/ubinos/ArduinoCore-API.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "This repository hosts the hardware independent layer of Arduino core."
+    },
+    {
+        "name": "ArduinoCore-API_wrapper",
+        "url": "https://github.com/ubinos/ArduinoCore-API_wrapper.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "ArduinoCore-API를 ubinos framework에서 사용할 수 있게 해주는 wrapper입니다."
     },
     {
         "name": "Arduino_LSM9DS1",
         "url": "https://github.com/ubinos/Arduino_LSM9DS1.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Allows you to read the accelerometer, magnetometer and gyroscope values from the LSM9DS1 IMU on your Arduino Nano 33 BLE Sense."
     },
     {
-        "name": "DHT-sensor-library_wrapper",
-        "url": "https://github.com/ubinos/DHT-sensor-library_wrapper.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "name": "Arduino_LSM9DS1_wrapper",
+        "url": "https://github.com/ubinos/Arduino_LSM9DS1_wrapper.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Arduino_LSM9DS1를 ubinos framework에서 사용할 수 있게 해주는 wrapper입니다."
+    },
+    {
+        "name": "CMSIS_5",
+        "url": "https://github.com/ubinos/CMSIS_5.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "CMSIS Version 5"
+    },
+    {
+        "name": "CMSIS_5_wrapper",
+        "url": "https://github.com/ubinos/CMSIS_5_wrapper.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "CMSIS_5를 ubinos framework에서 사용할 수 있게 해주는 wrapper입니다."
     },
     {
         "name": "DHT-sensor-library",
         "url": "https://github.com/ubinos/DHT-sensor-library.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "An Arduino library for the DHT series of low-cost temperature/humidity sensors."
+    },
+    {
+        "name": "DHT-sensor-library_wrapper",
+        "url": "https://github.com/ubinos/DHT-sensor-library_wrapper.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "DHT-sensor-library를 ubinos framework에서 사용할 수 있게 해주는 wrapper입니다."
+    },
+    {
+        "name": "STM32CubeL4_extension",
+        "url": "https://github.com/ubinos/STM32CubeL4_extension.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "STM32CubeL4의 기능을 확장해주는 라이브러리입니다."
+    },
+    {
+        "name": "STM32CubeL4_v01.15.00_lite",
+        "url": "https://github.com/ubinos/STM32CubeL4_v01.15.00_lite.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "STM32CubeL4 MCU Firmware Package v01.15.00 Lite version"
+    },
+    {
+        "name": "STM32CubeL4_wrapper",
+        "url": "https://github.com/ubinos/STM32CubeL4_wrapper.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "STM32CubeL4, STM32CubeL4_v01.15.00 라이브러리를 ubinos platform에서 사용할 수 있게 해주는 wrapper입니다."
     },
     {
         "name": "libcrc_wrapper",
@@ -197,11 +214,13 @@
     {
         "name": "mp_course_materials",
         "url": "https://github.com/ubinos-edu/mp_course_materials.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Microprocessor course materials"
     },
     {
         "name": "ece2_course_materials",
         "url": "https://github.com/ubinos-edu/ece2_course_materials.git",
-        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"}
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Electronic circuit experiment 2 course materials"
     }
 ]

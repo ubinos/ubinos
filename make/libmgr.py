@@ -527,6 +527,7 @@ class libmgr(tk.Tk):
             self.tv.tag_add(index, "selected")
         self.tv.selection_set(index)
         self.tv.see(index)
+        self.tv.see(index) # There are times when this function should not be called once. If you call it twice, it always works normally. It was assumed to be a library bug.
 
         self.description_text.config(state=tk.NORMAL)
         self.description_text.delete(1.0, tk.END)
