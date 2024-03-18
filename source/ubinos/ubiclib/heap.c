@@ -1463,6 +1463,7 @@ int heap_getblocksize(heap_pt _heap, void * ptr, unsigned int * size_p)
 
     _heap_block_pt block;
     unsigned int log2m;
+    (void) log2m;
 
     if (NULL == heap) {
         heap = _ubiclib_heap;
