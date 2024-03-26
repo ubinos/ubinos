@@ -937,7 +937,7 @@ class libmgr(tk.Tk):
                 print(result)
             
             branch, _, _ = self.git_local_branch_tag_commit(name)
-            if branch != "":
+            if branch == "":
                 return False
             
             git_command = ["git", "log", f"{branch}..origin/{branch}"]
