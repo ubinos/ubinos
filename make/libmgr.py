@@ -200,9 +200,10 @@ class libmgr(tk.Tk):
 
         self.prj_dir_base = prj_dir_base
         self.lib_rel_dir = lib_rel_dir
-        self.lib_list_file_name = "liblist.json"
-        self.lib_list_file_rel_dir = os.path.join(lib_rel_dir, "ubinos", "make")
-        self.custom_lib_list_file_rel_dir = "make"
+        self.lib_list_default_file_name = "liblist_default.json"
+        self.lib_list_default_file_rel_dir = os.path.join(lib_rel_dir, "ubinos", "make")
+        self.lib_list_custom_file_name = "liblist.json"
+        self.lib_list_custom_file_rel_dir = "make"
 
         self.lib_items = []
         self.lib_items_updatable = []
@@ -354,14 +355,16 @@ class libmgr(tk.Tk):
             exist_lib_items.append(lib)
         
         lib_list = []
+
         hide_checkbutton_value_string = self.hide_checkbutton_value.get()
         if hide_checkbutton_value_string != true_string:
-            lib_list_file_path = os.path.join(self.prj_dir_base, self.lib_list_file_rel_dir, self.lib_list_file_name)
-            lib_list = self.load_lib_list(lib_list_file_path)
-        custom_lib_list_file_path = os.path.join(self.prj_dir_base, self.custom_lib_list_file_rel_dir, 
-                                                 self.lib_list_file_name)
-        if os.path.exists(custom_lib_list_file_path):
-            lib_list_custom = self.load_lib_list(custom_lib_list_file_path)
+            lib_list_default_file_path = os.path.join(self.prj_dir_base, self.lib_list_default_file_rel_dir, self.lib_list_default_file_name)
+            if os.path.exists(lib_list_default_file_path):
+                lib_list = self.load_lib_list(lib_list_default_file_path)
+
+        lib_list_custom_file_path = os.path.join(self.prj_dir_base, self.lib_list_custom_file_rel_dir, self.lib_list_custom_file_name)
+        if os.path.exists(lib_list_custom_file_path):
+            lib_list_custom = self.load_lib_list(lib_list_custom_file_path)
             if lib_list_custom != None:
                 lib_list += lib_list_custom
         
