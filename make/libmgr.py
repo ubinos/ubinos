@@ -714,12 +714,13 @@ class libmgr(tk.Tk):
                     selection = self.lib_items[int(index)]
                     target_dir = os.path.join(lib_dir, selection["name"])
                     dot_git_dir = os.path.join(self.prj_dir_base, ".git", "modules", self.lib_rel_dir, selection["name"])
-                    # dot_gitmodule_path = os.path.join(self.prj_dir_base, ".gitmodules")
-                    # target_base_name = os.path.basename(target_dir)
                     if  self.is_git_repo(selection["name"]):
                         self.git_commands.append(f"git submodule deinit -f {target_dir}")
                         self.git_commands.append(f"rm -rf {dot_git_dir}")
                         self.git_commands.append(f"git rm -f {target_dir}")
+                        self.git_commands.append(f"rm -rf {target_dir}")
+                        # dot_gitmodule_path = os.path.join(self.prj_dir_base, ".gitmodules")
+                        # target_base_name = os.path.basename(target_dir)
                         # self.git_commands.append(f"git config -f {dot_gitmodule_path} --remove-section submodule.{target_base_name} || true")
                     else:
                         self.git_commands.append(f"rm -rf {dot_git_dir}")
