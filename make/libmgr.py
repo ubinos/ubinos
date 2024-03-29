@@ -68,12 +68,12 @@ class run_dialog(tk.Toplevel):
         super().__init__(parent)
 
         self.parent = parent
-        
+
         self.runable = True
         self.running = False
 
         self.title("Ubinos library command")
-        
+
         set_dialog_geometry_center(parent, self, 1100, 600)
 
         self.transient(self.parent)
@@ -125,7 +125,7 @@ class run_dialog(tk.Toplevel):
 
         self.run_button = tk.Button(frame_bt, text="Run", command=self.parent.press_run_dialog_run)
         self.run_button.pack(side=tk.LEFT, padx=10, pady=0)
-        
+
         self.close_button = tk.Button(frame_bt, text="Close", command=self.parent.press_run_dialog_close)
         self.close_button.pack(side=tk.RIGHT, padx=10, pady=0)
 
@@ -300,7 +300,7 @@ class libmgr(tk.Tk):
         frame_bt1 = tk.Frame(self)
         frame_bt1.grid(row=3, column=0, sticky="nsew", padx=10, pady=10)
 
-        self.hide_checkbutton = ttk.Checkbutton(frame_bt1, 
+        self.hide_checkbutton = ttk.Checkbutton(frame_bt1,
                                                 text="Hide ubinos default library list",
                                                 command=self.hide_checkbutton_changed,
                                                 variable=self.hide_checkbutton_value,
@@ -353,7 +353,7 @@ class libmgr(tk.Tk):
             lib["switchable"] = false_string
             lib["updatable"] = self.get_updatable(lib)
             exist_lib_items.append(lib)
-        
+
         lib_list = []
 
         hide_checkbutton_value_string = self.hide_checkbutton_value.get()
@@ -367,7 +367,7 @@ class libmgr(tk.Tk):
             lib_list_custom = self.load_lib_list(lib_list_custom_file_path)
             if lib_list_custom != None:
                 lib_list += lib_list_custom
-        
+
         for item in lib_list:
             is_exist = False
             lib = {}
@@ -388,12 +388,12 @@ class libmgr(tk.Tk):
                 lib["upstreams"] = item["upstreams"]
             if "description" in item:
                 lib["description"] = item["description"]
- 
+
             for exist_lib in exist_lib_items:
                 if self.is_equal_lib(lib, exist_lib):
                     exist_lib["listed"] = true_string
                     exist_lib["description"] = lib["description"]
-                    is_exist = True                    
+                    is_exist = True
                     break
             if is_exist:
                 continue
@@ -414,9 +414,9 @@ class libmgr(tk.Tk):
                             lib["switchable"] = true_string
                 lib["updatable"] = unknown_string
                 temp_lib_items.append(lib)
-        
+
         temp_lib_items += exist_lib_items
-        self.lib_items = sorted(temp_lib_items, key=lambda x: 
+        self.lib_items = sorted(temp_lib_items, key=lambda x:
                                 (x["name"], x["url"], x["branch"], x["tag"], x["commit"]))
 
         self.tv.delete(*self.tv.get_children())
@@ -425,13 +425,13 @@ class libmgr(tk.Tk):
             self.tv.insert(parent="", index=index, iid=index,
                             text=f"{index + 1}",
                             values=(
-                                lib_item["installed"], 
-                                lib_item["modified"], 
-                                lib_item["updatable"], 
-                                lib_item["switchable"], 
+                                lib_item["installed"],
+                                lib_item["modified"],
+                                lib_item["updatable"],
+                                lib_item["switchable"],
                                 lib_item["listed"],
-                                lib_item["name"], 
-                                lib_item["url"], 
+                                lib_item["name"],
+                                lib_item["url"],
                                 lib_item["branch"],
                                 lib_item["tag"],
                                 lib_item["commit"]
@@ -463,7 +463,7 @@ class libmgr(tk.Tk):
         include_switchable = False
         include_not_switchable = False
         checked_items_indexs = self.tv.get_checked()
-        
+
         for index in checked_items_indexs:
             item = self.lib_items[int(index)]
 
@@ -501,7 +501,7 @@ class libmgr(tk.Tk):
             self.uninstall_button.config(state=tk.NORMAL)
         else:
             self.uninstall_button.config(state=tk.DISABLED)
-        
+
         if include_modified and not include_not_modified:
             self.reset_button.config(state=tk.NORMAL)
         else:
@@ -567,7 +567,7 @@ class libmgr(tk.Tk):
                     print(lib)
                 exist_lib_list.append(lib)
         return exist_lib_list
-    
+
     def is_equal_lib(self, lib1, lib2):
         equal = False
         if lib1["name"] == lib2["name"] and lib1["url"] == lib2["url"]:
@@ -580,7 +580,7 @@ class libmgr(tk.Tk):
                 if lib1["commit"] != "" and lib1["commit"] == lib2["commit"]:
                     equal = True
         return equal
-        
+
     def is_checked_multiple(self):
         checked_items_indexs = self.tv.get_checked()
         multiple_check_items = []
@@ -793,7 +793,7 @@ class libmgr(tk.Tk):
             self.lib_items_updatable = []
             for lib_item in self.lib_items:
                 if lib_item["installed"] == true_string:
-                    item_updatable = {"name": lib_item["name"], "url": lib_item["url"], 
+                    item_updatable = {"name": lib_item["name"], "url": lib_item["url"],
                                       "branch": lib_item["branch"], "tag": lib_item["tag"], "commit": lib_item["commit"]}
                     if debug_level >= 2:
                         print(item_updatable)
@@ -809,7 +809,7 @@ class libmgr(tk.Tk):
             messagebox.showinfo(
                 title="Result",
                 message="Done",
-            )            
+            )
 
             self.update_lib_items()
 
@@ -894,7 +894,7 @@ class libmgr(tk.Tk):
                 result = True
         except Exception as e:
             print("Exception occurred.", e)
-        
+
         return result
 
     def run_git_command(self, directory, command):
@@ -905,7 +905,7 @@ class libmgr(tk.Tk):
         except Exception as e:
             if debug_level >= 1:
                 print("Exception occurred.", e)
-        
+
         return result
 
     def is_git_repo(self, name):
@@ -925,7 +925,7 @@ class libmgr(tk.Tk):
             result = self.run_git_command(target_dir, git_command)
             if debug_level >= 2:
                 print(result)
-            
+
             if result != None and result.returncode == 0:
                 return True
         return False
@@ -938,11 +938,11 @@ class libmgr(tk.Tk):
             result = self.run_git_command(target_dir, git_command)
             if debug_level >= 2:
                 print(result)
-            
+
             branch, _, _ = self.git_local_branch_tag_commit(name)
             if branch == "":
                 return False
-            
+
             git_command = ["git", "log", f"{branch}..origin/{branch}"]
             result = self.run_git_command(target_dir, git_command)
             if debug_level >= 2:
