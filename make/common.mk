@@ -358,6 +358,21 @@ endif
 
 ###############################################################################
 
+common-doc:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && doxygen
+	$(call end_message)
+
+common-opendoc:
+	$(call begin_message)
+	$(call end_message)
+
+common-cleandoc:
+	$(call begin_message)
+	$(call end_message)
+
+###############################################################################
+
 common-env:
 	$(call begin_message)
 	$(call end_message)
@@ -366,10 +381,7 @@ common-cleanenv:
 	$(call begin_message)
 	$(call end_message)
 
-common-doc:
-	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && doxygen
-	$(call end_message)
+###############################################################################
 
 common-test:
 	$(call begin_message)
