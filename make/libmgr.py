@@ -720,10 +720,10 @@ class libmgr(tk.Tk):
                         self.git_commands.append(f"git submodule deinit -f {target_dir}")
                         self.git_commands.append(f"rm -rf {dot_git_dir}")
                         self.git_commands.append(f"git rm -f {target_dir}")
+                        # self.git_commands.append(f"git config -f {dot_gitmodule_path} --remove-section submodule.{target_base_name} || true")
                     else:
                         self.git_commands.append(f"rm -rf {dot_git_dir}")
                         self.git_commands.append(f"rm -rf {target_dir}")
-                    # self.git_commands.append(f"git config -f {dot_gitmodule_path} --remove-section submodule.{target_base_name}")
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Uninstall library commands")
                 self.run_dialog.set_command(self.git_commands)
@@ -842,23 +842,26 @@ class libmgr(tk.Tk):
         self.deiconify()
 
     def press_run_dialog_run(self):
-        result = False
         self.run_dialog.set_running(True)
         self.run_dialog.clear_result()
 
+        result = True
         for cmd in self.git_commands:
-            result = self.run_git_command_with_dialog(cmd)
-            if not result:
-                messagebox.showinfo(
-                    title="Result",
-                    message="Failed",
-                )
-                break
+            run_result = self.run_git_command_with_dialog(cmd)
+            if not run_result:
+                result = False
+                if self.run_command_type != "uninstall":
+                    break
 
         if result:
             messagebox.showinfo(
                 title="Result",
                 message="Succeeded",
+            )
+        else:
+            messagebox.showinfo(
+                title="Result",
+                message="Failed",
             )
 
         self.run_dialog.set_running(False)
@@ -983,7 +986,8 @@ class libmgr(tk.Tk):
                 result = self.run_git_command(target_dir, git_command)
                 if debug_level >= 2:
                     print(result)
-                branch = result.stdout.strip()
+                if result != None:
+                   branch = result.stdout.strip()
 
             git_command = ["git", "describe", "--exact-match", "--tags", "HEAD"]
             result = self.run_git_command(target_dir, git_command)
