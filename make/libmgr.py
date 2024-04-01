@@ -330,7 +330,7 @@ class libmgr(tk.Tk):
         self.close_button = tk.Button(frame_bt2, text="Close", command=quit)
         self.close_button.pack(side=tk.RIGHT, padx=4, pady=0)
 
-        self.check_all_button = tk.Button(frame_bt2, text="Check for update all", command=self.press_check)
+        self.check_all_button = tk.Button(frame_bt2, text="Fetch and check for update all", command=self.press_check)
         self.check_all_button.pack(side=tk.RIGHT, padx=40, pady=0)
 
         self.update_lib_items()
