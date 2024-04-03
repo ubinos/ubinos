@@ -363,7 +363,7 @@ common-doc:
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && doxygen
 	$(call end_message)
 
-common-opendoc:
+common-xopendoc:
 	$(call begin_message)
 	$(call end_message)
 
