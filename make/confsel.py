@@ -61,7 +61,7 @@ def file_open(fname, mode):
     else:
         return open(fname, mode)
 
-class clone_dialog(tk.Toplevel):
+class copy_dialog(tk.Toplevel):
 
     src_config_dir = "../app"
     src_config_file_name = "myapp"
@@ -80,7 +80,7 @@ class clone_dialog(tk.Toplevel):
         set_dialog_geometry_center(parent, self, 1100, 500)
 
         self.transient(self.parent)
-        self.protocol("WM_DELETE_WINDOW", self.parent.press_clone_dialog_cancel)
+        self.protocol("WM_DELETE_WINDOW", self.parent.press_copy_dialog_cancel)
 
         self.rowconfigure(0, weight=1)
         self.columnconfigure(0, weight=1)
@@ -138,9 +138,9 @@ class clone_dialog(tk.Toplevel):
         frame_bt = tk.Frame(self)
         frame_bt.grid(row=1, column=0, sticky="nsew", padx=10, pady=20)
 
-        cancel_button = tk.Button(frame_bt, text="Cancel", command=self.parent.press_clone_dialog_cancel)
+        cancel_button = tk.Button(frame_bt, text="Cancel", command=self.parent.press_copy_dialog_cancel)
         cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
-        ok_button = tk.Button(frame_bt, text="Ok", command=self.parent.press_clone_dialog_ok)
+        ok_button = tk.Button(frame_bt, text="Ok", command=self.parent.press_copy_dialog_ok)
         ok_button.pack(side=tk.RIGHT, padx=10, pady=0)
 
         self.update_items(True)
@@ -234,7 +234,7 @@ class confsel(tk.Tk):
         cancel_button.pack(side=tk.RIGHT, padx=10, pady=0)
         select_button = tk.Button(frame_bt, text="Select", command=self.press_select)
         select_button.pack(side=tk.RIGHT, padx=10, pady=0)
-        clone_button = tk.Button(frame_bt, text="Copy", command=self.press_clone)
+        clone_button = tk.Button(frame_bt, text="Copy", command=self.press_copy)
         clone_button.pack(side=tk.LEFT, padx=10, pady=0)
 
         self.tv.heading(1, text="Index")
@@ -331,7 +331,7 @@ class confsel(tk.Tk):
 
         return include_file_names
 
-    def clone_config_info(self, src_config_info, dst_config_name_base):
+    def copy_config_info(self, src_config_info, dst_config_name_base):
         src_config_name_base = src_config_info["name_base"]
 
         dst_config_info = copy.deepcopy(src_config_info)
@@ -497,7 +497,7 @@ class confsel(tk.Tk):
 
         return is_valid
 
-    def clone_config(self, make_file_path, src_config_dir, src_config_file_name, dst_config_dir, dst_config_name_base):
+    def copy_config(self, make_file_path, src_config_dir, src_config_file_name, dst_config_dir, dst_config_name_base):
         src_file_paths, dst_file_paths, src_config_name_base, dst_config_name = self.get_clone_params(src_config_dir, src_config_file_name, dst_config_dir, dst_config_name_base)
 
         if debug_level >= 2:
@@ -528,7 +528,7 @@ class confsel(tk.Tk):
                             k_idx = k_idx + len(keyword)
                             config_info_idx = line[k_idx:].find("{")
                             tmp_config_info = json.loads(line[k_idx + config_info_idx:])
-                            dst_config_info = self.clone_config_info(tmp_config_info, dst_config_name_base)
+                            dst_config_info = self.copy_config_info(tmp_config_info, dst_config_name_base)
                             new_line = line[:k_idx] + " " + json.dumps(dst_config_info) + "\n"
                             file.write(new_line)
                             written = True
@@ -620,27 +620,27 @@ class confsel(tk.Tk):
 
         self.quit()
 
-    def press_clone(self):
+    def press_copy(self):
         if self.config_len > 0:
             if debug_level >= 1:
                 print("Copy config\n")
                 self.print_selection()
 
-            self.clone_dialog = clone_dialog(self)
-            self.clone_dialog.grab_set()
+            self.copy_dialog = copy_dialog(self)
+            self.copy_dialog.grab_set()
 
-    def press_clone_dialog_cancel(self):
-        self.clone_dialog.destroy()
+    def press_copy_dialog_cancel(self):
+        self.copy_dialog.destroy()
         self.deiconify()
 
-    def press_clone_dialog_ok(self):
-        result, message = self.clone_config(self.make_file_name, self.clone_dialog.src_config_dir, self.clone_dialog.src_config_file_name, self.clone_dialog.dst_config_dir, self.clone_dialog.dst_config_name_base)
+    def press_copy_dialog_ok(self):
+        result, message = self.copy_config(self.make_file_name, self.copy_dialog.src_config_dir, self.copy_dialog.src_config_file_name, self.copy_dialog.dst_config_dir, self.copy_dialog.dst_config_name_base)
         if result:
             messagebox.showinfo(
                 title='Copy result',
                 message="Copy succeeded",
             )
-            self.clone_dialog.destroy()
+            self.copy_dialog.destroy()
             self.deiconify()
             self.quit()
         else:
