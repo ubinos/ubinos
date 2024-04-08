@@ -15,6 +15,7 @@ import json
 
 config_info_keyword = "ubinos_config_info {"
 config_info_make_dir_key = "make_dir"
+config_info_name_base_key = "name_base"
 config_info_build_type_key = "build_type"
 
 def print_help():
@@ -40,6 +41,7 @@ def print_help():
     print("    python %s show_mapfile_info <source file name> <toolchain type>" % (sys.argv[0]))
     print("    python %s replace_string <source file name> <destination file name> <old string> <new string>" % (sys.argv[0]))
     print("    python %s get_make_dir_from_config_file <config file name>" % (sys.argv[0]))
+    print("    python %s get_name_base_from_config_file <config file name>" % (sys.argv[0]))
     print("    python %s get_build_type_from_config_file <config file name>" % (sys.argv[0]))
     print("===============================================================================")
 
@@ -461,6 +463,29 @@ def get_make_dir_from_config_file(config_file_path):
     else:
         print("")
 
+def get_name_base_from_config_file(config_file_path):
+    config_info = None
+
+    with file_open(config_file_path, 'r') as file:
+        try:
+            lines = file.readlines()
+            for line in lines:
+                k_idx = line.find(config_info_keyword)
+                if k_idx > -1:
+                    k_len = len(config_info_keyword)
+                    config_info_string = line[k_idx + k_len - 1:]
+                    config_info = json.loads(config_info_string)
+                    break
+        except Exception as e:
+            print('Exception occurred.', e)
+
+        file.close()
+
+    if config_info != None and config_info_name_base_key in config_info:
+        print(config_info[config_info_name_base_key])
+    else:
+        print("")
+
 def get_build_type_from_config_file(config_file_path):
     config_info = None
 
@@ -592,6 +617,12 @@ if __name__ == '__main__':
             else:
                 fname = sys.argv[2]
                 get_make_dir_from_config_file(fname)
+        elif "get_name_base_from_config_file" == sys.argv[1]:
+            if 3 > len(sys.argv):
+                print_help()
+            else:
+                fname = sys.argv[2]
+                get_name_base_from_config_file(fname)
         elif "get_build_type_from_config_file" == sys.argv[1]:
             if 3 > len(sys.argv):
                 print_help()
