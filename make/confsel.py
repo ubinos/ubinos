@@ -183,7 +183,7 @@ class copy_dialog(tk.Toplevel):
 class confsel(tk.Tk):
     config_info_keyword = "ubinos_config_info {"
     cmake_inclucde_file_keyword = "include(${CMAKE_CURRENT_LIST_DIR}/"
-    config_dir_names = ["app", "doc", "config"]
+    config_dir_names = ["app", "doc", "env", "config"]
     prj_dir_base = ".."
     lib_rel_dir = "library"
     make_file_name = "Makefile"
@@ -473,9 +473,10 @@ class confsel(tk.Tk):
             src_file_paths.append(os.path.join(src_config_dir, src_file_name))
             dst_file_paths.append(os.path.join(dst_config_dir, dst_file_name))
 
-        if (src_config_info is not None and 
-            (("app" in src_config_info and src_config_info["app"]) or 
-             ("doc" in src_config_info and src_config_info["doc"]))):
+        if (src_config_info is not None and
+            (("app" in src_config_info and src_config_info["app"]) or
+             ("doc" in src_config_info and src_config_info["doc"]) or
+             ("include_subdir" in src_config_info and src_config_info["include_subdir"]))):
             src_config_app_path = os.path.join(src_config_dir, src_config_name_base)
             dst_config_app_path = os.path.join(dst_config_dir, dst_config_name_base)
             if os.path.exists(src_config_app_path):
