@@ -25,6 +25,7 @@ def print_help():
     print("    python %s cpu_count" % (sys.argv[0]))
     print("    python %s get_start_command_for_cmake" % (sys.argv[0]))
     print("    python %s get_open_command_for_cmake" % (sys.argv[0]))
+    print("    python %s get_python_venv_activate_command_for_cmake <venv name>" % (sys.argv[0]))
     print("    python %s realpath <file name>" % (sys.argv[0]))
     print("    python %s is_existing_path <path name>" % (sys.argv[0]))
     print("    python %s is_removable_dir <output dir>" % (sys.argv[0]))
@@ -69,6 +70,12 @@ def get_open_command_for_cmake():
         print("xdg-open")
     elif platform.system() == "Darwin":
         print("open")
+
+def get_python_venv_activate_command_for_cmake(venvname):
+    if platform.system() == "Windows":
+        print(f"call {venvname}\\Scripts\\activate.bat")
+    elif platform.system() == "Linux" or platform.system() == "Darwin":
+        print(f". {venvname}/bin/activate")
 
 def realpath(fname):
     print(os.path.realpath(fname))
@@ -521,6 +528,12 @@ if __name__ == '__main__':
             get_start_command_for_cmake()
         elif "get_open_command_for_cmake" == sys.argv[1]:
             get_open_command_for_cmake()
+        elif "get_python_venv_activate_command_for_cmake" == sys.argv[1]:
+            if 3 > len(sys.argv):
+                print_help()
+            else:
+                venvname = sys.argv[2]
+                get_python_venv_activate_command_for_cmake(venvname)
         elif "realpath" == sys.argv[1]:
             if 3 > len(sys.argv):
                 print_help()
