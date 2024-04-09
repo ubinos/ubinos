@@ -73,7 +73,7 @@ def get_open_command_for_cmake():
 
 def get_python_venv_activate_command_for_cmake(venvname):
     if platform.system() == "Windows":
-        print(f"call {venvname}\\Scripts\\activate.bat")
+        print(f".\\\\{venvname}\\\\Scripts\\\\activate.bat")
     elif platform.system() == "Linux" or platform.system() == "Darwin":
         print(f". {venvname}/bin/activate")
 
