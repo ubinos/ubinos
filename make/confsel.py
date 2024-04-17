@@ -476,7 +476,7 @@ class confsel(tk.Tk):
         if (src_config_info is not None and
             (("app" in src_config_info and src_config_info["app"]) or
              ("doc" in src_config_info and src_config_info["doc"]) or
-             ("include_subdir" in src_config_info and src_config_info["include_subdir"]))):
+             ("include_sub_dir" in src_config_info and src_config_info["include_sub_dir"]))):
             src_config_app_path = os.path.join(src_config_dir, src_config_name_base)
             dst_config_app_path = os.path.join(dst_config_dir, dst_config_name_base)
             if os.path.exists(src_config_app_path):
