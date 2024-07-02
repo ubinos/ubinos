@@ -1,6 +1,6 @@
 #
 # Copyright (c) 2022 Sung Ho Park
-# 
+#
 # SPDX-License-Identifier: Apache-2.0
 #
 
@@ -8,6 +8,8 @@ set pagination off
 
 set remote memory-write-packet-size 1024
 set remote memory-read-packet-size 1024
+
+set substitute-path /Users/siminsungho /home/siminsungho
 
 define ushowmemx
     set $addr = $arg0
