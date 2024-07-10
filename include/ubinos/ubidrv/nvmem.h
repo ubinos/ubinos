@@ -36,7 +36,7 @@ extern "C"
 ubi_st_t nvmem_erase(uint8_t *addr, size_t size);
 
 /*!
- * 비휘발성 메모리에 자료를 갱신하는 함수
+ * 비휘발성 메모리에 자료를 갱신하는 함수 (이 함수 내에서 페이지 단위 backup, erase, write가 자동 수행 됨)
  *
  * @param   addr        대상 주소
  *
