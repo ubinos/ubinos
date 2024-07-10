@@ -32,6 +32,16 @@ true_string = "O"
 false_string = "X"
 unknown_string = "-"
 
+win_width = 1000
+win_height = 700
+win_x_offset = 0
+win_y_offset = 0
+
+# win_width = 2000
+# win_height = 1400
+# win_x_offset = -2000
+# win_y_offset = 150
+
 def print_help():
     print("===============================================================================")
     print("Usage:")
@@ -41,10 +51,8 @@ def print_help():
 def set_geometry_center(win, width, height):
     screen_width = win.winfo_screenwidth()
     screen_height = win.winfo_screenheight()
-    # screen_width = win.winfo_screenwidth() // 2
-    # screen_height = win.winfo_screenheight() // 2
-    x_cordinate = (screen_width  // 2) - (width  // 2)
-    y_cordinate = (screen_height // 2) - (height // 2)
+    x_cordinate = (screen_width  // 2) - (width  // 2) + win_x_offset
+    y_cordinate = (screen_height // 2) - (height // 2) + win_y_offset
     win.geometry("{}x{}+{}+{}".format(width, height, x_cordinate, y_cordinate))
 
 def set_dialog_geometry_center(parent, win, width, height):
@@ -223,7 +231,7 @@ class libmgr(tk.Tk):
 
         self.title("Ubinos library manager")
 
-        set_geometry_center(self, 1000, 700)
+        set_geometry_center(self, win_width, win_height)
 
         self.rowconfigure(0, weight=3)
         self.rowconfigure(1, weight=1)
