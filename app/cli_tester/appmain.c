@@ -14,7 +14,10 @@ static void root_func(void *arg);
 
 static void cli_help_hook_func();
 static int cli_hook_func(char *str, int len, void *arg);
-static int my_command(char *str, int len, void *arg);
+
+static int cli_cmd_hello(char *str, int len, void *arg);
+static int cli_cmd_add(char *str, int len, void *arg);
+static int cli_cmd_sub(char *str, int len, void *arg);
 
 int appmain(int argc, char *argv[])
 {
@@ -64,28 +67,94 @@ static int cli_hook_func(char *str, int len, void *arg)
     tmpstr = str;
     tmplen = len;
 
-    cmd = "mc";
-    cmdlen = strlen(cmd);
-    if (tmplen == cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+    do
     {
-        tmpstr = &tmpstr[cmdlen];
-        tmplen -= cmdlen;
+        cmd = "hello";
+        cmdlen = strlen(cmd);
+        if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+        {
+            tmpstr = &tmpstr[cmdlen];
+            tmplen -= cmdlen;
 
-        r = my_command(tmpstr, tmplen, arg);
-    }
+            r = cli_cmd_hello(tmpstr, tmplen, arg);
+            break;
+        }
+
+        cmd = "add ";
+        cmdlen = strlen(cmd);
+        if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+        {
+            tmpstr = &tmpstr[cmdlen];
+            tmplen -= cmdlen;
+
+            r = cli_cmd_add(tmpstr, tmplen, arg);
+            break;
+        }
+
+        cmd = "sub ";
+        cmdlen = strlen(cmd);
+        if (tmplen >= cmdlen && strncmp(tmpstr, cmd, cmdlen) == 0)
+        {
+            tmpstr = &tmpstr[cmdlen];
+            tmplen -= cmdlen;
+
+            r = cli_cmd_sub(tmpstr, tmplen, arg);
+            break;
+        }
+
+        break;
+    } while (1);
 
     return r;
 }
 
 static void cli_help_hook_func()
 {
-    printf("mc                                      : my command\n");
+    printf("hello                                   : say hello\n");
+    printf("    ex: hello\n");
+
+    printf("add <operand1> <operand2>               : add two operands\n");
+    printf("    ex: add 2 5\n");
+
+    printf("sub <operand1> <operand2>               : subtract two operands\n");
+    printf("    ex: sub 2 5\n");
 }
 
-static int my_command(char *str, int len, void *arg)
+static int cli_cmd_hello(char *str, int len, void *arg)
 {
-    printf("\n");
-    printf("done\n");
+    printf("    Hello, nice to meet you.\n");
+
+    return 0;
+}
+
+static int cli_cmd_add(char *str, int len, void *arg)
+{
+    int operand1 = 0;
+    int operand2 = 0;
+    int result = 0;
+
+    ubi_assert_not_null(str);
+    ubi_assert(len > 0);
+
+    sscanf(str, "%d %d", &operand1, &operand2);
+    result = operand1 + operand2;
+    printf("    result = %d\n", result);
+
+    return 0;
+}
+
+static int cli_cmd_sub(char *str, int len, void *arg)
+{
+    int operand1 = 0;
+    int operand2 = 0;
+    int result = 0;
+
+    ubi_assert_not_null(str);
+    ubi_assert(len > 0);
+
+    sscanf(str, "%d %d", &operand1, &operand2);
+    result = operand1 - operand2;
+    printf("    result = %d\n", result);
 
     return 0;
 }
