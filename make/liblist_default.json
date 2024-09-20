@@ -222,5 +222,11 @@
         "url": "https://github.com/ubinos-edu/ece2_course_materials.git",
         "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
         "description": "Electronic circuit experiment 2 course materials"
+    },
+    {
+        "name": "ece2knu_course_materials",
+        "url": "https://github.com/ubinos-edu/ece2knu_course_materials.git",
+        "branch_tag_commit": {"type": "branch", "name": "ubinos-main"},
+        "description": "Kyungpook National University Electronic circuit experiment 2 course materials"
     }
 ]
