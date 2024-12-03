@@ -218,6 +218,7 @@ common-help:
 	@echo "make xdserver                (run debug server with GUI or new window)"
 	@echo ""
 	@echo "make load                    (load execution binary file into target)"
+	@echo "make unload                  (unload execution binary file from target)"
 	@echo "make reset                   (reset target)"
 	@echo ""
 	@echo "make run                     (run execution binary file on target)"
@@ -295,6 +296,10 @@ common-load:
 	@echo ""
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make reset
 	@echo ""
+	$(call end_message)
+
+common-unload:
+	$(call begin_message)
 	$(call end_message)
 
 common-run:
@@ -382,6 +387,16 @@ common-env:
 	$(call end_message)
 
 common-cleanenv:
+	$(call begin_message)
+	$(call end_message)
+
+###############################################################################
+
+common-install:
+	$(call begin_message)
+	$(call end_message)
+
+common-uninstall:
 	$(call begin_message)
 	$(call end_message)
 
