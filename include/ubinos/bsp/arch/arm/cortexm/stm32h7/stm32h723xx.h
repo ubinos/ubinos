@@ -204,6 +204,7 @@ typedef enum
 /** @addtogroup Configuration_section_for_CMSIS
   * @{
   */
+#define CORE_CM7  /*!< CORE_CM7 line feature */
 
 
 
