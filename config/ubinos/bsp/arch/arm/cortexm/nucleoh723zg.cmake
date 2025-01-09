@@ -52,25 +52,10 @@ set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubin
 # set_cache(UBINOS__BSP__T32SCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nucleoh723zg/t32_flash_load.cmm" PATH)
 # set_cache(UBINOS__BSP__T32SCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nucleoh723zg/t32_flash_reset.cmm" PATH)
 
-# C:\ST\STM32CubeIDE_1.17.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.4.0.202409170845\tools\bin\openocd.exe
-# "-f" "nucleoh723zg_helloworld Debug OpenOCD.cfg"
-# "-s" "C:/MyWorks/stm32cubeide/workspace_1.17.0/nucleoh723zg_helloworld"
-# "-s" "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.3.0.202411041438/resources/openocd/st_scripts"
-# "-s" "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mpu.debug.openocd_2.2.0.202409171044/resources/openocd/st_scripts"
-# "-c" "gdb_report_data_abort enable"
-# "-c" "gdb_port 3333"
-# "-c" "tcl_port 6666"
-# "-c" "telnet_port 4444"
-
-# C:\ST\STM32CubeIDE_1.17.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.4.0.202409170845\tools\bin\openocd.exe -f "nucleoh723zg_helloworld Debug OpenOCD.cfg" -s "C:/MyWorks/stm32cubeide/workspace_1.17.0/nucleoh723zg_helloworld" -s "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.3.0.202411041438/resources/openocd/st_scripts" -s "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mpu.debug.openocd_2.2.0.202409171044/resources/openocd/st_scripts" -c "gdb_report_data_abort enable" -c "gdb_port 3333" -c "tcl_port 6666" -c "telnet_port 4444"
-
-# C:\ST\STM32CubeIDE_1.17.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.4.0.202409170845\tools\bin\openocd.exe -f "nucleoh723zg_helloworld Debug OpenOCD.cfg" -s "C:/MyWorks/stm32cubeide/workspace_1.17.0/nucleoh723zg_helloworld" -s "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.3.0.202411041438/resources/openocd/st_scripts" -s "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mpu.debug.openocd_2.2.0.202409171044/resources/openocd/st_scripts" -c "gdb_report_data_abort enable" -c "gdb_port 2331" -c "tcl_port 2334" -c "telnet_port 2337"
-
-C:\ST\STM32CubeIDE_1.17.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.4.0.202409170845\tools\bin\openocd.exe -f "nucleoh723zg_helloworld Debug OpenOCD.cfg" -s "C:/MyWorks/stm32cubeide/workspace_1.17.0/nucleoh723zg_helloworld" -s "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.3.0.202411041438/resources/openocd/st_scripts" -s "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mpu.debug.openocd_2.2.0.202409171044/resources/openocd/st_scripts" -c "gdb_report_data_abort enable" -c "gdb_port 2331" -c "tcl_port 2334" -c "telnet_port 2337"
-
-
 set_cache(UBINOS__BSP__DEBUG_SERVER_TYPE "OPENOCD" STRING)
-set_cache(UBINOS__BSP__DEBUG_SERVER_COMMAND "/mnt/c/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.4.0.202409170845/tools/bin/openocd.exe." STRING)
+set_cache(UBINOS__BSP__DEBUG_SERVER_COMMAND "openocd" STRING)
+
+# C:\ST\STM32CubeIDE_1.17.0\STM32CubeIDE\plugins\com.st.stm32cube.ide.mcu.externaltools.openocd.win32_2.4.0.202409170845\tools\bin\openocd.exe "-s" "C:/MyWorks/stm32cubeide/workspace_1.17.0/nucleoh723zg_helloworld" "-s" "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mcu.debug.openocd_2.3.0.202411041438/resources/openocd/st_scripts" "-s" "C:/ST/STM32CubeIDE_1.17.0/STM32CubeIDE/plugins/com.st.stm32cube.ide.mpu.debug.opeocd_2.2.0.202409171044/resources/openocd/st_scripts" "-c" "gdb_report_data_abort enable" "-c" "gdb_port 2331" "-c" "tcl_port 2334" "-c" "telnet_port 2337" "-f" "C:/MyWorks/ubinos/ubiworks/output/hi_world_nucleoh723zg_baremetal/openocd.cfg" 
 
 # maximum size = 128 KiB
 set_cache(UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM "GROUP" STRING)

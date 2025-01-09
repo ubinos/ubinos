@@ -17,23 +17,23 @@
 #include "../stm32h7/stm32h7xx_ll_usart.h"
 #include "../stm32h7/stm32h7xx_ll_rcc.h"
 
-#if (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 1)
+#if (UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER == 3)
 
-#define USARTx_INSTANCE               USART1
-#define USARTx_CLK_ENABLE()           LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_USART1)
-#define USARTx_CLK_SOURCE()           LL_RCC_SetUSARTClockSource(LL_RCC_USART16910_CLKSOURCE_PCLK2)
+#define USARTx_INSTANCE               USART3
+#define USARTx_CLK_ENABLE()           LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3)
+#define USARTx_CLK_SOURCE()           LL_RCC_SetUSARTClockSource(LL_RCC_USART234578_CLKSOURCE_PCLK1)
+#define USARTx_IRQn                   USART3_IRQn
+#define USARTx_IRQHandler             USART3_IRQHandler
 
-#define USARTx_TX_GPIO_CLK_ENABLE()   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOA)
-#define USARTx_TX_PIN                 LL_GPIO_PIN_9
-#define USARTx_TX_GPIO_PORT           GPIOA
-#define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_AF_7)
-
-#define USARTx_RX_GPIO_CLK_ENABLE()   LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOA)
-#define USARTx_RX_PIN                 LL_GPIO_PIN_10
-#define USARTx_RX_GPIO_PORT           GPIOA
-#define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_AF_7)
-
+#define USARTx_GPIO_CLK_ENABLE()      LL_AHB4_GRP1_EnableClock(LL_AHB4_GRP1_PERIPH_GPIOD)   /* Enable the peripheral clock of GPIOD */
+#define USARTx_TX_PIN                 LL_GPIO_PIN_8
+#define USARTx_TX_GPIO_PORT           GPIOD
+#define USARTx_SET_TX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOD, LL_GPIO_PIN_8, LL_GPIO_AF_7)
+#define USARTx_RX_PIN                 LL_GPIO_PIN_9
+#define USARTx_RX_GPIO_PORT           GPIOD
+#define USARTx_SET_RX_GPIO_AF()       LL_GPIO_SetAFPin_8_15(GPIOD, LL_GPIO_PIN_9, LL_GPIO_AF_7)
 #define APB_Div 2
+#define AHB_Div 2
 
 #else
 
@@ -55,7 +55,7 @@ static void Configure_USART(void) {
     /* Enable the peripheral clock of GPIO Port */
 
     /* Configure Tx Pin as : Alternate function, High Speed, Push pull, Pull up */
-    USARTx_TX_GPIO_CLK_ENABLE();
+    USARTx_GPIO_CLK_ENABLE();
     LL_GPIO_SetPinMode(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_MODE_ALTERNATE);
     USARTx_SET_TX_GPIO_AF();
     LL_GPIO_SetPinSpeed(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_SPEED_FREQ_HIGH);
@@ -63,7 +63,7 @@ static void Configure_USART(void) {
     LL_GPIO_SetPinPull(USARTx_TX_GPIO_PORT, USARTx_TX_PIN, LL_GPIO_PULL_UP);
 
     /* Configure Rx Pin as : Alternate function, High Speed, Push pull, Pull up */
-    USARTx_RX_GPIO_CLK_ENABLE();
+    USARTx_GPIO_CLK_ENABLE();
     LL_GPIO_SetPinMode(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_MODE_ALTERNATE);
     USARTx_SET_RX_GPIO_AF();
     LL_GPIO_SetPinSpeed(USARTx_RX_GPIO_PORT, USARTx_RX_PIN, LL_GPIO_SPEED_FREQ_HIGH);
@@ -103,7 +103,7 @@ static void Configure_USART(void) {
 
         In this example, Peripheral Clock is expected to be equal to 125000000 Hz => equal to SystemCoreClock/(AHB_Div * APB_Div)
     */
-    LL_USART_SetBaudRate(USARTx_INSTANCE, SystemCoreClock/APB_Div, LL_USART_PRESCALER_DIV2, LL_USART_OVERSAMPLING_16, 115200);
+    LL_USART_SetBaudRate(USARTx_INSTANCE, SystemCoreClock/(AHB_Div * APB_Div), LL_USART_PRESCALER_DIV1, LL_USART_OVERSAMPLING_16, 115200);
 
     /* (4) Enable USART *********************************************************/
     LL_USART_Enable(USARTx_INSTANCE);

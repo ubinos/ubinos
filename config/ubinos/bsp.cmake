@@ -314,7 +314,7 @@ set_cache_default(UBINOS__BSP__STM32_ENABLE_TRACE                               
 
 set_cache_default(UBINOS__BSP__STM32_HSE_VALUE                "8000000U"       STRING "Value of the External oscillator in Hz [8000000U]")
 
-set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "1"            STRING "[1]")
+set_cache_default(UBINOS__BSP__STM32_DTTY_USARTx_INSTANCE_NUMBER "3"            STRING "[3]")
 
 set_cache_default(UBINOS__BSP__STM32_ENABLE_ETHERNET                            FALSE    BOOL "")
 
