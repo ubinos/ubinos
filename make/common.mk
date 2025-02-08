@@ -95,7 +95,11 @@ else
 _JOBS                   = $(JOBS)
 endif
 ifeq ($(strip $(PRECMD)),)
+ifeq ("$(_SYSTEM_NAME)", "Windows")
+_PRECMD                 = echo > nul
+else
 _PRECMD                 = :
+endif
 else
 _PRECMD                 = $(PRECMD)
 endif
