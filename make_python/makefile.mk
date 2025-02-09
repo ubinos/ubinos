@@ -106,7 +106,7 @@ clean: cleanenv
 
 cleand:
 	$(call begin_message)
-	$(_PRECMD) && $(RM) "$(_OUTPUT_DIR)" || true
+	$(_PRECMD) && $(call func_remove_dir,$(_OUTPUT_DIR))
 	$(call end_message)
 
 test:

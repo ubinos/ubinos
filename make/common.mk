@@ -97,10 +97,8 @@ endif
 ifeq ($(strip $(PRECMD)),)
 ifeq ("$(_SYSTEM_NAME)", "Windows")
 _PRECMD                 = echo > nul
-RM                      = rmdir /s /q
 else
 _PRECMD                 = :
-RM                      = rm -rf
 endif
 else
 _PRECMD                 = $(PRECMD)
@@ -156,6 +154,14 @@ define end_message
 	@echo "# [End   $@ - $(_CONFIG_NAME)]"
 	@echo "###############################################################################"
 	@echo ""
+endef
+
+define func_remove_dir
+ifeq ("$(_SYSTEM_NAME)", "Windows")
+	if exist "$(1)" rmdir /s /q "$(1)"
+else
+	rm -rf "$(1)" || true
+endif
 endef
 
 ###############################################################################
@@ -273,7 +279,7 @@ endif
 common-cleand:
 	$(call begin_message)
 ifeq ("$(shell python "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
-	$(_PRECMD) && $(RM) "$(_OUTPUT_DIR)" || true
+	$(_PRECMD) && $(call func_remove_dir,$(_OUTPUT_DIR))
 endif
 	$(call end_message)
 
