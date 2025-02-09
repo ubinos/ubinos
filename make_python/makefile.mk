@@ -43,7 +43,7 @@ endif
 
 config:
 	$(call begin_message)
-	$(_PRECMD) && mkdir -p "$(_OUTPUT_DIR)"
+	$(_PRECMD) && $(call func_make_dir,"$(_OUTPUT_DIR)")
 	$(call end_message)
 
 menuconfig:
@@ -106,7 +106,7 @@ clean: cleanenv
 
 cleand:
 	$(call begin_message)
-	$(_PRECMD) && $(call func_remove_dir,$(_OUTPUT_DIR))
+	$(_PRECMD) && $(call func_remove_dir,"$(_OUTPUT_DIR)")
 	$(call end_message)
 
 test:

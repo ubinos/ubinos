@@ -158,11 +158,21 @@ endef
 
 ifeq ("$(_SYSTEM_NAME)", "Windows")
 define func_remove_dir
-	if exist "$(1)" rmdir /s /q "$(1)"
+if exist $(1) rmdir /s /q $(1)
 endef
 else
 define func_remove_dir
-	rm -rf "$(1)" || true
+rm -rf $(1) || true
+endef
+endif
+
+ifeq ("$(_SYSTEM_NAME)", "Windows")
+define func_make_dir
+if not exist $(1) mkdir $(1)
+endef
+else
+define func_make_dir
+mkdir -p $(1)
 endef
 endif
 
@@ -258,9 +268,9 @@ common-all: config build
 
 common-config:
 	$(call begin_message)
-	$(_PRECMD) && mkdir -p "$(_OUTPUT_DIR)"
+	$(_PRECMD) && $(call func_make_dir,"$(_OUTPUT_DIR)")
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake $(_CMAKE_OPTION) "$(_SOURCE_DIR)"
-	$(_PRECMD) && mkdir -p "$(_OUTPUT_DIR)/../Default"
+	$(_PRECMD) && $(call func_make_dir,"$(_OUTPUT_DIR)/../Default")
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python "$(_TOOLBOX)" copy_file compile_commands.json "$(_OUTPUT_DIR)/../Default/"
 	$(call end_message)
 
@@ -281,7 +291,7 @@ endif
 common-cleand:
 	$(call begin_message)
 ifeq ("$(shell python "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
-	$(_PRECMD) && $(call func_remove_dir,$(_OUTPUT_DIR))
+	$(_PRECMD) && $(call func_remove_dir,"$(_OUTPUT_DIR)")
 endif
 	$(call end_message)
 
