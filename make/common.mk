@@ -97,8 +97,10 @@ endif
 ifeq ($(strip $(PRECMD)),)
 ifeq ("$(_SYSTEM_NAME)", "Windows")
 _PRECMD                 = echo > nul
+RM                      = rmdir /s /q
 else
 _PRECMD                 = :
+RM                      = rm -rf
 endif
 else
 _PRECMD                 = $(PRECMD)
@@ -271,7 +273,7 @@ endif
 common-cleand:
 	$(call begin_message)
 ifeq ("$(shell python "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
-	$(_PRECMD) && rm -rf "$(_OUTPUT_DIR)" || true
+	$(_PRECMD) && $(RM) "$(_OUTPUT_DIR)" || true
 endif
 	$(call end_message)
 
