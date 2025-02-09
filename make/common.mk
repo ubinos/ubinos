@@ -156,13 +156,15 @@ define end_message
 	@echo ""
 endef
 
-define func_remove_dir
 ifeq ("$(_SYSTEM_NAME)", "Windows")
+define func_remove_dir
 	if exist "$(1)" rmdir /s /q "$(1)"
-else
-	rm -rf "$(1)" || true
-endif
 endef
+else
+define func_remove_dir
+	rm -rf "$(1)" || true
+endef
+endif
 
 ###############################################################################
 
