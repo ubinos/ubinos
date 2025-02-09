@@ -90,10 +90,10 @@ ifeq ($(strip $(PYTHON_SETUP_PY_INSTALL_LIST)),)
 else
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell python "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PYTHON_SETUP_PY_INSTALL_LIST),$(call func_python_setup_py_develop,$(item));)
 endif
-	@echo
-	@echo
+	@echo ""
+	@echo ""
 	@echo python interpreter path: "$(_OUTPUT_DIR)/bin/python"
-	@echo
+	@echo ""
 	$(call end_message)
 
 cleanenv:
