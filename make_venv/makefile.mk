@@ -96,10 +96,10 @@ endif
 	@echo "$(_OUTPUT_DIR)/bin/python"
 	@echo ""
 	@echo "* env activate command: "
-	@echo $(shell python "$(_TOOLBOX)" get_python_venv_activate_command $(_OUTPUT_DIR))
+	@echo "$(shell python "$(_TOOLBOX)" get_python_venv_activate_command $(_OUTPUT_DIR))"
 	@echo ""
 	@echo "* env deactivate command: "
-	@echo deactivate
+	@echo "deactivate"
 	@echo ""
 	$(call end_message)
 
