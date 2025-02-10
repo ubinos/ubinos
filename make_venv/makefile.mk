@@ -92,10 +92,14 @@ else
 endif
 	@echo ""
 	@echo ""
-	@echo python interpreter path: "$(_OUTPUT_DIR)/bin/python"
+	@echo "* python interpreter path: "
+	@echo "$(_OUTPUT_DIR)/bin/python"
 	@echo ""
-	@echo env activate command: "$(shell python "$(_TOOLBOX)" get_python_venv_activate_command $(_OUTPUT_DIR))"
-	@echo env deactivate commandy: "deactivate"
+	@echo "* env activate command: "
+	@echo $(shell python "$(_TOOLBOX)" get_python_venv_activate_command $(_OUTPUT_DIR))
+	@echo ""
+	@echo "* env deactivate command: "
+	@echo deactivate
 	@echo ""
 	$(call end_message)
 

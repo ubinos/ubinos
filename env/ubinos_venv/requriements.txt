@@ -8,12 +8,3 @@ sphinx-copybutton
 sphinx-tabs
 sphinxcontrib-bibtex
 
-numpy
-pandas
-matplotlib
-scipy
-
-pyserial
-ble-serial
-
-jupyter
