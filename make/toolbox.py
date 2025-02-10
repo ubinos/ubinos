@@ -56,7 +56,7 @@ def cpu_count():
 
 def get_start_command_for_cmake():
     if platform.system() == "Windows":
-        print("start")
+        print("cmd /c start \"\"")
     elif platform.system() == "Linux":
         print("xterm;-hold;-e")
     elif platform.system() == "Darwin":
@@ -66,7 +66,7 @@ def get_start_command_for_cmake():
 
 def get_open_command_for_cmake():
     if platform.system() == "Windows":
-        print("start")
+        print("cmd /c start \"\"")
     elif platform.system() == "Linux":
         print("xdg-open")
     elif platform.system() == "Darwin":
