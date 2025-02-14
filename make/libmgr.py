@@ -17,6 +17,7 @@ import copy
 import pathlib
 import shutil
 import subprocess
+import platform
 
 from tkinter import ttk
 from tkinter import Toplevel
@@ -704,6 +705,16 @@ class libmgr(tk.Tk):
                 self.run_dialog.set_command(self.git_commands)
                 self.run_dialog.grab_set()
 
+    def get_platform_rmdir_command(self, dir):
+        platform_rmdir_command = ""
+        if platform.system() == "Windows":
+            platform_rmdir_command = f"if exist {dir} rmdir /s /q {dir}"
+        elif platform.system() == "Linux":
+            platform_rmdir_command = f"rm -rf {dir}"
+        elif platform.system() == "Darwin":
+            platform_rmdir_command = f"rm -rf {dir}"
+        return platform_rmdir_command
+
     def press_uninstall(self):
         if len(self.lib_items) > 0:
             if debug_level >= 1:
@@ -724,15 +735,15 @@ class libmgr(tk.Tk):
                     dot_git_dir = os.path.join(self.prj_dir_base, ".git", "modules", self.lib_rel_dir, selection["name"])
                     if  self.is_git_repo(selection["name"]):
                         self.git_commands.append(f"git submodule deinit -f {target_dir}")
-                        self.git_commands.append(f"rm -rf {dot_git_dir}")
+                        self.git_commands.append(self.get_platform_rmdir_command(dot_git_dir))
                         self.git_commands.append(f"git rm -f {target_dir}")
-                        self.git_commands.append(f"rm -rf {target_dir}")
+                        self.git_commands.append(self.get_platform_rmdir_command(target_dir))
                         # dot_gitmodule_path = os.path.join(self.prj_dir_base, ".gitmodules")
                         # target_base_name = os.path.basename(target_dir)
                         # self.git_commands.append(f"git config -f {dot_gitmodule_path} --remove-section submodule.{target_base_name} || true")
                     else:
-                        self.git_commands.append(f"rm -rf {dot_git_dir}")
-                        self.git_commands.append(f"rm -rf {target_dir}")
+                        self.git_commands.append(self.get_platform_rmdir_command(dot_git_dir))
+                        self.git_commands.append(self.get_platform_rmdir_command(target_dir))
                 self.run_dialog = run_dialog(self)
                 self.run_dialog.title("Uninstall library commands")
                 self.run_dialog.set_command(self.git_commands)
