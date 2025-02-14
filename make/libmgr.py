@@ -913,7 +913,7 @@ class libmgr(tk.Tk):
         result = None
 
         try:
-            result = subprocess.run(command, cwd=directory, capture_output=True, text=True, check=True)
+            result = subprocess.run(command, cwd=directory, capture_output=True, text=True, check=True, encoding='utf-8')
         except Exception as e:
             if debug_level >= 1:
                 print("Exception occurred.", e)
