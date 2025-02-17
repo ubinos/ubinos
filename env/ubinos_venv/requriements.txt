@@ -8,3 +8,9 @@ sphinx-copybutton
 sphinx-tabs
 sphinxcontrib-bibtex
 
+pyserial
+adafruit-nrfutil
+
+pillow
+
+intelhex

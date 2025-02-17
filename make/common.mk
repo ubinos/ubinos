@@ -176,6 +176,16 @@ mkdir -p $(1)
 endef
 endif
 
+ifeq ("$(_SYSTEM_NAME)", "Windows")
+define func_move
+if exist $(1) move $(1) $(2)
+endef
+else
+define func_move
+mv $(1) $(2) || true
+endef
+endif
+
 ###############################################################################
 
 common-help:
