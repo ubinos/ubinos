@@ -346,6 +346,160 @@ macro(___project_add_app__gen_debugscript)
     endif()
 endmacro(___project_add_app__gen_debugscript)
 
+macro(___project_add_app__show_result)
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                local_gcc
+            )
+        elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                local_llvm
+            )
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
+    else()
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                gcc
+            )
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
+    endif()
+endmacro(___project_add_app__show_result)
+
+macro(___project_add_app__copy_to_default)
+
+    if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_INIT} STREQUAL "")
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_BINARY_DIR}/gdb_init.gdb
+        ../Default/
+    )
+    endif()
+
+    if(NOT ${UBINOS__BSP__FLASH_WRITER_FILE} STREQUAL "")
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_BINARY_DIR}/flash_writer.elf
+        ../Default/
+    )
+    endif()
+
+    if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
+    add_custom_command(
+        TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf
+        ../Default/
+    )
+    endif()
+
+    if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf
+        ../Default/
+    )
+    endif()
+
+    if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_LOAD} STREQUAL "")
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_BINARY_DIR}/t32_load.cmm
+        ../Default/
+    )
+    endif()
+
+    if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_RESET} STREQUAL "")
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${CMAKE_CURRENT_BINARY_DIR}/t32_reset.cmm
+        ../Default/
+    )
+    endif()
+
+    add_custom_command(
+    TARGET ${PROJECT_EXE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+    ../Default/
+    )
+
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+    else()
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.bin
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.hex
+        ../Default/
+    )
+    endif()
+
+    add_custom_command(
+    TARGET ${PROJECT_EXE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${PROJECT_EXE_NAME}.s
+    ../Default/
+    )
+    add_custom_command(
+    TARGET ${PROJECT_EXE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${PROJECT_EXE_NAME}.syms.s
+    ../Default/
+    )
+    add_custom_command(
+    TARGET ${PROJECT_EXE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${PROJECT_EXE_NAME}.data.txt
+    ../Default/
+    )
+    add_custom_command(
+    TARGET ${PROJECT_EXE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    ${PROJECT_EXE_NAME}.map
+    ../Default/
+    )
+
+    add_custom_command(
+    TARGET ${PROJECT_EXE_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+    compile_commands.json
+    ../Default/
+    )
+
+    if(NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        nrf52_softdevice.hex
+        ../Default/
+    )
+    endif()
+endmacro(___project_add_app__copy_to_default)
+
 macro(___project_add_app)
 
     if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
@@ -857,154 +1011,10 @@ macro(___project_add_app)
         endif()
     endif()
 
-    if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_INIT} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/gdb_init.gdb
-            ../Default/
-        )
-    endif()
+    ___project_add_app__copy_to_default()
 
-    if(NOT ${UBINOS__BSP__FLASH_WRITER_FILE} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/flash_writer.elf
-            ../Default/
-        )
-    endif()
+    ___project_add_app__show_result()
 
-    if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf
-            ../Default/
-        )
-    endif()
-
-    if(NOT ${UBINOS__BSP__SYS_INIT_FILE} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/sys_init.elf
-            ../Default/
-        )
-    endif()
-
-    if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_LOAD} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/t32_load.cmm
-            ../Default/
-        )
-    endif()
-
-    if(NOT ${UBINOS__BSP__T32SCRIPT_FILE_RESET} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${CMAKE_CURRENT_BINARY_DIR}/t32_reset.cmm
-            ../Default/
-        )
-    endif()
-
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-        ../Default/
-    )
-
-    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
-    else()
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${PROJECT_EXE_NAME}.bin
-            ../Default/
-        )
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            ${PROJECT_EXE_NAME}.hex
-            ../Default/
-        )
-    endif()
-
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}.s
-        ../Default/
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}.syms.s
-        ../Default/
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}.data.txt
-        ../Default/
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}.map
-        ../Default/
-    )
-
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        compile_commands.json
-        ../Default/
-    )
-
-    if(NOT ${UBINOS__BSP__NRF52_SOFTDEVICE_FILE} STREQUAL "")
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_COMMAND} -E copy
-            nrf52_softdevice.hex
-            ../Default/
-        )
-    endif()
-
-    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
-        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-                ${PROJECT_EXE_NAME}.map
-                local_gcc
-            )
-        elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-                ${PROJECT_EXE_NAME}.map
-                local_llvm
-            )
-        else()
-            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
-        endif()
-    else()
-        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-                ${PROJECT_EXE_NAME}.map
-                gcc
-            )
-        else()
-            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
-        endif()
-    endif()
 endmacro(___project_add_app)
 
 macro(___project_show)
@@ -1249,7 +1259,7 @@ macro(ubinos_project_end)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
     set(CMAKE_COLOR_MAKEFILE OFF)
-    # set(CMAKE_VERBOSE_MAKEFILE ON)
+    set(CMAKE_VERBOSE_MAKEFILE ON)
 
     ___project_show()
 endmacro(ubinos_project_end)
