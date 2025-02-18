@@ -346,38 +346,165 @@ macro(___project_add_app__gen_debugscript)
     endif()
 endmacro(___project_add_app__gen_debugscript)
 
-macro(___project_add_app__show_result)
+
+macro(___project_add_app__gen_binary)
     if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
-        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-                ${PROJECT_EXE_NAME}.map
-                local_gcc
-            )
-        elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-                ${PROJECT_EXE_NAME}.map
-                local_llvm
-            )
-        else()
-            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
-        endif()
     else()
-        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY} -O binary
+            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            ${PROJECT_EXE_NAME}.bin
+        )
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_OBJCOPY} -O ihex
+            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            ${PROJECT_EXE_NAME}.hex
+        )
+    endif()
+
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -d -l
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.s
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -t
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.syms.s
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -s -j ${PROJECT_TOOLCHAIN_DATA_SECTION_NAME}
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.data.txt
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove -f
+        ${PROJECT_EXE_NAME}.data${CMAKE_EXECUTABLE_SUFFIX}
+    )
+endmacro(___project_add_app__gen_binary)
+
+
+macro(___project_add_app__refine_debugscript)
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+    else()
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
             add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
-                ${PROJECT_EXE_NAME}.map
-                gcc
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_gdbscript
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${PROJECT_EXE_NAME}.bin
             )
-        else()
-            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
         endif()
     endif()
-endmacro(___project_add_app__show_result)
+
+    if(NOT ${UBINOS__BSP__DEBUG_SERVER_HOST} STREQUAL "")
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_ATTACH} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
+            )
+        endif()
+
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_DEBUG} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
+            )
+        endif()
+
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
+            )
+        endif()
+
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RESET} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
+            )
+        endif()
+
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RUN} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
+            )
+        endif()
+    endif()
+
+    if(NOT ${UBINOS__BSP__DEBUG_SERVER_PORT} STREQUAL "")
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_ATTACH} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
+                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
+            )
+        endif()
+
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_DEBUG} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
+                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
+            )
+        endif()
+
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
+                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
+            )
+        endif()
+
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RESET} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
+            )
+        endif()
+
+        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RUN} STREQUAL "")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
+                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
+            )
+        endif()
+    endif()
+endmacro(___project_add_app__refine_debugscript)
 
 macro(___project_add_app__copy_to_default)
 
@@ -499,6 +626,39 @@ macro(___project_add_app__copy_to_default)
     )
     endif()
 endmacro(___project_add_app__copy_to_default)
+
+macro(___project_add_app__show_result)
+    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                local_gcc
+            )
+        elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                local_llvm
+            )
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
+    else()
+        if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+            add_custom_command(
+                TARGET ${PROJECT_EXE_NAME} POST_BUILD
+                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+                ${PROJECT_EXE_NAME}.map
+                gcc
+            )
+        else()
+            message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+        endif()
+    endif()
+endmacro(___project_add_app__show_result)
 
 macro(___project_add_app)
 
@@ -857,159 +1017,9 @@ macro(___project_add_app)
         USES_TERMINAL
     )
 
-    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
-    else()
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_OBJCOPY} -O binary
-            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-            ${PROJECT_EXE_NAME}.bin
-        )
-        add_custom_command(
-            TARGET ${PROJECT_EXE_NAME} POST_BUILD
-            COMMAND ${CMAKE_OBJCOPY} -O ihex
-            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-            ${PROJECT_EXE_NAME}.hex
-        )
-    endif()
+    ___project_add_app__gen_binary()
 
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJDUMP} -d -l
-        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.s
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJDUMP} -t
-        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.syms.s
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_OBJDUMP} -s -j ${PROJECT_TOOLCHAIN_DATA_SECTION_NAME}
-        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.data.txt
-    )
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E remove -f
-        ${PROJECT_EXE_NAME}.data${CMAKE_EXECUTABLE_SUFFIX}
-    )
-
-    if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
-    else()
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} refine_gdbscript
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                ${PROJECT_EXE_NAME}.bin
-            )
-        endif()
-    endif()
-
-    if(NOT ${UBINOS__BSP__DEBUG_SERVER_HOST} STREQUAL "")
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_ATTACH} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
-            )
-        endif()
-
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_DEBUG} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
-            )
-        endif()
-
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
-            )
-        endif()
-
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RESET} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
-            )
-        endif()
-
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RUN} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-                "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
-            )
-        endif()
-    endif()
-
-    if(NOT ${UBINOS__BSP__DEBUG_SERVER_PORT} STREQUAL "")
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_ATTACH} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_attach.gdb
-                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
-            )
-        endif()
-
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_DEBUG} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_debug.gdb
-                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
-            )
-        endif()
-
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_load.gdb
-                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
-            )
-        endif()
-
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RESET} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
-            )
-        endif()
-
-        if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_RUN} STREQUAL "")
-            add_custom_command(
-                TARGET ${PROJECT_EXE_NAME} POST_BUILD
-                COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_run.gdb
-                ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
-            )
-        endif()
-    endif()
+    ___project_add_app__refine_debugscript()
 
     ___project_add_app__copy_to_default()
 
