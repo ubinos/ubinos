@@ -1,3 +1,21 @@
+
+macro(___project_add_app__set_link_flags)
+    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-Map=${PROJECT_EXE_NAME}.map,--cref")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -u main")
+    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-map,${PROJECT_EXE_NAME}.map")
+    else()
+        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+    endif()
+endmacro(___project_add_app__set_link_flags)
+
+macro(___project_add_app__gen_linkscript)
+endmacro(___project_add_app__gen_linkscript)
+
+macro(___project_add_app__gen_debugscript)
+endmacro(___project_add_app__gen_debugscript)
+
 macro(___project_add_app__gen_make_target)
 
     if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
@@ -82,3 +100,91 @@ macro(___project_add_app__gen_make_target)
         USES_TERMINAL
     )
 endmacro(___project_add_app__gen_make_target)
+
+macro(___project_add_app__gen_binary)
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -d -l
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.s
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -t
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.syms.s
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJDUMP} -s -j ${PROJECT_TOOLCHAIN_DATA_SECTION_NAME}
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.data.txt
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E remove -f
+        ${PROJECT_EXE_NAME}.data${CMAKE_EXECUTABLE_SUFFIX}
+    )
+endmacro(___project_add_app__gen_binary)
+
+macro(___project_add_app__refine_debugscript)
+endmacro(___project_add_app__refine_debugscript)
+
+macro(___project_add_app__copy_to_default)
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+        ../Default/
+    )
+
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.s
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.syms.s
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.data.txt
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.map
+        ../Default/
+    )
+
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        compile_commands.json
+        ../Default/
+    )
+endmacro(___project_add_app__copy_to_default)
+
+macro(___project_add_app__show_result)
+    if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+            ${PROJECT_EXE_NAME}.map
+            local_gcc
+        )
+    elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_TOOLBOX_RUN_CMD} show_mapfile_info
+            ${PROJECT_EXE_NAME}.map
+            local_llvm
+        )
+    else()
+        message(FATAL_ERROR "Unsupported PROJECT_TOOLCHAIN_TYPE")
+    endif()
+endmacro(___project_add_app__show_result)
+
