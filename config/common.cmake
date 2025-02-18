@@ -316,6 +316,8 @@ macro(ubinos_project_begin)
 
     if(UBINOS__BSP__BOARD_MODEL STREQUAL "LOCAL")
         include("${PROJECT_UBINOS_DIR}/config/common_local.cmake")
+    elseif(UBINOS__BSP__BOARD_MODEL STREQUAL "NOBSP")
+        include("${PROJECT_UBINOS_DIR}/config/common_nobsp.cmake")
     else()
         include("${PROJECT_UBINOS_DIR}/config/common_cross.cmake")
     endif()

@@ -164,7 +164,6 @@ macro(___project_add_app__gen_linkscript)
     endif()
 endmacro(___project_add_app__gen_linkscript)
 
-
 macro(___project_add_app__gen_debugscript)
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_LOAD} STREQUAL "")
         add_custom_command(
@@ -714,7 +713,6 @@ macro(___project_add_app__refine_debugscript)
         endif()
     endif()
 endmacro(___project_add_app__refine_debugscript)
-
 
 macro(___project_add_app__copy_to_default)
     if(NOT ${UBINOS__BSP__GDBSCRIPT_FILE_INIT} STREQUAL "")
