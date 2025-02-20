@@ -27,7 +27,7 @@ from ttkwidgets import CheckboxTreeview
 
 from collections import Counter
 
-debug_level = 1
+debug_level = 0
 
 true_string = "O"
 false_string = "X"
@@ -247,7 +247,7 @@ class libmgr(tk.Tk):
         frame_tv.columnconfigure(0, weight=1)
 
         self.tv = CheckboxTreeview(frame_tv)
-        self.tv["columns"] = ("I", "M", "U", "S", "L", "Name", "URL", "Branch", "Tag", "Commit")
+        self.tv["columns"] = ("I", "M", "U", "S", "L", "Name", "URL", "Branch", "Tags", "Commit")
         self.tv.pack(fill="both", expand=True)
         self.tv.grid(row=0, column=0, sticky="nsew")
         self.tv.tag_configure("selected", background="palegoldenrod")
@@ -278,8 +278,8 @@ class libmgr(tk.Tk):
         self.tv.column("URL", width=370)
         self.tv.heading("Branch", text="Branch")
         self.tv.column("Branch", width=100)
-        self.tv.heading("Tag", text="Tag")
-        self.tv.column("Tag", width=80)
+        self.tv.heading("Tags", text="Tags")
+        self.tv.column("Tags", width=80)
         self.tv.heading("Commit", text="Commit")
         self.tv.column("Commit", width=70)
 
@@ -383,14 +383,14 @@ class libmgr(tk.Tk):
             lib["name"] = item["name"]
             lib["url"] = item["url"]
             lib["branch"] = ""
-            lib["tag"] = ""
+            lib["tags"] = [""]
             lib["commit"] = ""
             lib["upstreams"] = []
             lib["description"] = ""
             if item["branch_tag_commit"]["type"] == "branch":
                 lib["branch"] = item["branch_tag_commit"]["name"]
             elif item["branch_tag_commit"]["type"] == "tag":
-                lib["tag"] = item["branch_tag_commit"]["name"]
+                lib["tags"] = [item["branch_tag_commit"]["name"]]
             elif item["branch_tag_commit"]["type"] == "commit":
                 lib["commit"] = item["branch_tag_commit"]["name"]
             if "upstreams" in item:
@@ -426,7 +426,7 @@ class libmgr(tk.Tk):
 
         temp_lib_items += exist_lib_items
         self.lib_items = sorted(temp_lib_items, key=lambda x:
-                                (x["name"], x["url"], x["branch"], x["tag"], x["commit"]))
+                                (x["name"], x["url"], x["branch"], x["commit"]))
 
         self.tv.delete(*self.tv.get_children())
         for index, lib_item in enumerate(self.lib_items):
@@ -442,7 +442,7 @@ class libmgr(tk.Tk):
                                 lib_item["name"],
                                 lib_item["url"],
                                 lib_item["branch"],
-                                lib_item["tag"],
+                                ", ".join(lib_item["tags"]),
                                 lib_item["commit"]
                                 )
                             )
@@ -562,12 +562,12 @@ class libmgr(tk.Tk):
         for name in os.listdir(lib_dir):
             if os.path.isdir(os.path.join(lib_dir, name)):
                 url, upstreams = self.git_local_url(name)
-                branch, tag, commit = self.git_local_branch_tag_commit(name)
+                branch, tags, commit = self.git_local_branch_tag_commit(name)
                 lib = {
                     "name": name,
                     "url": url,
                     "branch": branch,
-                    "tag": tag,
+                    "tags": tags,
                     "commit": commit,
                     "upstreams": upstreams,
                     "description": ""
@@ -580,14 +580,19 @@ class libmgr(tk.Tk):
     def is_equal_lib(self, lib1, lib2):
         equal = False
         if lib1["name"] == lib2["name"] and lib1["url"] == lib2["url"]:
-            if lib1["branch"] != "" or lib2["branch"] != "":
-                if lib1["branch"] == lib2["branch"]:
+            while True:
+                if lib1["branch"] != "" and lib2["branch"] != "":
+                    if lib1["branch"] == lib2["branch"]:
+                        equal = True
+                    break
+                if lib1["commit"] != "" and lib2["commit"] != "":
+                    if lib1["commit"] == lib2["commit"]:
+                        equal = True
+                    break
+
+                if set(lib1["tags"]).intersection(lib2["tags"]):
                     equal = True
-            else:
-                if lib1["tag"] != "" and lib1["tag"] == lib2["tag"]:
-                    equal = True
-                if lib1["commit"] != "" and lib1["commit"] == lib2["commit"]:
-                    equal = True
+                break
         return equal
 
     def is_checked_multiple(self):
@@ -684,7 +689,7 @@ class libmgr(tk.Tk):
                     target_dir = os.path.join(lib_dir, selection["name"])
                     source_url = selection["url"]
                     source_branch = selection["branch"]
-                    source_tag = selection["tag"]
+                    source_tag = selection["tags"][0]
                     source_commit = selection["commit"]
                     if source_branch != "":
                         self.git_commands.append(f"git submodule add -f -b {source_branch} {source_url} {target_dir}")
@@ -769,8 +774,8 @@ class libmgr(tk.Tk):
                     source_btc_name = ""
                     if selection["branch"] != "":
                         source_btc_name = selection["branch"]
-                    if selection["tag"] != "":
-                        source_btc_name = selection["tag"]
+                    if selection["tags"][0] != "":
+                        source_btc_name = selection["tags"][0]
                     if selection["commit"] != "":
                         source_btc_name = selection["commit"]
                     if source_btc_name != "":
@@ -814,7 +819,7 @@ class libmgr(tk.Tk):
             for lib_item in self.lib_items:
                 if lib_item["installed"] == true_string:
                     item_updatable = {"name": lib_item["name"], "url": lib_item["url"],
-                                      "branch": lib_item["branch"], "tag": lib_item["tag"], "commit": lib_item["commit"]}
+                                      "branch": lib_item["branch"], "tags": lib_item["tags"], "commit": lib_item["commit"]}
                     if debug_level >= 2:
                         print(item_updatable)
                     if self.git_check_updatable(lib_item["name"]):
@@ -994,7 +999,7 @@ class libmgr(tk.Tk):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
         target_dir = os.path.join(lib_dir, name)
         branch = ""
-        tag = ""
+        tags = []
         commit = ""
         if self.is_git_repo(name):
             git_command = ["git", "symbolic-ref", "--quiet", "HEAD"]
@@ -1009,12 +1014,12 @@ class libmgr(tk.Tk):
                 if result != None:
                    branch = result.stdout.strip()
 
-            git_command = ["git", "describe", "--exact-match", "--tags", "HEAD"]
+            git_command = ["git", "tag", "--points-at", "HEAD"]
             result = self.run_git_command(target_dir, git_command)
             if debug_level >= 2:
                 print(result)
             if result != None and result.returncode == 0:
-                tag = result.stdout.strip()
+                tags = result.stdout.strip().split('\n')
 
             git_command = ["git", "rev-parse", "--verify", "HEAD"]
             result = self.run_git_command(target_dir, git_command)
@@ -1023,7 +1028,7 @@ class libmgr(tk.Tk):
             if result != None and result.returncode == 0:
                 commit = result.stdout.strip()
 
-        return branch, tag, commit
+        return branch, tags, commit
 
     def git_local_url(self, name):
         lib_dir = os.path.join(self.prj_dir_base, self.lib_rel_dir)
