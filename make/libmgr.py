@@ -684,7 +684,7 @@ class libmgr(tk.Tk):
                     target_dir = os.path.join(lib_dir, selection["name"])
                     source_url = selection["url"]
                     source_branch = selection["branch"]
-                    source_tag = selection["branch"]
+                    source_tag = selection["tag"]
                     source_commit = selection["commit"]
                     if source_branch != "":
                         self.git_commands.append(f"git submodule add -f -b {source_branch} {source_url} {target_dir}")
