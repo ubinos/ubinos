@@ -50,6 +50,7 @@ doc:
 	$(call begin_message)
 ifneq ("$(BUILD_HTML)", "0")
 	$(_PRECMD) && sphinx-build -M html     "$(_CONFIG_DIR)/$(APP__NAME)/doc" "$(_OUTPUT_DIR)"
+	$(_PRECMD) && python -c "open('$(_OUTPUT_DIR)/html/.nojekyll', 'a').close()"
 endif
 ifneq ("$(BUILD_LATEXPDF)", "0")
 	$(_PRECMD) && sphinx-build -M latexpdf "$(_CONFIG_DIR)/$(APP__NAME)/doc" "$(_OUTPUT_DIR)"
