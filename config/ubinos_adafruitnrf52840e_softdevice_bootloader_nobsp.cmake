@@ -1,5 +1,5 @@
 #
-# Copyright (c) 2019 Sung Ho Park and CSOS
+# Copyright (c) 2025 Sung Ho Park and CSOS
 #
 # SPDX-License-Identifier: Apache-2.0
 #
@@ -21,10 +21,12 @@ set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_PRESENT TRUE BOOL)
 set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_NAME S140 STRING)
 set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION 6 STRING)
 
-set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_FILE "${PROJECT_LIBRARY_DIR}/Adafruit_nRF52_Bootloader/lib/softdevice/s140_nrf52_6.1.1/s140_nrf52_6.1.1_softdevice.hex" PATH)
-set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_INCLUDE_DIR "${PROJECT_LIBRARY_DIR}/Adafruit_nRF52_Bootloader/lib/softdevice/s140_nrf52_6.1.1/s140_nrf52_6.1.1_API/include" PATH)
+set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_FILE "${PROJECT_LIBRARY_DIR}/Adafruit_nRF52_Arduino_wrapper/resource/lib/softdevice/s140_nrf52_6.1.1/s140_nrf52_6.1.1_softdevice.hex" PATH)
+set_cache(UBINOS__BSP__NRF52_SOFTDEVICE_INCLUDE_DIR "${PROJECT_LIBRARY_DIR}/Adafruit_nRF52_Arduino_wrapper/resource/lib/softdevice/s140_nrf52_6.1.1/s140_nrf52_6.1.1_API/include" PATH)
 
-set_cache(UBINOS__BSP__GDBSCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nrf52840dk/gdb_flash_load_softdevice_noload.gdb" PATH)
+set_cache(UBINOS__BSP__NRF52_BOOTLOADER_FILE "${PROJECT_LIBRARY_DIR}/Adafruit_nRF52_Arduino_wrapper/resource/lib/bootloader/adafruitnrf52840e/nrf52_bootloader.hex" PATH)
+
+set_cache(UBINOS__BSP__GDBSCRIPT_FILE_LOAD "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nrf52840dk/gdb_flash_load_softdevice_bootloader.gdb" PATH)
 set_cache(UBINOS__BSP__GDBSCRIPT_FILE_RESET "${PROJECT_UBINOS_DIR}/resource/ubinos/bsp/arch/arm/cortexm/nrf52dk/gdb_flash_reset_softdevice.gdb" PATH)
 
 set_cache(UBINOS__BSP__DEBUG_SERVER_TYPE "JLINK" STRING)

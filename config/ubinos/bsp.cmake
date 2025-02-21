@@ -175,6 +175,8 @@ set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_BLE_API_VERSION                 
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_FILE                            ""      PATH "nRF52 softdevice file")
 set_cache_default(UBINOS__BSP__NRF52_SOFTDEVICE_INCLUDE_DIR                     ""      PATH "nRF52 softdevice include directory")
 
+set_cache_default(UBINOS__BSP__NRF52_BOOTLOADER_FILE                            ""      PATH "nRF52 bootloader file")
+
 set_cache_default(UBINOS__BSP__NRF52_MBR_PRESENT                                FALSE   BOOL "")
 
 set_cache_default(UBINOS__BSP__NRF52_IGNORE_HARDFAULT_EXCEPTION_FROM_SOFTDEVICE TRUE    BOOL "Ignore hard fault exception from nrf softdevice for debugging")

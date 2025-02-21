@@ -76,6 +76,24 @@ macro(___project_add_app__gen_debugscript)
             ${CMAKE_CURRENT_BINARY_DIR}/nrf52_softdevice.hex
         )
     endif()
+
+    if(NOT ${UBINOS__BSP__NRF52_BOOTLOADER_FILE} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${UBINOS__BSP__NRF52_BOOTLOADER_FILE}
+            ${CMAKE_CURRENT_BINARY_DIR}/nrf52_bootloader.hex
+        )
+    endif()
+
+    if((${UBINOS__BSP__DEBUG_SERVER_TYPE} STREQUAL "OPENOCD") AND (NOT ${UBINOS__BSP__OPENOCD_CONFIG_FILE} STREQUAL ""))
+        add_custom_command(
+            TARGET ${PROJECT_NAME} PRE_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${UBINOS__BSP__OPENOCD_CONFIG_FILE}
+            ${CMAKE_CURRENT_BINARY_DIR}/openocd.cfg
+        )
+    endif()
 endmacro(___project_add_app__gen_debugscript)
 
 macro(___project_add_app__gen_make_target)
@@ -256,6 +274,19 @@ endmacro(___project_add_app__gen_make_target)
 macro(___project_add_app__gen_binary)
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -O binary
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+        ${PROJECT_EXE_NAME}.bin
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_OBJCOPY} -O ihex
+        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+        ${PROJECT_EXE_NAME}.hex
+    )
+
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJDUMP} -d -l
         ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX} > ${PROJECT_EXE_NAME}.s
     )
@@ -324,6 +355,15 @@ macro(___project_add_app__copy_to_default)
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             nrf52_softdevice.hex
+            ../Default/
+        )
+    endif()
+
+    if(NOT ${UBINOS__BSP__NRF52_BOOTLOADER_FILE} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            nrf52_bootloader.hex
             ../Default/
         )
     endif()
