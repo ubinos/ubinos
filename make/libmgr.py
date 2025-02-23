@@ -354,10 +354,15 @@ class libmgr(tk.Tk):
                 lib["upstreams"] = []
             if not "description" in lib:
                 lib["description"] = ""
-            lib["installed"] = true_string
+            lib["installed"] = true_string if self.is_git_repo(lib["name"]) else unknown_string
             lib["modified"] = self.git_check_modified(lib["name"])
             lib["listed"] = false_string
-            lib["uninstallable"] = true_string if lib["name"] != "ubinos" else false_string
+            if lib["name"] == "ubinos":
+                lib["uninstallable"] = false_string
+            elif self.is_git_repo(lib["name"]):
+                lib["uninstallable"] = true_string
+            else:
+                lib["uninstallable"] = unknown_string
             lib["installable"] = false_string
             lib["switchable"] = false_string
             lib["updatable"] = self.get_updatable(lib)
