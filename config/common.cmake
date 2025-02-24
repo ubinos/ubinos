@@ -339,7 +339,10 @@ macro(___add_ubinos_library name)
             file(APPEND ${PROJECT_BINARY_DIR}/ubinos_config.h ${_tmp_fdata})
         endif()
 
-        include_directories(${PROJECT_LIBRARY_DIR}/${name}/include)
+        set(_tmp_fname "${PROJECT_LIBRARY_DIR}/${name}/include")
+        if(EXISTS "${_tmp_fname}")
+            include_directories(${PROJECT_LIBRARY_DIR}/${name}/include)
+        endif()
 
         set(_tmp_fname "${PROJECT_LIBRARY_DIR}/${name}/source/sources.cmake")
         if(EXISTS "${_tmp_fname}")

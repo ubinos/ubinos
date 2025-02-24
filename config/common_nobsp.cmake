@@ -98,7 +98,7 @@ endmacro(___project_add_app__gen_debugscript)
 
 macro(___project_add_app__gen_make_target)
     if(PROJECT_TOOLCHAIN_TYPE STREQUAL "GCC")
-        target_link_libraries(${PROJECT_EXE_NAME} ${PROJECT_LIBRARIES})
+        target_link_libraries(${PROJECT_EXE_NAME} -Wl,--start-group ${PROJECT_LIBRARIES} -Wl,--end-group)
     elseif(PROJECT_TOOLCHAIN_TYPE STREQUAL "LLVM")
         target_link_libraries(${PROJECT_EXE_NAME} ${PROJECT_LIBRARIES})
     else()
