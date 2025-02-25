@@ -8,9 +8,18 @@ set(_tmp_prefix "arm-none-eabi")
 
 ########
 
+set_cache_default(PROJECT_TOOLCHAIN_PATH "" PATH "Toolchain path")
+
+if("${PROJECT_TOOLCHAIN_PATH}"  STREQUAL "")
+    set(_tmp_path_prefix "${_tmp_prefix}")
+else()
+    set(_tmp_path_prefix "${PROJECT_TOOLCHAIN_PATH}/${_tmp_prefix}")
+endif()
+
 set_cache(PROJECT_TOOLCHAIN_TYPE "GCC" STRING)
 set_cache(PROJECT_TOOLCHAIN_PREFIX "${_tmp_prefix}" STRING)
-set_cache(PROJECT_TOOLCHAIN_GDB_COMMAND "${_tmp_prefix}-gdb" STRING)
+
+set_cache(PROJECT_TOOLCHAIN_GDB_COMMAND "${_tmp_path_prefix}-gdb" STRING)
 
 set_cache_default(PROJECT_TOOLCHAIN_F_NO_UNWIND_TABLES TRUE BOOL "-fno-unwind-tables")
 
@@ -33,29 +42,29 @@ set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE NEVER)
 set(CMAKE_C_COMPILER_FORCED TRUE)
 set(CMAKE_CXX_COMPILER_FORCED TRUE)
 
-set(CMAKE_C_COMPILER ${_tmp_prefix}-gcc)
-set(CMAKE_CXX_COMPILER ${_tmp_prefix}-g++)
+set(CMAKE_C_COMPILER ${_tmp_path_prefix}-gcc)
+set(CMAKE_CXX_COMPILER ${_tmp_path_prefix}-g++)
 
 enable_language(ASM C CXX)
 
-set(CMAKE_ASM_COMPILER ${_tmp_prefix}-gcc)
-set(CMAKE_ASM_COMPILER_AR ${_tmp_prefix}-gcc-ar)
-set(CMAKE_ASM_COMPILER_RANLIB ${_tmp_prefix}-gcc-ranlib)
+set(CMAKE_ASM_COMPILER ${_tmp_path_prefix}-gcc)
+set(CMAKE_ASM_COMPILER_AR ${_tmp_path_prefix}-gcc-ar)
+set(CMAKE_ASM_COMPILER_RANLIB ${_tmp_path_prefix}-gcc-ranlib)
 
-set(CMAKE_C_COMPILER_AR ${_tmp_prefix}-gcc-ar)
-set(CMAKE_C_COMPILER_RANLIB ${_tmp_prefix}-gcc-ranlib)
+set(CMAKE_C_COMPILER_AR ${_tmp_path_prefix}-gcc-ar)
+set(CMAKE_C_COMPILER_RANLIB ${_tmp_path_prefix}-gcc-ranlib)
 
-set(CMAKE_CXX_COMPILER_AR ${_tmp_prefix}-gcc-ar)
-set(CMAKE_CXX_COMPILER_RANLIB ${_tmp_prefix}-gcc-ranlib)
+set(CMAKE_CXX_COMPILER_AR ${_tmp_path_prefix}-gcc-ar)
+set(CMAKE_CXX_COMPILER_RANLIB ${_tmp_path_prefix}-gcc-ranlib)
 
 
-set(CMAKE_AR ${_tmp_prefix}-ar)
-set(CMAKE_RANLIB ${_tmp_prefix}-ranlib)
-set(CMAKE_LINKER ${_tmp_prefix}-ld)
-set(CMAKE_NM ${_tmp_prefix}-nm)
-set(CMAKE_OBJCOPY ${_tmp_prefix}-objcopy)
-set(CMAKE_OBJDUMP ${_tmp_prefix}-objdump)
-set(CMAKE_STRIP ${_tmp_prefix}-strip)
+set(CMAKE_AR ${_tmp_path_prefix}-ar)
+set(CMAKE_RANLIB ${_tmp_path_prefix}-ranlib)
+set(CMAKE_LINKER ${_tmp_path_prefix}-ld)
+set(CMAKE_NM ${_tmp_path_prefix}-nm)
+set(CMAKE_OBJCOPY ${_tmp_path_prefix}-objcopy)
+set(CMAKE_OBJDUMP ${_tmp_path_prefix}-objdump)
+set(CMAKE_STRIP ${_tmp_path_prefix}-strip)
 
 set(CMAKE_ASM_LINK_FLAGS)
 set(CMAKE_C_LINK_FLAGS)
