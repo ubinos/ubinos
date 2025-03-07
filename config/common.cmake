@@ -333,6 +333,8 @@ macro(ubinos_project_begin)
     else()
         include("${PROJECT_UBINOS_DIR}/config/common_cross.cmake")
     endif()
+
+    set_cache_default(PROJECT_PICOTOOL "" STRING "picotool path")
 endmacro(ubinos_project_begin)
 
 macro(___add_ubinos_library name)

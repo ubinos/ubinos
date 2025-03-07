@@ -305,6 +305,16 @@ macro(___project_add_app__gen_binary)
         COMMAND ${CMAKE_COMMAND} -E remove -f
         ${PROJECT_EXE_NAME}.data${CMAKE_EXECUTABLE_SUFFIX}
     )
+
+    if(NOT ${PROJECT_PICOTOOL} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${PROJECT_PICOTOOL} uf2 convert --quiet
+            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            ${PROJECT_EXE_NAME}.uf2
+            --family rp2040
+        )
+    endif()
 endmacro(___project_add_app__gen_binary)
 
 macro(___project_add_app__refine_debugscript)
@@ -364,6 +374,15 @@ macro(___project_add_app__copy_to_default)
             TARGET ${PROJECT_EXE_NAME} POST_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             nrf52_bootloader.hex
+            ../Default/
+        )
+    endif()
+
+    if(NOT ${PROJECT_PICOTOOL} STREQUAL "")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}.uf2
             ../Default/
         )
     endif()
