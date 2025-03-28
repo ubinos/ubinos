@@ -81,8 +81,17 @@ cleand:
 	$(_PRECMD) && $(call func_remove_dir,"$(_OUTPUT_DIR)")
 	$(call end_message)
 
+install:
+	$(call begin_message)
+ifeq ($(strip $(DOCS_INSTALL_DIR)),)
+	@echo "DOCS_INSTALL_DIR is not defined."
+else
+	$(_PRECMD) && python -c "import shutil, os; d='$(DOCS_INSTALL_DIR)'; shutil.rmtree(d) if os.path.exists(d) and os.path.isdir(d) else None"
+	$(_PRECMD) && python -c "import shutil; import os; s='$(_OUTPUT_DIR)/html'; d='$(DOCS_INSTALL_DIR)'; shutil.copytree(s, d)"
+endif
+	$(call end_message)
+
 %: common-% ;
 
 ###############################################################################
-
 
