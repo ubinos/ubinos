@@ -399,7 +399,7 @@ macro(ubinos_project_end)
     set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
     set(CMAKE_COLOR_MAKEFILE OFF)
-    set(CMAKE_VERBOSE_MAKEFILE ON)
+    set(CMAKE_VERBOSE_MAKEFILE OFF)
 
     ___project_show()
 endmacro(ubinos_project_end)
