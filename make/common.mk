@@ -156,35 +156,17 @@ define end_message
 	@echo ""
 endef
 
-ifeq ("$(_SYSTEM_NAME)", "Windows")
 define func_remove_dir
-if exist $(1) rmdir /s /q $(1)
+python -c "import os, shutil; shutil.rmtree('$(1)', ignore_errors=True)"
 endef
-else
-define func_remove_dir
-rm -rf $(1) || true
-endef
-endif
 
-ifeq ("$(_SYSTEM_NAME)", "Windows")
 define func_make_dir
-if not exist $(1) mkdir $(1)
+python -c "import os, shutil; os.makedirs('$(1)', exist_ok=True)"
 endef
-else
-define func_make_dir
-mkdir -p $(1)
-endef
-endif
 
-ifeq ("$(_SYSTEM_NAME)", "Windows")
 define func_move
-if exist $(1) move $(1) $(2)
+python -c "import os, shutil; os.path.exists('$(1)') and shutil.move('$(1)', '$(2)')"
 endef
-else
-define func_move
-mv $(1) $(2) || true
-endef
-endif
 
 ###############################################################################
 

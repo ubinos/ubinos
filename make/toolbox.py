@@ -12,6 +12,8 @@ import multiprocessing
 import platform
 import shutil
 import json
+import subprocess
+import re
 
 config_info_keyword = "ubinos_config_info {"
 config_info_make_dir_key = "make_dir"
@@ -73,14 +75,40 @@ def get_open_command_for_cmake():
         print("open")
 
 def get_python_venv_activate_command_for_cmake(venvname):
+    result = None
+
     if platform.system() == "Windows":
-        print(f"{venvname}\\Scripts\\activate")
+        # Try to get Chocolatey version
+        try:
+            choco_output = subprocess.check_output("choco --version", shell=True).decode('utf-8').strip()
+            # Extract version number using regex
+            version_match = re.search(r'(\d+\.\d+\.\d+)', choco_output)
+            if version_match:
+                choco_version = version_match.group(1)
+                version_parts = [int(x) for x in choco_version.split('.')]
+                # If Chocolatey version is 2.4.3 or higher
+                if (version_parts[0] > 2 or 
+                    (version_parts[0] == 2 and version_parts[1] > 4) or 
+                    (version_parts[0] == 2 and version_parts[1] == 4 and version_parts[2] >= 3)):
+                    result = f". {venvname}/Scripts/activate"
+                else:
+                    result = f"{venvname}\\Scripts\\activate.bat"
+                    result = result.replace('/', '\\')
+            else:
+                result = f"{venvname}\\Scripts\\activate.bat"
+                result = result.replace('/', '\\')
+        except:
+                result = f"{venvname}\\Scripts\\activate.bat"
+                result = result.replace('/', '\\')
     elif platform.system() == "Linux" or platform.system() == "Darwin":
-        print(f". {venvname}/bin/activate")
+        result = f". {venvname}/bin/activate"
+
+    print(result)
 
 def get_python_venv_activate_command(venvpath):
     if platform.system() == "Windows":
-        print(f"{venvpath}\\Scripts\\activate")
+        venvpath = venvpath.replace('/', '\\')
+        print(f"{venvpath}\\Scripts\\activate.bat")
     elif platform.system() == "Linux" or platform.system() == "Darwin":
         print(f". {venvpath}/bin/activate")
 
