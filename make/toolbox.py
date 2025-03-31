@@ -27,7 +27,7 @@ def print_help():
     print("    python %s cpu_count" % (sys.argv[0]))
     print("    python %s get_start_command_for_cmake" % (sys.argv[0]))
     print("    python %s get_open_command_for_cmake" % (sys.argv[0]))
-    print("    python %s get_python_venv_activate_command_for_cmake <venv name>" % (sys.argv[0]))
+    print("    python %s get_python_venv_activate_command_for_cmake <venv path>" % (sys.argv[0]))
     print("    python %s get_python_venv_activate_command <venv path>" % (sys.argv[0]))
     print("    python %s realpath <file name>" % (sys.argv[0]))
     print("    python %s is_existing_path <path name>" % (sys.argv[0]))
@@ -74,43 +74,27 @@ def get_open_command_for_cmake():
     elif platform.system() == "Darwin":
         print("open")
 
-def get_python_venv_activate_command_for_cmake(venvname):
+def get_python_venv_activate_command_for_cmake(venvpath):
     result = None
 
     if platform.system() == "Windows":
-        # Try to get Chocolatey version
-        try:
-            choco_output = subprocess.check_output("choco --version", shell=True).decode('utf-8').strip()
-            # Extract version number using regex
-            version_match = re.search(r'(\d+\.\d+\.\d+)', choco_output)
-            if version_match:
-                choco_version = version_match.group(1)
-                version_parts = [int(x) for x in choco_version.split('.')]
-                # If Chocolatey version is 2.4.3 or higher
-                if (version_parts[0] > 2 or 
-                    (version_parts[0] == 2 and version_parts[1] > 4) or 
-                    (version_parts[0] == 2 and version_parts[1] == 4 and version_parts[2] >= 3)):
-                    result = f". {venvname}/Scripts/activate"
-                else:
-                    result = f"{venvname}\\Scripts\\activate.bat"
-                    result = result.replace('/', '\\')
-            else:
-                result = f"{venvname}\\Scripts\\activate.bat"
-                result = result.replace('/', '\\')
-        except:
-                result = f"{venvname}\\Scripts\\activate.bat"
-                result = result.replace('/', '\\')
+        result = f"{venvpath}\\Scripts\\activate.bat"
+        result = result.replace('/', '\\')
     elif platform.system() == "Linux" or platform.system() == "Darwin":
-        result = f". {venvname}/bin/activate"
+        result = f". {venvpath}/bin/activate"
 
     print(result)
 
 def get_python_venv_activate_command(venvpath):
+    result = None
+
     if platform.system() == "Windows":
-        venvpath = venvpath.replace('/', '\\')
-        print(f"{venvpath}\\Scripts\\activate.bat")
+        result = f"{venvpath}\\Scripts\\activate.bat"
+        result = result.replace('/', '\\')
     elif platform.system() == "Linux" or platform.system() == "Darwin":
-        print(f". {venvpath}/bin/activate")
+        result = f". {venvpath}/bin/activate"
+
+    print(result)
 
 def realpath(fname):
     print(os.path.realpath(fname))
