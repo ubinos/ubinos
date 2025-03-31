@@ -50,7 +50,6 @@ doc:
 	$(call begin_message)
 ifneq ("$(BUILD_HTML)", "0")
 	$(_PRECMD) && sphinx-build -M html     "$(_CONFIG_DIR)/$(APP__NAME)/doc" "$(_OUTPUT_DIR)"
-	$(_PRECMD) && python -c "open('$(_OUTPUT_DIR)/html/.nojekyll', 'a').close()"
 endif
 ifneq ("$(BUILD_LATEXPDF)", "0")
 	$(_PRECMD) && sphinx-build -M latexpdf "$(_CONFIG_DIR)/$(APP__NAME)/doc" "$(_OUTPUT_DIR)"
@@ -88,6 +87,9 @@ ifeq ($(strip $(DOCS_INSTALL_DIR)),)
 else
 	$(_PRECMD) && python -c "import shutil, os; d='$(DOCS_INSTALL_DIR)'; shutil.rmtree(d) if os.path.exists(d) and os.path.isdir(d) else None"
 	$(_PRECMD) && python -c "import shutil; import os; s='$(_OUTPUT_DIR)/html'; d='$(DOCS_INSTALL_DIR)'; shutil.copytree(s, d)"
+endif
+ifneq ($(strip $(DOCS_INSTALL_ADDITIONAL_CMD)),)
+	$(_PRECMD) && $(DOCS_INSTALL_ADDITIONAL_CMD)
 endif
 	$(call end_message)
 
