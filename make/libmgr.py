@@ -810,7 +810,7 @@ class libmgr(tk.Tk):
                     self.git_commands.append(f"cd {target_dir} && git reset --hard HEAD")
                     self.git_commands.append(f"cd {target_dir} && git clean -fd")
                 self.run_dialog = run_dialog(self)
-                self.run_dialog.title("Uninstall library commands")
+                self.run_dialog.title("Reset library commands")
                 self.run_dialog.set_command(self.git_commands)
                 self.run_dialog.grab_set()
 
@@ -862,7 +862,7 @@ class libmgr(tk.Tk):
                     target_dir = os.path.join(lib_dir, selection["name"])
                     self.git_commands.append(f"cd {target_dir} && git pull")
                 self.run_dialog = run_dialog(self)
-                self.run_dialog.title("Uninstall library commands")
+                self.run_dialog.title("Update library commands")
                 self.run_dialog.set_command(self.git_commands)
                 self.run_dialog.grab_set()
 
