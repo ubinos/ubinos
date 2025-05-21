@@ -85,28 +85,26 @@ macro(___project_config_end)
 endmacro(___project_config_end)
 
 macro(___project_add_app__clean_default_dir)
-    add_custom_command(
-        TARGET ${PROJECT_NAME} PRE_BUILD
-        COMMAND ${CMAKE_COMMAND} -E remove -f
-        ../Default/${PROJECT_EXE_NAME}
-        ../Default/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-        ../Default/${PROJECT_EXE_NAME}.bin
-        ../Default/${PROJECT_EXE_NAME}.hex
-        ../Default/${PROJECT_EXE_NAME}.s
-        ../Default/${PROJECT_EXE_NAME}.syms.s
-        ../Default/${PROJECT_EXE_NAME}.data.txt
-        ../Default/${PROJECT_EXE_NAME}.map
-        ../Default/ubinos_config.h
-        ../Default/*.elf
-        ../Default/*.a
-        ../Default/*.ld
-        ../Default/*.gdb
-        ../Default/*.cmm
-        ../Default/CMakefiles
-        ../Default/cmake_install.cmake
-        ../Default/CMakeCache.txt
-        ../Default/Doxyfile
+    # 전체 파일 삭제
+    file(GLOB_RECURSE ___files_to_delete
+        "${PROJECT_BINARY_DIR}/../Default/*"
     )
+    list(REVERSE ___files_to_delete)
+    foreach(item IN LISTS ___files_to_delete)
+        file(REMOVE_RECURSE "${item}")
+    endforeach()
+
+    # 빈 디렉토리 삭제 (깊은 디렉토리부터 먼저)
+    file(GLOB_RECURSE ___dirs_to_delete
+        LIST_DIRECTORIES true
+        "${PROJECT_BINARY_DIR}/../Default/*"
+    )
+    list(REVERSE ___dirs_to_delete)
+    foreach(dir IN LISTS ___dirs_to_delete)
+        if(IS_DIRECTORY "${dir}")
+            file(REMOVE_RECURSE "${dir}")
+        endif()
+    endforeach()
 endmacro(___project_add_app__clean_default_dir)
 
 macro(___project_add_app)
