@@ -15,6 +15,8 @@ extern "C" {
 #include <ubinos/bsp_ubik.h>
 #include <ubinos/ubiclib.h>
 
+#if !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1)
+
 #if !defined(UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM)
     // maximum size = 256 KiB
     #define UBINOS__UBICLIB__HEAP_DIR0_ALGORITHM        UBINOS__UBICLIB__HEAP_ALGORITHM__GROUP
@@ -914,6 +916,8 @@ _heap_block_pt _heap_r_wbuddy_split_block(_heap_pt heap, _heap_block_pt block, u
         void * _heap_r_wbuddy_resize_block(_heap_pt heap, void * ptr, unsigned int size);
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP_ALGORITHM__WBUDDY == 1) */
+
+#endif /* !(UBINOS__UBICLIB__EXCLUDE_HEAP == 1) */
 
 #ifdef __cplusplus
 }

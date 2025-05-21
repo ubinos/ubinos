@@ -23,6 +23,7 @@
 
 #define UBINOS__BSP__CPU_ARCH__LOCAL                      1
 #define UBINOS__BSP__CPU_ARCH__ARM                        2
+#define UBINOS__BSP__CPU_ARCH__AARCH64                    3
 #define UBINOS__BSP__CPU_ARCH                             UBINOS__BSP__CPU_ARCH__@UBINOS__BSP__CPU_ARCH@
 
 #define UBINOS__BSP__CPU_TYPE__LOCAL                      1
@@ -31,9 +32,11 @@
 #define UBINOS__BSP__CPU_TYPE__CORTEX_M3                  13
 #define UBINOS__BSP__CPU_TYPE__CORTEX_M4                  14
 #define UBINOS__BSP__CPU_TYPE__CORTEX_M7                  17
+#define UBINOS__BSP__CPU_TYPE__CORTEX_A53                 353
 #define UBINOS__BSP__CPU_TYPE                             UBINOS__BSP__CPU_TYPE__@UBINOS__BSP__CPU_TYPE@
 
 #cmakedefine01 UBINOS__BSP__CORTEX_MX
+#cmakedefine01 UBINOS__BSP__CORTEX_AX
 
 #define UBINOS__BSP__CPU_ENDIAN__LITTLE                   1
 #define UBINOS__BSP__CPU_ENDIAN__BIG                      2
@@ -55,6 +58,7 @@
 #define UBINOS__BSP__CPU_MODEL__STM32F769NI               0x00010711
 #define UBINOS__BSP__CPU_MODEL__STM32H747XI               0x00010811
 #define UBINOS__BSP__CPU_MODEL__STM32H723ZG               0x00010821
+#define UBINOS__BSP__CPU_MODEL__CORTEX_A53_QEMU           0x00030053
 #define UBINOS__BSP__CPU_MODEL                            UBINOS__BSP__CPU_MODEL__@UBINOS__BSP__CPU_MODEL@
 
 #cmakedefine01 UBINOS__BSP__NRF52_NRF52XXX
@@ -82,6 +86,8 @@
 #cmakedefine01 UBINOS__BSP__STM32_STM32H747
 #cmakedefine01 UBINOS__BSP__STM32_STM32H723
 
+#cmakedefine01 UBINOS__BSP__STM32_STM32H723
+
 #define UBINOS__BSP__BOARD_MODEL__LOCAL                   0x00020100
 #define UBINOS__BSP__BOARD_MODEL__SAM9XE512EK             0x00020223
 #define UBINOS__BSP__BOARD_MODEL__NRF52DK                 0x00020311
@@ -101,6 +107,7 @@
 #define UBINOS__BSP__BOARD_MODEL__STM32F769IDISCO         0x00020721
 #define UBINOS__BSP__BOARD_MODEL__STM32H747IDISCO         0x00020821
 #define UBINOS__BSP__BOARD_MODEL__NUCLEOH723ZG            0x00020822
+#define UBINOS__BSP__BOARD_MODEL__CORTEX_A53_QEMU_VIRT    0x00030100
 #define UBINOS__BSP__BOARD_MODEL                          UBINOS__BSP__BOARD_MODEL__@UBINOS__BSP__BOARD_MODEL@
 
 #define UBINOS__BSP__BOARD_REVISION_NO @UBINOS__BSP__BOARD_REVISION_NO@
@@ -351,6 +358,10 @@
         #error "Unsupported UBINOS__BSP__BOARD_MODEL"
 
     #endif /* (UBINOS__BSP__BOARD_MODEL == ...) */
+
+#elif (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__AARCH64)
+
+
 
 #elif (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__LOCAL)
 

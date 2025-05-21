@@ -45,6 +45,7 @@ extern "C"
 #include "arch/arm/cortexm/nucleoh723zg.h"
 #elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__STM32VLDISCO)
 #include "arch/arm/cortexm/stm32vldisco.h"
+#elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__CORTEX_A53_QEMU_VIRT)
 #elif (UBINOS__BSP__BOARD_MODEL == UBINOS__BSP__BOARD_MODEL__LOCAL)
 #else
 #error "Unsupported UBINOS__BSP__BOARD_MODEL"

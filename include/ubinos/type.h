@@ -113,6 +113,16 @@ typedef __SIZE_TYPE__ size_t;
 
 #define MEM_ALIGN_16(a) ((((unsigned int) (a)) + MEM_ALIGNMASK_16) & (~MEM_ALIGNMASK_16))
 
+#elif (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__AARCH64)
+
+#ifndef NULL
+/*! NULL 정의 */
+#define NULL 0
+#endif
+
+/*! size_t 형 정의 */
+typedef __SIZE_TYPE__ size_t;
+
 #elif (UBINOS__BSP__CPU_ARCH == UBINOS__BSP__CPU_ARCH__LOCAL)
 
 #ifndef NULL
