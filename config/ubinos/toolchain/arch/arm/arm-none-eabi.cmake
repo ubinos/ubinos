@@ -33,6 +33,8 @@ set_cache_default(PROJECT_TOOLCHAIN_CXX_W_NO_CXX14_COMPAT TRUE BOOL "-Wno-c++14-
 
 set_cache(PROJECT_TOOLCHAIN_DATA_SECTION_NAME ".data" STRING)
 
+set(PROJECT_LANGUAGES ASM C CXX)
+
 ########
 
 set(CMAKE_SYSTEM_NAME "Generic")
@@ -45,8 +47,6 @@ set(CMAKE_CXX_COMPILER_FORCED TRUE)
 set(CMAKE_C_COMPILER ${_tmp_path_prefix}-gcc)
 set(CMAKE_CXX_COMPILER ${_tmp_path_prefix}-g++)
 
-enable_language(ASM C CXX)
-
 set(CMAKE_ASM_COMPILER ${_tmp_path_prefix}-gcc)
 set(CMAKE_ASM_COMPILER_AR ${_tmp_path_prefix}-gcc-ar)
 set(CMAKE_ASM_COMPILER_RANLIB ${_tmp_path_prefix}-gcc-ranlib)
@@ -56,7 +56,6 @@ set(CMAKE_C_COMPILER_RANLIB ${_tmp_path_prefix}-gcc-ranlib)
 
 set(CMAKE_CXX_COMPILER_AR ${_tmp_path_prefix}-gcc-ar)
 set(CMAKE_CXX_COMPILER_RANLIB ${_tmp_path_prefix}-gcc-ranlib)
-
 
 set(CMAKE_AR ${_tmp_path_prefix}-ar)
 set(CMAKE_RANLIB ${_tmp_path_prefix}-ranlib)

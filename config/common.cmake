@@ -368,6 +368,8 @@ macro(___add_ubinos_library name)
 endmacro(___add_ubinos_library)
 
 macro(ubinos_project_end)
+    enable_language(${PROJECT_LANGUAGES})
+
     ___project_config_begin()
 
     foreach(_lib ${PROJECT_UBINOS_LIBRARIES})
