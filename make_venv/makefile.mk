@@ -39,6 +39,16 @@ ifneq ("$(PYTHON_VENV_OPTIONS_USE_SYSTEM_SITE_PACKAGES)", "0")
 _PYTHON_VENV_OPTIONS   += --system-site-packages
 endif
 
+ifeq ($(strip $(PYTHON_VENV_INTERPRETER)),)
+ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
+_PYTHON_VENV_INTERPRETER = python
+else
+_PYTHON_VENV_INTERPRETER = python3
+endif
+else
+_PYTHON_VENV_INTERPRETER = $(PYTHON_VENV_INTERPRETER)
+endif
+
 ###############################################################################
 
 config:
