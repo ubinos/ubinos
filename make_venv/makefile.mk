@@ -86,19 +86,15 @@ xrun:
 
 env:
 	$(call begin_message)
-ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python  -m virtualenv $(_PYTHON_VENV_OPTIONS) -p python  .
-else
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python3 -m virtualenv $(_PYTHON_VENV_OPTIONS) -p python3 .
-endif
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell python "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && pip install -r "$(_CONFIG_DIR)/$(APP__NAME)/requriements.txt"
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python  -m virtualenv $(_PYTHON_VENV_OPTIONS) -p $(_PYTHON_VENV_INTERPRETER)  .
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_VENV_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && pip install -r "$(_CONFIG_DIR)/$(APP__NAME)/requriements.txt"
 ifeq ($(strip $(PIP_INSTALL_E_LIST)),)
 else
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell python "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PIP_INSTALL_E_LIST),$(call func_pip_install_e,$(item));)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_VENV_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PIP_INSTALL_E_LIST),$(call func_pip_install_e,$(item));)
 endif
 ifeq ($(strip $(PYTHON_SETUP_PY_INSTALL_LIST)),)
 else
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell python "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PYTHON_SETUP_PY_INSTALL_LIST),$(call func_python_setup_py_develop,$(item));)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_VENV_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PYTHON_SETUP_PY_INSTALL_LIST),$(call func_python_setup_py_develop,$(item));)
 endif
 	@echo ""
 	@echo ""

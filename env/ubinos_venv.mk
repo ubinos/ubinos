@@ -2,3 +2,5 @@
 
 APP__NAME = ubinos_venv
 
+# PYTHON_VENV_INTERPRETER = "C:\Python311\python.exe"
+
