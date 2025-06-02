@@ -272,6 +272,15 @@ macro(___project_add_app__gen_make_target)
 endmacro(___project_add_app__gen_make_target)
 
 macro(___project_add_app__gen_binary)
+    if(NOT "${CMAKE_EXECUTABLE_SUFFIX}" STREQUAL ".elf")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            ${PROJECT_EXE_NAME}.elf
+        )
+    endif()
+
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} -O binary
@@ -325,6 +334,24 @@ macro(___project_add_app__copy_to_default)
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_COMMAND} -E copy
         ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.elf
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.bin
+        ../Default/
+    )
+    add_custom_command(
+        TARGET ${PROJECT_EXE_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+        ${PROJECT_EXE_NAME}.hex
         ../Default/
     )
 

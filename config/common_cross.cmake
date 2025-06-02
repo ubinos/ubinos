@@ -578,12 +578,15 @@ macro(___project_add_app__gen_make_target)
 endmacro(___project_add_app__gen_make_target)
 
 macro(___project_add_app__gen_binary)
-    add_custom_command(
-        TARGET ${PROJECT_EXE_NAME} POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy
-        ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
-        ${PROJECT_EXE_NAME}.elf
-    )
+    if(NOT "${CMAKE_EXECUTABLE_SUFFIX}" STREQUAL ".elf")
+        add_custom_command(
+            TARGET ${PROJECT_EXE_NAME} POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E copy
+            ${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
+            ${PROJECT_EXE_NAME}.elf
+        )
+    endif()
+
     add_custom_command(
         TARGET ${PROJECT_EXE_NAME} POST_BUILD
         COMMAND ${CMAKE_OBJCOPY} -O binary
