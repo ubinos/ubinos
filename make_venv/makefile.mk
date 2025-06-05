@@ -86,7 +86,7 @@ xrun:
 
 env:
 	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python  -m virtualenv $(_PYTHON_VENV_OPTIONS) -p $(_PYTHON_VENV_INTERPRETER)  .
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(_PYTHON_VENV_INTERPRETER)  -m virtualenv $(_PYTHON_VENV_OPTIONS) -p $(_PYTHON_VENV_INTERPRETER)  .
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_VENV_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && pip install -r "$(_CONFIG_DIR)/$(APP__NAME)/requriements.txt"
 ifeq ($(strip $(PIP_INSTALL_E_LIST)),)
 else
