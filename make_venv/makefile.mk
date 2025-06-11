@@ -29,6 +29,22 @@ endef
 
 PYTHON_VENV_OPTIONS_USE_SYSTEM_SITE_PACKAGES ?= 0
 
+ifeq ($(strip $(PYTHON_INTERPRETER)),)
+ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
+_PYTHON_INTERPRETER = python
+else
+_PYTHON_INTERPRETER = python3
+endif
+else
+_PYTHON_INTERPRETER = $(PYTHON_INTERPRETER)
+endif
+
+ifeq ($(strip $(PYTHON_VENV_INTERPRETER)),)
+_PYTHON_VENV_INTERPRETER = $(_PYTHON_INTERPRETER)
+else
+_PYTHON_VENV_INTERPRETER = $(PYTHON_VENV_INTERPRETER)
+endif
+
 ifeq ($(strip $(PYTHON_VENV_OPTIONS)),)
 _PYTHON_VENV_OPTIONS    =
 else
@@ -39,21 +55,16 @@ ifneq ("$(PYTHON_VENV_OPTIONS_USE_SYSTEM_SITE_PACKAGES)", "0")
 _PYTHON_VENV_OPTIONS   += --system-site-packages
 endif
 
-ifeq ($(strip $(PYTHON_VENV_INTERPRETER)),)
-ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
-_PYTHON_VENV_INTERPRETER = python
-else
-_PYTHON_VENV_INTERPRETER = python3
-endif
-else
-_PYTHON_VENV_INTERPRETER = $(PYTHON_VENV_INTERPRETER)
-endif
-
 ###############################################################################
 
 config:
 	$(call begin_message)
 	$(_PRECMD) && $(call func_make_dir,"$(_OUTPUT_DIR)")
+	@echo ""
+	@echo "PYTHON_INTERPRETER:      $(_PYTHON_INTERPRETER)"
+	@echo "PYTHON_VENV_INTERPRETER: $(_PYTHON_VENV_INTERPRETER)"
+	@echo "PYTHON_VENV_OPTIONS:     $(_PYTHON_VENV_OPTIONS)"
+	@echo ""
 	$(call end_message)
 
 menuconfig:
@@ -86,15 +97,15 @@ xrun:
 
 env:
 	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(_PYTHON_VENV_INTERPRETER)  -m virtualenv $(_PYTHON_VENV_OPTIONS) -p $(_PYTHON_VENV_INTERPRETER)  .
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_VENV_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && pip install -r "$(_CONFIG_DIR)/$(APP__NAME)/requriements.txt"
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(_PYTHON_INTERPRETER)  -m virtualenv $(_PYTHON_VENV_OPTIONS) -p $(_PYTHON_VENV_INTERPRETER)  .
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && pip install -r "$(_CONFIG_DIR)/$(APP__NAME)/requriements.txt"
 ifeq ($(strip $(PIP_INSTALL_E_LIST)),)
 else
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_VENV_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PIP_INSTALL_E_LIST),$(call func_pip_install_e,$(item));)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PIP_INSTALL_E_LIST),$(call func_pip_install_e,$(item));)
 endif
 ifeq ($(strip $(PYTHON_SETUP_PY_INSTALL_LIST)),)
 else
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_VENV_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PYTHON_SETUP_PY_INSTALL_LIST),$(call func_python_setup_py_develop,$(item));)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && $(foreach item,$(PYTHON_SETUP_PY_INSTALL_LIST),$(call func_python_setup_py_develop,$(item));)
 endif
 	@echo ""
 	@echo ""
