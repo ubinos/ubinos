@@ -59,7 +59,7 @@ endif
 
 config:
 	$(call begin_message)
-	$(_PRECMD) && $(call func_make_dir,"$(_OUTPUT_DIR)")
+	$(_PRECMD) && $(call mkf_mkdir_p,"$(_OUTPUT_DIR)")
 	@echo ""
 	@echo "PYTHON_INTERPRETER:      $(_PYTHON_INTERPRETER)"
 	@echo "PYTHON_VENV_INTERPRETER: $(_PYTHON_VENV_INTERPRETER)"
@@ -130,7 +130,7 @@ clean: cleanenv
 
 cleand:
 	$(call begin_message)
-	$(_PRECMD) && $(call func_remove_dir,"$(_OUTPUT_DIR)")
+	$(_PRECMD) && $(call mkf_rm_rf,"$(_OUTPUT_DIR)")
 	$(call end_message)
 
 test:

@@ -156,17 +156,26 @@ define end_message
 	@echo ""
 endef
 
-define func_remove_dir
-python -c "import os, shutil; shutil.rmtree('$(1)', ignore_errors=True)"
+define mkf_mkdir_p
+python "$(_TOOLBOX)" mkdir_p ${1}
 endef
+# $(call mkf_mkdir_p,"build/output")
 
-define func_make_dir
-python -c "import os, shutil; os.makedirs('$(1)', exist_ok=True)"
+define mkf_rm_rf
+python "$(_TOOLBOX)" rm_rf ${1}
 endef
+# $(call mkf_rm_rf,"build/*")
 
-define func_move
-python -c "import os, shutil; os.path.exists('$(1)') and shutil.move('$(1)', '$(2)')"
+define mkf_mv_f
+python "$(_TOOLBOX)" mv_f ${1} ${2}
 endef
+# $(call mkf_mv_f,"build/*.o","build/obj")
+
+define mkf_cp_f
+python "$(_TOOLBOX)" cp_f ${1} ${2}
+
+endef
+# $(call mkf_cp_f,"build/*.o","build/obj")
 
 ###############################################################################
 
@@ -260,9 +269,9 @@ common-all: config build
 
 common-config:
 	$(call begin_message)
-	$(_PRECMD) && $(call func_make_dir,"$(_OUTPUT_DIR)")
+	$(_PRECMD) && $(call mkf_mkdir_p,"$(_OUTPUT_DIR)")
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake $(_CMAKE_OPTION) "$(_SOURCE_DIR)"
-	$(_PRECMD) && $(call func_make_dir,"$(_OUTPUT_DIR)/../Default")
+	$(_PRECMD) && $(call mkf_mkdir_p,"$(_OUTPUT_DIR)/../Default")
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python "$(_TOOLBOX)" copy_file compile_commands.json "$(_OUTPUT_DIR)/../Default/"
 	$(call end_message)
 
@@ -283,7 +292,7 @@ endif
 common-cleand:
 	$(call begin_message)
 ifeq ("$(shell python "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
-	$(_PRECMD) && $(call func_remove_dir,"$(_OUTPUT_DIR)")
+	$(_PRECMD) && $(call mkf_rm_rf,"$(_OUTPUT_DIR)")
 endif
 	$(call end_message)
 

@@ -14,6 +14,7 @@ import shutil
 import json
 import subprocess
 import re
+import glob
 
 config_info_keyword = "ubinos_config_info {"
 config_info_make_dir_key = "make_dir"
@@ -47,6 +48,10 @@ def print_help():
     print("    python %s get_make_dir_from_config_file <config file name>" % (sys.argv[0]))
     print("    python %s get_name_base_from_config_file <config file name>" % (sys.argv[0]))
     print("    python %s get_build_type_from_config_file <config file name>" % (sys.argv[0]))
+    print("    python %s mkdir_p <directory path>" % (sys.argv[0]))
+    print("    python %s rm_rf <path pattern>" % (sys.argv[0]))
+    print("    python %s mv_f <source pattern> <destination>" % (sys.argv[0]))
+    print("    python %s cp_f <source pattern> <destination>" % (sys.argv[0]))
     print("===============================================================================")
 
 def system_name():
@@ -156,6 +161,10 @@ def file_open(fname, mode):
         return open(fname, mode)
 
 def replace_string(sfn, dfn, oldstr, newstr):
+    if not os.path.exists(sfn):
+        print("Source file does not exist: %s" % sfn)
+        return
+    
     sf = file_open(sfn, 'r')
     lines = sf.readlines()
     sf.close()
@@ -535,6 +544,339 @@ def get_build_type_from_config_file(config_file_path):
     else:
         print("")
 
+def mkdir_p(path_str: str):
+    """안전하게 디렉토리를 생성하는 함수 (mkdir -p와 유사)"""
+    path_str = path_str.strip()
+    try:
+        path = os.path.normpath(path_str)
+        os.makedirs(path, exist_ok=True)
+    except Exception as e:
+        print(f'Failed to create directory: {e}', file=sys.stderr)
+        sys.exit(1)
+# 사용 예:
+# mkdir_p("build/output")
+
+def rm_rf(patterns: str):
+    """안전한 rm -rf 구현: 공백으로 구분된 glob 패턴들을 사용해 경로 제거"""
+
+    patterns = patterns.strip()
+    if not patterns:
+        print("Error: Empty pattern provided", file=sys.stderr)
+        sys.exit(1)
+
+    pattern_list = patterns.split()
+    for pattern in pattern_list:
+        if '**' in pattern:
+            print(f"Recursive glob patterns (**) are not allowed: {pattern}", file=sys.stderr)
+            sys.exit(1)
+
+    dangerous_patterns = []
+    if platform.system() == 'Windows':
+        dangerous_patterns = ['C:\\Windows']
+    else:
+        dangerous_patterns = [
+            '/bin', '/usr', '/etc', '/home', '/root',
+            os.path.expanduser('~'),
+            '/', '/*', os.path.expanduser('~/*')
+        ]
+
+    current_dir = os.getcwd()
+    paths = []
+
+    for pattern in pattern_list:
+        if pattern.startswith('~/'):
+            pattern = os.path.expanduser(pattern)
+
+        abs_pattern = os.path.abspath(pattern)
+        for dangerous in dangerous_patterns:
+            if abs_pattern.startswith(os.path.abspath(dangerous)):
+                print(f'Dangerous pattern rejected: {pattern}', file=sys.stderr)
+                sys.exit(1)
+
+        try:
+            rel_path = os.path.relpath(abs_pattern, current_dir)
+            if rel_path.startswith('..') and rel_path.count('..') > 3:
+                print(f'Suspicious pattern rejected: {pattern}', file=sys.stderr)
+                sys.exit(1)
+        except ValueError:
+            pass
+
+        if any(c in pattern for c in ['*', '?', '[']):
+            paths += glob.glob(pattern, recursive=False)
+        else:
+            paths.append(pattern)
+
+    paths = sorted(set(paths), key=len, reverse=True)
+
+    removed_count = 0
+    error_count = 0
+
+    for path in paths:
+        abs_path = os.path.abspath(path)
+        for dangerous in dangerous_patterns:
+            if abs_path.startswith(os.path.abspath(dangerous)):
+                print(f'Dangerous expanded path rejected: {path}', file=sys.stderr)
+                sys.exit(1)
+
+        try:
+            if os.path.lexists(path):
+                if os.path.isdir(path) and not os.path.islink(path):
+                    shutil.rmtree(path)
+                else:
+                    os.remove(path)
+                removed_count += 1
+        except FileNotFoundError:
+            pass
+        except PermissionError:
+            print(f'Permission denied: {path}', file=sys.stderr)
+            error_count += 1
+        except Exception as e:
+            print(f'Failed to remove {path}: {e}', file=sys.stderr)
+            error_count += 1
+
+    if removed_count > 0:
+        print(f'Removed {removed_count} items', file=sys.stderr)
+    if error_count > 0:
+        sys.exit(1)
+# 사용 예:
+# rm_rf("build/*")
+# rm_rf("*.aux *.bbl *.blg)
+
+def is_dangerous_path(path: str, dangerous_patterns: list) -> bool:
+    abs_path = os.path.abspath(path)
+    if platform.system() == 'Windows':
+        return any(abs_path.lower().startswith(os.path.abspath(dangerous).lower()) 
+                   for dangerous in dangerous_patterns)
+    else:
+        return any(abs_path.startswith(os.path.abspath(dangerous)) 
+                   for dangerous in dangerous_patterns)
+
+def mv_f(patterns: str, destination: str):
+    """
+    Move files with glob pattern support (similar to mv -f).
+    
+    Args:
+        patterns: Space-separated glob patterns
+        destination: Target directory or file path
+    """
+
+    # print(f"\n\n patterns {patterns} destination {destination} \n\n", file=sys.stderr)
+
+    patterns = patterns.strip()
+    if not patterns:
+        print("Error: Empty patterns provided", file=sys.stderr)
+        sys.exit(1)
+
+    destination = destination.strip()
+    if not destination:
+        print("Error: Empty destination provided", file=sys.stderr)
+        sys.exit(1)
+
+    pattern_list = patterns.split()
+    for pattern in pattern_list:
+        if '**' in pattern:
+            print(f"Recursive glob patterns (**) are not allowed: {pattern}", file=sys.stderr)
+            sys.exit(1)
+
+    dangerous_patterns = []
+    if platform.system() == 'Windows':
+        dangerous_patterns = [
+            'C:\\Windows', 'C:\\Program Files', 'C:\\Program Files (x86)', 'C:\\System32', 'C:\\Windows\\System32'
+        ]
+    else:
+        dangerous_patterns = [
+            '/', '/bin', '/usr', '/etc', '/root', '/var', '/sys', '/proc',
+        ]
+
+    paths = []
+
+    for pattern in pattern_list:
+        if any(c in pattern for c in ['*', '?', '[']):
+            matched = glob.glob(pattern, recursive=False)
+        else:
+            matched = [pattern]
+
+        for path in matched:
+            abs_path = os.path.abspath(path)
+            if not os.path.exists(path) and not os.path.islink(path):
+                continue
+            if is_dangerous_path(path, dangerous_patterns):
+                print(f'Dangerous path rejected: {path}', file=sys.stderr)
+                sys.exit(1)
+
+            paths.append(path)
+
+    paths = sorted(set(paths), key=len, reverse=True)
+
+    done_count = 0
+    error_count = 0
+
+    dst_norm = os.path.normpath(destination)
+    is_dst_dir = (
+        len(paths) > 1 or
+        destination.endswith(os.sep) or
+        os.path.isdir(dst_norm)
+    )
+
+    if is_dst_dir:
+        os.makedirs(dst_norm, exist_ok=True)
+
+    for path in paths:
+        try:
+            src = os.path.normpath(path)
+            target = os.path.join(dst_norm, os.path.basename(src)) if is_dst_dir else dst_norm
+
+            if os.path.abspath(src) != os.path.abspath(target):
+                # 순환 이동 방지: target이 src의 하위 디렉토리인지 확인
+                try:
+                    rel_path = os.path.relpath(os.path.abspath(target), os.path.abspath(src))
+                    if not rel_path.startswith('..'):
+                        print(f'Cannot move {src} into itself or its subdirectory', file=sys.stderr)
+                        error_count += 1
+                        continue
+                except ValueError:
+                    pass  # 다른 드라이브, 계속 진행
+
+                if os.path.lexists(target):
+                    if os.path.isdir(target) and not os.path.islink(target):
+                        shutil.rmtree(target)
+                    else:
+                        os.remove(target)
+
+                shutil.move(src, target)
+                done_count += 1
+        except FileNotFoundError:
+            pass
+        except PermissionError:
+            print(f'Permission denied: {path}', file=sys.stderr)
+            error_count += 1
+        except Exception as e:
+            print(f'Failed to move {path}: {e}', file=sys.stderr)
+            error_count += 1
+
+    if done_count > 0:
+        print(f'Moved {done_count} items', file=sys.stderr)
+    if error_count > 0:
+        sys.exit(1)
+# 사용 예:
+# mv_f("build/*.o", "build/obj")
+
+def cp_f(patterns: str, destination: str):
+    """
+    Copy files with glob pattern support (similar to cp -f).
+    
+    Args:
+        patterns: Space-separated glob patterns
+        destination: Target directory or file path
+    """
+
+    # print(f"\n\n patterns {patterns} destination {destination} \n\n", file=sys.stderr)
+
+    patterns = patterns.strip()
+    if not patterns:
+        print("Error: Empty patterns provided", file=sys.stderr)
+        sys.exit(1)
+
+    destination = destination.strip()
+    if not destination:
+        print("Error: Empty destination provided", file=sys.stderr)
+        sys.exit(1)
+
+    pattern_list = patterns.split()
+    for pattern in pattern_list:
+        if '**' in pattern:
+            print(f"Recursive glob patterns (**) are not allowed: {pattern}", file=sys.stderr)
+            sys.exit(1)
+
+    dangerous_patterns = []
+    if platform.system() == 'Windows':
+        dangerous_patterns = [
+            'C:\\Windows', 'C:\\Program Files', 'C:\\Program Files (x86)', 'C:\\System32', 'C:\\Windows\\System32'
+        ]
+    else:
+        dangerous_patterns = [
+            '/', '/bin', '/usr', '/etc', '/root', '/var', '/sys', '/proc',
+        ]
+
+    paths = []
+
+    for pattern in pattern_list:
+        if any(c in pattern for c in ['*', '?', '[']):
+            matched = glob.glob(pattern, recursive=False)
+        else:
+            matched = [pattern]
+
+        for path in matched:
+            abs_path = os.path.abspath(path)
+            if not os.path.exists(path) and not os.path.islink(path):
+                continue
+            if is_dangerous_path(path, dangerous_patterns):
+                print(f'Dangerous path rejected: {path}', file=sys.stderr)
+                sys.exit(1)
+
+            paths.append(path)
+
+    paths = sorted(set(paths), key=len, reverse=True)
+
+    done_count = 0
+    error_count = 0
+
+    dst_norm = os.path.normpath(destination)
+    is_dst_dir = (
+        len(paths) > 1 or
+        destination.endswith(os.sep) or
+        os.path.isdir(dst_norm)
+    )
+
+    if is_dst_dir:
+        os.makedirs(dst_norm, exist_ok=True)
+
+    for path in paths:
+        try:
+            src = os.path.normpath(path)
+            target = os.path.join(dst_norm, os.path.basename(src)) if is_dst_dir else dst_norm
+
+            if os.path.abspath(src) != os.path.abspath(target):
+                # 순환 복사 방지: target이 src의 하위 디렉토리인지 확인
+                try:
+                    rel_path = os.path.relpath(os.path.abspath(target), os.path.abspath(src))
+                    if not rel_path.startswith('..'):
+                        print(f'Cannot copy {src} into itself or its subdirectory', file=sys.stderr)
+                        error_count += 1
+                        continue
+                except ValueError:
+                    pass  # 다른 드라이브, 계속 진행
+
+                if os.path.lexists(target):
+                    if os.path.isdir(target) and not os.path.islink(target):
+                        shutil.rmtree(target)
+                    else:
+                        os.remove(target)
+
+                if os.path.isdir(src) and not os.path.islink(src):
+                    if sys.version_info >= (3, 8):
+                        shutil.copytree(src, target, dirs_exist_ok=True)
+                    else:
+                        shutil.copytree(src, target)
+                else:
+                    shutil.copy2(src, target)
+                done_count += 1
+        except FileNotFoundError:
+            pass
+        except PermissionError:
+            print(f'Permission denied: {path}', file=sys.stderr)
+            error_count += 1
+        except Exception as e:
+            print(f'Failed to copy {path}: {e}', file=sys.stderr)
+            error_count += 1
+
+    if done_count > 0:
+        print(f'Copied {done_count} items', file=sys.stderr)
+    if error_count > 0:
+        sys.exit(1)
+# 사용 예:
+# cp_f("build/*.o", "build/obj")
+
 if __name__ == '__main__':
     if 2 > len(sys.argv):
         print_help()
@@ -667,6 +1009,33 @@ if __name__ == '__main__':
             else:
                 fname = sys.argv[2]
                 get_build_type_from_config_file(fname)
+
+        elif "mkdir_p" == sys.argv[1]:
+            if 3 > len(sys.argv):
+                print_help()
+            else:
+                directory_path = sys.argv[2]
+                mkdir_p(directory_path)
+        elif "rm_rf" == sys.argv[1]:
+            if 3 > len(sys.argv):
+                print_help()
+            else:
+                path_pattern = sys.argv[2]
+                rm_rf(path_pattern)
+        elif "mv_f" == sys.argv[1]:
+            if 4 > len(sys.argv):
+                print_help()
+            else:
+                source_pattern = sys.argv[2]
+                destination = sys.argv[3]
+                mv_f(source_pattern, destination)
+        elif "cp_f" == sys.argv[1]:
+            if 4 > len(sys.argv):
+                print_help()
+            else:
+                source_pattern = sys.argv[2]
+                destination = sys.argv[3]
+                cp_f(source_pattern, destination)
         else:
             print_help()
 

@@ -15,7 +15,7 @@ include $(_CONFIG_DIR)/$(_CONFIG_NAME).mk
 
 config:
 	$(call begin_message)
-	$(_PRECMD) && $(call func_make_dir,"$(_OUTPUT_DIR)")
+	$(_PRECMD) && $(call mkf_mkdir_p,"$(_OUTPUT_DIR)")
 	$(call end_message)
 
 menuconfig:
@@ -77,7 +77,7 @@ clean: cleandoc
 
 cleand:
 	$(call begin_message)
-	$(_PRECMD) && $(call func_remove_dir,"$(_OUTPUT_DIR)")
+	$(_PRECMD) && $(call mkf_rm_rf,"$(_OUTPUT_DIR)")
 	$(call end_message)
 
 install:
