@@ -9,6 +9,7 @@ sphinx_rtd_theme
 sphinx-copybutton
 sphinx-tabs
 sphinxcontrib-bibtex
+git+https://github.com/ubinos/sphinxcontrib-pseudocode.git
 furo
 
 pyserial
