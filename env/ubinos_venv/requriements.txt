@@ -21,3 +21,8 @@ intelhex
 
 numpy
 matplotlib
+scipy
+pandas
+
+jupyter
+
