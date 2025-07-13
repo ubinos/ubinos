@@ -15,6 +15,7 @@ import json
 import subprocess
 import re
 import glob
+import stat
 
 config_info_keyword = "ubinos_config_info {"
 config_info_make_dir_key = "make_dir"
@@ -555,6 +556,13 @@ def mkdir_p(path_str: str):
         sys.exit(1)
 # 사용 예:
 # mkdir_p("build/output")
+        
+def handle_onexc(func, path, exc):
+    try:
+        os.chmod(path, stat.S_IWRITE)
+        func(path)
+    except Exception as e:
+        print(f'Forced removal failed for {path}: {e}', file=sys.stderr)
 
 def rm_rf(patterns: str):
     """안전한 rm -rf 구현: 공백으로 구분된 glob 패턴들을 사용해 경로 제거"""
@@ -622,7 +630,7 @@ def rm_rf(patterns: str):
         try:
             if os.path.lexists(path):
                 if os.path.isdir(path) and not os.path.islink(path):
-                    shutil.rmtree(path)
+                    shutil.rmtree(path, onexc=handle_onexc)
                 else:
                     os.remove(path)
                 removed_count += 1
