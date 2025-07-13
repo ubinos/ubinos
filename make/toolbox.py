@@ -572,11 +572,13 @@ def rm_rf(patterns: str):
 
     dangerous_patterns = []
     if platform.system() == 'Windows':
-        dangerous_patterns = ['C:\\Windows']
+        dangerous_patterns = [
+            'C:\\Windows', 'C:\\Program Files', 'C:\\Program Files (x86)', 'C:\\System32', 'C:\\Windows\\System32',
+        ]
     else:
         dangerous_patterns = [
-            '/bin', '/usr', '/etc', '/root',
-            '/*', os.path.expanduser('~/*')
+            '/bin', '/usr', '/etc', '/root', '/sys', '/proc',
+            '/*', os.path.expanduser('~/*'),
         ]
 
     current_dir = os.getcwd()
@@ -680,11 +682,11 @@ def mv_f(patterns: str, destination: str):
     dangerous_patterns = []
     if platform.system() == 'Windows':
         dangerous_patterns = [
-            'C:\\Windows', 'C:\\Program Files', 'C:\\Program Files (x86)', 'C:\\System32', 'C:\\Windows\\System32'
+            'C:\\Windows', 'C:\\Program Files', 'C:\\Program Files (x86)', 'C:\\System32', 'C:\\Windows\\System32',
         ]
     else:
         dangerous_patterns = [
-            '/', '/bin', '/usr', '/etc', '/root', '/var', '/sys', '/proc',
+            '/bin', '/usr', '/etc', '/root', '/sys', '/proc',
         ]
 
     paths = []
@@ -794,7 +796,7 @@ def cp_f(patterns: str, destination: str):
         ]
     else:
         dangerous_patterns = [
-            '/', '/bin', '/usr', '/etc', '/root', '/var', '/sys', '/proc',
+            '/bin', '/usr', '/etc', '/root', '/sys', '/proc',
         ]
 
     paths = []
