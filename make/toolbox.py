@@ -575,9 +575,8 @@ def rm_rf(patterns: str):
         dangerous_patterns = ['C:\\Windows']
     else:
         dangerous_patterns = [
-            '/bin', '/usr', '/etc', '/home', '/root',
-            os.path.expanduser('~'),
-            '/', '/*', os.path.expanduser('~/*')
+            '/bin', '/usr', '/etc', '/root',
+            '/*', os.path.expanduser('~/*')
         ]
 
     current_dir = os.getcwd()
