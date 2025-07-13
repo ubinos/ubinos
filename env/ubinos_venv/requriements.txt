@@ -26,3 +26,5 @@ pandas
 
 jupyter
 
+mpremote
+
