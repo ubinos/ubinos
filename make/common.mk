@@ -84,13 +84,19 @@ endif
 
 ###############################################################################
 
+ifeq ($(strip $(PYTHON_CMD)),)
+_PYTHON_CMD            = $(shell python -c "import sys; print(\"python\" if sys.version_info[0] == 3 else \"python3\")")
+else
+_PYTHON_CMD            = $(PYTHON_CMD)
+endif
+
 ifeq ($(strip $(SYSTEM_NAME)),)
-_SYSTEM_NAME            = $(shell python "$(_TOOLBOX)" system_name)
+_SYSTEM_NAME            = $(shell $(_PYTHON_CMD) "$(_TOOLBOX)" system_name)
 else
 _SYSTEM_NAME            = $(SYSTEM_NAME)
 endif
 ifeq ($(strip $(JOBS)),)
-_JOBS                   = $(shell python "$(_TOOLBOX)" cpu_count)
+_JOBS                   = $(shell $(_PYTHON_CMD) "$(_TOOLBOX)" cpu_count)
 else
 _JOBS                   = $(JOBS)
 endif
@@ -157,22 +163,22 @@ define end_message
 endef
 
 define mkf_mkdir_p
-python "$(_TOOLBOX)" mkdir_p ${1}
+$(_PYTHON_CMD) "$(_TOOLBOX)" mkdir_p ${1}
 endef
 # $(call mkf_mkdir_p,"build/output")
 
 define mkf_rm_rf
-python "$(_TOOLBOX)" rm_rf ${1}
+$(_PYTHON_CMD) "$(_TOOLBOX)" rm_rf ${1}
 endef
 # $(call mkf_rm_rf,"build/*")
 
 define mkf_mv_f
-python "$(_TOOLBOX)" mv_f ${1} ${2}
+$(_PYTHON_CMD) "$(_TOOLBOX)" mv_f ${1} ${2}
 endef
 # $(call mkf_mv_f,"build/*.o","build/obj")
 
 define mkf_cp_f
-python "$(_TOOLBOX)" cp_f ${1} ${2}
+$(_PYTHON_CMD) "$(_TOOLBOX)" cp_f ${1} ${2}
 
 endef
 # $(call mkf_cp_f,"build/*.o","build/obj")
@@ -272,7 +278,7 @@ common-config:
 	$(_PRECMD) && $(call mkf_mkdir_p,"$(_OUTPUT_DIR)")
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && cmake $(_CMAKE_OPTION) "$(_SOURCE_DIR)"
 	$(_PRECMD) && $(call mkf_mkdir_p,"$(_OUTPUT_DIR)/../Default")
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && python "$(_TOOLBOX)" copy_file compile_commands.json "$(_OUTPUT_DIR)/../Default/"
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(_PYTHON_CMD) "$(_TOOLBOX)" copy_file compile_commands.json "$(_OUTPUT_DIR)/../Default/"
 	$(call end_message)
 
 common-configd: cleand config
@@ -284,14 +290,14 @@ common-build:
 
 common-clean:
 	$(call begin_message)
-ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "$(_OUTPUT_DIR)/Makefile")", "1")
+ifeq ("$(shell $(_PYTHON_CMD) "$(_TOOLBOX)" is_existing_path "$(_OUTPUT_DIR)/Makefile")", "1")
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && make clean
 endif
 	$(call end_message)
 
 common-cleand:
 	$(call begin_message)
-ifeq ("$(shell python "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
+ifeq ("$(shell $(_PYTHON_CMD) "$(_TOOLBOX)" is_removable_dir "$(_OUTPUT_DIR)")", "1")
 	$(_PRECMD) && $(call mkf_rm_rf,"$(_OUTPUT_DIR)")
 endif
 	$(call end_message)
@@ -374,20 +380,12 @@ common-menuconfig:
 
 common-xmgr:
 	$(call begin_message)
-ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
-	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python  "$(_UBINOS_DIR)/make/libmgr.py" --lib-absolute .. $(_LIBRARY_DIR)
-else
-	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/libmgr.py" --lib-absolute .. $(_LIBRARY_DIR)
-endif
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && $(_PYTHON_CMD) "$(_UBINOS_DIR)/make/libmgr.py" --lib-absolute .. $(_LIBRARY_DIR)
 	$(call end_message)
 
 common-xsel:
 	$(call begin_message)
-ifeq ("$(shell python "$(_TOOLBOX)" is_python3)", "1")
-	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python  "$(_UBINOS_DIR)/make/confsel.py" --lib-absolute .. $(_LIBRARY_DIR)
-else
-	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && python3 "$(_UBINOS_DIR)/make/confsel.py" --lib-absolute .. $(_LIBRARY_DIR)
-endif
+	$(_PRECMD) && cd $(dir $(firstword $(MAKEFILE_LIST))) && $(_PYTHON_CMD) "$(_UBINOS_DIR)/make/confsel.py" --lib-absolute .. $(_LIBRARY_DIR)
 	$(call end_message)
 
 ###############################################################################
@@ -435,19 +433,19 @@ common-test:
 
 common-zbatch-all:
 	make -f batch.mk SYSTEM_NAME=$(_SYSTEM_NAME) all
-ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+ifeq ("$(shell $(_PYTHON_CMD) "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk SYSTEM_NAME=$(_SYSTEM_NAME) config
 endif
 
 common-zbatch-rebuild:
 	make -f batch.mk SYSTEM_NAME=$(_SYSTEM_NAME) rebuild
-ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+ifeq ("$(shell $(_PYTHON_CMD) "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk SYSTEM_NAME=$(_SYSTEM_NAME) clean config
 endif
 
 common-zbatch-rebuildd:
 	make -f batch.mk SYSTEM_NAME=$(_SYSTEM_NAME) rebuildd
-ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+ifeq ("$(shell $(_PYTHON_CMD) "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk SYSTEM_NAME=$(_SYSTEM_NAME) cleand config
 endif
 
@@ -501,7 +499,7 @@ common-zbatch-test:
 
 common-zbatch-%:
 	make -f batch.mk SYSTEM_NAME=$(_SYSTEM_NAME) $*
-ifeq ("$(shell python "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
+ifeq ("$(shell $(_PYTHON_CMD) "$(_TOOLBOX)" is_existing_path "batch_external_build.mk")", "1")
 	make -f batch_external_build.mk SYSTEM_NAME=$(_SYSTEM_NAME) $*
 endif
 

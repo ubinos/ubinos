@@ -84,10 +84,10 @@ def get_python_venv_activate_command_for_cmake(venvpath):
     result = None
 
     if platform.system() == "Windows":
-        result = f"{venvpath}\\Scripts\\activate.bat"
+        result = "{}\\Scripts\\activate.bat".format(venvpath)
         result = result.replace('/', '\\')
     elif platform.system() == "Linux" or platform.system() == "Darwin":
-        result = f". {venvpath}/bin/activate"
+        result = ". {}/bin/activate".format(venvpath)
 
     print(result)
 
@@ -95,10 +95,10 @@ def get_python_venv_activate_command(venvpath):
     result = None
 
     if platform.system() == "Windows":
-        result = f"{venvpath}\\Scripts\\activate.bat"
+        result = "{}\\Scripts\\activate.bat".format(venvpath)
         result = result.replace('/', '\\')
     elif platform.system() == "Linux" or platform.system() == "Darwin":
-        result = f". {venvpath}/bin/activate"
+        result = ". {}/bin/activate".format(venvpath)
 
     print(result)
 
@@ -545,16 +545,15 @@ def get_build_type_from_config_file(config_file_path):
     else:
         print("")
 
-def mkdir_p(path_str: str):
-    """안전하게 디렉토리를 생성하는 함수 (mkdir -p와 유사)"""
+def mkdir_p(path_str):
     path_str = path_str.strip()
     try:
         path = os.path.normpath(path_str)
         os.makedirs(path, exist_ok=True)
     except Exception as e:
-        print(f'Failed to create directory: {e}', file=sys.stderr)
+        print("Failed to create directory: {}".format(e))
         sys.exit(1)
-# 사용 예:
+# Usage:
 # mkdir_p("build/output")
         
 def handle_onexc(func, path, exc):
@@ -562,20 +561,18 @@ def handle_onexc(func, path, exc):
         os.chmod(path, stat.S_IWRITE)
         func(path)
     except Exception as e:
-        print(f'Forced removal failed for {path}: {e}', file=sys.stderr)
+        print("Forced removal failed for {}: {}".format(path, e))
 
-def rm_rf(patterns: str):
-    """안전한 rm -rf 구현: 공백으로 구분된 glob 패턴들을 사용해 경로 제거"""
-
+def rm_rf(patterns):
     patterns = patterns.strip()
     if not patterns:
-        print("Error: Empty pattern provided", file=sys.stderr)
+        print("Error: Empty pattern provided")
         sys.exit(1)
 
     pattern_list = patterns.split()
     for pattern in pattern_list:
         if '**' in pattern:
-            print(f"Recursive glob patterns (**) are not allowed: {pattern}", file=sys.stderr)
+            print("Recursive glob patterns (**) are not allowed: {}".format(pattern))
             sys.exit(1)
 
     dangerous_patterns = []
@@ -599,13 +596,13 @@ def rm_rf(patterns: str):
         abs_pattern = os.path.abspath(pattern)
         for dangerous in dangerous_patterns:
             if abs_pattern.startswith(os.path.abspath(dangerous)):
-                print(f'Dangerous pattern rejected: {pattern}', file=sys.stderr)
+                print("Dangerous pattern rejected: {}".format(pattern))
                 sys.exit(1)
 
         try:
             rel_path = os.path.relpath(abs_pattern, current_dir)
             if rel_path.startswith('..') and rel_path.count('..') > 3:
-                print(f'Suspicious pattern rejected: {pattern}', file=sys.stderr)
+                print("Suspicious pattern rejected: {}".format(pattern))
                 sys.exit(1)
         except ValueError:
             pass
@@ -624,7 +621,7 @@ def rm_rf(patterns: str):
         abs_path = os.path.abspath(path)
         for dangerous in dangerous_patterns:
             if abs_path.startswith(os.path.abspath(dangerous)):
-                print(f'Dangerous expanded path rejected: {path}', file=sys.stderr)
+                print("Dangerous expanded path rejected: {}".format(path))
                 sys.exit(1)
 
         try:
@@ -637,21 +634,21 @@ def rm_rf(patterns: str):
         except FileNotFoundError:
             pass
         except PermissionError:
-            print(f'Permission denied: {path}', file=sys.stderr)
+            print("Permission denied: {}".format(path))
             error_count += 1
         except Exception as e:
-            print(f'Failed to remove {path}: {e}', file=sys.stderr)
+            print("Failed to remove {}: {}".format(path, e))
             error_count += 1
 
     if removed_count > 0:
-        print(f'Removed {removed_count} items', file=sys.stderr)
+        print("Removed {} items".format(removed_count))
     if error_count > 0:
         sys.exit(1)
-# 사용 예:
+# Usage:
 # rm_rf("build/*")
 # rm_rf("*.aux *.bbl *.blg)
 
-def is_dangerous_path(path: str, dangerous_patterns: list) -> bool:
+def is_dangerous_path(path, dangerous_patterns):
     abs_path = os.path.abspath(path)
     if platform.system() == 'Windows':
         return any(abs_path.lower().startswith(os.path.abspath(dangerous).lower()) 
@@ -660,7 +657,7 @@ def is_dangerous_path(path: str, dangerous_patterns: list) -> bool:
         return any(abs_path.startswith(os.path.abspath(dangerous)) 
                    for dangerous in dangerous_patterns)
 
-def mv_f(patterns: str, destination: str):
+def mv_f(patterns, destination):
     """
     Move files with glob pattern support (similar to mv -f).
     
@@ -669,22 +666,22 @@ def mv_f(patterns: str, destination: str):
         destination: Target directory or file path
     """
 
-    # print(f"\n\n patterns {patterns} destination {destination} \n\n", file=sys.stderr)
+    # print("\n\n patterns {} destination {} \n\n".format(patterns, destination))
 
     patterns = patterns.strip()
     if not patterns:
-        print("Error: Empty patterns provided", file=sys.stderr)
+        print("Error: Empty patterns provided")
         sys.exit(1)
 
     destination = destination.strip()
     if not destination:
-        print("Error: Empty destination provided", file=sys.stderr)
+        print("Error: Empty destination provided")
         sys.exit(1)
 
     pattern_list = patterns.split()
     for pattern in pattern_list:
         if '**' in pattern:
-            print(f"Recursive glob patterns (**) are not allowed: {pattern}", file=sys.stderr)
+            print("Recursive glob patterns (**) are not allowed: {}".format(pattern))
             sys.exit(1)
 
     dangerous_patterns = []
@@ -710,7 +707,7 @@ def mv_f(patterns: str, destination: str):
             if not os.path.exists(path) and not os.path.islink(path):
                 continue
             if is_dangerous_path(path, dangerous_patterns):
-                print(f'Dangerous path rejected: {path}', file=sys.stderr)
+                print("Dangerous path rejected: {}".format(path))
                 sys.exit(1)
 
             paths.append(path)
@@ -736,15 +733,15 @@ def mv_f(patterns: str, destination: str):
             target = os.path.join(dst_norm, os.path.basename(src)) if is_dst_dir else dst_norm
 
             if os.path.abspath(src) != os.path.abspath(target):
-                # 순환 이동 방지: target이 src의 하위 디렉토리인지 확인
+                # Prevent circular moves: check if target is a subdirectory of src
                 try:
                     rel_path = os.path.relpath(os.path.abspath(target), os.path.abspath(src))
                     if not rel_path.startswith('..'):
-                        print(f'Cannot move {src} into itself or its subdirectory', file=sys.stderr)
+                        print("Cannot move {} into itself or its subdirectory".format(src))
                         error_count += 1
                         continue
                 except ValueError:
-                    pass  # 다른 드라이브, 계속 진행
+                    pass  # Another drive, continue
 
                 if os.path.lexists(target):
                     if os.path.isdir(target) and not os.path.islink(target):
@@ -757,20 +754,20 @@ def mv_f(patterns: str, destination: str):
         except FileNotFoundError:
             pass
         except PermissionError:
-            print(f'Permission denied: {path}', file=sys.stderr)
+            print("Permission denied: {}".format(path))
             error_count += 1
         except Exception as e:
-            print(f'Failed to move {path}: {e}', file=sys.stderr)
+            print("Failed to move {}: {}".format(path, e))
             error_count += 1
 
     if done_count > 0:
-        print(f'Moved {done_count} items', file=sys.stderr)
+        print("Moved {} items".format(done_count))
     if error_count > 0:
         sys.exit(1)
-# 사용 예:
+# Usage:
 # mv_f("build/*.o", "build/obj")
 
-def cp_f(patterns: str, destination: str):
+def cp_f(patterns, destination):
     """
     Copy files with glob pattern support (similar to cp -f).
     
@@ -779,22 +776,22 @@ def cp_f(patterns: str, destination: str):
         destination: Target directory or file path
     """
 
-    # print(f"\n\n patterns {patterns} destination {destination} \n\n", file=sys.stderr)
+    # print("\n\n patterns {patterns} destination {} \n\n".format(destination))
 
     patterns = patterns.strip()
     if not patterns:
-        print("Error: Empty patterns provided", file=sys.stderr)
+        print("Error: Empty patterns provided")
         sys.exit(1)
 
     destination = destination.strip()
     if not destination:
-        print("Error: Empty destination provided", file=sys.stderr)
+        print("Error: Empty destination provided")
         sys.exit(1)
 
     pattern_list = patterns.split()
     for pattern in pattern_list:
         if '**' in pattern:
-            print(f"Recursive glob patterns (**) are not allowed: {pattern}", file=sys.stderr)
+            print("Recursive glob patterns (**) are not allowed: {}".format(pattern))
             sys.exit(1)
 
     dangerous_patterns = []
@@ -820,7 +817,7 @@ def cp_f(patterns: str, destination: str):
             if not os.path.exists(path) and not os.path.islink(path):
                 continue
             if is_dangerous_path(path, dangerous_patterns):
-                print(f'Dangerous path rejected: {path}', file=sys.stderr)
+                print("Dangerous path rejected: {}".format(path))
                 sys.exit(1)
 
             paths.append(path)
@@ -846,15 +843,15 @@ def cp_f(patterns: str, destination: str):
             target = os.path.join(dst_norm, os.path.basename(src)) if is_dst_dir else dst_norm
 
             if os.path.abspath(src) != os.path.abspath(target):
-                # 순환 복사 방지: target이 src의 하위 디렉토리인지 확인
+                # Prevent circular moves: check if target is a subdirectory of src
                 try:
                     rel_path = os.path.relpath(os.path.abspath(target), os.path.abspath(src))
                     if not rel_path.startswith('..'):
-                        print(f'Cannot copy {src} into itself or its subdirectory', file=sys.stderr)
+                        print("Cannot copy {} into itself or its subdirectory".format(src))
                         error_count += 1
                         continue
                 except ValueError:
-                    pass  # 다른 드라이브, 계속 진행
+                    pass  # Another drive, continue
 
                 if os.path.lexists(target):
                     if os.path.isdir(target) and not os.path.islink(target):
@@ -873,17 +870,17 @@ def cp_f(patterns: str, destination: str):
         except FileNotFoundError:
             pass
         except PermissionError:
-            print(f'Permission denied: {path}', file=sys.stderr)
+            print("Permission denied: {}".format(path))
             error_count += 1
         except Exception as e:
-            print(f'Failed to copy {path}: {e}', file=sys.stderr)
+            print("Failed to copy {}: {}".format(path, e))
             error_count += 1
 
     if done_count > 0:
-        print(f'Copied {done_count} items', file=sys.stderr)
+        print("Copied {} items".format(done_count))
     if error_count > 0:
         sys.exit(1)
-# 사용 예:
+# Usage:
 # cp_f("build/*.o", "build/obj")
 
 if __name__ == '__main__':
