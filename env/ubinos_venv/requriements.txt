@@ -1,8 +1,6 @@
 ttkwidgets
 virtualenv
 
-pytest
-
 sphinx
 myst-parser
 sphinx_rtd_theme
@@ -11,6 +9,8 @@ sphinx-tabs
 sphinxcontrib-bibtex
 git+https://github.com/ubinos/sphinxcontrib-pseudocode.git
 furo
+
+pytest
 
 pyserial
 adafruit-nrfutil
