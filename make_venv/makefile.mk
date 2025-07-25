@@ -95,9 +95,11 @@ xrun:
 	$(call begin_message)
 	$(call end_message)
 
-env:
+env: env_python env_nodejs
+
+env_python:
 	$(call begin_message)
-	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(_PYTHON_INTERPRETER)  -m virtualenv $(_PYTHON_VENV_OPTIONS) -p $(_PYTHON_VENV_INTERPRETER)  .
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(_PYTHON_INTERPRETER) -m virtualenv $(_PYTHON_VENV_OPTIONS) -p $(_PYTHON_VENV_INTERPRETER)  .
 	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(shell $(_PYTHON_INTERPRETER) "$(_TOOLBOX)" get_python_venv_activate_command_for_cmake .) && pip install -r "$(_CONFIG_DIR)/$(APP__NAME)/requriements.txt"
 ifeq ($(strip $(PIP_INSTALL_E_LIST)),)
 else
@@ -117,6 +119,17 @@ endif
 	@echo ""
 	@echo "* env deactivate command: "
 	@echo "deactivate"
+	@echo ""
+	$(call end_message)
+
+env_nodejs:
+	$(call begin_message)
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && $(call mkf_cp_f,"$(_CONFIG_DIR)/$(APP__NAME)/package.json",".")
+	$(_PRECMD) && cd "$(_OUTPUT_DIR)" && npm install
+	@echo ""
+	@echo ""
+	@echo "* nodejs binary path: "
+	@echo "$(_OUTPUT_DIR)/node_modules/.bin"
 	@echo ""
 	$(call end_message)
 

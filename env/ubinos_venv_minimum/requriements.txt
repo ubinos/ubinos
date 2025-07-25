@@ -7,6 +7,7 @@ sphinx_rtd_theme
 sphinx-copybutton
 sphinx-tabs
 sphinxcontrib-bibtex
+sphinxcontrib-mermaid
 git+https://github.com/ubinos/sphinxcontrib-pseudocode.git
 furo
 
