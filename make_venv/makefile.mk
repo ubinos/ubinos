@@ -95,7 +95,7 @@ xrun:
 	$(call begin_message)
 	$(call end_message)
 
-env: env_python env_nodejs
+env: env_nodejs env_python
 
 env_python:
 	$(call begin_message)
