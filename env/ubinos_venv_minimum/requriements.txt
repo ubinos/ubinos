@@ -1,5 +1,7 @@
 ttkwidgets
 virtualenv
+debugpy
+ipdb
 
 sphinx
 myst-parser
