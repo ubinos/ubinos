@@ -2,6 +2,7 @@ ttkwidgets
 virtualenv
 debugpy
 ipdb
+typer
 
 sphinx
 myst-parser

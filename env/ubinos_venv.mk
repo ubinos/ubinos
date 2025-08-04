@@ -4,4 +4,3 @@ APP__NAME = ubinos_venv
 
 # PYTHON_INTERPRETER = python3.13
 # PYTHON_VENV_INTERPRETER = python3.11
-
