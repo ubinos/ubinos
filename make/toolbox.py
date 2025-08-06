@@ -601,7 +601,7 @@ def rm_rf(patterns):
 
         try:
             rel_path = os.path.relpath(abs_pattern, current_dir)
-            if rel_path.startswith('..') and rel_path.count('..') > 3:
+            if rel_path.startswith('..') and rel_path.count('..') > 4:
                 print("Suspicious pattern rejected: {}".format(pattern))
                 sys.exit(1)
         except ValueError:
