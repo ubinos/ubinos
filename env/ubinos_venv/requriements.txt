@@ -3,6 +3,7 @@ virtualenv
 debugpy
 ipdb
 typer
+mypy
 
 sphinx
 myst-parser
