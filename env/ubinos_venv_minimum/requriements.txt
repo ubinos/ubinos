@@ -4,6 +4,8 @@ debugpy
 ipdb
 typer
 mypy
+json5
+jmespath
 
 sphinx
 myst-parser
