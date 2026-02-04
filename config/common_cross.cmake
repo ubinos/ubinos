@@ -179,7 +179,7 @@ macro(___project_add_app__gen_debugscript)
             TARGET ${PROJECT_NAME} PRE_BUILD
             COMMAND ${CMAKE_COMMAND} -E copy
             ${UBINOS__BSP__GDBSCRIPT_FILE_RESET}
-            ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+            ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset_and_halt.gdb
         )
     endif()
 
@@ -488,7 +488,7 @@ macro(___project_add_app__gen_make_target)
         )
     endif()
     add_custom_target(reset
-        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -batch -x ./gdb_reset.gdb
+        COMMAND ${PROJECT_TOOLCHAIN_GDB_COMMAND} -q -batch -x ./gdb_reset_and_halt.gdb
         DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_EXE_NAME}${CMAKE_EXECUTABLE_SUFFIX}
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
         USES_TERMINAL
@@ -669,8 +669,8 @@ macro(___project_add_app__refine_debugscript)
             add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
                 COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset_and_halt.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset_and_halt.gdb
                 "localhost:" "${UBINOS__BSP__DEBUG_SERVER_HOST}:"
             )
         endif()
@@ -721,8 +721,8 @@ macro(___project_add_app__refine_debugscript)
             add_custom_command(
                 TARGET ${PROJECT_EXE_NAME} POST_BUILD
                 COMMAND ${PROJECT_TOOLBOX_RUN_CMD} replace_string
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
-                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset_and_halt.gdb
+                ${CMAKE_CURRENT_BINARY_DIR}/gdb_reset_and_halt.gdb
                 ":2331" ":${UBINOS__BSP__DEBUG_SERVER_PORT}"
             )
         endif()
