@@ -508,20 +508,21 @@ macro(___project_add_app__gen_make_target)
         if (${__tmp_system_name} MATCHES "Linux")
             add_custom_target(load
                 COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd} &
-                COMMAND sleep 1
+                COMMAND ${CMAKE_COMMAND} -E sleep 1
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 USES_TERMINAL
             )
         elseif (${__tmp_system_name} MATCHES "Windows")
             add_custom_target(load
                 COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
-                COMMAND timeout /t 1 >nul
+                COMMAND ${CMAKE_COMMAND} -E sleep 1
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 USES_TERMINAL
             )
         else()
             add_custom_target(load
                 COMMAND ${__tmp_start_cmd} ${__tmp_dserver_cmd} ${__tmp_dserver_params_with_start_cmd}
+                COMMAND ${CMAKE_COMMAND} -E sleep 1
                 WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                 USES_TERMINAL
             )
