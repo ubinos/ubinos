@@ -33,6 +33,7 @@
 #include <assert.h>
 #include <sys/errno.h>
 #include <sys/time.h>
+#include <sys/stat.h>
 
 #include "../../_heap.h"
 
@@ -455,6 +456,64 @@ int __attribute__((weak)) _read(int file, char * p_char, int len)
 }
 
 #endif /* (UBINOS__UBICLIB__USE_STDIO_RETARGETING == 1) */
+
+/*
+ * newlib 의 stdio 와 signal 이 부르는 system call 들의 기본 구현.
+ *
+ * 정의하지 않으면 --specs=nosys.specs 의 libnosys stub 이 링크된다. gcc-arm-none-eabi 15.3.rel1
+ * (newlib 4.6) 의 libnosys stub 은 링크할 때 "warning: _close is not implemented and will always fail"
+ * 같은 경고를 낸다 (10.3-2021.10 의 newlib 4.1 은 내지 않았다). stdin, stdout, stderr 는 dtty 로
+ * 다루는 문자 장치이므로 그에 맞게 정의한다. 이 파일의 object 는 -u _sbrk 때문에 libc 보다 먼저
+ * 링크되므로 -u 를 주지 않아도 이 정의가 libnosys stub 대신 쓰인다.
+ */
+
+int __attribute__((weak)) _close(int file)
+{
+    (void) file;
+    errno = EBADF;
+    return -1;
+}
+
+int __attribute__((weak)) _fstat(int file, struct stat * st)
+{
+    (void) file;
+    if (st == NULL)
+    {
+        errno = EFAULT;
+        return -1;
+    }
+    memset(st, 0, sizeof(struct stat));
+    st->st_mode = S_IFCHR;
+    return 0;
+}
+
+int __attribute__((weak)) _isatty(int file)
+{
+    (void) file;
+    return 1;
+}
+
+int __attribute__((weak)) _lseek(int file, int offset, int whence)
+{
+    (void) file;
+    (void) offset;
+    (void) whence;
+    errno = ESPIPE;
+    return -1;
+}
+
+int __attribute__((weak)) _getpid(void)
+{
+    return 1;
+}
+
+int __attribute__((weak)) _kill(int pid, int sig)
+{
+    (void) pid;
+    (void) sig;
+    errno = EINVAL;
+    return -1;
+}
 
 #endif /* !(UBINOS__UBICLIB__EXCLUDE_ARCH_INIT == 1) */
 #endif /* !(UBINOS__UBICLIB__NOSTDLIB == 1) */
